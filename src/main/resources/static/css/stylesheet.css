@@ -10,6 +10,9 @@
 #navbar a {
     text-decoration: none;
     margin-right: 10px;
+    max-width: 200px;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
 #navbar a:hover {
@@ -129,6 +132,9 @@
 
 .garden-details p {
     margin-bottom: 10px;
+    max-width: inherit;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
 
@@ -194,6 +200,12 @@
     background-color: #EEFBEE;
     padding: 20px 50px 40px;
     box-shadow: 1px 4px 10px 1px #777;
+}
+
+#garden-names {
+    max-width: inherit;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
 .container {
