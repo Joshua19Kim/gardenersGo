@@ -200,6 +200,14 @@ public class PlantFormController {
       model.addAttribute("requestURI", requestUri);
       model.addAttribute("plant", plant.get());
       model.addAttribute("garden", plant.get().getGarden());
+
+      if (plant.get().getDatePlanted() != null) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate date = LocalDate.parse(plant.get().getDatePlanted(), dateTimeFormatter);
+        DateTimeFormatter htmlFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        String formattedDate = date.format(htmlFormatter);
+        model.addAttribute("formattedDate", formattedDate);
+      }
       return "editPlantFormTemplate";
     } else {
       return "redirect:/gardens";
