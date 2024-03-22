@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static java.lang.Long.parseLong;
 
@@ -93,6 +95,10 @@ public class PlantFormController {
       Model model) {
     logger.info("/gardens/details/plants/form");
 
+    LocalDate localDate = LocalDate.parse(date);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    date = localDate.format(formatter);
+
     Garden garden = gardenService.getGarden(Long.parseLong(gardenId)).get();
     String validatedPlantName = ValidityChecker.validatePlantName(name);
     String validatedPlantCount = ValidityChecker.validatePlantCount(count);
@@ -113,7 +119,7 @@ public class PlantFormController {
       model.addAttribute("descriptionError", validatedPlantDescription);
       isValid = false;
     }
-    if (!Objects.equals(date, validatedPlantDate)) {
+    if (!Objects.equals(date.replace("-", "/"), validatedPlantDate)) {
       model.addAttribute("dateError", validatedPlantDate);
       isValid = false;
     }

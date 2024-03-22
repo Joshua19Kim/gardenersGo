@@ -27,8 +27,7 @@
         <span th:if="${descriptionError}" th:text="${descriptionError}" style="color: red;"></span>
         <br/>
         <label for="datePlanted"> Date Planted: </label>
-        <input type="text" class="form-control" th:value="*{date}"id="datePlanted" name="date" placeholder="DD/MM/YYYY"
-               th:classappend="${dateError} ? 'error' : ''">
+        <input type="date" class="form-control" th:value="*{date}" id="datePlanted" name="date">
         <span th:if="${dateError}" th:text="${dateError}" style="color: red;"></span>
         <br/>
         <button type="submit">Submit</button>
