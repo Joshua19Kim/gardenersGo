@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Edit Garden</title>
+    <link  th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
+</head>
+<body>
+
+<div id = "navbar" th:insert="~{fragmentExample/fragments/navbar.html :: navbar}"></div>
+
+<div>
+    <div id="form">
+        <h1> Edit Garden </h1>
+        <form id="editGardenForm" th:action="@{edit(gardenId=${garden.id})}" method="post">
+            <label for="name"> Name: </label>
+            <input type="text" class="form-control" id="name" th:value="${name != null ? name : garden.name}"
+                   th:name="name" data-cy="name" autofocus
+                   th:classappend="${nameError} ? 'error' : ''">
+            <span th:if="${nameError}" th:text="${nameError}" style="color: red;"></span>
+            <br/>
+            <label for="location"> Garden Location: </label>
+            <input type="text" class="form-control" id="location" th:value="${location != null ? location : garden.location}"
+                   th:name="location" data-cy="location" autofocus
+                   th:classappend="${locationError} ? 'error' : ''">
+            <span th:if="${locationError}" th:text="${locationError}" style="color: red;"></span>
+            <br/>
+            <label for="size"> Size (m^2): </label>
+            <input type="text" class="form-control" id="size" th:name="size"
+                   th:value="${size != null ? size : garden.size != 0.0 ? garden.size : ''}" data-cy="size" autofocus
+                   th:classappend="${sizeError} ? 'error' : ''">
+            <span th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></span>
+            <br/>
+            <button type="submit">Submit</button>
+        </form>
+        <a th:href="@{../gardens/details(gardenId=${garden.id})}">
+            <button>Cancel</button>
+        </a>
+    </div>
+    <script>
+        document.getElementById("editGardenForm").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                var activeElement = document.activeElement;
+                if (activeElement.tagName === "BUTTON") {
+                    return true;
+                } else {
+                    event.preventDefault();
+                }
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title>Gardens</title>
+    <link th:href="@{/css/stylesheet.css}" rel="stylesheet">
+</head>
+<body>
+
+<div id="navbar" th:insert="~{fragmentExample/fragments/navbar.html :: navbar}"></div>
+<div id="gardens_list">
+    <h1> List of Gardens </h1>
+    <th:block th:each="garden : ${gardens}">
+        <div>
+            <a th:text="${garden.name}" th:href="@{/gardens/details(gardenId=${garden.id})}"></a>
+        </div>
+
+    </th:block>
+</div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+  <title>Create New Garden</title>
+  <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
+</head>
+<body>
+
+<div id = "navbar" th:insert="~{fragmentExample/fragments/navbar.html :: navbar}"></div>
+
+<div>
+  <div id="form">
+    <h1> Create New Garden </h1>
+    <form id="gardenForm" th:action="@{form(redirect=${requestURI})}" method="post">
+      <label for="name"> Name: </label>
+      <input type="text" class="form-control" id="name" placeholder="Name"
+             th:name="name" th:value="*{name}" data-cy="name" autofocus
+             th:classappend="${nameError} ? 'error' : ''">
+      <span th:if="${nameError}" th:text="${nameError}" style="color: red;"></span>
+      <br/>
+      <label for="location"> Garden Location: </label>
+      <input type="text" class="form-control" id="location" placeholder="Jack Erskine?"
+             th:name="location" th:value="*{location}" data-cy="location" autofocus
+             th:classappend="${locationError} ? 'error' : ''">
+      <span th:if="${locationError}" th:text="${locationError}" style="color: red;"></span>
+      <br/>
+      <label for="size"> Size (m^2): </label>
+      <input type="text" class="form-control" id="size" placeholder=""
+             th:name="size" th:value="*{size}" data-cy="size" autofocus
+             th:classappend="${sizeError} ? 'error' : ''">
+      <span th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></span>
+      <br/>
+      <button type="submit">Create!</button>
+    </form>
+    <a th:href="@{${requestURI}}">
+      <button>Cancel</button>
+    </a>
+  </div>
+  <script>
+    document.getElementById("gardenForm").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        var activeElement = document.activeElement;
+        if (activeElement.tagName === "BUTTON") {
+          return true;
+        } else {
+          event.preventDefault();
+        }
+      }
+    });
+  </script>
+
+</div>
+</body>
+</html>
