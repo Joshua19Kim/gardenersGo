@@ -109,23 +109,6 @@ public class ValidityChecker {
     }
 
     /**
-     * Validates that the date is in Aotearoa NZ format (DD/MM/YYYY)
-     * @param date the date planted
-     * @return Either the date or an error message
-     */
-    public static String validatePlantDate(String date) {
-        if (date == null || date.trim().isEmpty()) {
-            return date;
-        }
-        String regex = "\\d{2}/\\d{2}/\\d{4}";
-        if(date.matches(regex)) {
-            return date;
-        } else {
-            return "Date is not in valid format, DD/MM/YYYY";
-        }
-    }
-
-    /**
      * Checks that the description is less than 512 characters
      * @param description plant description
      * @return Either an error message or the description

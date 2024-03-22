@@ -270,55 +270,6 @@ public class ValidityCheckerTest {
     }
 
     @Test
-    public void DatePlantedEntered_ValidFormat_DatePlantedReturned() {
-        String date = "21/07/2003";
-        String returnedInput = ValidityChecker.validatePlantDate(date);
-        Assertions.assertEquals(date, returnedInput);
-    }
-
-    @Test
-    public void DatePlantedEntered_TooManyNumbers_ErrorMessageReturned() {
-        String date = "211/0711/20035";
-        String returnedInput = ValidityChecker.validatePlantDate(date);
-        Assertions.assertEquals("Date is not in valid format, DD/MM/YYYY", returnedInput);
-    }
-
-    @Test
-    public void DatePlantedEntered_TooLittleNumbers_ErrorMessageReturned() {
-        String date = "2/07/203";
-        String returnedInput = ValidityChecker.validatePlantDate(date);
-        Assertions.assertEquals("Date is not in valid format, DD/MM/YYYY", returnedInput);
-    }
-
-    @Test
-    public void DatePlantedEntered_InvalidDashesFormat_ErrorMessageReturned() {
-        String date = "21-07-2003";
-        String returnedInput = ValidityChecker.validatePlantDate(date);
-        Assertions.assertEquals("Date is not in valid format, DD/MM/YYYY", returnedInput);
-    }
-
-    @Test
-    public void DatePlantedEntered_BigEndianFormat_ErrorMessageReturned() {
-        String date = "2003/21/07";
-        String returnedInput = ValidityChecker.validatePlantDate(date);
-        Assertions.assertEquals("Date is not in valid format, DD/MM/YYYY", returnedInput);
-    }
-
-    @Test
-    public void DatePlantedEntered_EmptyString_EmptyStringReturned() {
-        String date = "";
-        String returnedInput = ValidityChecker.validatePlantDate(date);
-        Assertions.assertEquals("", returnedInput);
-    }
-
-    @Test
-    public void DatePlantedEntered_SpaceString_SpaceStringReturned() {
-        String date = " ";
-        String returnedInput = ValidityChecker.validatePlantDate(date);
-        Assertions.assertEquals(" ", returnedInput);
-    }
-
-    @Test
     public void PlantDescriptionEntered_LessThan512Characters_PlantDescriptionReturned() {
         String description = "The rose is a symbol of love";
         String returnedInput = ValidityChecker.validatePlantDescription(description);
