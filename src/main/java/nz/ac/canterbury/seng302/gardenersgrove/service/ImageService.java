@@ -53,6 +53,7 @@ public class ImageService {
             String fileName = file.getOriginalFilename();
             if (gardenerOptional.isPresent()) {
                 Gardener gardener = gardenerOptional.get();
+                //NullPointerException shouldn't affect below line as HTML form prevents an empty upload, i.e. file will never be null
                 String newFileName = gardener.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
                 Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);
                 logger.info("File location: " + filePath);
