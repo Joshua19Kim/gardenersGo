@@ -95,15 +95,22 @@
 
 #form textarea {
     display: block;
-    height: 32px;
-    max-height: 280px;
+    min-height: 32px;
+    max-height: 300px;
+    box-sizing: border-box;
     padding: 6px 16px;
     width: 100%;
     min-width: 100%;
     max-width: 100%;
     border: none;
     margin-bottom: 15px;
+    overflow-y: auto;
+    resize: vertical;
 }
+#characterCountContainer {
+    font-size: 0.8em;
+}
+
 
 #form label {
     font-size: 0.8em;
