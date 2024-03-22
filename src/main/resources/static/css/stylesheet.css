@@ -169,11 +169,39 @@
     max-width: 200px;
 }
 
-
-.plant-image {
+.plant-image-container {
     max-width: 100px;
     max-height: 70px;
     border-radius: 4px;
+    position: relative;
+}
+
+.plant-image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: inherit;
+}
+
+.image-button {
+    position: absolute;
+    top: 0;
+    right: 10%;
+    opacity: 0.5;
+    border: none;
+    background-color: transparent;
+    color: white; /* Text color */
+    font-size: 20px;
+    width: 10px;
+    height: 10px;
+    line-height: 1;
+    text-align: center;
+    vertical-align: top;
+}
+
+
+.plant-image-container .image-button:hover {
+    cursor: pointer;
+    opacity: 1;
 }
 
 
