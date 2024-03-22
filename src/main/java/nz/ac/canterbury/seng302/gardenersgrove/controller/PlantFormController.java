@@ -95,9 +95,11 @@ public class PlantFormController {
       Model model) {
     logger.info("/gardens/details/plants/form");
 
-    LocalDate localDate = LocalDate.parse(date);
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    date = localDate.format(formatter);
+    if (!date.trim().isEmpty()) {
+      LocalDate localDate = LocalDate.parse(date);
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+      date = localDate.format(formatter);
+    }
 
     Garden garden = gardenService.getGarden(Long.parseLong(gardenId)).get();
     String validatedPlantName = ValidityChecker.validatePlantName(name);

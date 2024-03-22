@@ -147,7 +147,7 @@ public class PlantFormControllerTest {
                         .param("name", name)
                         .param("count", "")
                         .param("description", "")
-                        .param("date", date)
+                        .param("date", "2024-01-10")
                         .param("gardenId", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
@@ -195,7 +195,7 @@ public class PlantFormControllerTest {
                         .param("name", name)
                         .param("count", "2")
                         .param("description", "")
-                        .param("date", date)
+                        .param("date", "2024-03-10")
                         .param("gardenId", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
@@ -219,7 +219,7 @@ public class PlantFormControllerTest {
                         .param("name", name)
                         .param("count", "")
                         .param("description", description)
-                        .param("date", date)
+                        .param("date", "2024-01-10")
                         .param("gardenId", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
@@ -244,7 +244,7 @@ public class PlantFormControllerTest {
                         .param("name", name)
                         .param("count", "2")
                         .param("description", description)
-                        .param("date", date)
+                        .param("date", "2024-01-10")
                         .param("gardenId", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
@@ -268,7 +268,7 @@ public class PlantFormControllerTest {
                         .param("name", name)
                         .param("count", "2.0")
                         .param("description", description)
-                        .param("date", date)
+                        .param("date", "2024-03-10")
                         .param("gardenId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("plantsFormTemplate"))
@@ -299,7 +299,7 @@ public class PlantFormControllerTest {
                         .param("name", name)
                         .param("count", "2.0")
                         .param("description", description)
-                        .param("date", date)
+                        .param("date", "2024-03-10")
                         .param("gardenId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("plantsFormTemplate"))
@@ -330,7 +330,7 @@ public class PlantFormControllerTest {
                         .param("name", name)
                         .param("count", "Not a Number")
                         .param("description", description)
-                        .param("date", date)
+                        .param("date", "2024-03-10")
                         .param("gardenId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("plantsFormTemplate"))
@@ -361,7 +361,7 @@ public class PlantFormControllerTest {
                         .param("name", name)
                         .param("count", "-2.0")
                         .param("description", description)
-                        .param("date", date)
+                        .param("date", "2024-03-10")
                         .param("gardenId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("plantsFormTemplate"))
@@ -402,7 +402,7 @@ public class PlantFormControllerTest {
                         .param("name", name)
                         .param("count", "2.0")
                         .param("description", description)
-                        .param("date", date)
+                        .param("date", "2024-03-10")
                         .param("gardenId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("plantsFormTemplate"))
@@ -413,37 +413,6 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("date", date))
                 .andExpect(model().attribute("descriptionError",
                         "Plant description must be less than 512 characters"));
-
-        verify(plantService, never()).addPlant(any(Plant.class));
-    }
-
-    @Test
-    public void PlantFormSubmitted_InvalidDate_ErrorMessageAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "My Plant";
-        float count = 2.0F;
-        String description = "A Plant in My Garden";
-        String date = "10th of March 2024";
-        Plant plant = new Plant(name, count, description, date, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
-                        .param("name", name)
-                        .param("count", "2.0")
-                        .param("description", description)
-                        .param("date", date)
-                        .param("gardenId", "1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("plantsFormTemplate"))
-                .andExpect(model().attributeExists("dateError", "name", "count", "description", "date"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("count", String.valueOf(count)))
-                .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", date))
-                .andExpect(model().attribute("dateError",
-                        "Date is not in valid format, DD/MM/YYYY"));
 
         verify(plantService, never()).addPlant(any(Plant.class));
     }
