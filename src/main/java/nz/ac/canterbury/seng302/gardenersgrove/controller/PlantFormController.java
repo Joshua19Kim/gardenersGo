@@ -105,7 +105,6 @@ public class PlantFormController {
     String validatedPlantName = ValidityChecker.validatePlantName(name);
     String validatedPlantCount = ValidityChecker.validatePlantCount(count);
     String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
-    String validatedPlantDate = ValidityChecker.validatePlantDate(date);
 
     boolean isValid = true;
 
@@ -121,16 +120,12 @@ public class PlantFormController {
       model.addAttribute("descriptionError", validatedPlantDescription);
       isValid = false;
     }
-    if (!Objects.equals(date.replace("-", "/"), validatedPlantDate)) {
-      model.addAttribute("dateError", validatedPlantDate);
-      isValid = false;
-    }
 
     if (isValid) {
       Plant plant;
       boolean countPresent = !Objects.equals(validatedPlantCount.trim(), "");
       boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
-      boolean datePresent = !Objects.equals(validatedPlantDate.trim(), "");
+      boolean datePresent = !Objects.equals(date.trim(), "");
 
       if (countPresent && descriptionPresent && datePresent) {
         // All optional fields are present
@@ -139,7 +134,7 @@ public class PlantFormController {
                 name,
                 Float.parseFloat(validatedPlantCount),
                 validatedPlantDescription,
-                validatedPlantDate,
+                date,
                 garden);
       } else if (countPresent && descriptionPresent) {
         // Count and Description are present
@@ -148,10 +143,10 @@ public class PlantFormController {
                 name, Float.parseFloat(validatedPlantCount), validatedPlantDescription, garden);
       } else if (countPresent && datePresent) {
         // Count and Date are present
-        plant = new Plant(name, validatedPlantDate, Float.parseFloat(validatedPlantCount), garden);
+        plant = new Plant(name, date, Float.parseFloat(validatedPlantCount), garden);
       } else if (descriptionPresent && datePresent) {
         // Description and Date are present
-        plant = new Plant(name, validatedPlantDescription, validatedPlantDate, garden);
+        plant = new Plant(name, validatedPlantDescription, date, garden);
       } else if (countPresent) {
         // Only Count is present
         plant = new Plant(name, Float.parseFloat(validatedPlantCount), garden);
@@ -160,7 +155,7 @@ public class PlantFormController {
         plant = new Plant(name, validatedPlantDescription, garden);
       } else if (datePresent) {
         // Only Date is present
-        plant = new Plant(name, garden, validatedPlantDate);
+        plant = new Plant(name, garden, date);
       } else {
         // Only name is present
         plant = new Plant(name, garden);
@@ -236,11 +231,17 @@ public class PlantFormController {
       @RequestParam(name = "plantId") String plantId,
       Model model) {
     logger.info("POST /gardens/details/plants/edit");
+
+    if (!date.trim().isEmpty()) {
+      LocalDate localDate = LocalDate.parse(date);
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+      date = localDate.format(formatter);
+    }
+
     Plant plant = plantService.getPlant(parseLong(plantId)).get();
     String validatedPlantName = ValidityChecker.validatePlantName(name);
     String validatedPlantCount = ValidityChecker.validatePlantCount(count);
     String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
-    String validatedPlantDate = ValidityChecker.validatePlantDate(date);
 
     boolean isValid = true;
 
@@ -256,16 +257,12 @@ public class PlantFormController {
       model.addAttribute("descriptionError", validatedPlantDescription);
       isValid = false;
     }
-    if (!Objects.equals(date, validatedPlantDate)) {
-      model.addAttribute("dateError", validatedPlantDate);
-      isValid = false;
-    }
 
     if (isValid) {
       plant.setName(validatedPlantName);
       boolean countPresent = !Objects.equals(validatedPlantCount.trim(), "");
       boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
-      boolean datePresent = !Objects.equals(validatedPlantDate.trim(), "");
+      boolean datePresent = !Objects.equals(date.trim(), "");
       if (countPresent) {
         plant.setCount(Float.parseFloat(validatedPlantCount));
       } else {
@@ -277,7 +274,7 @@ public class PlantFormController {
         plant.setDescription(null);
       }
       if (datePresent) {
-        plant.setDatePlanted(validatedPlantDate);
+        plant.setDatePlanted(date);
       } else {
         plant.setDatePlanted(null);
       }

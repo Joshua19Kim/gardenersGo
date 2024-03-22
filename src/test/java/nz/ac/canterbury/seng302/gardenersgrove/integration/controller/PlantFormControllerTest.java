@@ -467,15 +467,15 @@ public class PlantFormControllerTest {
                 "be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this " +
                 "principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures " +
                 "pains to avoid worse pains.";
-        String date = "10th of March 2024";
-        Plant plant = new Plant("My Plant", 2, "Rose", "10/10/2023", garden);
+        String date = "10/10/2023";
+        Plant plant = new Plant("My Plant", 2, "Rose", date, garden);
         when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/details/plants/edit")
                         .param("name", name)
                         .param("count", count)
                         .param("description", description)
-                        .param("date", date)
+                        .param("date", "2023-10-10")
                         .param("plantId", plantId))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editPlantFormTemplate"))
@@ -483,7 +483,7 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("name", name))
                 .andExpect(model().attribute("count", count))
                 .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", date))
+                .andExpect(model().attribute("date", "2023-10-10"))
                 .andExpect(model().attribute("nameError", "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"))
                 .andExpect(model().attribute("countError", "Plant count must be a positive number"))
                 .andExpect(model().attribute("descriptionError", "Plant description must be less than 512 characters"))
