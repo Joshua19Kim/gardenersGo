@@ -177,5 +177,12 @@ public class UserProfileController {
         }
         return new RedirectView("/login");
     }
+    @GetMapping("/password")
+    public String getPassword() {
+        logger.info("GET /password");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+
+        return "/password";
+    }
 }
