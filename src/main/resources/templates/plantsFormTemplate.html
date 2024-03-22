@@ -40,6 +40,12 @@
                 });
         </script>
         <br/>
+        <label for="image"> Image: </label>
+        <div class="plant-image-container" id="image">
+            <img src="/images/placeholder.jpg" alt="Plant">
+            <button type="button" class="image-button">+</button>
+        </div>
+        <br/>
         <button type="submit">Submit</button>
     </form>
     <a th:href="@{../../details(gardenId=${garden.id})}">

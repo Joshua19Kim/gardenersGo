@@ -189,7 +189,7 @@
     border-radius: inherit;
 }
 
-.image-button {
+.plant-image-container .image-button {
     position: absolute;
     top: 0;
     right: 10%;
@@ -211,6 +211,39 @@
     opacity: 1;
 }
 
+#form .plant-image-container {
+    max-width: 100px;
+    max-height: 70px;
+    border-radius: 4px;
+    position: relative;
+}
+
+#form .plant-image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: inherit;
+}
+
+#form .plant-image-container .image-button {
+    position: absolute;
+    top: 0;
+    right: 10%;
+    opacity: 0.5;
+    border: none;
+    background-color: transparent;
+    color: white; /* Text color */
+    font-size: 20px;
+    width: 10px;
+    height: 10px;
+    line-height: 1;
+    text-align: center;
+    vertical-align: top;
+}
+
+#form .plant-image-container .image-button:hover {
+    cursor: pointer;
+    opacity: 1;
+}
 
 .edit-button {
     background-color: #45a049;

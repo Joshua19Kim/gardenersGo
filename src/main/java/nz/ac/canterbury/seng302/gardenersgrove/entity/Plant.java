@@ -42,6 +42,12 @@ public class Plant {
     private String datePlanted;
 
     /**
+     * The image for the plant
+     */
+    @Column
+    private String image;
+
+    /**
      * The garden to which the plant belongs.
      */
     @ManyToOne
@@ -192,6 +198,22 @@ public class Plant {
      * @return The garden where the plant is located.
      */
     public Garden getGarden() {return garden;}
+
+    /**
+     * Gets the image filename associated with the plant
+     * @return the plant image filename
+     */
+    public String getImage() {
+        return image;
+    }
+
+    /**
+     * Sets the image filename of the plant
+     * @param image the image filename
+     */
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     /**
      * Sets the name of the plant
