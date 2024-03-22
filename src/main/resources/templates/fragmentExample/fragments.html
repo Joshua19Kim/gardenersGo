@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thymeleaf Fragments: home</title>
+    <!--/*/ <th:block th:include="fragmentExample/fragments/general.html :: headerfiles">
+            </th:block> /*/-->
+    <!-- The above comment (differentiated by the enclosing "slash star slash") is a thymeleaf prototype-only block
+        making use of synthetic th:block tags. This code will import the header files then the block will disappear.
+        We can see it working since it applies the style import from general.html.
+        See: https://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf.html#comments-and-blocks -->
+</head>
+<body>
+<header th:insert="fragmentExample/fragments/general.html :: header"></header>
+<p th:replace="fragmentExample/fragments/general.html :: p.intro"></p>
+<div th:replace="fragmentExample/fragments/general.html :: footer"></div>
+</body>
+</html>

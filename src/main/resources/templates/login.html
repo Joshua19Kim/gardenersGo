@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Please Log In</title>
+    <link rel="stylesheet" th:href="@{css/styles.css}">
+</head>
+<body>
+<h1>Please Log In</h1>
+<div>
+<form method="post" th:action="@{/login}">
+    <div th:if="${param.logout}">
+        <p>You have been logged out.</p>
+    </div>
+    <div>
+        <input name="username" placeholder="Username" type="text"/>
+    </div>
+    <div th:if="${param.error}">
+        <p data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"> </p>
+
+
+    </div>
+    <div>
+        <input name="password" placeholder="Password" type="password"/>
+    </div>
+    <div>
+        <input type="submit" value="Sign in"/>
+        <a th:href="@{register}">Not Registered? Create an account</a>
+    </div>
+
+</form>
+</div>
+</body>
+</html>
