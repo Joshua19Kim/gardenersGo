@@ -28,7 +28,14 @@
         <br/>
         <label for="datePlanted"> Date Planted: </label>
         <input type="date" class="form-control" th:value="*{date}" id="datePlanted" name="date">
-        <span th:if="${dateError}" th:text="${dateError}" style="color: red;"></span>
+        <span id="dateError" style="color: red;"></span>
+        <script>
+            document.getElementById( "datePlanted" ).addEventListener( "invalid",
+                function( event ) {
+                    event.preventDefault();
+                    document.getElementById("dateError").textContent = "Date is not in valid format, DD/MM/YYYY";
+                });
+        </script>
         <br/>
         <button type="submit">Submit</button>
     </form>
