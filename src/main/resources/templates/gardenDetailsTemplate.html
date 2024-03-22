@@ -49,7 +49,12 @@
             <tbody>
             <tr th:each="plant: ${garden.plants}">
                 <td th:text="${plant.name}"></td>
-                <td><img src="/images/placeholder.jpg" width="100" height="70" class="plant-image"></td>
+                <td>
+                    <div class="plant-image-container">
+                        <img src="/images/placeholder.jpg" alt="Plant">
+                        <button class="image-button">+</button>
+                    </div>
+                </td>
                 <td th:if="${plant.count !=0}" th:text="${plant.count}"></td>
                 <td th:if="${plant.count == 0}"></td>
                 <td th:text="${plant.description}"></td>
