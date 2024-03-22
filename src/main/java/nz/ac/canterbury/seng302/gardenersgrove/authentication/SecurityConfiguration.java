@@ -61,7 +61,13 @@ public class SecurityConfiguration {
         // See https://github.com/spring-projects/spring-security/issues/12546
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector).servletPath("/path");
         http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/h2/**"), AntPathRequestMatcher.antMatcher("/css/**")).permitAll())
+                        .requestMatchers(
+                                AntPathRequestMatcher.antMatcher("/h2/**"),
+                                AntPathRequestMatcher.antMatcher("/css/**"),
+                                AntPathRequestMatcher.antMatcher("/"),
+                                AntPathRequestMatcher.antMatcher("/login"),
+                                AntPathRequestMatcher.antMatcher("/register"))
+                        .permitAll())
                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
                 .authorizeHttpRequests(request -> request

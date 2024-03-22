@@ -20,8 +20,11 @@ dependencies {
 
 	implementation "org.springframework.boot:spring-boot-starter-security"
 
-	developmentOnly 'org.springframework.boot:spring-boot'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-test
+	testImplementation 'org.springframework.security:spring-security-test:6.2.3'
 }
 
 tasks.named('test') {
