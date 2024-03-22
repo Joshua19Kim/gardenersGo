@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.integration;
+package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.LoginController;
@@ -10,21 +10,30 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = LoginController.class)
+@WebMvcTest(LoginController.class)
 public class LoginControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    @WithMockUser()
+    @WithMockUser
     void homeURL_redirectsToLogin() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/").with(csrf()))
+                .perform(MockMvcRequestBuilders.get("/")
+                        .with(csrf()))
                 .andExpect(redirectedUrl("/login"))
                 .andExpect(status().isFound());
+    }
+
+    @Test
+    void onLoginPage_notLoggedIn_StaysOnLoginPage() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/login")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"));
     }
 
 }

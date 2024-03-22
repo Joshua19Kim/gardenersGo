@@ -23,14 +23,14 @@ public class MainController {
      * @return redirect to /login if not authenticated, otherwise go to the main page
      */
     @GetMapping("/main")
-    public String login() {
+    public String mainPage() {
         logger.info("GET /Main");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Authentication: " + authentication);
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             return "main";
-        } else {
-            return "redirect:/login";
         }
+
+        return "redirect:/login";
     }
 }
