@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 /**
- * Controller for User Profile.
+ * Controller for User.
  * Note the @link{Autowired} annotation giving us access to the @link{GardenerFormService} class automatically
  */
 
@@ -43,6 +43,19 @@ public class UserProfileController {
         this.gardenerFormService = gardenerFormService;
     }
 
+    /**
+     * Retrieve user's details (first name, last name, date of birth, email and also check the existence of last name.) based on the current authentication
+     * If the edit button is clicked in user.html, all the details will be editable.
+     * When the save button is clicked, all the existed/edited details will be checked for validation and saved if all pass the tests.
+     * And it will go back to user profile page.
+     * @param firstName First name of user to be entered on User profile form
+     * @param lastName Last name of user to be entered on User profile form
+     * @param DoB Date of Birth of user to be entered on User profile form
+     * @param email Email of Birth of user to be entered on User profile form
+     * @param isLastNameOptional Indication of existence of user's last name
+     * @param model (map-like) representation of firstName, lastName, date of birth, email and profile picture for use in thymeleaf
+     * @return thymeleaf user profile page or redirect user (to reload page)
+     */
     @GetMapping("/user")
     public String getUserProfile(@RequestParam(name = "firstName", required = false) String firstName,
                                  @RequestParam(name = "lastName", required = false) String lastName,
@@ -71,8 +84,6 @@ public class UserProfileController {
             model.addAttribute("email", "");
         }
 
-
-        // PASTED HERE
         InputValidationService inputValidator = new InputValidationService(gardenerFormService);
 
         Optional<String> firstNameError = Optional.empty();
@@ -102,7 +113,6 @@ public class UserProfileController {
         if (email != null && !email.equals(currentUserEmail)) {
             emailInUseError = inputValidator.checkEmailInUse(email);
         }
-        // emailValid is either the String stored in validEmailError OR ELSE it is equal to the String stored in emailInUseError otherwise its empty
         model.addAttribute("emailValid", validEmailError.orElse(emailInUseError.orElse("")));
 
         if (firstNameError.isEmpty() &&
@@ -122,10 +132,18 @@ public class UserProfileController {
                 return "redirect:/user";
             }
         }
-
         return "user";
     }
 
+    /**
+     * Check whether there is the authentication of current user to change the profile photo.
+     * If yes,read the uploaded file from user.html and Save the file.
+     * If the file is empty, redirect user to 'user' page with existing image(or default photo).
+     * If there is an image file, go back to 'user' page with new image
+     * @param file the file of profile picture
+     * @param model (map-like) representation of profile picture for use in thymeleaf
+     * @return thymeleaf 'user' page after updating successfully to reload user's details, otherwise thymeleaf login page
+     */
     @PostMapping("/user")
     public String handleFileUpload(@RequestParam("file") MultipartFile file, Model model) {
 
@@ -145,6 +163,11 @@ public class UserProfileController {
         return "/login";
     }
 
+    /**Check whether there is the authentication of current user to change the profile photo.
+     * If yes, redirect user to 'user' page with photo uploading function
+     * If no, go to 'login' page
+     * @return thymeleaf 'user' page or 'login' page
+     */
     @GetMapping("/redirectToUserPage")
     public RedirectView profileButton() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
