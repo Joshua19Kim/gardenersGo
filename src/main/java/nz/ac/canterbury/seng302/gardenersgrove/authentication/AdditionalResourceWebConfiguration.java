@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.component;
+package nz.ac.canterbury.seng302.gardenersgrove.authentication;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

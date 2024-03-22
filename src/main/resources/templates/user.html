@@ -29,6 +29,9 @@
 
     <div class="formContainer">
         <form id="uploadForm" action="/user" method="post" enctype="multipart/form-data">
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}" />
             <div class="uploadLabelContainer">
                 <label for="file">Choose an image:</label>
                 <input type="file" id="file" name="file" accept="image/*" placeholder="Choose an image">

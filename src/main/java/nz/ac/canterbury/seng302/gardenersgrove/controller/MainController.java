@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
     Logger logger = LoggerFactory.getLogger(MainController.class);
 
+
+    /**
+     * Method for the /main route
+     * @return redirect to /login if not authenticated, otherwise go to the main page
+     */
     @GetMapping("/main")
     public String login() {
         logger.info("GET /Main");

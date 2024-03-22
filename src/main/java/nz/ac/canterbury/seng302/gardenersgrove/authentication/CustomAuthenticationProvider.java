@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.component;
+package nz.ac.canterbury.seng302.gardenersgrove.authentication;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -20,7 +20,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
      * User service for custom authentication using our own user objects
      */
     private final GardenerFormService gardenerFormService;
-    private final InputValidationService inputValidationService;
 
     /**
      * @param gardenerFormService Gardener service for custom authentication using our own user objects to be injected in
@@ -28,7 +27,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public CustomAuthenticationProvider(GardenerFormService gardenerFormService) {
         super();
         this.gardenerFormService = gardenerFormService;
-        inputValidationService = new InputValidationService(gardenerFormService);
+
     }
 
     /**
@@ -39,6 +38,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(Authentication authentication) {
+        InputValidationService inputValidationService = new InputValidationService(gardenerFormService);
         String email = String.valueOf(authentication.getName());
         String password = String.valueOf(authentication.getCredentials());
 
@@ -57,6 +57,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         return new UsernamePasswordAuthenticationToken(u.getEmail(), null, u.getAuthorities());
     }
 
+    /**
+     * Function used by spring security to ensure that authentication is of the correct class
+     * @param authentication - the authentication object to check
+     * @return true if @param authentication is of class UsernamePasswordAuthenticationToken
+     */
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);

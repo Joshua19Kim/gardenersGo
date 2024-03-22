@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * This is a basic spring boot controller, note the @link{Controller} annotation which defines this.
- * This controller defines endpoints as functions with specific HTTP mappings
+ * This controller defines endpoints as functions with specific HTTP mappings. This controller is used
+ * for all the login related routes, as well as routing to the login page by default
  */
 @Controller
 public class LoginController {
@@ -29,6 +30,10 @@ public class LoginController {
         return "redirect:/login";
     }
 
+    /**
+     * Method for the /login route
+     * @return redirect to /login if not authenticated, otherwise go to the main page
+     */
     @GetMapping("/login")
     public String login() {
         logger.info("GET /");

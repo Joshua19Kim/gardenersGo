@@ -30,7 +30,11 @@ public class RegisterFormController {
     private final AuthenticationManager authenticationManager;
     Logger logger = LoggerFactory.getLogger(RegisterFormController.class);
 
-
+    /**
+     * Constructor for the controller. Sets the gardener form service and authentication manager objects
+     * @param gardenerFormService - object that is used to interact with the database
+     * @param authenticationManager - object that is used for authentication (checking, adding, removing authentication)
+     */
     @Autowired
     public RegisterFormController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager) {
         this.gardenerFormService = gardenerFormService;

@@ -1,6 +1,5 @@
-package nz.ac.canterbury.seng302.gardenersgrove.component;
+package nz.ac.canterbury.seng302.gardenersgrove.authentication;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +9,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 /**
  * Custom Security Configuration
@@ -24,8 +25,15 @@ public class SecurityConfiguration {
     /**
      * Our Custom Authentication Provider {@link CustomAuthenticationProvider}
      */
-    @Autowired
-    private CustomAuthenticationProvider authProvider;
+    private final CustomAuthenticationProvider authProvider;
+
+    /**
+     *
+     * @param authProvider Our Custom Authentication Provider {@link CustomAuthenticationProvider} to be injected in
+     */
+    public SecurityConfiguration(CustomAuthenticationProvider authProvider) {
+        this.authProvider = authProvider;
+    }
 
     /**
      * Create an Authentication Manager with our {@link CustomAuthenticationProvider}
@@ -39,7 +47,6 @@ public class SecurityConfiguration {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(authProvider);
         return authenticationManagerBuilder.build();
-
     }
 
 
@@ -49,21 +56,25 @@ public class SecurityConfiguration {
      * @throws Exception if the SecurityFilterChain can not be built
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-// Allow h2 console through security. Note: Spring 6 broke the nicer way to do this (i.e. how the authorisation is handled below)
+    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+        // Allow h2 console through security. Note: Spring 6 broke the nicer way to do this (i.e. how the authorisation is handled below)
         // See https://github.com/spring-projects/spring-security/issues/12546
-        http.authorizeHttpRequests(auth -> auth.requestMatchers(AntPathRequestMatcher.antMatcher("/h2/**"),AntPathRequestMatcher.antMatcher("/css/**")).permitAll())
+        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector).servletPath("/path");
+        http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/h2/**"), AntPathRequestMatcher.antMatcher("/css/**")).permitAll())
                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
-                .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/user")))
+                .authorizeHttpRequests(request -> request
+                                // Allow "/", "/register", and "/login" to anyone (permitAll)
+                                .requestMatchers("/").permitAll()
+                                .requestMatchers("/login").permitAll()
+                                .requestMatchers("/register").permitAll()
+                                .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
+                                .requestMatchers(mvcMatcherBuilder.pattern("/login")).permitAll()
+                                .requestMatchers(mvcMatcherBuilder.pattern("/register")).permitAll()
 
-                .authorizeHttpRequests(request ->
-                        // Allow "/", "/register", and "/login" to anyone (permitAll)
-                        request.requestMatchers("/", "/register", "/login")
-                                .permitAll()
                                 // Only allow admins to reach the "/admin" page
-                                .requestMatchers("/admin")
-                                .hasRole("ADMIN")
+                                .requestMatchers("/admin").hasRole("ADMIN")
                                 // Any other request requires authentication
                                 .anyRequest()
                                 .authenticated()
@@ -73,7 +84,5 @@ public class SecurityConfiguration {
                 // Define logging out, a POST "/logout" endpoint now exists under the hood, redirect to "/login", invalidate session and remove cookie
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login").invalidateHttpSession(true).deleteCookies("JSESSIONID"));
         return http.build();
-
-
     }
 }

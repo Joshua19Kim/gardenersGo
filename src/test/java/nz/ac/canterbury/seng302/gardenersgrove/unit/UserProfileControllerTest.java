@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove;
+package nz.ac.canterbury.seng302.gardenersgrove.unit;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -10,10 +10,8 @@ import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
-
 import java.time.LocalDate;
 import java.util.Optional;
-
 import static org.mockito.Mockito.times;
 
 public class UserProfileControllerTest {
@@ -25,7 +23,6 @@ public class UserProfileControllerTest {
     private Authentication authentication;
     private InputValidationService inputValidator;
     private Optional optional;
-//    private StandaloneMockMvcBuilder mockMvc;
 
 
     @BeforeEach
@@ -39,9 +36,6 @@ public class UserProfileControllerTest {
         inputValidator = Mockito.mock(InputValidationService.class);
         optional = Mockito.mock(Optional.class);
         gardener.setEmail("testSameEmail@test.test");
-//        this.mockMvc = MockMvcBuilders.standaloneSetup(new UserProfileController(gardenerFormService));
-
-
     }
 
     @Test
@@ -54,16 +48,12 @@ public class UserProfileControllerTest {
 
     @Test
     void GivenValidGardenerEdit_WhenUserConfirms_GardenerEditUploaded() {
-
         Mockito.when(authentication.getName()).thenReturn("new@new.new");
         Mockito.when(gardenerFormService.findByEmail(Mockito.any())).thenReturn(Optional.ofNullable(gardener));
         Mockito.when(optional.get()).thenReturn(gardener);
         Mockito.when(inputValidator.checkValidEmail(Mockito.any())).thenReturn(Optional.empty());
         // ONLY works when the email is the same as the submitted one
         Mockito.when(gardener.getEmail()).thenReturn("new@new.new");
-//        Mockito.when(SecurityContextHolder.getContext().getAuthentication()).thenReturn();
-//        Gardener testGardener = new Gardener("Ben", "Moore", LocalDate.of(2001, 11, 11),"test@test.test", "password");
-//        Authentication newAuth = new UsernamePasswordAuthenticationToken(testGardener.getEmail(), testGardener.getPassword(), testGardener.getAuthorities());
         Mockito.when(authentication.getName()).thenReturn("new@new.new");
         userProfileController.getUserProfile("Ben", "Moore", LocalDate.of(2001, 11, 11), "new@new.new", false, modelMock);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
@@ -89,9 +79,6 @@ public class UserProfileControllerTest {
         Mockito.when(inputValidator.checkValidEmail(Mockito.any())).thenReturn(Optional.empty());
         // ONLY works when the email is the same as the submitted one
         Mockito.when(gardener.getEmail()).thenReturn("test@gmail.com");
-//        Mockito.when(SecurityContextHolder.getContext().getAuthentication()).thenReturn();
-//        Gardener testGardener = new Gardener("Ben", "Moore", LocalDate.of(2001, 11, 11),"test@test.test", "password");
-//        Authentication newAuth = new UsernamePasswordAuthenticationToken(testGardener.getEmail(), testGardener.getPassword(), testGardener.getAuthorities());
         Mockito.when(authentication.getName()).thenReturn("test@gmail.com");
         userProfileController.getUserProfile("Kush", "$#@", LocalDate.of(2004, 1, 15), "test@gmail.com", true, modelMock);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
