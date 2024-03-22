@@ -16,21 +16,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service to handle the validation and naming of images, before writing to file
+ */
 @Service
 public class ImageService {
 
     private final Logger logger = LoggerFactory.getLogger(ImageService.class);
     private final GardenerFormService gardenerFormService;
-    private final String IMAGE_PATH = "/images/";
     public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
-    private static int MAX_SIZE = 10*1024*1024;
+    private final int MAX_SIZE = 10*1024*1024;
 
     public List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
+
     @Autowired
     public ImageService(GardenerFormService gardenerFormService) {
         this.gardenerFormService = gardenerFormService;
     }
 
+    /**
+     * Gets credentials to see user can make changes to a users profile picture. Retrieves gardener(user) and uses their
+     * id to generate the appropriate filename for the image. Assuming image is a valid type, image gets written to
+     * storage. If this chain of events fails then appropriate optional strings are returned
+     *
+     * @param file, the Image
+     * @return Returns a variety of optional strings. These are strings that can be used to display various
+     * warning/diagnosing/success messages.
+     */
     public Optional<String> saveImage(MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = authentication.getName();
@@ -41,7 +53,7 @@ public class ImageService {
             String fileName = file.getOriginalFilename();
             if (gardenerOptional.isPresent()) {
                 Gardener gardener = gardenerOptional.get();
-                String newFileName = gardener.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1); // mess around with better version of this
+                String newFileName = gardener.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
                 Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);
                 logger.info("File location: " + filePath);
 
@@ -72,6 +84,13 @@ public class ImageService {
         return validExtensions.contains(file.getContentType());
     }
 
+    /**
+     * Using helper functions, checks the image file is of an appropriate image extension as detailed in a global list,
+     * and checks that the image is below the stipulated file size based on another global variable
+     *
+     * @param file the image
+     * @return optional string detailing the results the image extension check
+     */
     public Optional<String> checkValidImage(MultipartFile file) {
         if (checkValidExtension(file) && isFileSizeValid(file)) {
             return Optional.empty();
