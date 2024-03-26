@@ -13,15 +13,15 @@ public class Garden {
   private Long id;
 
   /** The name of the garden. */
-  @Column(nullable = false)
+  @Column(length=64, nullable = false)
   private String name;
 
   /** The location of the garden. */
-  @Column(nullable = false)
+  @Column(length=64 ,nullable = false)
   private String location;
 
   /** The size of the garden in square units. */
-  @Column
+  @Column(length=10)
   private float size;
 
   /** The list of plants in the garden. */

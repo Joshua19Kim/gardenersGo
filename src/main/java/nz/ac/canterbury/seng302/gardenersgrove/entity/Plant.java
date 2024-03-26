@@ -20,13 +20,13 @@ public class Plant {
     /**
      * Name of the plant.
      */
-    @Column(nullable = false)
+    @Column(length=64,nullable = false)
     private String name;
 
     /**
      * Count of the plant.
      */
-    @Column
+    @Column(length=10)
     private float count;
 
     /**

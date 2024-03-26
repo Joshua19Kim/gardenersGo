@@ -23,6 +23,9 @@ public class ValidityChecker {
         if (!name.matches(regex)) {
             return "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes";
         }
+        if(name.length() > 64) {
+            return "Garden name must be less than 64 characters";
+        }
 
         return name;
     }
@@ -40,6 +43,9 @@ public class ValidityChecker {
         String regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
         if (!location.matches(regex)) {
             return "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
+        }
+        if(location.length() > 64) {
+            return "Location must be less than 64 characters";
         }
 
         return location;
@@ -67,6 +73,9 @@ public class ValidityChecker {
         if (sizeReplaced.contains("-")) {
             return "Garden size must be a positive number";
         }
+        if(size.length() > 10) {
+            return "Garden size must be less than 10 characters";
+        }
         return sizeReplaced;
     }
 
@@ -80,6 +89,9 @@ public class ValidityChecker {
         String regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
         if (name == null || name.trim().isEmpty() || !name.matches(regex)) {
             return "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+        }
+        if(name.length() > 64) {
+            return "Plant name must be less than 64 characters";
         }
         return name;
     }
@@ -104,6 +116,9 @@ public class ValidityChecker {
 
         if (countReplaced.contains("-")) {
             return "Plant count must be a positive number";
+        }
+        if(count.length() > 10) {
+            return "Plant count must be less than 10 characters";
         }
         return countReplaced;
     }
