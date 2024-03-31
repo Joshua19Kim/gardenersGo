@@ -2,9 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -25,8 +26,6 @@ public class LoginController {
     @GetMapping("/")
     public String home() {
         logger.info("GET /");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        logger.info("Authentication: " + authentication);
         return "redirect:/login";
     }
 
@@ -35,11 +34,11 @@ public class LoginController {
      * @return redirect to /login if not authenticated, otherwise go to the main page
      */
     @GetMapping("/login")
-    public String login() {
+    public String login(Authentication authentication) {
         logger.info("GET /");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Authentication: " + authentication);
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+
+        if (authentication instanceof UsernamePasswordAuthenticationToken) {
             return "redirect:/main";
         }
         return "login";
