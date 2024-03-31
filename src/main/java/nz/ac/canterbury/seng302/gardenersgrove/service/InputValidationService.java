@@ -25,7 +25,7 @@ public class InputValidationService {
     /**
      * Verify password entered is strong as given by U1-AC12
      * @param password attempted by user
-     * @return true if strong, false if weak
+     * @return empty optional if password is strong, otherwise error string
      */
     public Optional<String> checkStrongPassword (String password) {
         String validRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_])[A-Za-z\\d\\W_]{8,}$";
@@ -37,17 +37,17 @@ public class InputValidationService {
      * - 0 < Name < 64
      * - Allows special characters umlauts, macrons, apostrophes, spaces
      * @param name provided by user input
-     * @return true if passes verification
+     * @return empty optional if input is valid, otherwise return error string
      */
     public Optional<String> checkValidName (String name, String firstOrLast, boolean isLastNameOptional) {
         String nameRegex = "^[A-Za-zÄÖÜäöüßĀĒĪŌŪāēīōū]+[A-Za-zÄÖÜäöüßĀĒĪŌŪāēīōū' -]*$";
         if (isLastNameOptional) {
             return Optional.empty();
         } else if (name.length() > 64) {
-            return Optional.of(firstOrLast +" name must\n" +
+            return Optional.of(firstOrLast +" name must " +
                     "be 64 characters long or less");
         } else if (!name.matches(nameRegex)) {
-            return Optional.of(firstOrLast + " name cannot be empty and must only include letters, spaces,\n" +
+            return Optional.of(firstOrLast + " name cannot be empty and must only include letters, spaces, " +
                     "hyphens or apostrophes");
         } else {
             return Optional.empty();
@@ -67,15 +67,15 @@ public class InputValidationService {
     /**
      * Checks if the email is already in use
      * @param email provided by user input
-     * @return true if passes verification
+     * @return empty optional if email is valid otherwise returns an Optional error string
      */
     public Optional<String> checkEmailInUse(String email) {
         return (gardenerFormService.findByEmail(email).isPresent() ? Optional.of("This email address is already in use") : Optional.empty());
     }
 
     /** Verifies that the user is old enough to register (13 years or more)
-     * @param DoB
-     * @return true if user is old enough
+     * @param DoB LocalDate object that contains users age
+     * @return empty optional if date is valid, otherwise returns Optional error string
      */
     public Optional<String> checkDoB (LocalDate DoB) {
         if (Period.between(DoB, LocalDate.now()).getYears() < 13) {

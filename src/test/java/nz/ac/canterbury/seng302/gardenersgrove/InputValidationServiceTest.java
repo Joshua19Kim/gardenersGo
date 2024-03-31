@@ -4,13 +4,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //@ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -92,11 +91,25 @@ public class InputValidationServiceTest {
         String password = "ABCDEG!@#$aa";
         Optional<String> isValid = validate.checkStrongPassword(password);
         assertTrue(isValid.get().matches("Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
-
+    }
+    @Test
+    void testInvalidPassword7Characters() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String password = "AB23sd!";
+        Optional<String> isValid = validate.checkStrongPassword(password);
+        assertEquals(isValid.get(), "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
     }
 
     @Test
-    void testValidPassword() {
+    void testValidPassword8Characters() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String password = "ABC12sd!";
+        Optional<String> isValid = validate.checkStrongPassword(password);
+        assertTrue(isValid.isEmpty());
+    }
+
+    @Test
+    void testValidPassword9Characters() {
         InputValidationService validate = new InputValidationService(gardenerFormService);
         String password = "ABC123sd!";
         Optional<String> isValid = validate.checkStrongPassword(password);
@@ -113,15 +126,15 @@ public class InputValidationServiceTest {
         assertTrue(isValid.isEmpty());
     }
 
-//    @Test
-//    void testLongName() {
-//        InputValidationService validate = new InputValidationService(gardenerFormService);
-//        String name = "Thisnameisdefinatelylongerthansixtyfourcharactersanditisgoingtofailthetest";
-//        String first  = "First";
-//        boolean lastName = false;
-//        Optional<String> isValid = validate.checkValidName(name, first, lastName);
-//        assertTrue(isValid.get().matches(first +" name must be 64 characters long or less"));
-//    }
+    @Test
+    void testLongName() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String name = "Thisnameisdefinatelylongerthansixtyfourcharactersanditisgoingtofailthetesthahahahahahahahahahah";
+        String first  = "First";
+        boolean lastName = false;
+        Optional<String> isValid = validate.checkValidName(name, first, lastName);
+        assertTrue(isValid.get().matches(first +" name must be 64 characters long or less"));
+    }
 
     @Test
     void testNullFirstName() {
@@ -241,7 +254,4 @@ public class InputValidationServiceTest {
         Optional<String> isValid = validate.checkValidEmail(email);
         assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
     }
-
-
-
 }
