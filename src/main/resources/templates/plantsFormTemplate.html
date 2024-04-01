@@ -26,7 +26,7 @@
         <br/>
         <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
         <textarea class="form-control" th:value="*{description}" id="description" name="description"  maxlength="512"
-                  th:classappend="${descriptionError} ? 'error' : ''"></textarea>
+                  th:classappend="${descriptionError} ? 'error' : ''">[[${description != null ? description : plant.description}]]</textarea>
         <span th:if="${descriptionError}" th:text="${descriptionError}" style="color: red;"></span>
         <br/>
         <label for="datePlanted"> Date Planted: </label>
@@ -65,10 +65,14 @@
     });
 </script>
 <script type="text/javascript">
-
+    const txHeight = 16;
     const tx = document.getElementsByTagName("textarea");
     for (let i = 0; i < tx.length; i++) {
-        tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+        if (tx[i].value === '') {
+            tx[i].setAttribute("style", "height:" + txHeight + "px;overflow-y:hidden;");
+        } else {
+            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+        }
         tx[i].addEventListener("input", OnInput, false);
         document.addEventListener('DOMContentLoaded', function() {
             updateCharacterCount();
@@ -76,6 +80,7 @@
         document.addEventListener('input', function() {
             updateCharacterCount();
         });
+
     }
 
     function OnInput() {
