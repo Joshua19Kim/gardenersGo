@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import static java.lang.Float.parseFloat;
@@ -128,7 +129,7 @@ public class GardenFormController {
       if (Objects.equals(size.trim(), "")) {
         garden = gardenService.addGarden(new Garden(name, location));
       } else {
-        garden = gardenService.addGarden(new Garden(name, location, Float.parseFloat(validatedSize)));
+        garden = gardenService.addGarden(new Garden(name, location, new BigDecimal(validatedSize).stripTrailingZeros().toPlainString()));
       }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
     } else {
@@ -220,10 +221,10 @@ public class GardenFormController {
       existingGarden.setLocation(location);
 
       if (Objects.equals(size.trim(), "")) {
-        existingGarden.setSize(0);
+        existingGarden.setSize("0");
         gardenService.addGarden(existingGarden);
       } else {
-        existingGarden.setSize(Float.parseFloat(size.replace(',', '.')));
+        existingGarden.setSize(new BigDecimal(validatedSize).stripTrailingZeros().toPlainString());
         gardenService.addGarden(existingGarden);
       }
     } else {

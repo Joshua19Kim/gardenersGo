@@ -26,8 +26,8 @@ public class Plant {
     /**
      * Count of the plant.
      */
-    @Column(length=10)
-    private float count;
+    @Column(length=20)
+    private String count;
 
     /**
      * Description of the plant.
@@ -75,7 +75,7 @@ public class Plant {
      * @param count The count of the plant.
      * @param garden The garden where the plant is located.
      */
-    public Plant(String name, float count, Garden garden) {
+    public Plant(String name, String count, Garden garden) {
         this.name = name;
         this.count = count;
         this.garden = garden;
@@ -87,7 +87,7 @@ public class Plant {
      * @param description The description of the plant.
      * @param garden The garden where the plant is located.
      */
-    public Plant(String name, String description, Garden garden) {
+    public Plant(Garden garden, String name, String description) {
         this.name = name;
         this.description = description;
         this.garden = garden;
@@ -112,7 +112,7 @@ public class Plant {
      * @param description The description of the plant.
      * @param garden The garden where the plant is located.
      */
-    public Plant(String name, float count, String description, Garden garden) {
+    public Plant(String name, String count, String description, Garden garden) {
         this.name = name;
         this.count = count;
         this.description = description;
@@ -126,7 +126,7 @@ public class Plant {
      * @param count The count of the plant.
      * @param garden The garden where the plant is located.
      */
-    public Plant(String name, String datePlanted, float count, Garden garden) {
+    public Plant(String name, String datePlanted, Garden garden, String count) {
         this.name = name;
         this.count = count;
         this.datePlanted = datePlanted;
@@ -140,7 +140,7 @@ public class Plant {
      * @param datePlanted The date when the plant was planted.
      * @param garden The garden where the plant is located.
      */
-    public Plant(String name, String description, String datePlanted, Garden garden) {
+    public Plant(String name, Garden garden, String description, String datePlanted) {
         this.name = name;
         this.description = description;
         this.datePlanted = datePlanted;
@@ -155,7 +155,7 @@ public class Plant {
      * @param datePlanted The date when the plant was planted.
      * @param garden The garden where the plant is located.
      */
-    public Plant(String name, float count, String description, String datePlanted, Garden garden) {
+    public Plant(String name, String count, String description, String datePlanted, Garden garden) {
         this.name = name;
         this.count = count;
         this.description = description;
@@ -179,7 +179,7 @@ public class Plant {
      * Gets the count of the plant.
      * @return The count of the plant.
      */
-    public float getCount() { return count;}
+    public String getCount() { return count;}
 
     /**
      * Gets the description of the plant.
@@ -231,7 +231,7 @@ public class Plant {
      * Sets the count of the plant
      * @param count the count
      */
-    public void setCount(float count) {this.count = count;}
+    public void setCount(String count) {this.count = count;}
 
     /**
      * Sets the date planted
