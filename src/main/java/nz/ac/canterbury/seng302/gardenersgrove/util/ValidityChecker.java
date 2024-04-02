@@ -73,8 +73,8 @@ public class ValidityChecker {
         if (sizeReplaced.contains("-")) {
             return "Garden size must be a positive number";
         }
-        if(size.length() > 10) {
-            return "Garden size must be less than 10 characters";
+        if(size.length() > 20) {
+            return "Garden size must be less than 20 characters";
         }
         return sizeReplaced;
     }
@@ -117,8 +117,8 @@ public class ValidityChecker {
         if (countReplaced.contains("-")) {
             return "Plant count must be a positive number";
         }
-        if(count.length() > 10) {
-            return "Plant count must be less than 10 characters";
+        if(count.length() > 20) {
+            return "Plant count must be less than 20 characters";
         }
         return countReplaced;
     }
