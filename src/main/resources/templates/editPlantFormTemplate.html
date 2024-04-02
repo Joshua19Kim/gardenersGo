@@ -30,7 +30,7 @@
         <span th:if="${descriptionError}" th:text="${descriptionError}" style="color: red;"></span>
         <br/>
         <label for="datePlanted"> Date Planted: </label>
-        <input type="date" class="form-control" th:value="${formattedDate} ?: *{date}" id="datePlanted" name="date">
+        <input type="date" class="form-control" th:value="${date != null ? date : formattedDate}" id="datePlanted" name="date">
         <span id="dateError" style="color: red;"></span>
         <script>
             document.getElementById( "datePlanted" ).addEventListener( "invalid",
@@ -69,7 +69,7 @@
     const tx = document.getElementsByTagName("textarea");
 
     for (let i = 0; i < tx.length; i++) {
-        if (tx[i].value == '') {
+        if (tx[i].value === '') {
             tx[i].setAttribute("style", "height:" + txHeight + "px;overflow-y:hidden;");
         } else {
             tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");

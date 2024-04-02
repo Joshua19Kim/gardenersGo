@@ -95,11 +95,11 @@ public class PlantFormController {
       @RequestParam(name = "gardenId") String gardenId,
       Model model) {
     logger.info("/gardens/details/plants/form");
-
+    String validatedDate = "";
     if (!date.trim().isEmpty()) {
       LocalDate localDate = LocalDate.parse(date);
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-      date = localDate.format(formatter);
+      validatedDate = localDate.format(formatter);
     }
 
     Garden garden = gardenService.getGarden(Long.parseLong(gardenId)).get();
@@ -135,7 +135,7 @@ public class PlantFormController {
                 name,
                     new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString(),
                 validatedPlantDescription,
-                date,
+                validatedDate,
                 garden);
       } else if (countPresent && descriptionPresent) {
         // Count and Description are present
@@ -143,10 +143,10 @@ public class PlantFormController {
             new Plant(name, new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString(), validatedPlantDescription, garden);
       } else if (countPresent && datePresent) {
         // Count and Date are present
-        plant = new Plant(name, date, garden, new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
+        plant = new Plant(name, validatedDate, garden, new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
       } else if (descriptionPresent && datePresent) {
         // Description and Date are present
-        plant = new Plant(name, garden, validatedPlantDescription, date);
+        plant = new Plant(name, garden, validatedPlantDescription, validatedDate);
       } else if (countPresent) {
         // Only Count is present
         plant = new Plant(name, new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString(), garden);
@@ -155,7 +155,7 @@ public class PlantFormController {
         plant = new Plant(garden, name, validatedPlantDescription);
       } else if (datePresent) {
         // Only Date is present
-        plant = new Plant(name, garden, date);
+        plant = new Plant(name, garden, validatedDate);
       } else {
         // Only name is present
         plant = new Plant(name, garden);
@@ -231,11 +231,11 @@ public class PlantFormController {
       @RequestParam(name = "plantId") String plantId,
       Model model) {
     logger.info("POST /gardens/details/plants/edit");
-
+    String formattedDate = "";
     if (!date.trim().isEmpty()) {
       LocalDate localDate = LocalDate.parse(date);
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-      date = localDate.format(formatter);
+      formattedDate = localDate.format(formatter);
     }
 
     Plant plant = plantService.getPlant(parseLong(plantId)).get();
@@ -274,7 +274,7 @@ public class PlantFormController {
         plant.setDescription(null);
       }
       if (datePresent) {
-        plant.setDatePlanted(date);
+        plant.setDatePlanted(formattedDate);
       } else {
         plant.setDatePlanted(null);
       }

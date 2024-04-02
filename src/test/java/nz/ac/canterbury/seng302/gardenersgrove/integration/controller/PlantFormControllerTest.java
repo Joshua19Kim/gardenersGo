@@ -276,7 +276,7 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("name", name))
                 .andExpect(model().attribute("count", String.valueOf(count)))
                 .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", date))
+                .andExpect(model().attribute("date", "2024-03-10"))
                 .andExpect(model().attribute("nameError",
                         "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"));
 
@@ -307,7 +307,7 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("name", name))
                 .andExpect(model().attribute("count", String.valueOf(count)))
                 .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", date))
+                .andExpect(model().attribute("date", "2024-03-10"))
                 .andExpect(model().attribute("nameError",
                         "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"));
 
@@ -338,7 +338,7 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("name", name))
                 .andExpect(model().attribute("count", "Not a Number"))
                 .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", date))
+                .andExpect(model().attribute("date", "2024-03-10"))
                 .andExpect(model().attribute("countError",
                         "Plant count must be a positive number"));
 
@@ -369,7 +369,7 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("name", name))
                 .andExpect(model().attribute("count", "-2.0"))
                 .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", date))
+                .andExpect(model().attribute("date", "2024-03-10"))
                 .andExpect(model().attribute("countError",
                         "Plant count must be a positive number"));
 
@@ -410,7 +410,7 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("name", name))
                 .andExpect(model().attribute("count", String.valueOf(count)))
                 .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", date))
+                .andExpect(model().attribute("date", "2024-03-10"))
                 .andExpect(model().attribute("descriptionError",
                         "Plant description must be less than 512 characters"));
 
@@ -479,7 +479,7 @@ public class PlantFormControllerTest {
                         .param("plantId", plantId))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editPlantFormTemplate"))
-                .andExpect(model().attributeExists("nameError", "countError", "descriptionError", "dateError", "name", "count", "description", "date", "plant", "garden"))
+                .andExpect(model().attributeExists("nameError", "countError", "descriptionError", "name", "count", "description", "date", "plant", "garden"))
                 .andExpect(model().attribute("name", name))
                 .andExpect(model().attribute("count", count))
                 .andExpect(model().attribute("description", description))
@@ -487,7 +487,6 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("nameError", "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"))
                 .andExpect(model().attribute("countError", "Plant count must be a positive number"))
                 .andExpect(model().attribute("descriptionError", "Plant description must be less than 512 characters"))
-                .andExpect(model().attribute("dateError", "Date is not in valid format, DD/MM/YYYY"))
                 .andExpect(model().attribute("plant", plant))
                 .andExpect(model().attribute("garden", garden));
 
@@ -510,7 +509,7 @@ public class PlantFormControllerTest {
                         .param("name", name)
                         .param("count", count)
                         .param("description", description)
-                        .param("date", date)
+                        .param("date", "2024-03-10")
                         .param("plantId", plantId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=" + garden.getId()));

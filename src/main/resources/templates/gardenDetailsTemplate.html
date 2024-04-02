@@ -50,9 +50,10 @@
             <tr th:each="plant: ${garden.plants}">
                 <td th:text="${plant.name}"></td>
                 <td>
-                    <div class="plant-image-container">
-                        <img src="/images/placeholder.jpg" alt="Plant">
-                        <button class="image-button">+</button>
+                    <div class="plant-image-container" id="image">
+                        <img src="/images/placeholder.jpg" alt="Plant" id="currentImage">
+                        <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
+                        <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="handleImageChange()">
                     </div>
                 </td>
                 <td th:if="${plant.count !=0}" th:text="${plant.count}"></td>
@@ -67,6 +68,19 @@
             </tr>
             </tbody>
         </table>
+        <script>
+            function handleImageChange() {
+                var fileInput = document.getElementById('fileInput');
+                var file = fileInput.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('currentImage').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        </script>
     </div>
 
 
