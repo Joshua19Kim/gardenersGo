@@ -178,10 +178,28 @@ public class UserProfileController {
         return new RedirectView("/login");
     }
     @GetMapping("/password")
-    public String getPassword() {
+    public String getPassword(@RequestParam(name = "oldPassword", required = false) String oldPassword,
+                              @RequestParam(name = "newPassword", required = false) String newPassword,
+                              @RequestParam(name = "retypePassword", required = false) String retypePassword,
+                              Model model) {
         logger.info("GET /password");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+        Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+        if (gardenerOptional.isEmpty()) {
+            model.addAttribute("oldPassword", "Not Registered");
+        }
+        gardener = gardenerOptional.get();
+        int hashPasswordFromServer = gardener.getPassword();
+        if (hashPasswordFromServer != oldPassword.hashCode()) {
+            //need to make inputvalidation function in inputValidator to follow coding style
+        }
 
+        InputValidationService inputValidator = new InputValidationService(gardenerFormService);
+        Optional<String> passwordMatchError = inputValidator.checkPasswordsMatch(newPassword, retypePassword);
+        model.addAttribute("passwordsMatch", passwordMatchError.orElse(""));
+        Optional<String> passwordStrengthError = inputValidator.checkStrongPassword(newPassword);
+        model.addAttribute("passwordStrong", passwordStrengthError.orElse(""));
 
         return "/password";
     }
