@@ -92,7 +92,7 @@ public class PlantFormControllerTest {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
-        float count = 2.0F;
+        String count = "2.0";
         Plant plant = new Plant(name, count, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
@@ -161,7 +161,7 @@ public class PlantFormControllerTest {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
-        float count = 2;
+        String count = "2";
         String description = "A Plant in My Garden";
         Plant plant = new Plant(name, count, description, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
@@ -185,9 +185,9 @@ public class PlantFormControllerTest {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
-        float count = 2;
+        String count = "2";
         String date = "10/03/2024";
-        Plant plant = new Plant(name, date, count, garden);
+        Plant plant = new Plant(name, date, garden, count);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
         mockMvc
@@ -233,7 +233,7 @@ public class PlantFormControllerTest {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
-        float count = 2;
+        String count = "2";
         String description = "A Plant in My Garden";
         String date = "10/03/2024";
         Plant plant = new Plant(name, count, description, date, garden);
@@ -258,7 +258,7 @@ public class PlantFormControllerTest {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "";
-        float count = 2.0F;
+        String count = "2";
         String description = "A Plant in My Garden";
         String date = "10/03/2024";
         Plant plant = new Plant(name, count, description, date, garden);
@@ -289,7 +289,7 @@ public class PlantFormControllerTest {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "~!@#$%^&*()_+";
-        float count = 2.0F;
+        String count = "2";
         String description = "A Plant in My Garden";
         String date = "10/03/2024";
         Plant plant = new Plant(name, count, description, date, garden);
@@ -320,7 +320,7 @@ public class PlantFormControllerTest {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
-        float count = 2.0F;
+        String count = "2";
         String description = "A Plant in My Garden";
         String date = "10/03/2024";
         Plant plant = new Plant(name, count, description, date, garden);
@@ -351,7 +351,7 @@ public class PlantFormControllerTest {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
-        float count = 2.0F;
+        String count = "2";
         String description = "A Plant in My Garden";
         String date = "10/03/2024";
         Plant plant = new Plant(name, count, description, date, garden);
@@ -382,7 +382,7 @@ public class PlantFormControllerTest {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
-        float count = 2.0F;
+        String count = "2";
         String description = "On the other hand, we denounce with righteous indignation and dislike men who are so " +
                 "beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they " +
                 "cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who " +
@@ -433,7 +433,7 @@ public class PlantFormControllerTest {
     @Test
     public void EditPlantFormRequested_ExistentPlantId_GoToEditPlantForm() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
-        Plant plant = new Plant("My Plant", 2, "Rose", "12/06/2004", garden);
+        Plant plant = new Plant("My Plant", "2", "Rose", "12/06/2004", garden);
         String plantId = "2";
         List<Garden> gardens = new ArrayList<>();
         when(gardenService.getGardenResults()).thenReturn(gardens);
@@ -468,7 +468,7 @@ public class PlantFormControllerTest {
                 "principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures " +
                 "pains to avoid worse pains.";
         String date = "10/10/2023";
-        Plant plant = new Plant("My Plant", 2, "Rose", date, garden);
+        Plant plant = new Plant("My Plant", "2", "Rose", date, garden);
         when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/details/plants/edit")
@@ -502,7 +502,7 @@ public class PlantFormControllerTest {
         String count = "3";
         String description = "Daisy";
         String date = "10/03/2024";
-        Plant plant = new Plant("My Plant", 2, "Rose", "10/10/2023", garden);
+        Plant plant = new Plant("My Plant", "2", "Rose", "10/10/2023", garden);
         when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
         when(plantService.addPlant(plant)).thenReturn(plant);
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/details/plants/edit")
@@ -515,7 +515,7 @@ public class PlantFormControllerTest {
                 .andExpect(redirectedUrl("/gardens/details?gardenId=" + garden.getId()));
         verify(plantService, times(1)).addPlant(plant);
         Assertions.assertEquals(name, plant.getName());
-        Assertions.assertEquals(Float.parseFloat(count), plant.getCount());
+        Assertions.assertEquals(count, plant.getCount());
         Assertions.assertEquals(description, plant.getDescription());
         Assertions.assertEquals(date, plant.getDatePlanted());
     }

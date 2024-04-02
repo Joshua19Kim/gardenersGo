@@ -1,16 +1,19 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.LoginController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +26,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = GardenFormController.class)
 public class GardenFormControllerTest {
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired private static MockMvc mockMvc;
 
   @MockBean private GardenService gardenService;
 
+  @BeforeAll
+  public static void setup() {
+      LoginController loginController = new LoginController();
+      mockMvc = MockMvcBuilders.standaloneSetup(loginController).build();
+  }
+
   @Test
-  public void RootDirectoryRequested_DefaultValues_RedirectToMyGardens() throws Exception {
+  public void RootDirectoryRequested_DefaultValues_RedirectToLogin() throws Exception {
       mockMvc
               .perform((MockMvcRequestBuilders.get("")))
               .andExpect(status().is3xxRedirection())
-              .andExpect(redirectedUrl("./gardens"));
+              .andExpect(redirectedUrl("/login"));
   }
 
     @Test
@@ -109,7 +118,7 @@ public class GardenFormControllerTest {
   @Test
   public void EditedGardenDetailsSubmitted_ValidValuesWithSize_GardenDetailsUpdated()
       throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", 32);
+    Garden garden = new Garden("My Garden", "Ilam", "32");
     when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
     when(gardenService.addGarden(garden)).thenReturn(garden);
     mockMvc
@@ -131,7 +140,7 @@ public class GardenFormControllerTest {
   @Test
   public void EditedGardenDetailsSubmitted_ValidValuesWithNoSize_GardenDetailsUpdated()
       throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", 32);
+    Garden garden = new Garden("My Garden", "Ilam", "32");
     when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
     when(gardenService.addGarden(garden)).thenReturn(garden);
     mockMvc
@@ -153,7 +162,7 @@ public class GardenFormControllerTest {
     @Test
     public void GardenFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
         List<Garden> gardens = new ArrayList<>();
-        gardens.add(new Garden("My Garden", "Ilam", 32));
+        gardens.add(new Garden("My Garden", "Ilam", "32"));
         when(gardenService.getGardenResults()).thenReturn(gardens);
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/form")
                         .param("redirect", ""))
@@ -169,7 +178,7 @@ public class GardenFormControllerTest {
         String name = "My Garden";
         String location = "Ilam";
         String size = "1.0";
-        Garden garden = new Garden(name, location, Float.parseFloat(size));
+        Garden garden = new Garden(name, location, size);
         garden.setId(1L);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
