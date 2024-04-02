@@ -18,18 +18,12 @@
     </div>
     <div>
         <input name="username" placeholder="Username" type="text"/>
-    </div>
-    <div th:if="${param.error}">
-        <p data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"> </p>
-
-
-    </div>
-    <div>
         <input name="password" placeholder="Password" type="password"/>
+        <p class="errorMessage" th:if="${param.error}" data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
     </div>
-    <div>
+    <div style="display: flex; flex-direction: column">
         <input type="submit" value="Sign in"/>
-        <a th:href="@{register}">Not Registered? Create an account</a>
+        <a th:href="@{register}" style="margin-top: 20px">Not Registered? Create an account</a>
     </div>
 
 </form>

@@ -1,45 +1,43 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<nav th:fragment="navbar">
-    <h1>Gardener's Grove</h1>
-    <script>
-        // JavaScript function to submit the logout form
-        function logout(event) {
-            event.preventDefault(); // Prevent the link from navigating
-            document.getElementById('logoutForm').submit(); // Submit the hidden logout form
-        }
-    </script>
-    <ul>
-        <li>
-            <div class="dropdown">
-                <a th:href="@{/gardens}">
-                    <button class="dropbtn">My Gardens</button>
-                </a>
-                <div class="dropdown-content">
-                    <th:block th:each="garden : ${gardens}">
-                        <!-- Iterate over the list of gardens and display them -->
-                        <a th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a>
-                    </th:block>
-                </div>
+<h1>Gardener's Grove</h1>
+<script>
+    // JavaScript function to submit the logout form
+    function logout(event) {
+        event.preventDefault(); // Prevent the link from navigating
+        document.getElementById('logoutForm').submit(); // Submit the hidden logout form
+    }
+</script>
+<ul>
+    <li>
+        <div class="dropdown">
+            <a th:href="@{/gardens}">
+                <button class="dropbtn">My Gardens</button>
+            </a>
+            <div class="dropdown-content">
+                <th:block th:each="garden : ${gardens}">
+                    <!-- Iterate over the list of gardens and display them -->
+                    <a th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a>
+                </th:block>
             </div>
-        </li>
-        <li>
-            <a th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>
-        </li>
-        <li>
-            <a th:href="@{/user}">My Profile</a>
-        </li>
-        <li>
-            <a href="#" onclick="logout(event)">Logout</a>
-            <form id="logoutForm" method="POST" th:action="@{/logout}" style="display: none;">
-                <input type="submit" value="Logout"/>
-<!--                old code below: -->
-<!--            <form method="POST" th:action="@{logout}">-->
-<!--                <input type="submit" value="Logout"/>-->
-            </form>
-        </li>
+        </div>
+    </li>
+    <li>
+        <a th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>
+    </li>
+    <li>
+        <a th:href="@{/user}">My Profile</a>
+    </li>
+    <li>
+        <a href="#" onclick="logout(event)">Logout</a>
+        <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
+            <input type="submit" value="Logout"/>
+            <!--                old code below: -->
+            <!--            <form method="POST" th:action="@{logout}">-->
+            <!--                <input type="submit" value="Logout"/>-->
+        </form>
+    </li>
 
-    </ul>
-</nav>
+</ul>
 </html>
 

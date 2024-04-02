@@ -1,5 +1,5 @@
 
-#navbar {
+nav {
     background-color: #d9f7d9;
     padding: 10px;
     font-family: 'Roboto', sans-serif;
@@ -7,41 +7,66 @@
 }
 
 
-#navbar  a, #navbar input[type="submit"] {
-    text-decoration: none;
-    margin-right: 10px;
-    max-width: 200px;
-    word-wrap: break-word;
-    white-space: normal;
-}
-
-#navbar  a:hover, #navbar input[type="submit"] {
-    color: #45a049;
-    text-decoration: underline #45a049;
-}
-
-nav form {
-    all: revert;
-}
-
 nav ul {
     list-style-type: none;
     display: flex;
 }
 
+
 nav ul li {
     text-decoration: none;
-    margin-right: 10px;
+    margin: 0 10px 0 10px;
+    word-wrap: break-word;
+    white-space: normal;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+
+nav ul li form {
+    all: revert;
+}
+
+
+nav ul li a, nav ul li input[type="submit"] {
+    text-decoration: none;
     max-width: 200px;
     word-wrap: break-word;
     white-space: normal;
+    display: inline-block;
+}
+
+/* Took the following code from my year 13 project
+ * This code adds the white underline effect on hover
+ */
+nav ul li a:after, nav ul li input[type="submit"]:after {
+    bottom: 0;
+    content: "";
+    display: block;
+    height: 2px;
+    left: 50%;
+    position: absolute;
+    background: #fff;
+    transition: width 0.3s ease 0s, left 0.3s ease 0s;
+    width: 0;
+}
+
+nav ul li a:hover:after, nav ul li input[type="submit"]:after {
+    width: 100%;
+    left: 0;
+}
+
+nav ul li a:hover, nav ul li input[type="submit"]:hover {
+    color: #45a049;
+    transition: 0.3s ease;
 }
 
 
 .dropdown {
     position: relative;
     display: inline-block;
-
 }
 
 
@@ -53,6 +78,7 @@ nav ul li {
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
+
 
 .dropdown-content a {
     padding: 12px 16px;
@@ -71,6 +97,11 @@ nav ul li {
 
 .error {
     border: 1px solid red;
+}
+
+.errorMessage {
+    color: red;
+    font-size: 0.7rem;
 }
 
 .dropbtn {
@@ -146,6 +177,11 @@ nav ul li {
     font-weight: 700;
     box-shadow: 2px 3px 1px #777;
     background: #d9f7d9;
+}
+
+#form button:hover, #form input[type="submit"]:hover {
+    background: #8af58a;
+    cursor: pointer;
 }
 
 #garden-details {

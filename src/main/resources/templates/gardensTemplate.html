@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<div id="navbar" th:insert="~{fragmentExample/fragments/navbar.html :: navbar}"></div>
+<nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div id="gardens_list">
     <h1> List of Gardens </h1>
     <th:block th:each="garden : ${gardens}">
