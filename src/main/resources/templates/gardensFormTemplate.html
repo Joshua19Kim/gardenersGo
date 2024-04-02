@@ -24,7 +24,7 @@
              th:classappend="${locationError} ? 'error' : ''">
       <span th:if="${locationError}" th:text="${locationError}" style="color: red;"></span>
       <br/>
-      <label for="size"> Size (m^2): </label>
+      <label for="size"> Size (m<sup>2</sup>): </label>
       <input type="text" class="form-control" id="size" placeholder=""
              th:name="size" th:value="*{size}" data-cy="size" autofocus
              th:classappend="${sizeError} ? 'error' : ''">

@@ -113,7 +113,7 @@
 <script>
 
     function toggleUploadContainer() {
-        var toggleState = document.getElementById("uploadContainer");
+        let toggleState = document.getElementById("uploadContainer");
         if (toggleState.style.display === "flex") {
             toggleState.style.display = "none";
         } else {
@@ -121,7 +121,8 @@
         }
     }
     function enableEditing() {
-        toggleUploadContainer();
+        const toggleState = document.getElementById("uploadContainer");
+        toggleState.style.display = "flex";
         document.getElementById('editButtonDiv').style.display = 'none';
         document.getElementById('saveCancelButtonDiv').style.display = 'block';
 
@@ -132,7 +133,7 @@
         document.getElementById('lastNameEdit').style.display = 'inline';
         document.getElementById('isLastNameOptional').style.display = 'inline';
         document.getElementById('isLastNameOptionalLabelEdit').style.display = 'inline';
-        var lName = document.getElementById('lastNameEdit');
+        let lName = document.getElementById('lastNameEdit');
         if (lName.value.trim() === "") {
             document.getElementById('isLastNameOptional').checked = true;
             document.getElementById('lastNameEdit').disabled = true;
@@ -147,7 +148,8 @@
     }
 
     function disableEditing() {
-        toggleUploadContainer();
+        const toggleState = document.getElementById("uploadContainer");
+        toggleState.style.display = "flex";
         document.getElementById('editButtonDiv').style.display = 'block';
         document.getElementById('saveCancelButtonDiv').style.display = 'none';
 
