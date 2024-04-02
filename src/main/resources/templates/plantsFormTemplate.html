@@ -26,7 +26,7 @@
         <br/>
         <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
         <textarea class="form-control" th:value="*{description}" id="description" name="description"  maxlength="512"
-                  th:classappend="${descriptionError} ? 'error' : ''">[[${description != null ? description : plant.description}]]</textarea>
+                  th:classappend="${descriptionError} ? 'error' : ''">[[${description}]]</textarea>
         <span th:if="${descriptionError}" th:text="${descriptionError}" style="color: red;"></span>
         <br/>
         <label for="datePlanted"> Date Planted: </label>
