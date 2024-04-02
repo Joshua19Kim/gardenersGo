@@ -39,7 +39,7 @@ public class LoginController {
         logger.info("Authentication: " + authentication);
 
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
-            return "redirect:/main";
+            return "redirect:/gardens";
         }
         return "login";
     }

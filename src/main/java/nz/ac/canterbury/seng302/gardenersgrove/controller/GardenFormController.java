@@ -24,18 +24,6 @@ import java.util.Optional;
 public class GardenFormController {
   Logger logger = LoggerFactory.getLogger(GardenFormController.class);
 
-  /**
-   * Retrieves the 'my garden' page.
-   *
-   * @return The name of the template for displaying the 'my gardens' page.
-   */
-
-  @GetMapping("/")
-  public String home() {
-    logger.info("GET /");
-    return "redirect:./gardens";
-  }
-
 
   /**
    * Gets the home page that displays the list of gardens
