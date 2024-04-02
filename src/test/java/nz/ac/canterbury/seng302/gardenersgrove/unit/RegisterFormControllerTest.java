@@ -2,7 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unit;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.times;
 
 public class RegisterFormControllerTest {
 
-    private RegisterFormController registerFormController;
+    private RegisterController registerFormController;
     private GardenerFormService gardenerFormService;
     private AuthenticationManager authenticationManager;
     private Authentication authentication;
@@ -32,7 +32,7 @@ public class RegisterFormControllerTest {
         gardenerFormService = Mockito.mock(GardenerFormService.class);
         request = Mockito.mock(HttpServletRequest.class);
         authenticationManager = Mockito.mock(AuthenticationManager.class);
-        registerFormController = new RegisterFormController(gardenerFormService, authenticationManager);
+        registerFormController = new RegisterController(gardenerFormService, authenticationManager);
         model = Mockito.mock(Model.class);
         assertTrue(true);
     }

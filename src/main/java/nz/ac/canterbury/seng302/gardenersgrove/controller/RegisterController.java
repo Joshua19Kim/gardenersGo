@@ -25,10 +25,10 @@ import java.util.Optional;
  * Note the @link{Autowired} annotation giving us access to the @link{FormService} class automatically
  */
 @Controller
-public class RegisterFormController {
+public class RegisterController {
     private final GardenerFormService gardenerFormService;
     private final AuthenticationManager authenticationManager;
-    Logger logger = LoggerFactory.getLogger(RegisterFormController.class);
+    Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
     /**
      * Constructor for the controller. Sets the gardener form service and authentication manager objects
@@ -36,7 +36,7 @@ public class RegisterFormController {
      * @param authenticationManager - object that is used for authentication (checking, adding, removing authentication)
      */
     @Autowired
-    public RegisterFormController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager) {
+    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager) {
         this.gardenerFormService = gardenerFormService;
         this.authenticationManager = authenticationManager;
     }
