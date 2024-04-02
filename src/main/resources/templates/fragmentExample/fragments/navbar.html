@@ -2,6 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <nav th:fragment="navbar">
     <h1>Gardener's Grove</h1>
+    <script>
+        // JavaScript function to submit the logout form
+        function logout(event) {
+            event.preventDefault(); // Prevent the link from navigating
+            document.getElementById('logoutForm').submit(); // Submit the hidden logout form
+        }
+    </script>
     <ul>
         <li>
             <div class="dropdown">
@@ -20,13 +27,15 @@
             <a th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>
         </li>
         <li>
-            <form method="GET" th:action="@{redirectToUserPage}">
-                <input type="submit" value="My Profile"/>
-            </form>
+            <a th:href="@{/user}">My Profile</a>
         </li>
         <li>
-            <form method="POST" th:action="@{logout}">
+            <a href="#" onclick="logout(event)">Logout</a>
+            <form id="logoutForm" method="POST" th:action="@{/logout}" style="display: none;">
                 <input type="submit" value="Logout"/>
+<!--                old code below: -->
+<!--            <form method="POST" th:action="@{logout}">-->
+<!--                <input type="submit" value="Logout"/>-->
             </form>
         </li>
 
