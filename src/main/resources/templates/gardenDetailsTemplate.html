@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Garden Details</title>
+    <link th:href="@{/css/stylesheet.css}" rel="stylesheet">
+</head>
+<body>
+<div id="navbar">
+    <h1>Gardener's Grove</h1>
+    <div class="dropdown">
+        <a th:href="@{/gardens}">
+            <button class="dropbtn">My Gardens</button>
+        </a>
+        <div class="dropdown-content">
+            <th:block th:each="garden : ${gardens}">
+                <!-- Iterate over the list of gardens and display them -->
+                <a th:text="${garden.name}" th:href="@{/gardens/details(gardenId=${garden.id})}"></a>
+            </th:block>
+        </div>
+    </div>
+    <a th:href="@{../gardens/form(redirect=${requestURI})}">Create New Garden</a>
+    <a th:href="@{../gardens/edit(gardenId=${garden.id})}">Edit Garden</a>
+    <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}">Add New Plant</a>
+</div>
+
+<div class="container">
+    <h1>Garden Details</h1>
+
+    <div class="garden-details">
+        <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
+        <p><strong>Location:</strong> <span th:text="${garden.location}"></span></p>
+        <p th:if="${garden.size != 0}">
+            <strong>Size:</strong> <span th:text="${garden.size}"></span>
+        </p>
+    </div>
+    <h4>Plants:</h4>
+    <div th:if="${not #lists.isEmpty(garden.plants)}" class="plant-list-container">
+        <table class="plant-table">
+            <thead>
+            <tr>
+                <th>NAME</th>
+                <th>IMAGE</th>
+                <th>COUNT</th>
+                <th>DESCRIPTION</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="plant: ${garden.plants}">
+                <td th:text="${plant.name}"></td>
+                <td>
+                    <div class="plant-image-container" id="image">
+                        <img src="/images/placeholder.jpg" alt="Plant" id="currentImage">
+                        <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
+                        <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="handleImageChange()">
+                    </div>
+                </td>
+                <td th:if="${plant.count !=0}" th:text="${plant.count}"></td>
+                <td th:if="${plant.count == 0}"></td>
+                <td th:text="${plant.description}"></td>
+                <td>
+                    <form th:action="@{../gardens/details/plants/edit}" method="get">
+                        <input type="hidden" th:name="plantId" th:value="${plant.id}" />
+                        <button type="submit" class="edit-button">Edit</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <script>
+            function handleImageChange() {
+                var fileInput = document.getElementById('fileInput');
+                var file = fileInput.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('currentImage').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        </script>
+    </div>
+
+
+
+
+</div>
+</body>
+</html>
+

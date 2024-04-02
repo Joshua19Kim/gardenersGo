@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment ="navbar">
+    <h1>Gardener's Grove</h1>
+    <div class="dropdown">
+        <a th:href="@{/gardens}">
+            <button class="dropbtn">My Gardens</button>
+        </a>
+        <div class="dropdown-content">
+            <th:block th:each="garden : ${gardens}">
+                <!-- Iterate over the list of gardens and display them -->
+                <a th:text="${garden.name}" th:href="@{/gardens/details(gardenId=${garden.id})}"></a>
+            </th:block>
+        </div>
+    </div>
+    <a th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>
+</div>
+</html>
+
