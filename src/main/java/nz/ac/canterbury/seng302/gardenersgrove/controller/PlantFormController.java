@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -132,27 +133,26 @@ public class PlantFormController {
         plant =
             new Plant(
                 name,
-                Float.parseFloat(validatedPlantCount),
+                    new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString(),
                 validatedPlantDescription,
                 validatedDate,
                 garden);
       } else if (countPresent && descriptionPresent) {
         // Count and Description are present
         plant =
-            new Plant(
-                name, Float.parseFloat(validatedPlantCount), validatedPlantDescription, garden);
+            new Plant(name, new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString(), validatedPlantDescription, garden);
       } else if (countPresent && datePresent) {
         // Count and Date are present
-        plant = new Plant(name, validatedDate, Float.parseFloat(validatedPlantCount), garden);
+        plant = new Plant(name, validatedDate, garden, new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
       } else if (descriptionPresent && datePresent) {
         // Description and Date are present
-        plant = new Plant(name, validatedPlantDescription, validatedDate, garden);
+        plant = new Plant(name, garden, validatedPlantDescription, validatedDate);
       } else if (countPresent) {
         // Only Count is present
-        plant = new Plant(name, Float.parseFloat(validatedPlantCount), garden);
+        plant = new Plant(name, new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString(), garden);
       } else if (descriptionPresent) {
         // Only Description is present
-        plant = new Plant(name, validatedPlantDescription, garden);
+        plant = new Plant(garden, name, validatedPlantDescription);
       } else if (datePresent) {
         // Only Date is present
         plant = new Plant(name, garden, validatedDate);
@@ -264,9 +264,9 @@ public class PlantFormController {
       boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
       boolean datePresent = !Objects.equals(date.trim(), "");
       if (countPresent) {
-        plant.setCount(Float.parseFloat(validatedPlantCount));
+        plant.setCount(new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
       } else {
-        plant.setCount(0);
+        plant.setCount("0");
       }
       if (descriptionPresent) {
         plant.setDescription(validatedPlantDescription);

@@ -6,7 +6,8 @@
     <link rel="stylesheet" th:href="@{~/css/stylesheet.css}">
 </head>
 <body>
-<nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
+<div id = "navbar" th:insert="~{fragmentExample/fragments/navbar.html :: navbar}"></div>
+<div id="user_div">
 <h1>User Profile</h1>
 
 <div class="UserProfilePicContainer">
@@ -48,7 +49,7 @@
 </div>
 
 <div>
-    <form id="profileForm" action="/user" method="get">
+    <form id="form" action="/user" method="get">
         <label for="firstName"> First Name: </label>
         <span id="firstName" th:text="${firstName}"></span>
         <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit"
@@ -105,6 +106,7 @@
             <button class="buttonDesign" type="button" onclick="disableEditing()">Cancel</button>
         </div>
     </form>
+</div>
 </div>
 
 

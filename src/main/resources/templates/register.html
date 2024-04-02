@@ -6,10 +6,10 @@
     <link rel="stylesheet" th:href="@{css/stylesheet.css}">
 </head>
 <body>
-<h1>Register</h1>
 
-<div>
 
+<div id="form">
+    <h1>Register</h1>
     <form method="post" th:action="@{register}">
         <input type="hidden"
                th:name="${_csrf.parameterName}"
