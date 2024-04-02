@@ -4,16 +4,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +38,7 @@ public class PlantFormController {
 
   private final PlantService plantService;
   private final GardenService gardenService;
+  private final ImageService imageService;
 
   /**
    * Constructor for PlantFormController.
@@ -41,9 +47,10 @@ public class PlantFormController {
    * @param gardenService Service for managing garden-related operations.
    */
   @Autowired
-  public PlantFormController(PlantService plantService, GardenService gardenService) {
+  public PlantFormController(PlantService plantService, GardenService gardenService, ImageService imageService) {
     this.plantService = plantService;
     this.gardenService = gardenService;
+    this.imageService = imageService;
   }
 
   /**
@@ -291,5 +298,36 @@ public class PlantFormController {
       model.addAttribute("garden", plant.getGarden());
       return "editPlantFormTemplate";
     }
+  }
+
+  /**
+   * Check whether there is the authentication of current user to change the profile photo.
+   * If yes,read the uploaded file from user.html and Save the file.
+   * If the file is empty, redirect user to 'user' page with existing image(or default photo).
+   * If there is an image file, go back to 'user' page with new image
+   * @param file the file of profile picture
+   * @param model (map-like) representation of profile picture for use in thymeleaf
+   * @return thymeleaf 'user' page after updating successfully to reload user's details, otherwise thymeleaf login page
+   */
+  @PostMapping("gardens/details/plants/image")
+  public String handleFileUpload(@RequestParam("file") MultipartFile file,
+                                 @RequestParam(name = "plantId") String plantId,
+                                 Model model) {
+
+    Optional<Plant> plant = plantService.getPlant(parseLong(plantId));
+    logger.info(plantId);
+    if(plant.isPresent()) {
+      Optional<String> uploadMessage =  imageService.savePlantImage(file, plant.get());
+      if(uploadMessage.isEmpty()) {
+        return "redirect:/gardens/details?gardenId=" + plant.get().getGarden().getId();
+      } else {
+          model.addAttribute("uploadError", uploadMessage.get());
+          return "gardenDetailsTemplate";
+      }
+    } else {
+      return "redirect:/gardens";
+    }
+
+
   }
 }
