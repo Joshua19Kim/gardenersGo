@@ -11,6 +11,12 @@ h1 {
     display: flex;
 }
 
+h3 {
+    margin: 5%;
+    justify-content: center;
+    display: flex;
+}
+
 label {
     margin: 5px;
     display: inline-block;
@@ -35,7 +41,7 @@ input[type=submit] {
     text-decoration: none;
     cursor: pointer;
     font-size: 16px;
-    width: 100px;
+    width: 120px;
     border-radius: 5px;
 }
 
@@ -197,3 +203,23 @@ nav ul {
 nav ul li {
     display: block;
 }
+
+
+
+/* --------------------------Manage Friends Page CSS------------------------*/
+
+.friendsListContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: green;
+    height: 100px;
+}
+
+.friendsListTitle {
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: yellow;
+}
+
+/* ------------------------------- END ------------------------------------*/
