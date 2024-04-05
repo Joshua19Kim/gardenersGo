@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
@@ -177,30 +178,52 @@ public class UserProfileController {
         }
         return new RedirectView("/login");
     }
+
     @GetMapping("/password")
-    public String getPassword(@RequestParam(name = "oldPassword", required = false) String oldPassword,
+    public String passwordForm(@RequestParam(name = "oldPassword", required = false) String oldPassword,
+                               @RequestParam(name = "newPassword", required = false) String newPassword,
+                               @RequestParam(name = "retypePassword", required = false) String retypePassword,
+                               Model model) {
+        logger.info("GET /password");
+        return "password";
+    }
+    @PostMapping("/password")
+    public String updatePassword(@RequestParam(name = "oldPassword", required = false) String oldPassword,
                               @RequestParam(name = "newPassword", required = false) String newPassword,
                               @RequestParam(name = "retypePassword", required = false) String retypePassword,
                               Model model) {
-        logger.info("GET /password");
+        logger.info("POST /password");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = authentication.getName();
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+        InputValidationService inputValidator = new InputValidationService(gardenerFormService);
+
         if (gardenerOptional.isEmpty()) {
             model.addAttribute("oldPassword", "Not Registered");
-        }
-        gardener = gardenerOptional.get();
-        int hashPasswordFromServer = gardener.getPassword();
-        if (hashPasswordFromServer != oldPassword.hashCode()) {
-            //need to make inputvalidation function in inputValidator to follow coding style
+            return "/password";
+        } else {
+            gardener = gardenerOptional.get();
         }
 
-        InputValidationService inputValidator = new InputValidationService(gardenerFormService);
+        Optional<String> passwordCorrectError = inputValidator.checkSavedPassword(oldPassword.hashCode(), gardener.getPassword());
+        model.addAttribute("passwordCorrect", passwordCorrectError.orElse(""));
         Optional<String> passwordMatchError = inputValidator.checkPasswordsMatch(newPassword, retypePassword);
         model.addAttribute("passwordsMatch", passwordMatchError.orElse(""));
         Optional<String> passwordStrengthError = inputValidator.checkStrongPassword(newPassword);
         model.addAttribute("passwordStrong", passwordStrengthError.orElse(""));
 
-        return "/password";
+        if (passwordCorrectError.isEmpty() && passwordMatchError.isEmpty() && passwordStrengthError.isEmpty()) {
+            gardener.updatePassword(newPassword);
+            gardenerFormService.addGardener(gardener);
+            // Re-authenticates user to catch case when they change their email
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication((newAuth));
+            return "redirect:/user";
+        }
+        if (passwordCorrectError.isEmpty()) {
+        model.addAttribute("oldPassword", oldPassword);
+    }
+        return "password";
     }
 }
