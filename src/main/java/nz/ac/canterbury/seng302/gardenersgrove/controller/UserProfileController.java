@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
@@ -80,9 +79,6 @@ public class UserProfileController {
             model.addAttribute("profilePic", gardener.getProfilePicture());
         } else {
             model.addAttribute("firstName", "Not Registered");
-            model.addAttribute("lastName", "");
-            model.addAttribute("DoB", "");
-            model.addAttribute("email", "");
         }
 
         InputValidationService inputValidator = new InputValidationService(gardenerFormService);
@@ -180,10 +176,7 @@ public class UserProfileController {
     }
 
     @GetMapping("/password")
-    public String passwordForm(@RequestParam(name = "oldPassword", required = false) String oldPassword,
-                               @RequestParam(name = "newPassword", required = false) String newPassword,
-                               @RequestParam(name = "retypePassword", required = false) String retypePassword,
-                               Model model) {
+    public String passwordForm() {
         logger.info("GET /password");
         return "password";
     }
@@ -221,9 +214,7 @@ public class UserProfileController {
             SecurityContextHolder.getContext().setAuthentication((newAuth));
             return "redirect:/user";
         }
-        if (passwordCorrectError.isEmpty()) {
-        model.addAttribute("oldPassword", oldPassword);
-    }
+
         return "password";
     }
 }
