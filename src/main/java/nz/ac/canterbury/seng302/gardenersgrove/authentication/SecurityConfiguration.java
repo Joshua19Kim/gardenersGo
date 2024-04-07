@@ -75,9 +75,6 @@ public class SecurityConfiguration {
                                 .requestMatchers("/").permitAll()
                                 .requestMatchers("/login").permitAll()
                                 .requestMatchers("/register").permitAll()
-                                .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
-                                .requestMatchers(mvcMatcherBuilder.pattern("/login")).permitAll()
-                                .requestMatchers(mvcMatcherBuilder.pattern("/register")).permitAll()
 
                                 // Only allow admins to reach the "/admin" page
                                 .requestMatchers("/admin").hasRole("ADMIN")

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -20,8 +21,8 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
 @WebMvcTest(controllers = {GardenFormController.class, PlantFormController.class})
 public class PlantFormControllerTest {
@@ -35,6 +36,7 @@ public class PlantFormControllerTest {
     private PlantService plantService;
 
     @Test
+    @WithMockUser
     public void GardenDetailsRequested_ExistentIdGiven_PlantDetailsProvided() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         Plant plant = new Plant("My Plant", garden);
@@ -42,18 +44,21 @@ public class PlantFormControllerTest {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         mockMvc
-                .perform(MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1"))
+                .perform(MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("My Plant")));
     }
 
     @Test
+    @WithMockUser
     public void PlantFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         mockMvc
-                .perform(MockMvcRequestBuilders.get("/gardens/details/plants/form").param("gardenId", "1"))
+                .perform(MockMvcRequestBuilders.get("/gardens/details/plants/form").param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("plantsFormTemplate"))
                 .andExpect(content().string(containsString("Name:")))
@@ -63,6 +68,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_ValidNameOnly_PlantAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -79,7 +85,8 @@ public class PlantFormControllerTest {
                         .param("count", "")
                         .param("description", description)
                         .param("date", date)
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
@@ -87,6 +94,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_ValidNameAndCountOnly_PlantAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -99,10 +107,11 @@ public class PlantFormControllerTest {
         mockMvc
                 .perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
                         .param("name", name)
-                        .param("count", String.valueOf(count))
+                        .param("count", count)
                         .param("description", "")
                         .param("date", "")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
@@ -110,6 +119,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_ValidNameAndDescriptionOnly_PlantAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -125,7 +135,8 @@ public class PlantFormControllerTest {
                         .param("count", "")
                         .param("description", description)
                         .param("date", "")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
@@ -133,6 +144,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_ValidNameAndDateOnly_PlantAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -148,7 +160,8 @@ public class PlantFormControllerTest {
                         .param("count", "")
                         .param("description", "")
                         .param("date", "2024-01-10")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
@@ -156,6 +169,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_ValidNameCountAndDescriptionOnly_PlantAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -172,7 +186,8 @@ public class PlantFormControllerTest {
                         .param("count", "2")
                         .param("description", description)
                         .param("date", "")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
@@ -180,6 +195,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_ValidNameCountAndDateOnly_PlantAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -196,7 +212,8 @@ public class PlantFormControllerTest {
                         .param("count", "2")
                         .param("description", "")
                         .param("date", "2024-03-10")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
@@ -204,6 +221,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_ValidNameDescriptionAndDateOnly_PlantAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -220,7 +238,8 @@ public class PlantFormControllerTest {
                         .param("count", "")
                         .param("description", description)
                         .param("date", "2024-01-10")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
@@ -228,6 +247,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_AllValidInputs_PlantAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -245,7 +265,8 @@ public class PlantFormControllerTest {
                         .param("count", "2")
                         .param("description", description)
                         .param("date", "2024-01-10")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
@@ -253,6 +274,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_EmptyName_ErrorMessageAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -269,12 +291,13 @@ public class PlantFormControllerTest {
                         .param("count", "2.0")
                         .param("description", description)
                         .param("date", "2024-03-10")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("plantsFormTemplate"))
                 .andExpect(model().attributeExists("nameError", "name", "count", "description", "date"))
                 .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("count", String.valueOf(count)))
+                .andExpect(model().attribute("count", "2.0"))
                 .andExpect(model().attribute("description", description))
                 .andExpect(model().attribute("date", "2024-03-10"))
                 .andExpect(model().attribute("nameError",
@@ -284,6 +307,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_InvalidName_ErrorMessageAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -300,12 +324,13 @@ public class PlantFormControllerTest {
                         .param("count", "2.0")
                         .param("description", description)
                         .param("date", "2024-03-10")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("plantsFormTemplate"))
                 .andExpect(model().attributeExists("nameError", "name", "count", "description", "date"))
                 .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("count", String.valueOf(count)))
+                .andExpect(model().attribute("count", "2.0"))
                 .andExpect(model().attribute("description", description))
                 .andExpect(model().attribute("date", "2024-03-10"))
                 .andExpect(model().attribute("nameError",
@@ -315,6 +340,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_CountNotANumber_ErrorMessageAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -331,7 +357,8 @@ public class PlantFormControllerTest {
                         .param("count", "Not a Number")
                         .param("description", description)
                         .param("date", "2024-03-10")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("plantsFormTemplate"))
                 .andExpect(model().attributeExists("countError", "name", "count", "description", "date"))
@@ -346,6 +373,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_NegativeCount_ErrorMessageAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -362,7 +390,8 @@ public class PlantFormControllerTest {
                         .param("count", "-2.0")
                         .param("description", description)
                         .param("date", "2024-03-10")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("plantsFormTemplate"))
                 .andExpect(model().attributeExists("countError", "name", "count", "description", "date"))
@@ -377,6 +406,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void PlantFormSubmitted_DescriptionOverLimit_ErrorMessageAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -403,12 +433,13 @@ public class PlantFormControllerTest {
                         .param("count", "2.0")
                         .param("description", description)
                         .param("date", "2024-03-10")
-                        .param("gardenId", "1"))
+                        .param("gardenId", "1")
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("plantsFormTemplate"))
                 .andExpect(model().attributeExists("descriptionError", "name", "count", "description", "date"))
                 .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("count", String.valueOf(count)))
+                .andExpect(model().attribute("count", "2.0"))
                 .andExpect(model().attribute("description", description))
                 .andExpect(model().attribute("date", "2024-03-10"))
                 .andExpect(model().attribute("descriptionError",
@@ -418,19 +449,22 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void EditPlantFormRequested_NonExistentPlantId_GoBackToMyGardens() throws Exception {
         String plantId = "1";
         when(gardenService.getGardenResults()).thenReturn(new ArrayList<>());
         when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.empty());
 
         mockMvc.perform((MockMvcRequestBuilders.get("/gardens/details/plants/edit")
-                        .param("plantId", plantId)))
+                        .param("plantId", plantId)
+                        .with(csrf())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens"));
 
     }
 
     @Test
+    @WithMockUser
     public void EditPlantFormRequested_ExistentPlantId_GoToEditPlantForm() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         Plant plant = new Plant("My Plant", "2", "Rose", "12/06/2004", garden);
@@ -440,7 +474,8 @@ public class PlantFormControllerTest {
         when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/details/plants/edit")
-                        .param("plantId", plantId))
+                        .param("plantId", plantId)
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editPlantFormTemplate"))
                 .andExpect(model().attributeExists("plant", "garden", "gardens", "requestURI"))
@@ -451,6 +486,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void EditPlantFormSubmitted_AllInvalid_AllErrorMessagesAdded() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         String name = "My Pl@nt";
@@ -476,7 +512,8 @@ public class PlantFormControllerTest {
                         .param("count", count)
                         .param("description", description)
                         .param("date", "2023-10-10")
-                        .param("plantId", plantId))
+                        .param("plantId", plantId)
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editPlantFormTemplate"))
                 .andExpect(model().attributeExists("nameError", "countError", "descriptionError", "name", "count", "description", "date", "plant", "garden"))
@@ -495,6 +532,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void EditPlantFormSubmitted_AllValidChanges_PlantUpdatedAndBackToGardenDetails() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         String name = "My Plant 2";
@@ -510,7 +548,8 @@ public class PlantFormControllerTest {
                         .param("count", count)
                         .param("description", description)
                         .param("date", "2024-03-10")
-                        .param("plantId", plantId))
+                        .param("plantId", plantId)
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=" + garden.getId()));
         verify(plantService, times(1)).addPlant(plant);
