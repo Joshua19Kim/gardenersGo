@@ -175,11 +175,27 @@ public class UserProfileController {
         return new RedirectView("/login");
     }
 
+    /**
+     * direct a user to 'Update password' page
+     * @return 'Update password' page
+     */
     @GetMapping("/password")
     public String passwordForm() {
         logger.info("GET /password");
         return "password";
     }
+
+    /**
+     * Posts a password form with old password and new password.
+     * Authentication will be checked first to compare with the password in the server, then
+     * new password and retyped password will be checked for validation and whether they are matching or not.
+     * If no error message comes up, new password will be saved.
+     * @param oldPassword old password to be entered in the form
+     * @param newPassword new password to be entered in the form
+     * @param retypePassword retype password to be entered in the form
+     * @param model (map-like) representation of passwords in thymeleaf
+     * @return thymeleaf 'User' page if all the inputs are valid, otherwise stay on 'Update password' page
+     */
     @PostMapping("/password")
     public String updatePassword(@RequestParam(name = "oldPassword", required = false) String oldPassword,
                               @RequestParam(name = "newPassword", required = false) String newPassword,
@@ -192,13 +208,9 @@ public class UserProfileController {
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
         InputValidationService inputValidator = new InputValidationService(gardenerFormService);
 
-        if (gardenerOptional.isEmpty()) {
-            model.addAttribute("oldPassword", "Not Registered");
-            return "/password";
-        } else {
-            gardener = gardenerOptional.get();
-        }
+        if (gardenerOptional.isEmpty()) {return "/login";}
 
+        gardener = gardenerOptional.get();
         Optional<String> passwordCorrectError = inputValidator.checkSavedPassword(oldPassword.hashCode(), gardener.getPassword());
         model.addAttribute("passwordCorrect", passwordCorrectError.orElse(""));
         Optional<String> passwordMatchError = inputValidator.checkPasswordsMatch(newPassword, retypePassword);
