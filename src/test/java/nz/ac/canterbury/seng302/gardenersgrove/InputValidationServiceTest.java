@@ -1,11 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -253,5 +255,25 @@ public class InputValidationServiceTest {
         String email = "longsuffix@uc.christchurch";
         Optional<String> isValid = validate.checkValidEmail(email);
         assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
+    }
+
+    @Test
+    void testSamePasswordWithSavedPassword() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String passwordEntered = "PassworD1@";
+        String passwordInServer = "PassworD1@";
+        int hashedPasswordInServer = passwordInServer.hashCode();
+        Optional<String> isValid = validate.checkSavedPassword(passwordEntered, hashedPasswordInServer);
+        assertTrue(isValid.isEmpty());
+    }
+
+    @Test
+    void testDifferentPasswordWithSavedPassword() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String passwordEntered = "PassworD1@";
+        String passwordInServer = "DifferentPassWord1@";
+        int hashedPasswordInServer = passwordInServer.hashCode();
+        Optional<String> isValid = validate.checkSavedPassword(passwordEntered, hashedPasswordInServer);
+        assertTrue(isValid.get().matches("Your old password is incorrect."));
     }
 }

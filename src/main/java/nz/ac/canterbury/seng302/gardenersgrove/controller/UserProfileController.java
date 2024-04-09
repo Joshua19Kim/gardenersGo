@@ -32,7 +32,6 @@ public class UserProfileController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
     private final GardenerFormService gardenerFormService;
 
-    private Authentication authentication;
     private Gardener gardener;
 
     @Autowired
@@ -66,7 +65,7 @@ public class UserProfileController {
 
         logger.info("GET /user");
 
-        authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = authentication.getName();
 
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
@@ -211,7 +210,7 @@ public class UserProfileController {
         if (gardenerOptional.isEmpty()) {return "/login";}
 
         gardener = gardenerOptional.get();
-        Optional<String> passwordCorrectError = inputValidator.checkSavedPassword(oldPassword.hashCode(), gardener.getPassword());
+        Optional<String> passwordCorrectError = inputValidator.checkSavedPassword(oldPassword, gardener.getPassword());
         model.addAttribute("passwordCorrect", passwordCorrectError.orElse(""));
         Optional<String> passwordMatchError = inputValidator.checkPasswordsMatch(newPassword, retypePassword);
         model.addAttribute("passwordsMatch", passwordMatchError.orElse(""));
