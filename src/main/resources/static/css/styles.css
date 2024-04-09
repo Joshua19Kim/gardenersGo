@@ -213,13 +213,71 @@ nav ul li {
     justify-content: center;
     align-items: center;
     background-color: green;
-    height: 100px;
+    height: 150px;
 }
 
 .friendsListTitle {
     white-space: nowrap;
     overflow: hidden;
     background-color: yellow;
+}
+
+#searchGardeners {
+    float: right;
+    padding: 6px;
+    margin-top: 8px;
+    margin-right: 16px;
+    font-size: 17px;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+}
+
+/* Style the search field */
+form.search input[type=text] {
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid grey;
+    float: left;
+    width: 80%;
+    background: #f1f1f1;
+}
+
+/* Style the submit button */
+form.search button {
+    float: left;
+    width: 20%;
+    padding: 10px;
+    background: cornflowerblue;
+    color: white;
+    font-size: 17px;
+    border: 1px solid grey;
+    border-left: none; /* Prevent double borders */
+    cursor: pointer;
+}
+
+form.search button:hover {
+    background: #0b7dda;
+}
+
+/* Clear floats */
+form.example::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.friendsListContainer {
+    flex-direction: column;
+    padding: 15px;
+    margin: 15px;
+}
+
+.displayResultsContainer {
+    padding: 15px;
+    margin: 15px;
 }
 
 /* ------------------------------- END ------------------------------------*/

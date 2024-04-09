@@ -4,19 +4,57 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Manage Friends</title>
     <link rel="stylesheet" th:href="@{~/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 <body>
 <nav th:insert="~{fragmentExample/fragments/nav.html}"></nav>
 <h1>Manage Friends</h1>
 
+<div class="searchBarContainer">
+    <form id="searchForm" class="search" action="/manageFriends" method="POST">
+        <label for="searchGardeners"> Search Gardeners: </label>
+        <input autofocus class="form-control" data-cy="searchGardeners" id="searchGardeners"
+               placeholder="Search..." name="searchGardeners" type="text">
+        <button type="submit"><i class="fa fa-search"></i></button>
+    </form>
+</div>
+
 <div class="friendsListContainer">
     <div class="friendsListTitle">
-        <h3>My Friends</h3>
+        <h3 id="test">Test for search var</h3>
     </div>
-    <div class="displayFriendsContainer">
-
+    <div class="displayResultsContainer">
+        <ul>
+            <li th:if="${searchResults.isPresent()}">
+                <!-- Iterate over search results -->
+                <ul th:each="gardener : ${searchResults.get()}">
+                    <li>
+                        <!-- Display gardener information -->
+                        <span th:text="${gardener.firstName}"></span>
+                        <span th:text="${gardener.lastName}"></span>
+                    </li>
+                </ul>
+            </li>
+            <li th:unless="${searchResults.isPresent()}">
+                No search results found.
+            </li>
+        </ul>
+        <span th:text="${searchGardeners}"></span>
     </div>
 </div>
 
+
+
 </body>
+
+<script>
+    let searchForm = document.getElementById('searchForm');
+    searchForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        let searchValue = document.getElementById('searchGardeners').value;
+        document.getElementById('test').textContent = searchValue;
+    });
+
+</script>
 </html>

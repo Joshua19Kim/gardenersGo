@@ -19,10 +19,10 @@ public class Friends {
     @Column(name = "relationship_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "gardener_id", nullable = false)
     private int gardenerId;
 
-    @Column(nullable = false)
+    @Column(name = "friend_id", nullable = false)
     private int friendId;
 
     @Column(nullable = false)
