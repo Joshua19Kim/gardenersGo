@@ -22,7 +22,7 @@
 
 <div class="friendsListContainer">
     <div class="friendsListTitle">
-        <h3 id="test" th:text="${userSearchQuery}"></h3>
+        <h3 id="resultsListTitle" >Gardeners</h3>
     </div>
 
     <div class="emailSearchResults">
@@ -30,6 +30,9 @@
     </div>
     <div class="displayResultsContainer">
         <ul>
+            <li th:if="${foundGardener != null}">
+                <span th:if="${foundGardener.isPresent()}" th:text="${foundGardener.get().getSearchResult()}"></span>
+            </li>
             <li th:if="${foundGardeners != null and not foundGardeners.isEmpty()}">
                 <!-- Iterate over search results -->
                 <ul th:each="gardener : ${foundGardeners}">

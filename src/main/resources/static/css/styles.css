@@ -212,14 +212,12 @@ nav ul li {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: green;
     height: 150px;
 }
 
 .friendsListTitle {
     white-space: nowrap;
     overflow: hidden;
-    background-color: yellow;
 }
 
 #searchGardeners {
