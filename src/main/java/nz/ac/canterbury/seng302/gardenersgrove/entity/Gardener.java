@@ -107,6 +107,9 @@ public class Gardener {
 
     public String getProfilePicture() { return this.profilePicture; }
 
+    public String getSearchResult() {
+        return firstName + " " + lastName + " " + email;
+    }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
     public void setLastName(String lastName) { this.lastName = lastName; }

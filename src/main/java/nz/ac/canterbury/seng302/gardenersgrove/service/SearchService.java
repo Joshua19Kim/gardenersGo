@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,8 +25,22 @@ public class SearchService {
         this.gardenerFormRepository = gardenerFormRepository;
     }
 
-    public Optional<Gardener> searchGardeners(String searchQuery) {
+    public Optional<Gardener> searchGardenersByEmail(String searchQuery) {
         logger.info(gardenerFormRepository.findByEmail(searchQuery).toString());
         return gardenerFormRepository.findByEmail(searchQuery);
+    }
+
+    public List<Gardener> searchGardenersByFullName(String searchQuery) {
+        List<Gardener> allUsers = gardenerFormRepository.findAll();
+        List<Gardener> results = new ArrayList<>();
+
+        for (Gardener gardener  : allUsers) {
+            String fullName = gardener.getFirstName() + " " + gardener.getLastName();
+            if (fullName.matches(searchQuery)) {
+                results.add(gardener);
+            }
+        }
+
+        return results;
     }
 }

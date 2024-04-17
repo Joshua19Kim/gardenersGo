@@ -12,35 +12,35 @@
 <h1>Manage Friends</h1>
 
 <div class="searchBarContainer">
-    <form id="searchForm" class="search" action="/manageFriends" method="POST">
+    <form id="searchForm" class="search" th:action="@{manageFriends}" method="post">
         <label for="searchGardeners"> Search Gardeners: </label>
         <input autofocus class="form-control" data-cy="searchGardeners" id="searchGardeners"
-               placeholder="Search..." name="searchGardeners" type="text">
+               placeholder="Search..." name="searchGardeners" type="text" th:value="*{searchQuery}">
         <button type="submit"><i class="fa fa-search"></i></button>
     </form>
 </div>
 
 <div class="friendsListContainer">
     <div class="friendsListTitle">
-        <h3 id="test">Test for search var</h3>
+        <h3 id="test" th:text="${userSearchQuery}"></h3>
+    </div>
+
+    <div class="emailSearchResults">
+        <span th:text="${foundGardener}"></span>-
     </div>
     <div class="displayResultsContainer">
         <ul>
-            <li th:if="${searchResults.isPresent()}">
+            <li th:if="${foundGardeners != null and not foundGardeners.isEmpty()}">
                 <!-- Iterate over search results -->
-                <ul th:each="gardener : ${searchResults.get()}">
+                <ul th:each="gardener : ${foundGardeners}">
                     <li>
                         <!-- Display gardener information -->
-                        <span th:text="${gardener.firstName}"></span>
-                        <span th:text="${gardener.lastName}"></span>
+                        <span th:text="${gardener.getSearchResult()}"></span>
                     </li>
                 </ul>
             </li>
-            <li th:unless="${searchResults.isPresent()}">
-                No search results found.
-            </li>
         </ul>
-        <span th:text="${searchGardeners}"></span>
+        <span th:text="${userSearchQuery}"></span>
     </div>
 </div>
 
@@ -51,7 +51,6 @@
 <script>
     let searchForm = document.getElementById('searchForm');
     searchForm.addEventListener('submit', function (event) {
-        event.preventDefault();
         let searchValue = document.getElementById('searchGardeners').value;
         document.getElementById('test').textContent = searchValue;
     });

@@ -2,7 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +37,6 @@ public class ManageFriendsController {
         this.searchService = searchService;
     }
 
-    //model.addAttribute searchGardeners at some point
-
     @GetMapping("/manageFriends")
     public String getManageFriends(@RequestParam(name = "searchGardeners", required = false, defaultValue = "") String searchGardener,
                                    Model model) {
@@ -45,14 +44,44 @@ public class ManageFriendsController {
         logger.info("GET /manageFriends");
         authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Authentication: " + authentication);
-        searchService.searchGardeners("test");
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
-            Optional<Gardener> searchResults = searchService.searchGardeners(searchGardener);
+            Optional<Gardener> searchResults = searchService.searchGardenersByEmail(searchGardener);
             model.addAttribute("searchResults", searchResults);
             return "manageFriends";
         }
         return "redirect:/login";
     }
+
+    @PostMapping("/manageFriends")
+    public String searchGardeners(@RequestParam(name="searchGardeners", required = false, defaultValue = "") String searchQuery,
+                                  Model model) {
+        logger.info("POST /manageFriends");
+        logger.info("Search query is: " + searchQuery);
+        
+        model.addAttribute("searchQuery", searchQuery);
+        InputValidationService inputValidator = new InputValidationService(gardenerFormService);
+
+        List<Gardener> gardenerList = searchService.searchGardenersByFullName(searchQuery);
+        String searchQueryMessage = "";
+        Optional<Gardener> foundGardener = null;
+        if (inputValidator.checkValidEmail(searchQuery).isEmpty()) {
+            searchQueryMessage = "Search results for: " + searchQuery;
+            foundGardener = searchService.searchGardenersByEmail(searchQuery);
+        } else if (!gardenerList.isEmpty()) {
+            searchQueryMessage = "Search results for: " + searchQuery;
+        } else {
+            searchQueryMessage = "Nobody with that name or email in Gardener’s Grove";
+
+        }
+        model.addAttribute("userSearchQuery", searchQueryMessage);
+        model.addAttribute("foundGardener", foundGardener);
+        model.addAttribute("foundGardeners", gardenerList);
+
+
+        return "/manageFriends";
+    }
+
+
 
     @GetMapping("/redirectToManageFriendsPage")
     public RedirectView profileButton() {

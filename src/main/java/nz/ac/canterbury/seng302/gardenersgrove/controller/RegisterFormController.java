@@ -74,7 +74,7 @@ public class RegisterFormController {
     }
 
     /**
-     * Posts a form response with name and favourite language
+     * Posts a form response with a new Gardener
      * @param firstName first name of user
      * @param lastName last name of user
      * @param DoB user's date of birth
