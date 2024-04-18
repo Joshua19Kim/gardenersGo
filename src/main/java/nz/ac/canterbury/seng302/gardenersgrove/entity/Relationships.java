@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,7 @@ import java.util.List;
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
 @Entity
-public class Friends {
+public class Relationships {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "relationship_id")
@@ -38,7 +37,7 @@ public class Friends {
     /**
      * JPA required no-args constructor
      */
-    protected Friends() {}
+    protected Relationships() {}
 
     /**
      * Creates a new Gardener object
@@ -46,7 +45,7 @@ public class Friends {
      * @param friendId the id of the gardener the relationship is with
      * @param status status of the relationship between gardeners e.g. "accepted" or "pending"
      */
-    public Friends(int gardenerId, int friendId, String status) {
+    public Relationships(int gardenerId, int friendId, String status) {
         this.gardenerId = gardenerId;
         this.friendId = friendId;
         this.status = status;

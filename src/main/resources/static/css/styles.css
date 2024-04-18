@@ -210,9 +210,18 @@ nav ul li {
 
 .friendsListContainer {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 150px;
+    height: auto;
+    padding: 15px;
+    margin: 15px;
+}
+
+
+.displayResultsContainer {
+    padding: 15px;
+    margin: 15px;
 }
 
 .friendsListTitle {
@@ -267,15 +276,6 @@ form.example::after {
     display: table;
 }
 
-.friendsListContainer {
-    flex-direction: column;
-    padding: 15px;
-    margin: 15px;
-}
 
-.displayResultsContainer {
-    padding: 15px;
-    margin: 15px;
-}
 
 /* ------------------------------- END ------------------------------------*/
