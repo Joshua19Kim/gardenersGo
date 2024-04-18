@@ -13,6 +13,6 @@ public class LostPasswordFormController {
 
     @PostMapping("/resetPassword")
     public String sendResetPasswordLink() {
-        return "lostPasswordForm";
+        return "newPasswordForm";
     }
 }
