@@ -141,7 +141,10 @@ public class GardenFormController {
    * @return The garden details page if the garden exists, else remains on the gardens page
    */
   @GetMapping("gardens/details")
-  public String gardenDetails(@RequestParam(name = "gardenId") String gardenId, Model model, HttpServletRequest request) {
+  public String gardenDetails(@RequestParam(name = "gardenId") String gardenId,
+                              @RequestParam(name = "uploadError", required = false) String uploadError,
+                              @RequestParam(name = "errorId", required = false) String errorId,
+                              Model model, HttpServletRequest request) {
     logger.info("GET /gardens/details");
     List<Garden> gardens = gardenService.getGardenResults();
     model.addAttribute("gardens", gardens);
@@ -157,6 +160,11 @@ public class GardenFormController {
       model.addAttribute("requestURI", requestUri);
 
       model.addAttribute("garden", garden.get());
+
+      if(uploadError != null) {
+        model.addAttribute("uploadError", uploadError);
+        model.addAttribute("errorId", errorId);
+      }
       return "gardenDetailsTemplate";
     } else {
       return "redirect:/gardens";

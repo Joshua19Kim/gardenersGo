@@ -250,6 +250,7 @@ public class PlantFormController {
       @RequestParam(name = "description", required = false) String description,
       @RequestParam(name = "date", required = false) String date,
       @RequestParam(name = "plantId") String plantId,
+      @RequestParam("file") MultipartFile file,
       Model model) {
     logger.info("POST /gardens/details/plants/edit");
     String formattedDate = "";
@@ -278,6 +279,13 @@ public class PlantFormController {
       model.addAttribute("descriptionError", validatedPlantDescription);
       isValid = false;
     }
+    if(!file.isEmpty()) {
+      Optional<String> uploadMessage = imageService.checkValidImage(file);
+      if(uploadMessage.isPresent()) {
+        model.addAttribute("uploadError", uploadMessage.get());
+        isValid = false;
+      }
+    }
 
     if (isValid) {
       plant.setName(validatedPlantName);
@@ -299,7 +307,9 @@ public class PlantFormController {
       } else {
         plant.setDatePlanted(null);
       }
-      plantService.addPlant(plant);
+      if(!file.isEmpty()) {
+        imageService.savePlantImage(file, plant);
+      }
       return "redirect:/gardens/details?gardenId=" + plant.getGarden().getId();
     } else {
       List<Garden> gardens = gardenService.getGardenResults();
@@ -326,17 +336,17 @@ public class PlantFormController {
   @PostMapping("gardens/details/plants/image")
   public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                  @RequestParam(name = "plantId") String plantId,
+                                 HttpServletRequest request,
                                  Model model) {
 
     Optional<Plant> plant = plantService.getPlant(parseLong(plantId));
-    logger.info(plantId);
     if(plant.isPresent()) {
       Optional<String> uploadMessage =  imageService.savePlantImage(file, plant.get());
       if(uploadMessage.isEmpty()) {
         return "redirect:/gardens/details?gardenId=" + plant.get().getGarden().getId();
       } else {
-          model.addAttribute("uploadError", uploadMessage.get());
-          return "gardenDetailsTemplate";
+        return "redirect:/gardens/details?uploadError=" + uploadMessage.get() + "&errorId=" + plantId +
+                "&gardenId=" + plant.get().getGarden().getId();
       }
     } else {
       return "redirect:/gardens";

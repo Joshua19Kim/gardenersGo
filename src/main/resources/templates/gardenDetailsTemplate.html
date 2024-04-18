@@ -51,16 +51,15 @@
                 <td th:text="${plant.name}"></td>
                 <td>
                     <div class="plant-image-container" id="image">
-                        <form th:id="uploadPlantForm" action="/gardens/details/plants/image" method="post" enctype="multipart/form-data">
+                        <form th:id="'uploadPlantForm_' + ${plant.id}" action="/gardens/details/plants/image" method="post" enctype="multipart/form-data">
                             <input type="hidden" th:name="plantId" th:value="${plant.id}" />
-                            <input type="hidden"
-                                   th:name="${_csrf.parameterName}"
-                                   th:value="${_csrf.token}" />
-                            <img th:src="@{${'/images/' + plant.image}}" alt="Plant" id="currentImage">
-                            <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
-                            <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*" onchange="this.parentNode.submit()">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <img th:src="@{${'/images/' + plant.image}}" alt="Plant" th:id="'currentImage_' + ${plant.id}">
+                            <button type="button" class="image-button" th:onclick="'handleImageClick(\'' + ${plant.id} + '\');'">+</button>
+                            <input type="file" th:id="'fileInput_' + ${plant.id}" name="file" style="display: none;" accept="image/*" th:onchange="'handleImageChange(\'' + ${plant.id} + '\');'">
                         </form>
                     </div>
+                    <span th:if="${uploadError} and ${plant.id} == ${errorId}" th:text="${uploadError}" style="color: red;"></span>
                 </td>
                 <td th:if="${plant.count !=0}" th:text="${plant.count}"></td>
                 <td th:if="${plant.count == 0}"></td>
@@ -76,17 +75,14 @@
         </table>
     </div>
     <script>
-        function submitForm() {
-            var form = document.getElementById('uploadPlantForm');
-            var plantId = document.getElementById('plantId').value;
-            form.action = '/gardens/details/plants/image?plantId=' + plantId;
-            form.submit();
+        function handleImageClick(plantId) {
+            document.getElementById('fileInput_' + plantId).click();
+        }
+
+        function handleImageChange(plantId) {
+            document.getElementById('uploadPlantForm_' + plantId).submit();
         }
     </script>
-
-
-
-
 </div>
 </body>
 </html>
