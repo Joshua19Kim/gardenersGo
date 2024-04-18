@@ -82,8 +82,8 @@ public class ImageService {
     }
 
     /**
-     * Gets credentials to see user can make changes to a plants profile picture. Retrieves gardener(user) and uses their
-     * id and the plants id to generate the appropriate filename for the image. Assuming image is a valid type, image gets written to
+     * Gets credentials to see user can make changes to a plants profile picture. Uses the plants id to generate the
+     * appropriate filename for the image. Assuming image is a valid type, image gets written to
      * storage. If this chain of events fails then appropriate optional strings are returned
      *
      * @param file, the Image
@@ -95,9 +95,9 @@ public class ImageService {
         try {
             Files.createDirectories(Paths.get(UPLOAD_DIRECTORY));
             String fileName = file.getOriginalFilename();
-            Garden garden = plant.getGarden();
+            logger.info(fileName);
             //NullPointerException shouldn't affect below line as HTML form prevents an empty upload, i.e. file will never be null
-            String newFileName = "garden" + garden.getId() + "_plant" + plant.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
+            String newFileName = "plant_" + plant.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
             Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);
             logger.info("File location: " + filePath);
             if (checkValidImage(file).isEmpty()) {

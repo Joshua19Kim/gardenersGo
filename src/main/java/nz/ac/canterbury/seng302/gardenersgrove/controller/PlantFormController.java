@@ -99,6 +99,7 @@ public class PlantFormController {
       @RequestParam(name = "description", required = false) String description,
       @RequestParam(name = "date", required = false) String date,
       @RequestParam(name = "gardenId") String gardenId,
+      @RequestParam("file") MultipartFile file,
       Model model) {
     logger.info("/gardens/details/plants/form");
     String validatedDate = "";
@@ -126,6 +127,13 @@ public class PlantFormController {
     if (!Objects.equals(description, validatedPlantDescription)) {
       model.addAttribute("descriptionError", validatedPlantDescription);
       isValid = false;
+    }
+    if(!file.isEmpty()) {
+      Optional<String> uploadMessage = imageService.checkValidImage(file);
+      if(uploadMessage.isPresent()) {
+        model.addAttribute("uploadError", uploadMessage.get());
+        isValid = false;
+      }
     }
 
     if (isValid) {
@@ -168,6 +176,12 @@ public class PlantFormController {
         plant = new Plant(name, garden);
       }
       plantService.addPlant(plant);
+      if(file.isEmpty()) {
+        plant.setImage("placeholder.jpg");
+        plantService.addPlant(plant);
+      } else {
+        imageService.savePlantImage(file, plant);
+      }
       return "redirect:/gardens/details?gardenId=" + gardenId;
     } else {
       List<Garden> gardens = gardenService.getGardenResults();
