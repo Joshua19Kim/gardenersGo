@@ -9,9 +9,11 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.SearchService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,13 +34,16 @@ public class ManageFriendsController {
     private final SearchService searchService;
     private final RelationshipService relationshipService;
     private Authentication authentication;
+    private final AuthenticationManager authenticationManager;
+
     private Gardener gardener;
 
     @Autowired
-    public ManageFriendsController(GardenerFormService gardenerFormService, SearchService searchService, RelationshipService relationshipService) {
+    public ManageFriendsController(GardenerFormService gardenerFormService, SearchService searchService, RelationshipService relationshipService, AuthenticationManager authenticationManager) {
         this.gardenerFormService = gardenerFormService;
         this.searchService = searchService;
         this.relationshipService = relationshipService;
+        this.authenticationManager = authenticationManager;
     }
 
     @GetMapping("/manageFriends")
@@ -57,44 +62,65 @@ public class ManageFriendsController {
     }
 
     @PostMapping("/manageFriends")
-    public String handleFormSubmission(HttpServletRequest request,
-                                       @RequestParam(name="searchGardeners", required = false, defaultValue = "") String searchQuery,
-                                       @RequestParam(name="email", required = false) String email,
-                                       @RequestParam(name="friendId", required = false) Integer friendId,
-                                       Model model) {
+    public String handleFormSubmission(HttpServletRequest request, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUser = authentication.getPrincipal().toString();
 
-        logger.info("^^^" + email);
+        Authentication authenticationTest = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authenticationTest.getName();
+        Gardener gardenerOptional = gardenerFormService.findByEmail(currentUserEmail).get();
 
-        if (email != null && !email.isEmpty()) {
+        String searchQuery = request.getParameter("searchQuery");
+        String email = request.getParameter("email");
+        String friendIdStr = request.getParameter("friendId");
+
+        String existingRelationshipErrorMessage = "test";
+        if (email != null && !email.isEmpty() && friendIdStr != null && !friendIdStr.isEmpty()) {
             logger.info("Friend added email: " + email);
             long currentUserIdLong = searchService.searchGardenersByEmail(currentUser).get().getId();
             int currentUserId = (int) currentUserIdLong;
+            Integer friendId = Integer.parseInt(friendIdStr);
+
             Relationships relationships = new Relationships(currentUserId, friendId, "pending");
-            relationshipService.addRelationship(relationships);
-            logger.info(relationships.toString());
-        }
-        logger.info("POST /manageFriends");
-        logger.info("Search query is: " + searchQuery);
+            if (!relationshipService.relationshipExists(currentUserId, friendId)) {
+                relationshipService.addRelationship(relationships);
+                logger.info(relationships.toString());
+                existingRelationshipErrorMessage = "Relationship with user already exists";
 
+            } else {
+                logger.info("Relationship already in database");
+                existingRelationshipErrorMessage = "Relationship with user already exists";
+                logger.info(existingRelationshipErrorMessage);
+            }
 
-
-        InputValidationService inputValidator = new InputValidationService(gardenerFormService);
-        List<Gardener> foundGardeners = searchService.searchGardenersByFullName(searchQuery);
-        String emptySearchQueryMessage = "";
-        if (inputValidator.checkValidEmail(searchQuery).isEmpty()) {
-            Optional<Gardener> foundGardener = searchService.searchGardenersByEmail(searchQuery);
-            foundGardener.ifPresent(foundGardeners::add);
-        }
-        if (foundGardeners.isEmpty()) {
-            emptySearchQueryMessage = "Nobody with that name or email in Gardener’s Grove";
         }
 
-        model.addAttribute("currentUser", currentUser);
-        model.addAttribute("searchQuery", searchQuery);
-        model.addAttribute("emptySearchQueryMessage", emptySearchQueryMessage);
-        model.addAttribute("foundGardeners", foundGardeners);
+
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            logger.info("POST /manageFriends");
+            logger.info("Search query is: " + searchQuery);
+
+            InputValidationService inputValidator = new InputValidationService(gardenerFormService);
+            List<Gardener> foundGardeners = searchService.searchGardenersByFullName(searchQuery);
+            logger.info(foundGardeners.toString());
+            String emptySearchQueryMessage = "";
+            if (inputValidator.checkValidEmail(searchQuery).isEmpty()) {
+                Optional<Gardener> foundGardener = searchService.searchGardenersByEmail(searchQuery);
+                foundGardener.ifPresent(foundGardeners::add);
+            }
+            if (foundGardeners.isEmpty()) {
+                emptySearchQueryMessage = "Nobody with that name or email in Gardener’s Grove";
+            }
+
+            model.addAttribute("currentUser", currentUser);
+            model.addAttribute("searchQuery", searchQuery);
+            model.addAttribute("emptySearchQueryMessage", emptySearchQueryMessage);
+            model.addAttribute("existingRelationshipErrorMessage", existingRelationshipErrorMessage);
+            model.addAttribute("foundGardeners", foundGardeners);
+        }
+
+        Authentication newAuth = new UsernamePasswordAuthenticationToken(gardenerOptional.getEmail(), gardenerOptional.getPassword(), gardenerOptional.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication((newAuth));
 
 
 

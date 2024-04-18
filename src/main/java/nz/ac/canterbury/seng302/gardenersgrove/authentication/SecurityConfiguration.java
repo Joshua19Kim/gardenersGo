@@ -66,6 +66,7 @@ public class SecurityConfiguration {
                                 AntPathRequestMatcher.antMatcher("/css/**"),
                                 AntPathRequestMatcher.antMatcher("/"),
                                 AntPathRequestMatcher.antMatcher("/login"),
+                                AntPathRequestMatcher.antMatcher("/manageFriends"),
                                 AntPathRequestMatcher.antMatcher("/register"))
                         .permitAll())
                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())
@@ -75,9 +76,11 @@ public class SecurityConfiguration {
                                 .requestMatchers("/").permitAll()
                                 .requestMatchers("/login").permitAll()
                                 .requestMatchers("/register").permitAll()
+                                .requestMatchers("/manageFriends").permitAll()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/login")).permitAll()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/register")).permitAll()
+                                .requestMatchers(mvcMatcherBuilder.pattern("/manageFriends")).permitAll()
 
                                 // Only allow admins to reach the "/admin" page
                                 .requestMatchers("/admin").hasRole("ADMIN")

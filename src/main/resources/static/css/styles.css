@@ -208,25 +208,31 @@ nav ul li {
 
 /* --------------------------Manage Friends Page CSS------------------------*/
 
-.friendsListContainer {
+.friendsContainer {
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    width: 100%;
     height: auto;
     padding: 15px;
     margin: 15px;
 }
 
-
 .displayResultsContainer {
     padding: 15px;
     margin: 15px;
+    background-color: beige;
+    width: 50%;
+    flex-direction: column;
 }
 
-.friendsListTitle {
-    white-space: nowrap;
-    overflow: hidden;
+.friendManagement {
+    background-color: cadetblue;
+    width: 50%;
+    padding: 15px;
+    margin: 15px;
+    flex-direction: column;
+
 }
 
 #searchGardeners {

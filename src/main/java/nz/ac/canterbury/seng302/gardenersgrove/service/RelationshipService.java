@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.RelationshipRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,25 +14,25 @@ import java.util.Optional;
  */
 @Service
 public class RelationshipService {
-    private final nz.ac.canterbury.seng302.gardenersgrove.repository.RelationshipRepository RelationshipRepository;
-    private RelationshipRepository relationshipRepository;
+    private final RelationshipRepository relationshipRepository;
 
-    // @Autowired
+    @Autowired
     public RelationshipService(RelationshipRepository relationshipRepository) {
-        this.RelationshipRepository = relationshipRepository;
+        this.relationshipRepository = relationshipRepository;
     }
+
     /**
-     * Gets all FormResults from persistence
-     * @return all FormResults currently saved in persistence
+     * Gets all Relationships from persistence
+     * @return all Relationships currently saved in persistence
      */
     public List<Relationships> getRelationships() {
         return relationshipRepository.findAll();
     }
 
     /**
-     * Adds a formResult to persistence
+     * Adds a Relationship to persistence
      * @param relationships object to persist
-     * @return the saved formResult object
+     * @return the saved Relationship object
      */
     public Relationships addRelationship(Relationships relationships) {
         return relationshipRepository.save(relationships);
@@ -41,6 +42,8 @@ public class RelationshipService {
         return relationshipRepository.findById(id);
     }
 
-
+    public boolean relationshipExists(int gardenerId, int friendId) {
+        return relationshipRepository.existsByGardenerIdAndFriendId(gardenerId, friendId);
+    }
 
 }

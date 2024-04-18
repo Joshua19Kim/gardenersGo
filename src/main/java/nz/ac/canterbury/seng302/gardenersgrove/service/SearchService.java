@@ -35,7 +35,14 @@ public class SearchService {
         List<Gardener> results = new ArrayList<>();
 
         for (Gardener gardener  : allUsers) {
-            String fullName = gardener.getFirstName() + " " + gardener.getLastName();
+            String fullName = "";
+            if (gardener.getLastName() == null) {
+                fullName = gardener.getFirstName();
+            } else {
+                fullName = gardener.getFirstName() + " " + gardener.getLastName();
+
+            }
+            logger.info(fullName);
             if (fullName.matches(searchQuery)) {
                 results.add(gardener);
             }
