@@ -5,14 +5,20 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.multipart.MultipartFile;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +39,9 @@ public class PlantFormControllerTest {
 
     @MockBean
     private PlantService plantService;
+
+    @MockBean
+    private ImageService imageService;
 
     @Test
     public void GardenDetailsRequested_ExistentIdGiven_PlantDetailsProvided() throws Exception {
@@ -518,6 +527,50 @@ public class PlantFormControllerTest {
         Assertions.assertEquals(Float.parseFloat(count), plant.getCount());
         Assertions.assertEquals(description, plant.getDescription());
         Assertions.assertEquals(date, plant.getDatePlanted());
+    }
+
+    @Test
+    public void ImageUploaded_ValidImage_PlantImageUpdated() throws Exception {
+        Garden garden = new Garden("My Garden", "Ilam");
+        String plantId = "1";
+        Plant plant = new Plant("My Plant", 2, "Rose", "10/10/2023", garden);
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "file",
+                "image.jpg",
+                "image/jpeg",
+                "image content".getBytes()
+        );
+        when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
+        when(imageService.savePlantImage(mockMultipartFile, plant)).thenReturn(Optional.empty());
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/image")
+                        .file(mockMultipartFile)
+                        .param("plantId", plantId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens/details?gardenId=" + garden.getId()));
+
+    }
+
+    @Test
+    public void ImageUploaded_InvalidImage_ErrorMessageShown() throws Exception {
+        Garden garden = new Garden("My Garden", "Ilam");
+        String plantId = "1";
+        Plant plant = new Plant("My Plant", 2, "Rose", "10/10/2023", garden);
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "file",
+                "file.txt",
+                "plain/text",
+                "Hello World!".getBytes()
+        );
+        String uploadMessage = "Image must be of type png, jpg or svg";
+        when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
+        when(imageService.savePlantImage(mockMultipartFile, plant)).thenReturn(Optional.of(uploadMessage));
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/image")
+                        .file(mockMultipartFile)
+                        .param("plantId", plantId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens/details?uploadError=" + uploadMessage + "&errorId=" + plantId +
+                        "&gardenId=" + garden.getId()));
+
     }
 
 }
