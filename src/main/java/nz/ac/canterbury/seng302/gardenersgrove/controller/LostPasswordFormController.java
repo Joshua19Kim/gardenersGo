@@ -7,12 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class LostPasswordFormController {
     @GetMapping("/forgotPassword")
-    public String getLostPasswordForm() {
-        return "lostPasswordForm";
-    }
+    public String getLostPasswordForm() { return "lostPasswordForm"; }
 
-    @PostMapping("/resetPassword")
-    public String sendResetPasswordLink() {
-        return "newPasswordForm";
-    }
+    @PostMapping("/forgotPassword")
+    public String sendResetPasswordLink() { return "lostPasswordForm"; }
 }
