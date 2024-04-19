@@ -325,18 +325,16 @@ public class PlantFormController {
   }
 
   /**
-   * Check whether there is the authentication of current user to change the profile photo.
-   * If yes,read the uploaded file from user.html and Save the file.
-   * If the file is empty, redirect user to 'user' page with existing image(or default photo).
-   * If there is an image file, go back to 'user' page with new image
-   * @param file the file of profile picture
-   * @param model (map-like) representation of profile picture for use in thymeleaf
-   * @return thymeleaf 'user' page after updating successfully to reload user's details, otherwise thymeleaf login page
+   * Updates the picture of the plant from the garden details page. If the picture is valid it will update the picture
+   * for the plant, else it will show an error message
+   * @param file the file of plant picture
+   * @param model (map-like) representation of plant picture for use in thymeleaf
+   * @param plantId the id of the plant to change the profile picture of
+   * @return the garden details page with the updated picture or an error message
    */
   @PostMapping("gardens/details/plants/image")
   public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                  @RequestParam(name = "plantId") String plantId,
-                                 HttpServletRequest request,
                                  Model model) {
 
     Optional<Plant> plant = plantService.getPlant(parseLong(plantId));
