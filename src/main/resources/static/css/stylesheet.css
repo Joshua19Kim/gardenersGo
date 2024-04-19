@@ -234,7 +234,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 .plant-image-container {
     max-width: 100px;
-    max-height: 70px;
     border-radius: 4px;
     position: relative;
 }
@@ -283,6 +282,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 #form .plant-image-container .image-button {
     position: absolute;
     top: 0;
+    margin: unset;
     right: 10%;
     opacity: 0.5;
     border: none;
