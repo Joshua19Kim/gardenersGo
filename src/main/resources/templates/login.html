@@ -6,20 +6,9 @@
     <link rel="stylesheet" th:href="@{css/stylesheet.css}">
 </head>
 <body>
-<script type="text/javascript" >
-    // Copied this code from:
-    // https://stackoverflow.com/questions/56000575/spring-security-disable-login-page-while-session-is-valid
-    // This is to prevent the user pressing the back button in browser to go back to the login page
-    // once they are logged in.
-    function preventBack() {
-        window.history.forward();
-    }
-    setTimeout("preventBack()", 0);
-    window.onunload= function() { null };
-</script>
 <div id="form">
     <h1>Please Log In</h1>
-<form id="loginForm" method="post" th:action="@{/login}">
+<form id="loginForm" method="post" th:action="@{/login}" onsubmit="return validateLogin()">
     <input type="hidden"
            th:name="${_csrf.parameterName}"
            th:value="${_csrf.token}" />
@@ -49,6 +38,10 @@
             }
         }
     });
+
+    function validateLogin() {
+        return true;
+    }
 </script>
 </body>
 </html>
