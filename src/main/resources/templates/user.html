@@ -19,7 +19,7 @@
     <button class="ChangeProfilePictureButtonContainer" type="button" id="changePicture" onclick=toggleUploadContainer()> + </button>
 </div>
 
-<div id="uploadContainer">
+<div id="uploadContainer"  style="display: none;">
     <h3 id="upLoadTitle">Upload New Profile Image</h3>
     <div class="imageInstructionsContainer">
         <h4>Picture must be less than 10MB</h4>
@@ -54,7 +54,7 @@
         <span id="firstName" th:text="${firstName}"></span>
         <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit"
                placeholder="First Name" required th:name="firstName" th:value="*{firstName}" type="text" style="display: none;">
-        <p th:text="${firstNameValid}"></p>
+        <p class="errorMessage" th:text="${firstNameValid}"></p>
         <br/>
 
         <label for="lastName"> Last Name: </label>
@@ -71,14 +71,14 @@
                 document.getElementById('lastNameEdit').disabled = this.checked;
             };
         </script>
-        <p th:text="${lastNameValid}"></p>
+        <p class="errorMessage" th:text="${lastNameValid}"></p>
         <br/>
 
         <label for="DoB"> Date of Birth: </label>
         <span id="DoB" th:text="${DoB}"></span>
         <input class="form-control" data-cy="DoB" id="DoBEdit"
                th:name="DoB" th:value="*{DoB}" type="date" style="display: none;">
-        <p id = "DoBInvalid" th:text="${DoBValid}"></p>
+        <p class="errorMessage" id = "DoBInvalid" th:text="${DoBValid}"></p>
         <script>
             document.getElementById( "DoBEdit" ).addEventListener( "invalid",
                 function( event ) {
@@ -92,7 +92,7 @@
         <span id="email" th:text="${email}"></span>
         <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email"
                th:name="email" th:value="*{email}" type="text" style="display: none;">
-        <p th:text="${emailValid}"></p>
+        <p class="errorMessage" th:text="${emailValid}"></p>
         <br/>
 
         <div id="editButtonDiv">
@@ -102,8 +102,8 @@
             <div>
                 <a th:href="@{password}">Update password</a>
             </div>
-            <input class="buttonDesign" type="submit" value="Save" onclick="console.log('save')"/>
-            <button class="buttonDesign" type="button" onclick="disableEditing()">Cancel</button>
+            <input type="submit" value="Save" onclick="console.log('save')"/>
+            <button type="button" onclick="disableEditing()">Cancel</button>
         </div>
     </form>
 </div>
@@ -121,8 +121,7 @@
         }
     }
     function enableEditing() {
-        const toggleState = document.getElementById("uploadContainer");
-        toggleState.style.display = "flex";
+        toggleUploadContainer()
         document.getElementById('editButtonDiv').style.display = 'none';
         document.getElementById('saveCancelButtonDiv').style.display = 'block';
 
@@ -148,8 +147,7 @@
     }
 
     function disableEditing() {
-        const toggleState = document.getElementById("uploadContainer");
-        toggleState.style.display = "flex";
+        toggleUploadContainer()
         document.getElementById('editButtonDiv').style.display = 'block';
         document.getElementById('saveCancelButtonDiv').style.display = 'none';
 
@@ -169,10 +167,18 @@
 
         window.location.href='/user'
     }
-    // function redirectToPasswordPage() {
-    //     window.location.href = "password.html";
-    // }
-
+</script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var firstNameValid = /*[[${firstNameValid}]]*/ '';
+    var lastNameValid = /*[[${lastNameValid}]]*/ '';
+    var DoBValid = /*[[${DoBValid}]]*/ '';
+    var emailValid = /*[[${emailValid}]]*/ '';
+    if (firstNameValid !== '' || lastNameValid !== '' || DoBValid !== '' || emailValid !== '') {
+        console.log("edit");
+        enableEditing();
+    }
+    /*]]>*/
 </script>
 </body>
 </html>

@@ -24,3 +24,11 @@ INSERT INTO plant (name, garden_id, count, description, date_planted) VALUES ('D
 INSERT INTO plant (name, garden_id, count, description, date_planted) VALUES ('Cactus', 3, '0', 'Low-maintenance succulent', '11/11/2001');
 INSERT INTO plant (name, garden_id, count, description) VALUES ('Fern', 3, '18', 'Shade-loving foliage plant');
 INSERT INTO plant (name, garden_id, count, description) VALUES ('Rosemary', 3, '9', 'Aromatic herb for seasoning');
+
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('A', 'A', DATE '2004-01-07', 'a@gmail.com', -1009294837, 'defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('B', 'B', DATE '2004-01-07', 'b@gmail.com', -1009294837, 'defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('C', 'C', null, 'c@gmail.com', -1009294837, 'defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('D', null, DATE '2004-01-07', 'd@gmail.com', -1009294837, 'defaultProfilePic.png');
+
+-- email: a@gmail.com
+-- password: Password1!

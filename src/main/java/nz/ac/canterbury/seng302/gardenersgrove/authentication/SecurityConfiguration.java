@@ -66,15 +66,19 @@ public class SecurityConfiguration {
                                 AntPathRequestMatcher.antMatcher("/css/**"),
                                 AntPathRequestMatcher.antMatcher("/"),
                                 AntPathRequestMatcher.antMatcher("/login"),
-                                AntPathRequestMatcher.antMatcher("/register"))
+                                AntPathRequestMatcher.antMatcher("/register"),
+                                AntPathRequestMatcher.antMatcher("/forgotPassword"),
+                                AntPathRequestMatcher.antMatcher("/resetPassword"))
                         .permitAll())
                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
                 .authorizeHttpRequests(request -> request
-                                // Allow "/", "/register", and "/login" to anyone (permitAll)
+                                // Allow "/", "/register", "/forgotPassword", "/resetPassword" and "/login" to anyone (permitAll)
                                 .requestMatchers("/").permitAll()
                                 .requestMatchers("/login").permitAll()
                                 .requestMatchers("/register").permitAll()
+                                .requestMatchers("/forgotPassword").permitAll()
+                                .requestMatchers("/resetPassword").permitAll()
 
                                 // Only allow admins to reach the "/admin" page
                                 .requestMatchers("/admin").hasRole("ADMIN")
