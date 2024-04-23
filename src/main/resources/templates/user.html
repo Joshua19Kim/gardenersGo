@@ -99,9 +99,7 @@
             <button class="buttonDesign" type="button" onclick="enableEditing()">Edit</button>
         </div>
         <div id="saveCancelButtonDiv" style="display: none;">
-            <div>
-                <a th:href="@{password}">Update password</a>
-            </div>
+            <button type="button" onclick="window.location='./password'">Update password</button>
             <input type="submit" value="Save" onclick="console.log('save')"/>
             <button type="button" onclick="disableEditing()">Cancel</button>
         </div>
