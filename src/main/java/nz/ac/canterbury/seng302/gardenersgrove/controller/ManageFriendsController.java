@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,8 +52,14 @@ public class ManageFriendsController {
                                    Model model) {
 
         logger.info("GET /manageFriends");
-        authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Authentication: " + authentication);
+
+        String currentUserEmail = authentication.getPrincipal().toString();
+        Optional<Gardener> currentUser = gardenerFormService.findByEmail(currentUserEmail);
+
+        List<Gardener> currentUserRelationships = new ArrayList<>();
+
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             Optional<Gardener> searchResults = searchService.searchGardenersByEmail(searchGardener);
             model.addAttribute("searchResults", searchResults);
@@ -80,6 +87,7 @@ public class ManageFriendsController {
             long currentUserIdLong = searchService.searchGardenersByEmail(currentUser).get().getId();
             int currentUserId = (int) currentUserIdLong;
             Integer friendId = Integer.parseInt(friendIdStr);
+            relationshipService.retrieveCurrentUserRelationships(currentUserId);
 
             Relationships relationships = new Relationships(currentUserId, friendId, "pending");
             if (!relationshipService.relationshipExists(currentUserId, friendId)) {
@@ -117,6 +125,7 @@ public class ManageFriendsController {
             model.addAttribute("emptySearchQueryMessage", emptySearchQueryMessage);
             model.addAttribute("existingRelationshipErrorMessage", existingRelationshipErrorMessage);
             model.addAttribute("foundGardeners", foundGardeners);
+
         }
 
         Authentication newAuth = new UsernamePasswordAuthenticationToken(gardenerOptional.getEmail(), gardenerOptional.getPassword(), gardenerOptional.getAuthorities());

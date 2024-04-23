@@ -18,4 +18,7 @@ public interface RelationshipRepository extends CrudRepository<Relationships, Lo
 
     boolean existsByGardenerIdAndFriendId(int gardenerId, int friendId);
 
+    boolean existsByFriendIdAndGardenerId(int friendId, int gardernerId);
+
+
 }
