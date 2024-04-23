@@ -16,6 +16,9 @@
     <div th:if="${param.logout}">
         <p>You have been logged out.</p>
     </div>
+    <div th:if="${param.expired}">
+        <p>Reset password link has expired.</p>
+    </div>
     <div>
         <input name="username" placeholder="Username" type="text"/>
         <input name="password" placeholder="Password" type="password"/>
