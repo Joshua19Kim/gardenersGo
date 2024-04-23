@@ -58,7 +58,13 @@ public class ManageFriendsController {
         String currentUserEmail = authentication.getPrincipal().toString();
         Optional<Gardener> currentUser = gardenerFormService.findByEmail(currentUserEmail);
 
-        List<Gardener> currentUserRelationships = new ArrayList<>();
+        List<Gardener> currentUserRelationships = relationshipService.getCurrentUserRelationships(currentUser.get().getId());
+        for (Gardener user : currentUserRelationships) {
+            logger.info("+++ " + user);
+        }
+
+        model.addAttribute("currentUserRelationships", currentUserRelationships);
+
 
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             Optional<Gardener> searchResults = searchService.searchGardenersByEmail(searchGardener);
@@ -84,10 +90,8 @@ public class ManageFriendsController {
         String existingRelationshipErrorMessage = "test";
         if (email != null && !email.isEmpty() && friendIdStr != null && !friendIdStr.isEmpty()) {
             logger.info("Friend added email: " + email);
-            long currentUserIdLong = searchService.searchGardenersByEmail(currentUser).get().getId();
-            int currentUserId = (int) currentUserIdLong;
-            Integer friendId = Integer.parseInt(friendIdStr);
-            relationshipService.retrieveCurrentUserRelationships(currentUserId);
+            long currentUserId = searchService.searchGardenersByEmail(currentUser).get().getId();
+            long friendId = Long.parseLong(friendIdStr);
 
             Relationships relationships = new Relationships(currentUserId, friendId, "pending");
             if (!relationshipService.relationshipExists(currentUserId, friendId)) {

@@ -19,10 +19,10 @@ public class Relationships {
     private Long id;
 
     @Column(name = "gardener_id", nullable = false)
-    private int gardenerId;
+    private Long gardenerId;
 
     @Column(name = "friend_id", nullable = false)
-    private int friendId;
+    private Long friendId;
 
     @Column(nullable = false)
     private String status;
@@ -45,7 +45,7 @@ public class Relationships {
      * @param friendId the id of the gardener the relationship is with
      * @param status status of the relationship between gardeners e.g. "accepted" or "pending"
      */
-    public Relationships(int gardenerId, int friendId, String status) {
+    public Relationships(Long gardenerId, Long friendId, String status) {
         this.gardenerId = gardenerId;
         this.friendId = friendId;
         this.status = status;
@@ -74,11 +74,11 @@ public class Relationships {
         return id;
     }
 
-    public int getGardenerId() {
+    public Long getGardenerId() {
         return gardenerId;
     }
 
-    public int getFriendId() {
+    public Long getFriendId() {
         return friendId;
     }
 
@@ -86,9 +86,9 @@ public class Relationships {
         return status;
     }
 
-    public void setGardenerId(int gardenerId) { this.gardenerId = gardenerId; }
+    public void setGardenerId(Long gardenerId) { this.gardenerId = gardenerId; }
 
-    public void setFriendId(int friendId) { this.friendId = friendId; }
+    public void setFriendId(Long friendId) { this.friendId = friendId; }
 
     public void setStatus(String status) { this.status = status; }
 

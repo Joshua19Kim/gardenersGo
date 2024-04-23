@@ -16,9 +16,9 @@ public interface RelationshipRepository extends CrudRepository<Relationships, Lo
     Optional<Relationships> findById(long id);
     List<Relationships> findAll();
 
-    boolean existsByGardenerIdAndFriendId(int gardenerId, int friendId);
+    boolean existsByGardenerIdAndFriendId(long gardenerId, long friendId);
 
-    boolean existsByFriendIdAndGardenerId(int friendId, int gardernerId);
+    boolean existsByFriendIdAndGardenerId(long friendId, long gardernerId);
 
 
 }
