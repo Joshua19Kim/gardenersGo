@@ -573,7 +573,7 @@ public class PlantFormControllerTest {
     public void ImageUploaded_ValidImage_PlantImageUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         String plantId = "1";
-        Plant plant = new Plant("My Plant", 2, "Rose", "10/10/2023", garden);
+        Plant plant = new Plant("My Plant", "2", "Rose", "10/10/2023", garden);
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "file",
                 "image.jpg",
@@ -596,7 +596,7 @@ public class PlantFormControllerTest {
     public void ImageUploaded_InvalidImage_ErrorMessageShown() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         String plantId = "1";
-        Plant plant = new Plant("My Plant", 2, "Rose", "10/10/2023", garden);
+        Plant plant = new Plant("My Plant", "2", "Rose", "10/10/2023", garden);
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "file",
                 "file.txt",

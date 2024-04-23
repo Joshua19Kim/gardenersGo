@@ -255,9 +255,9 @@ public class PlantFormController {
         logger.info("POST /gardens/details/plants/edit");
         String formattedDate = "";
         if (!date.trim().isEmpty()) {
-          LocalDate localDate = LocalDate.parse(date);
-          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-          formattedDate = localDate.format(formatter);
+            LocalDate localDate = LocalDate.parse(date);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            formattedDate = localDate.format(formatter);
         }
 
         Plant plant = plantService.getPlant(parseLong(plantId)).get();
@@ -309,6 +309,8 @@ public class PlantFormController {
             }
             if(!file.isEmpty()) {
                 imageService.savePlantImage(file, plant);
+            } else {
+                plantService.addPlant(plant);
             }
             return "redirect:/gardens/details?gardenId=" + plant.getGarden().getId();
         } else {
