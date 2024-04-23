@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
@@ -530,6 +531,7 @@ public class PlantFormControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void ImageUploaded_ValidImage_PlantImageUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         String plantId = "1";
@@ -544,13 +546,15 @@ public class PlantFormControllerTest {
         when(imageService.savePlantImage(mockMultipartFile, plant)).thenReturn(Optional.empty());
         mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/image")
                         .file(mockMultipartFile)
-                        .param("plantId", plantId))
+                        .param("plantId", plantId)
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=" + garden.getId()));
 
     }
 
     @Test
+    @WithMockUser
     public void ImageUploaded_InvalidImage_ErrorMessageShown() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam");
         String plantId = "1";
@@ -566,7 +570,8 @@ public class PlantFormControllerTest {
         when(imageService.savePlantImage(mockMultipartFile, plant)).thenReturn(Optional.of(uploadMessage));
         mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/image")
                         .file(mockMultipartFile)
-                        .param("plantId", plantId))
+                        .param("plantId", plantId)
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?uploadError=" + uploadMessage + "&errorId=" + plantId +
                         "&gardenId=" + garden.getId()));
