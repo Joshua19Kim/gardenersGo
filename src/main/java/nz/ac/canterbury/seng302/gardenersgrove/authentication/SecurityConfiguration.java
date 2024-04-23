@@ -68,7 +68,8 @@ public class SecurityConfiguration {
                                 AntPathRequestMatcher.antMatcher("/login"),
                                 AntPathRequestMatcher.antMatcher("/register"),
                                 AntPathRequestMatcher.antMatcher("/forgotPassword"),
-                                AntPathRequestMatcher.antMatcher("/resetPassword"))
+                                AntPathRequestMatcher.antMatcher("/resetPassword"),
+                                AntPathRequestMatcher.antMatcher("/signup"))
                         .permitAll())
                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
@@ -79,6 +80,7 @@ public class SecurityConfiguration {
                                 .requestMatchers("/register").permitAll()
                                 .requestMatchers("/forgotPassword").permitAll()
                                 .requestMatchers("/resetPassword").permitAll()
+                                .requestMatchers("/signup").permitAll()
 
                                 // Only allow admins to reach the "/admin" page
                                 .requestMatchers("/admin").hasRole("ADMIN")
