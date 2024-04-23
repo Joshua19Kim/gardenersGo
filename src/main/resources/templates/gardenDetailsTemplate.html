@@ -9,7 +9,10 @@
 
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div class="container">
-    <h1>Garden Details</h1>
+    <h1 class="garden-details-links">Garden Details
+        <a th:href="@{../gardens/edit(gardenId=${garden.id})}" class="edit-garden-button">Edit Garden</a>
+        <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="add-plant-button">Add New Plant</a>
+    </h1>
 
     <div class="garden-details">
         <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>

@@ -1,5 +1,3 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
 <h1>Gardener's Grove</h1>
 <script>
     // JavaScript function to submit the logout form
@@ -7,6 +5,7 @@
         event.preventDefault(); // Prevent the link from navigating
         document.getElementById('logoutForm').submit(); // Submit the hidden logout form
     }
+    console.log("Cookie: " + document.cookie);
 </script>
 <ul>
     <li>
@@ -28,9 +27,9 @@
     <li>
         <a th:href="@{/user}">My Profile</a>
     </li>
-    <li>
+    <li sec:authorize="isAuthenticated()">
         <a href="#" onclick="logout(event)">Logout</a>
-        <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
+        <form id="logoutForm" method="POST" style="display: none;" th:action="@{logout}">
             <input type="submit" value="Logout"/>
             <!--                old code below: -->
             <!--            <form method="POST" th:action="@{logout}">-->
@@ -39,5 +38,4 @@
     </li>
 
 </ul>
-</html>
 

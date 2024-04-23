@@ -10,7 +10,7 @@
 
 <div id="form">
     <h1>Register</h1>
-    <form method="post" th:action="@{register}">
+    <form method="post" th:action="@{register}" id="registerForm">
         <input type="hidden"
                th:name="${_csrf.parameterName}"
                th:value="${_csrf.token}" />
@@ -69,8 +69,18 @@
             <button type="reset" id="cancel" onclick="window.location='./'">Cancel</button>
         </div>
     </form>
-
-
 </div>
+<script type="text/javascript">
+    document.getElementById("registerForm").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            var activeElement = document.activeElement;
+            if (activeElement.type === "submit" || activeElement.type === "reset") {
+                return true;
+            } else {
+                event.preventDefault();
+            }
+        }
+    });
+</script>
 </body>
 </html>
