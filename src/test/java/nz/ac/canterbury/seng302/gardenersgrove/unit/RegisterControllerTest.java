@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 
-public class RegisterFormControllerTest {
+public class RegisterControllerTest {
 
     private RegisterController registerFormController;
     private GardenerFormService gardenerFormService;

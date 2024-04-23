@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 
 /**
@@ -34,9 +36,14 @@ public class LoginController {
      * @return redirect to /login if not authenticated, otherwise go to the main page
      */
     @GetMapping("/login")
-    public String login(Authentication authentication) {
+    public String login(Authentication authentication, HttpServletResponse response) {
         logger.info("GET /");
         logger.info("Authentication: " + authentication);
+
+        // Prevent caching of the page so that we always reload it when we reach it (mainly for when you use the browser back button)
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        response.setHeader("Expires", "0"); // Proxies
 
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             return "redirect:/gardens";

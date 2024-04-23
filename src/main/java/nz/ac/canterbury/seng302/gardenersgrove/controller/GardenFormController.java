@@ -1,18 +1,22 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import static java.lang.Float.parseFloat;
@@ -32,8 +36,15 @@ public class GardenFormController {
    * @return the gardens template which defines the user interface for the my gardens page
    */
   @GetMapping("/gardens")
-  public String getGardenHome(Model model, HttpServletRequest request) {
+  public String getGardenHome(Model model, HttpServletRequest request, HttpServletResponse response) {
     logger.info("GET /gardens/main");
+    // Prevent caching of the page so that we always reload it when we reach it (mainly for when you use the browser back button)
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+    response.setHeader("Expires", "0"); // Proxies
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    logger.info("Authentication: " + authentication);
     List<Garden> gardens = gardenService.getGardenResults();
     model.addAttribute("gardens", gardens);
 
@@ -116,7 +127,7 @@ public class GardenFormController {
       if (Objects.equals(size.trim(), "")) {
         garden = gardenService.addGarden(new Garden(name, location));
       } else {
-        garden = gardenService.addGarden(new Garden(name, location, Float.parseFloat(validatedSize)));
+        garden = gardenService.addGarden(new Garden(name, location, new BigDecimal(validatedSize).stripTrailingZeros().toPlainString()));
       }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
     } else {
@@ -216,10 +227,10 @@ public class GardenFormController {
       existingGarden.setLocation(location);
 
       if (Objects.equals(size.trim(), "")) {
-        existingGarden.setSize(0);
+        existingGarden.setSize("0");
         gardenService.addGarden(existingGarden);
       } else {
-        existingGarden.setSize(Float.parseFloat(size.replace(',', '.')));
+        existingGarden.setSize(new BigDecimal(validatedSize).stripTrailingZeros().toPlainString());
         gardenService.addGarden(existingGarden);
       }
     } else {

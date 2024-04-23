@@ -33,7 +33,7 @@ public class GardenServiceTest {
             public <S extends Garden> S save(S entity) {
                 Assertions.assertEquals(entity.getName(), "Botanical");
                 Assertions.assertEquals(entity.getLocation(), "Homestead Lane");
-                Assertions.assertEquals(entity.getSize(), 100);
+                Assertions.assertEquals(entity.getSize(), "100");
                 return entity;
             }
 
@@ -87,7 +87,7 @@ public class GardenServiceTest {
 
             }
         });
-        gardenService.addGarden(new Garden("Botanical","Homestead Lane", 100));
+        gardenService.addGarden(new Garden("Botanical","Homestead Lane", "100"));
     }
 
     @Autowired
@@ -96,10 +96,10 @@ public class GardenServiceTest {
     @Test
     public void GardenAdded_ValidInputs_GardenReturned() {
         GardenService gardenService = new GardenService(gardenRepository);
-        Garden garden = gardenService.addGarden(new Garden("Botanical","Homestead Lane", 100));
+        Garden garden = gardenService.addGarden(new Garden("Botanical","Homestead Lane", "100"));
         Assertions.assertEquals(garden.getName(), "Botanical");
         Assertions.assertEquals(garden.getLocation(), "Homestead Lane");
-        Assertions.assertEquals(garden.getSize(), 100);
+        Assertions.assertEquals(garden.getSize(), "100");
     }
 
 

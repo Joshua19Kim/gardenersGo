@@ -119,7 +119,7 @@ public class Gardener {
         this.profilePicture = imageLocation;
     }
 
-
+    public void updatePassword(String password) { this.password = password.hashCode(); }
 
     @Override
     public String toString() {

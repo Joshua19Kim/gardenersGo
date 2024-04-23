@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +18,7 @@ public class PlantServiceTest {
 
     @Test
     public void PlantAdded_ValidInputs_PlantSavedToRepository() {
-        Garden garden = new Garden("Botanical","Homestead Lane", 100);
+        Garden garden = new Garden("Botanical","Homestead Lane", "100");
         PlantService plantService = new PlantService(new PlantRepository() {
             @Override
             public Optional<Plant> findById(long id) {
@@ -35,7 +33,7 @@ public class PlantServiceTest {
             @Override
             public <S extends Plant> S save(S entity) {
                 Assertions.assertEquals(entity.getName(), "Flower");
-                Assertions.assertEquals(entity.getCount(), 2);
+                Assertions.assertEquals(entity.getCount(), "2");
                 Assertions.assertEquals(entity.getDescription(), "Rose");
                 Assertions.assertEquals(entity.getDatePlanted(), "08/02/2024");
                 Assertions.assertEquals(entity.getGarden(), garden);
@@ -92,7 +90,7 @@ public class PlantServiceTest {
 
             }
         });
-        plantService.addPlant(new Plant("Flower",2, "Rose", "08/02/2024", garden));
+        plantService.addPlant(new Plant("Flower","2", "Rose", "08/02/2024", garden));
     }
 
     @Autowired
@@ -101,10 +99,10 @@ public class PlantServiceTest {
     @Test
     public void PlantAdded_ValidInputs_PlantReturned() {
         PlantService plantService = new PlantService(plantRepository);
-        Garden garden = new Garden("Botanical","Homestead Lane", 100);
-        Plant plant = plantService.addPlant(new Plant("Flower",2, "Rose", "08/02/2024", garden));
+        Garden garden = new Garden("Botanical","Homestead Lane", "100");
+        Plant plant = plantService.addPlant(new Plant("Flower","2", "Rose", "08/02/2024", garden));
         Assertions.assertEquals(plant.getName(), "Flower");
-        Assertions.assertEquals(plant.getCount(), 2);
+        Assertions.assertEquals(plant.getCount(), "2");
         Assertions.assertEquals(plant.getDescription(), "Rose");
         Assertions.assertEquals(plant.getDatePlanted(), "08/02/2024");
         Assertions.assertEquals(plant.getGarden(), garden);

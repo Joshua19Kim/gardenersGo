@@ -21,8 +21,8 @@ public class Garden {
   private String location;
 
   /** The size of the garden in square units. */
-  @Column(length=10)
-  private float size;
+  @Column(length=20)
+  private String size;
 
   /** The list of plants in the garden. */
   @OneToMany(mappedBy = "garden")
@@ -50,7 +50,7 @@ public class Garden {
    * @param location The location of the garden.
    * @param size The size of the garden.
    */
-  public Garden(String name, String location, float size) {
+  public Garden(String name, String location, String size) {
     this.name = name;
     this.location = location;
     this.size = size;
@@ -89,7 +89,7 @@ public class Garden {
    *
    * @return The size of the garden.
    */
-  public float getSize() {
+  public String getSize() {
     return size;
   }
 
@@ -112,7 +112,7 @@ public class Garden {
    * Sets the size of the garden
    * @param size the size of the garden
    */
-  public void setSize(float size) {this.size = size; }
+  public void setSize(String size) {this.size = size; }
 
   /**
    * Sets the location of the garden

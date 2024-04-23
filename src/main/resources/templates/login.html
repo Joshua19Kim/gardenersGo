@@ -6,9 +6,9 @@
     <link rel="stylesheet" th:href="@{css/stylesheet.css}">
 </head>
 <body>
-<h1>Please Log In</h1>
-<div>
-<form method="post" th:action="@{/login}">
+<div id="form">
+    <h1>Please Log In</h1>
+<form id="loginForm" method="post" th:action="@{/login}">
     <input type="hidden"
            th:name="${_csrf.parameterName}"
            th:value="${_csrf.token}" />
@@ -17,21 +17,28 @@
     </div>
     <div>
         <input name="username" placeholder="Username" type="text"/>
-    </div>
-    <div th:if="${param.error}">
-        <p data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"> </p>
-
-
-    </div>
-    <div>
         <input name="password" placeholder="Password" type="password"/>
+        <p class="errorMessage" th:if="${param.error}" data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
     </div>
-    <div>
+    <div style="display: flex; flex-direction: column">
         <input type="submit" value="Sign in"/>
-        <a th:href="@{register}">Not Registered? Create an account</a>
+        <a th:href="@{register}" style="margin-top: 20px">Not Registered? Create an account</a>
+        <a th:href="@{forgotPassword}" style="margin-top: 10px">Forgot your password?</a>
     </div>
 
 </form>
 </div>
+<script type="text/javascript">
+    document.getElementById("loginForm").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            var activeElement = document.activeElement;
+            if (activeElement.type === "submit") {
+                return true;
+            } else {
+                event.preventDefault();
+            }
+        }
+    });
+</script>
 </body>
 </html>

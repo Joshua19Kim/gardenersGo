@@ -1,5 +1,4 @@
 
-
 nav {
     background-color: #d9f7d9;
     padding: 10px;
@@ -313,6 +312,35 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 .edit-button:hover {
     background-color: #45a049;
 }
+
+.container .garden-details-links .edit-garden-button {
+    background-color: #45a049;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    font-size: 18px;
+    border-radius: 4px;         /* Rounded corners */
+    cursor: pointer;
+}
+
+.container .garden-details-links .edit-garden-button:hover {
+    background-color: #45a049;
+}
+
+.container .garden-details-links .add-plant-button {
+    background-color: #45a049;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    font-size: 18px;
+    border-radius: 4px;         /* Rounded corners */
+    cursor: pointer;
+}
+
+.container .garden-details-links .add-plant-button:hover {
+    background-color: #45a049;
+}
+
 
 #gardens_list a:hover {
     color: #45a049;

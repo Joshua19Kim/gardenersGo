@@ -79,9 +79,6 @@ public class UserProfileController {
             model.addAttribute("profilePic", gardener.getProfilePicture());
         } else {
             model.addAttribute("firstName", "Not Registered");
-            model.addAttribute("lastName", "");
-            model.addAttribute("DoB", "");
-            model.addAttribute("email", "");
         }
 
         InputValidationService inputValidator = new InputValidationService(gardenerFormService);
@@ -177,12 +174,47 @@ public class UserProfileController {
         }
         return new RedirectView("/login");
     }
+
     @GetMapping("/password")
-    public String getPassword() {
+    public String passwordForm() {
         logger.info("GET /password");
+        return "password";
+    }
+    @PostMapping("/password")
+    public String updatePassword(@RequestParam(name = "oldPassword", required = false) String oldPassword,
+                              @RequestParam(name = "newPassword", required = false) String newPassword,
+                              @RequestParam(name = "retypePassword", required = false) String retypePassword,
+                              Model model) {
+        logger.info("POST /password");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+        Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+        InputValidationService inputValidator = new InputValidationService(gardenerFormService);
 
+        if (gardenerOptional.isEmpty()) {
+            model.addAttribute("oldPassword", "Not Registered");
+            return "/password";
+        } else {
+            gardener = gardenerOptional.get();
+        }
 
-        return "/password";
+        Optional<String> passwordCorrectError = inputValidator.checkSavedPassword(oldPassword.hashCode(), gardener.getPassword());
+        model.addAttribute("passwordCorrect", passwordCorrectError.orElse(""));
+        Optional<String> passwordMatchError = inputValidator.checkPasswordsMatch(newPassword, retypePassword);
+        model.addAttribute("passwordsMatch", passwordMatchError.orElse(""));
+        Optional<String> passwordStrengthError = inputValidator.checkStrongPassword(newPassword);
+        model.addAttribute("passwordStrong", passwordStrengthError.orElse(""));
+
+        if (passwordCorrectError.isEmpty() && passwordMatchError.isEmpty() && passwordStrengthError.isEmpty()) {
+            gardener.updatePassword(newPassword);
+            gardenerFormService.addGardener(gardener);
+            // Re-authenticates user to catch case when they change their email
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication((newAuth));
+            return "redirect:/user";
+        }
+
+        return "password";
     }
 }
