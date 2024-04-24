@@ -241,6 +241,8 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     width: 100%;
     height: auto;
     border-radius: inherit;
+    max-height: 20vh;
+
 }
 
 .plant-image-container .image-button {
@@ -275,6 +277,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     width: 100%;
     height: auto;
     border-radius: inherit;
+    max-height: 20vh;
 }
 
 #form .plant-image-container .image-button {
