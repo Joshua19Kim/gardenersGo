@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
+import static org.hamcrest.Matchers.empty;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 
@@ -88,8 +89,11 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
         mockMvc
-                .perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", "")
                         .param("description", description)
@@ -99,7 +103,7 @@ public class PlantFormControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
-        verify(plantService, times(1)).addPlant(any(Plant.class));
+        verify(plantService, times(2)).addPlant(any(Plant.class));
     }
 
     @Test
@@ -113,8 +117,11 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, count, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
         mockMvc
-                .perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", count)
                         .param("description", "")
@@ -124,7 +131,7 @@ public class PlantFormControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
-        verify(plantService, times(1)).addPlant(any(Plant.class));
+        verify(plantService, times(2)).addPlant(any(Plant.class));
     }
 
     @Test
@@ -138,8 +145,11 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, description, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
         mockMvc
-                .perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", "")
                         .param("description", description)
@@ -149,7 +159,7 @@ public class PlantFormControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
-        verify(plantService, times(1)).addPlant(any(Plant.class));
+        verify(plantService, times(2)).addPlant(any(Plant.class));
     }
 
     @Test
@@ -163,8 +173,11 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, garden, date);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
         mockMvc
-                .perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", "")
                         .param("description", "")
@@ -174,7 +187,7 @@ public class PlantFormControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
-        verify(plantService, times(1)).addPlant(any(Plant.class));
+        verify(plantService, times(2)).addPlant(any(Plant.class));
     }
 
     @Test
@@ -189,8 +202,11 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, count, description, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
         mockMvc
-                .perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", "2")
                         .param("description", description)
@@ -200,7 +216,7 @@ public class PlantFormControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
-        verify(plantService, times(1)).addPlant(any(Plant.class));
+        verify(plantService, times(2)).addPlant(any(Plant.class));
     }
 
     @Test
@@ -215,8 +231,11 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, date, garden, count);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
         mockMvc
-                .perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", "2")
                         .param("description", "")
@@ -226,7 +245,7 @@ public class PlantFormControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
-        verify(plantService, times(1)).addPlant(any(Plant.class));
+        verify(plantService, times(2)).addPlant(any(Plant.class));
     }
 
     @Test
@@ -241,8 +260,11 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, description, date, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
         mockMvc
-                .perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", "")
                         .param("description", description)
@@ -252,7 +274,7 @@ public class PlantFormControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
-        verify(plantService, times(1)).addPlant(any(Plant.class));
+        verify(plantService, times(2)).addPlant(any(Plant.class));
     }
 
     @Test
@@ -268,8 +290,17 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, count, description, date, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "file",
+                "image.jpg",
+                "image/jpeg",
+                "image content".getBytes()
+        );
+        when(imageService.savePlantImage(eq(mockMultipartFile), any(Plant.class))).thenReturn(Optional.empty());
+
         mockMvc
-                .perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(mockMultipartFile)
                         .param("name", name)
                         .param("count", "2")
                         .param("description", description)
@@ -280,6 +311,7 @@ public class PlantFormControllerTest {
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
         verify(plantService, times(1)).addPlant(any(Plant.class));
+        verify(imageService, times(1)).savePlantImage(eq(mockMultipartFile), any(Plant.class));
     }
 
     @Test
@@ -295,7 +327,10 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, count, description, date, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", "2.0")
                         .param("description", description)
@@ -328,7 +363,10 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, count, description, date, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", "2.0")
                         .param("description", description)
@@ -361,7 +399,10 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, count, description, date, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", "Not a Number")
                         .param("description", description)
@@ -394,7 +435,10 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, count, description, date, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", "-2.0")
                         .param("description", description)
@@ -437,7 +481,10 @@ public class PlantFormControllerTest {
         Plant plant = new Plant(name, count, description, date, garden);
         when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/details/plants/form")
+        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                        .file(emptyFile)
                         .param("name", name)
                         .param("count", "2.0")
                         .param("description", description)
@@ -516,7 +563,18 @@ public class PlantFormControllerTest {
         Plant plant = new Plant("My Plant", "2", "Rose", date, garden);
         when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/details/plants/edit")
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "file",
+                "file.txt",
+                "plain/text",
+                "Hello World!".getBytes()
+        );
+        String uploadMessage = "Image must be of type png, jpg or svg";
+
+        when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.of(uploadMessage));
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/edit")
+                        .file(mockMultipartFile)
                         .param("name", name)
                         .param("count", count)
                         .param("description", description)
@@ -525,7 +583,7 @@ public class PlantFormControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editPlantFormTemplate"))
-                .andExpect(model().attributeExists("nameError", "countError", "descriptionError", "name", "count", "description", "date", "plant", "garden"))
+                .andExpect(model().attributeExists("nameError", "countError", "descriptionError", "uploadError", "name", "count", "description", "date", "plant", "garden"))
                 .andExpect(model().attribute("name", name))
                 .andExpect(model().attribute("count", count))
                 .andExpect(model().attribute("description", description))
@@ -534,9 +592,11 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("countError", "Plant count must be a positive number"))
                 .andExpect(model().attribute("descriptionError", "Plant description must be less than 512 characters"))
                 .andExpect(model().attribute("plant", plant))
+                .andExpect(model().attribute("uploadError", uploadMessage))
                 .andExpect(model().attribute("garden", garden));
 
         verify(plantService, never()).addPlant(plant);
+        verify(imageService, never()).savePlantImage(mockMultipartFile, plant);
 
     }
 
@@ -552,7 +612,18 @@ public class PlantFormControllerTest {
         Plant plant = new Plant("My Plant", "2", "Rose", "10/10/2023", garden);
         when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
         when(plantService.addPlant(plant)).thenReturn(plant);
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/details/plants/edit")
+
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "file",
+                "image.jpg",
+                "image/jpeg",
+                "image content".getBytes()
+        );
+        when(imageService.savePlantImage(mockMultipartFile, plant)).thenReturn(Optional.empty());
+        when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/edit")
+                        .file(mockMultipartFile)
                         .param("name", name)
                         .param("count", count)
                         .param("description", description)
@@ -561,7 +632,7 @@ public class PlantFormControllerTest {
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=" + garden.getId()));
-        verify(plantService, times(1)).addPlant(plant);
+        verify(imageService, times(1)).savePlantImage(mockMultipartFile, plant);
         Assertions.assertEquals(name, plant.getName());
         Assertions.assertEquals(count, plant.getCount());
         Assertions.assertEquals(description, plant.getDescription());
