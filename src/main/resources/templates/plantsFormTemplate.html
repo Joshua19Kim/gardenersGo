@@ -11,7 +11,7 @@
 
 <div id="form">
     <h1> Add New Plant </h1>
-    <form id="plantForm" th:action="@{form(gardenId=${garden.id})}" method="post">
+    <form id="plantForm" th:action="@{form(gardenId=${garden.id})}" method="post" enctype="multipart/form-data">
         <label for="name"> Name: </label>
         <input type="text" class="form-control" th:value="*{name}" id="name" name="name" placeholder="Name"
                th:classappend="${nameError} ? 'error' : ''">
@@ -42,9 +42,11 @@
         <br/>
         <label for="image"> Image: </label>
         <div class="plant-image-container" id="image">
-            <img src="/images/placeholder.jpg" alt="Plant">
-            <button type="button" class="image-button">+</button>
+            <img src="/images/placeholder.jpg" alt="Plant" id="currentImage">
+            <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
+            <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*" onchange="handleImageChange()">
         </div>
+        <span th:if="${uploadError}" th:text="${uploadError}" style="color: red;"></span>
         <br/>
         <button type="submit">Submit</button>
     </form>
@@ -63,6 +65,19 @@
             }
         }
     });
+
+    function handleImageChange() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('currentImage').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
 </script>
 <script type="text/javascript">
     const txHeight = 16;
