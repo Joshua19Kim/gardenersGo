@@ -267,7 +267,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 #form .plant-image-container {
     max-width: 100px;
-    max-height: 70px;
     border-radius: 4px;
     position: relative;
 }
