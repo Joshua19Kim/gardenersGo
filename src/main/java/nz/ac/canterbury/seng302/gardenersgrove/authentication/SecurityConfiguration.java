@@ -64,6 +64,7 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher("/h2/**"),
                                 AntPathRequestMatcher.antMatcher("/css/**"),
+                                AntPathRequestMatcher.antMatcher("/images/**"),
                                 AntPathRequestMatcher.antMatcher("/"),
                                 AntPathRequestMatcher.antMatcher("/login"),
                                 AntPathRequestMatcher.antMatcher("/register"),
