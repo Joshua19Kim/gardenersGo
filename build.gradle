@@ -26,13 +26,18 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+tasks.named('test') {
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
 // Selects what reports Jacoco generates and where to put them
 jacocoTestReport {
 	reports {
-		xml.enabled true
-		xml.destination file("${layout.buildDirectory}/jacoco/test-report.xml")
-		csv.enabled false
-		html.destination file("${layout.buildDirectory}/jacoco/html")
+		xml.required.set(true)
+		xml.destination file("${buildDir}/jacoco/test-report.xml")
+		csv.required.set(false)
+		html.destination file("${buildDir}/jacoco/html")
 	}
 }
 sonarqube {
@@ -43,10 +48,4 @@ sonarqube {
 		property "sonar.host.url", "https://sonarqube.csse.canterbury.ac.nz"
 		property "sonar.login", "$System.env.SONARQUBE_TOKEN"
 	}
-}
-
-
-tasks.named('test') {
-	useJUnitPlatform()
-	finalizedBy jacocoTestReport
 }
