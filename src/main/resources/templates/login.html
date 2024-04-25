@@ -3,12 +3,12 @@
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Please Log In</title>
-    <link rel="stylesheet" th:href="@{css/stylesheet.css}">
+    <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
 </head>
 <body>
 <div id="form">
     <h1>Please Log In</h1>
-<form id="loginForm" method="post" th:action="@{/login}" onsubmit="return validateLogin()">
+<form id="loginForm" method="post" th:action="@{/login}">
     <input type="hidden"
            th:name="${_csrf.parameterName}"
            th:value="${_csrf.token}" />
@@ -23,6 +23,7 @@
     <div style="display: flex; flex-direction: column">
         <input type="submit" value="Sign in"/>
         <a th:href="@{register}" style="margin-top: 20px">Not Registered? Create an account</a>
+        <a th:href="@{forgotPassword}" style="margin-top: 10px">Forgot your password?</a>
     </div>
 
 </form>
@@ -38,10 +39,6 @@
             }
         }
     });
-
-    function validateLogin() {
-        return true;
-    }
 </script>
 </body>
 </html>
