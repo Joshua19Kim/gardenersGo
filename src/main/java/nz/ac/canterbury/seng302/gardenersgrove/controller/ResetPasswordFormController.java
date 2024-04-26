@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class ResetPasswordFormController {
     @GetMapping("/resetPassword")
     public String getResetPasswordForm() {
-//        if () {
-//            return "resetPasswordForm";
-//        }
-        return "redirect:/login?expire";
+        return "resetPasswordForm";
     }
 
     @PostMapping("/resetPassword")
