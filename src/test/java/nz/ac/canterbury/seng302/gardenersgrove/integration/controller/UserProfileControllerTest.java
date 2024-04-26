@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -46,28 +47,26 @@ public class UserProfileControllerTest {
     private static AuthenticationManager authenticationManager;
     @MockBean
     private static Authentication authentication;
+    @MockBean
+    private static ImageService imageService;
 
     @BeforeEach
-    @WithMockUser
     void setUp() {
-//        authentication = Mockito.mock(Authentication.class);
-//        modelMock = Mockito.mock(Model.class);
-//        Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
-//        Mockito.when(authentication.isAuthenticated()).thenReturn(true);
+        //Use this following gardener as the one called from db.
         Gardener testGardener = new Gardener(
                 "testFirstName",
                 "testLastName",
                 LocalDate.of(1980, 1, 1),
                 "testEmail@gmail.com",
                 "testPassword",
-                "6.jpg");
+                "testProfilePhoto.jpg");
         Mockito.when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
 
     }
 
     @Test
     @WithMockUser
-    void onUserPage_validUserWantsToSeeDetails_showCorrectDetails() throws Exception {
+    void onUserPage_userWantsToSeeDetails_showCorrectDetails() throws Exception {
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/user")
                         .with(csrf()))
@@ -76,10 +75,16 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("firstName", "testFirstName"))
                 .andExpect(model().attribute("lastName", "testLastName"))
                 .andExpect(model().attribute("DoB", LocalDate.of(1980, 1, 1)))
-                .andExpect(model().attribute("email", "testEmail@example.com"))
+                .andExpect(model().attribute("email", "testEmail@gmail.com"))
                 .andExpect(model().attribute("profilePic", "testProfilePhoto.jpg"));
 
     }
+//    @Test
+//    @WithMockUser
+//    void onUserPage_userChangeTheFirstNameWithValidFirstname_SaveNewFirstName() throws Exception {
+//        this.mockMvc
+//
+//    }
 
 
 
