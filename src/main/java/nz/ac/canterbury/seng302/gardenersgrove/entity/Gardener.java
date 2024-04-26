@@ -43,6 +43,10 @@ public class Gardener {
     @JoinColumn(name = "gardener_id")
     private List<Authority> userRoles;
 
+    /** The list of gardens belonging to the gardener. */
+    @OneToMany(mappedBy = "gardener")
+    private List<Garden> gardens;
+
     /**
      * JPA required no-args constructor
      */
@@ -62,6 +66,7 @@ public class Gardener {
         this.email = email;
         this.password = password.hashCode();
         this.profilePicture = profilePicture;
+        gardens = new ArrayList<>();
     }
 
     public void grantAuthority(String authority) {
