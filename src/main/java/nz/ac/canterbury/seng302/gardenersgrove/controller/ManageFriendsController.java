@@ -32,11 +32,7 @@ import java.util.Optional;
 public class ManageFriendsController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
     private final GardenerFormService gardenerFormService;
-    private final SearchService searchService;
     private final RelationshipService relationshipService;
-    private Authentication authentication;
-    private final AuthenticationManager authenticationManager;
-
     private List<Gardener> noExistingRelationship;
 
     private Gardener gardener;
@@ -44,9 +40,7 @@ public class ManageFriendsController {
     @Autowired
     public ManageFriendsController(GardenerFormService gardenerFormService, SearchService searchService, RelationshipService relationshipService, AuthenticationManager authenticationManager) {
         this.gardenerFormService = gardenerFormService;
-        this.searchService = searchService;
         this.relationshipService = relationshipService;
-        this.authenticationManager = authenticationManager;
     }
 
     /**
@@ -54,13 +48,12 @@ public class ManageFriendsController {
      * accepted, pending, incoming and declined. These lists are also used to decrease the current available search pool
      * in order to prevent the user for searching and sending requests to other users they have an existing relationship
      * with
-     * @param searchGardener
+     * @param
      * @param model
      * @return
      */
     @GetMapping("/manageFriends")
-    public String getManageFriends(@RequestParam(name = "searchGardeners", required = false, defaultValue = "") String searchGardener,
-                                   Model model) {
+    public String getManageFriends(Authentication authentication, Model model) {
 
         logger.info("GET /manageFriends");
 
