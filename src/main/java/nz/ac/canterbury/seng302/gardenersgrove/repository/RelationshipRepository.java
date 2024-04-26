@@ -22,7 +22,9 @@ public interface RelationshipRepository extends CrudRepository<Relationships, Lo
      * @param id
      * @returns a list of all the accepted relationships of the user
      */
-    @Query(value = "SELECT CASE WHEN gardener_id = ?1 THEN friend_id ELSE gardener_id END AS friendId FROM Relationships WHERE gardener_id=?1 or friend_id=?1 and status = 'accepted'", nativeQuery = true)
+    @Query(value = "SELECT gardener_id FROM Relationship WHERE friend_id = ?1 AND status='accepted' " +
+            "UNION " +
+            "SELECT friend_id FROM Relationship WHERE gardener_id=?1 AND status='accepted'", nativeQuery = true)
     List<Long> getGardenerFriends(Long id);
 
     @Query(value = "Select friend_id FROM Relationships WHERE gardener_id = ?1 and status = 'pending'", nativeQuery = true)
