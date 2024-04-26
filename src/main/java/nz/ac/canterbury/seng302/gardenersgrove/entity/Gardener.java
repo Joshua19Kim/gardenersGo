@@ -112,7 +112,7 @@ public class Gardener {
         if (lastName == null) {
             searchResult = firstName + " " + email;
         } else {
-            searchResult = firstName + " " + lastName + " " + email;
+            searchResult = firstName + " " + lastName + " " + "- " + email;
         }
         return searchResult;
     }

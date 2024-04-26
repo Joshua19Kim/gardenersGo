@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.RelationshipRepository;
+import org.aspectj.asm.internal.Relationship;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,5 +73,23 @@ public class RelationshipService {
     }
 
 
+    public String getButtonLabel(long gardenerId, long friendId) {
+        String buttonLabel = "";
+        Optional <Relationships> relationship = relationshipRepository.findRelationshipsByGardenerIdAndFriendId(gardenerId, friendId);
+        if (relationship.get().getStatus() == "accepted") {
+            buttonLabel = "Remove friend";
+        }
+        if (!relationship.isPresent()) {
+            buttonLabel = "Add friend";
+        }
+        if (gardenerId == relationship.get().getGardenerId() && relationship.get().getStatus() == "pending") {
+            buttonLabel = "Cancel request";
+        }
+        if (gardenerId == relationship.get().getFriendId() && relationship.get().getStatus() == "pending") {
+            buttonLabel = "Remove friend";
+        }
+
+        return buttonLabel;
+    }
 
 }

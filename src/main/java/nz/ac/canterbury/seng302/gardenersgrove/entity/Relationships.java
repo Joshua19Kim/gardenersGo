@@ -68,7 +68,9 @@ public class Relationships {
          List<GrantedAuthority> authorities = new ArrayList<>();
          this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
          return authorities;
-         }
+    }
+
+
 
     public Long getId() {
         return id;
