@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,11 +17,20 @@ public interface RelationshipRepository extends CrudRepository<Relationships, Lo
     Optional<Relationships> findById(long id);
     List<Relationships> findAll();
 
-    boolean existsByGardenerIdAndFriendId(long gardenerId, long friendId);
+    /**
+     *
+     * @param id
+     * @returns a list of all the accepted relationships of the user
+     */
+    @Query("SELECT CASE WHEN gardenerId = ? THEN friend_id ELSE gardener_id END AS friendId FROM Relationships WHERE gardener_id=? or friend_id=? and status = 'accepted'")
+    List<Relationships> getGardenerFriends(Long id);
 
-    boolean existsByFriendIdAndGardenerId(long friendId, long gardernerId);
+    @Query()
+    List<Relationships> getGardenerPending(long id);
 
-    Optional <Relationships> findRelationshipsByGardenerIdAndFriendId(long gardenerId, long friendId);
+
+
+    Optional<Relationships> findRelationshipsByGardenerIdAndFriendId(long gardenerId, long friendId);
 
 
 }

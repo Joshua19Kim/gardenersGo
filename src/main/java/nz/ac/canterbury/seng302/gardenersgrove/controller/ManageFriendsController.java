@@ -63,7 +63,10 @@ public class ManageFriendsController {
             logger.info("+++ " + user);
         }
 
+
+
         model.addAttribute("currentUserRelationships", currentUserRelationships);
+       // model.addAttribute("buttonLabel", buttonLabel);
 
 
         if (authentication instanceof UsernamePasswordAuthenticationToken) {

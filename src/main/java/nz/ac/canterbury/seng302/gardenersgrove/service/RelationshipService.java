@@ -73,23 +73,23 @@ public class RelationshipService {
     }
 
 
-    public String getButtonLabel(long gardenerId, long friendId) {
-        String buttonLabel = "";
-        Optional <Relationships> relationship = relationshipRepository.findRelationshipsByGardenerIdAndFriendId(gardenerId, friendId);
-        if (relationship.get().getStatus() == "accepted") {
-            buttonLabel = "Remove friend";
-        }
-        if (!relationship.isPresent()) {
-            buttonLabel = "Add friend";
-        }
-        if (gardenerId == relationship.get().getGardenerId() && relationship.get().getStatus() == "pending") {
-            buttonLabel = "Cancel request";
-        }
-        if (gardenerId == relationship.get().getFriendId() && relationship.get().getStatus() == "pending") {
-            buttonLabel = "Remove friend";
-        }
-
-        return buttonLabel;
-    }
+//    public String getButtonLabel(long gardenerId, long friendId) {
+//        String buttonLabel = "";
+//        Optional<Relationships> relationship = relationshipRepository.findRelationshipsByGardenerIdAndFriendId(gardenerId, friendId);
+//        if (relationship.get().getStatus() == "accepted") {
+//            buttonLabel = "Remove friend";
+//        }
+//        if (!relationship.isPresent()) {
+//            buttonLabel = "Add friend";
+//        }
+//        if (gardenerId == relationship.get().getGardenerId() && relationship.get().getStatus() == "pending") {
+//            buttonLabel = "Cancel request";
+//        }
+//        if (gardenerId == relationship.get().getFriendId() && relationship.get().getStatus() == "pending") {
+//            buttonLabel = "Remove friend";
+//        }
+//
+//        return buttonLabel;
+//    }
 
 }
