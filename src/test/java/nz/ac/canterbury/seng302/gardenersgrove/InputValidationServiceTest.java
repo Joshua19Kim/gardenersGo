@@ -143,7 +143,7 @@ public class InputValidationServiceTest {
         String first  = "First";
         boolean lastName = false;
         Optional<String> isValid = validate.checkValidName(name, first, lastName);
-        assertTrue(isValid.get().matches(first + " name cannot be empty and must only include letters, spaces,\n" +
+        assertTrue(isValid.get().matches(first + " name cannot be empty and must only include letters, spaces, " +
                 "hyphens or apostrophes"));
     }
 
@@ -154,7 +154,7 @@ public class InputValidationServiceTest {
         String first  = "Last";
         boolean lastName = false;
         Optional<String> isValid = validate.checkValidName(name, first, lastName);
-        assertTrue(isValid.get().matches(first + " name cannot be empty and must only include letters, spaces,\n" +
+        assertTrue(isValid.get().matches(first + " name cannot be empty and must only include letters, spaces, " +
                 "hyphens or apostrophes"));
     }
 
@@ -186,7 +186,7 @@ public class InputValidationServiceTest {
         String first = "First";
         boolean lastName = false;
         Optional<String> isValid = validate.checkValidName(name, first, lastName);
-        assertTrue(isValid.get().matches(first + " name cannot be empty and must only include letters, spaces,\n" +
+        assertTrue(isValid.get().matches(first + " name cannot be empty and must only include letters, spaces, " +
                 "hyphens or apostrophes"));
     }
 

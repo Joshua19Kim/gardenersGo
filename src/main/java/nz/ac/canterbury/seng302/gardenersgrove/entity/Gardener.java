@@ -65,10 +65,10 @@ public class Gardener {
     }
 
     public void grantAuthority(String authority) {
-         if ( userRoles == null )
-             userRoles = new ArrayList<>();
-         userRoles.add(new Authority(authority));
-         }
+        if ( userRoles == null )
+            userRoles = new ArrayList<>();
+        userRoles.add(new Authority(authority));
+    }
     public void grantAuthorities(List<String> roles) {
         if ( userRoles == null )
             userRoles = new ArrayList<>();
@@ -78,10 +78,10 @@ public class Gardener {
     }
 
     public List<GrantedAuthority> getAuthorities(){
-         List<GrantedAuthority> authorities = new ArrayList<>();
-         this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
-         return authorities;
-         }
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
+        return authorities;
+    }
 
     public Long getId() {
         return id;
@@ -128,7 +128,7 @@ public class Gardener {
         this.profilePicture = imageLocation;
     }
 
-
+    public void updatePassword(String password) { this.password = password.hashCode(); }
 
     @Override
     public String toString() {

@@ -66,21 +66,19 @@ public class SecurityConfiguration {
                                 AntPathRequestMatcher.antMatcher("/css/**"),
                                 AntPathRequestMatcher.antMatcher("/"),
                                 AntPathRequestMatcher.antMatcher("/login"),
-                                AntPathRequestMatcher.antMatcher("/manageFriends"),
-                                AntPathRequestMatcher.antMatcher("/register"))
+                                AntPathRequestMatcher.antMatcher("/register"),
+                                AntPathRequestMatcher.antMatcher("/forgotPassword"),
+                                AntPathRequestMatcher.antMatcher("/resetPassword"))
                         .permitAll())
                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
                 .authorizeHttpRequests(request -> request
-                                // Allow "/", "/register", and "/login" to anyone (permitAll)
+                                // Allow "/", "/register", "/forgotPassword", "/resetPassword" and "/login" to anyone (permitAll)
                                 .requestMatchers("/").permitAll()
                                 .requestMatchers("/login").permitAll()
                                 .requestMatchers("/register").permitAll()
-                                .requestMatchers("/manageFriends").permitAll()
-                                .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
-                                .requestMatchers(mvcMatcherBuilder.pattern("/login")).permitAll()
-                                .requestMatchers(mvcMatcherBuilder.pattern("/register")).permitAll()
-                                .requestMatchers(mvcMatcherBuilder.pattern("/manageFriends")).permitAll()
+                                .requestMatchers("/forgotPassword").permitAll()
+                                .requestMatchers("/resetPassword").permitAll()
 
                                 // Only allow admins to reach the "/admin" page
                                 .requestMatchers("/admin").hasRole("ADMIN")
@@ -89,7 +87,7 @@ public class SecurityConfiguration {
                                 .authenticated()
                 )
                 // Define logging in, a POST "/login" endpoint now exists under the hood, after login redirect to user page
-                .formLogin(formLogin -> formLogin.loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/main"))
+                .formLogin(formLogin -> formLogin.loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/user"))
                 // Define logging out, a POST "/logout" endpoint now exists under the hood, redirect to "/login", invalidate session and remove cookie
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login").invalidateHttpSession(true).deleteCookies("JSESSIONID"));
         return http.build();

@@ -33,6 +33,16 @@ public class InputValidationService {
     }
 
     /**
+     * Verify password entered is matching to the saved password in database
+     * @param password password entered in form
+     * @param savedPassword password called from the database
+     * @return empty optional if password is correct, otherwise error string
+     */
+    public Optional<String> checkSavedPassword (int password, int savedPassword) {
+        return (password == savedPassword) ? Optional.empty() : Optional.of("Your old password is incorrect.");
+    }
+
+    /**
      * Verify name user has input passes conditions:
      * - 0 < Name < 64
      * - Allows special characters umlauts, macrons, apostrophes, spaces

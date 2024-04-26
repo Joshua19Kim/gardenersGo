@@ -1,0 +1,534 @@
+
+nav {
+    background-color: #d9f7d9;
+    padding: 10px;
+    font-family: 'Roboto', sans-serif;
+    border-bottom: 2px solid #45a049;
+}
+
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+}
+
+
+nav ul li {
+    text-decoration: none;
+    margin: 0 10px 0 10px;
+    word-wrap: break-word;
+    white-space: normal;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+
+nav ul li form {
+    all: revert;
+}
+
+
+nav ul li a, nav ul li input[type="submit"] {
+    text-decoration: none;
+    max-width: 200px;
+    word-wrap: break-word;
+    white-space: normal;
+    display: inline-block;
+}
+
+/* Took the following code from my year 13 project
+ * This code adds the white underline effect on hover
+ */
+nav ul li a:after, nav ul li input[type="submit"]:after {
+    bottom: 0;
+    content: "";
+    display: block;
+    height: 2px;
+    left: 50%;
+    position: absolute;
+    background: #fff;
+    transition: width 0.3s ease 0s, left 0.3s ease 0s;
+    width: 0;
+}
+
+nav ul li a:hover:after, nav ul li input[type="submit"]:after {
+    width: 100%;
+    left: 0;
+}
+
+nav ul li a:hover, nav ul li input[type="submit"]:hover {
+    color: #45a049;
+    transition: 0.3s ease;
+}
+
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+
+.dropdown-content a {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #EEFBEE;
+
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.error {
+    border: 1px solid red;
+}
+
+.errorMessage {
+    color: red;
+    font-size: 0.7rem;
+}
+
+.dropbtn {
+    color: #1c1c1a;
+    background-color: #d9f7d9;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+}
+
+#form {
+    width: 550px;
+    margin: 20px auto;
+    background-color: #EEFBEE;
+    padding: 20px 50px 40px;
+    box-shadow: 1px 4px 10px 1px #777;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+#form * {
+    box-sizing: border-box;
+}
+
+#form h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+
+#form input {
+    display: block;
+    height: 32px;
+    padding: 6px 16px;
+    width: 100%;
+    border: none;
+    margin-bottom: 15px;
+}
+
+#form textarea {
+    display: block;
+    min-height: 32px;
+    max-height: 300px;
+    box-sizing: border-box;
+    padding: 6px 16px;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    border: none;
+    margin-bottom: 15px;
+    overflow-y: auto;
+    resize: vertical;
+}
+#characterCountContainer {
+    font-size: 0.8em;
+}
+
+
+#form label {
+    font-size: 0.8em;
+}
+
+#form button, #form input[type="submit"] {
+    color: #1c1c1a;
+    display: block;
+    margin: 20px auto 0;
+    width: 100%;
+    height: 40px;
+    border-radius: 25px;
+    border: 1px solid #45a049;
+    font-weight: 700;
+    box-shadow: 2px 3px 1px #777;
+    background: #d9f7d9;
+}
+
+#form button:hover, #form input[type="submit"]:hover {
+    background: #8af58a;
+    cursor: pointer;
+}
+
+#garden-details {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.garden-details p {
+    margin-bottom: 10px;
+    max-width: inherit;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+
+.plant-list-container {
+    overflow-y: auto;
+    border-bottom: 1px solid #45a049;
+    max-height: 600px;
+}
+
+.plant-table {
+    width: 100%;
+    border-collapse: collapse;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.plant-table th {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #45a049;
+    background-color: #d9f7d9;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.plant-table td {
+    padding: 10px;
+    border-bottom: 1px solid #d9f7d9;
+    word-wrap: break-word;
+    white-space: normal;
+    max-width: 200px;
+}
+
+.plant-image-container {
+    max-width: 100px;
+    max-height: 70px;
+    border-radius: 4px;
+    position: relative;
+}
+
+.plant-image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: inherit;
+}
+
+.plant-image-container .image-button {
+    position: absolute;
+    top: 0;
+    right: 10%;
+    opacity: 0.5;
+    border: none;
+    background-color: transparent;
+    color: black; /* Text color */
+    font-size: 20px;
+    width: 10px;
+    height: 10px;
+    line-height: 1;
+    text-align: center;
+    vertical-align: top;
+}
+
+
+.plant-image-container .image-button:hover {
+    cursor: pointer;
+    opacity: 1;
+}
+
+#form .plant-image-container {
+    max-width: 100px;
+    max-height: 70px;
+    border-radius: 4px;
+    position: relative;
+}
+
+#form .plant-image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: inherit;
+}
+
+#form .plant-image-container .image-button {
+    position: absolute;
+    top: 0;
+    right: 10%;
+    opacity: 0.5;
+    border: none;
+    background-color: transparent;
+    color: white; /* Text color */
+    font-size: 20px;
+    width: 10px;
+    height: 10px;
+    line-height: 1;
+    text-align: center;
+    vertical-align: top;
+}
+
+#form .plant-image-container .image-button:hover {
+    cursor: pointer;
+    opacity: 1;
+}
+
+.edit-button {
+    background-color: #45a049;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-button:hover {
+    background-color: #45a049;
+}
+
+#gardens_list a:hover {
+    color: #45a049;
+}
+
+#gardens_list {
+    width: 550px;
+    margin: 20px auto;
+    background-color: #EEFBEE;
+    padding: 20px 50px 40px;
+    box-shadow: 1px 4px 10px 1px #777;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+#garden-names {
+    max-width: inherit;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #45a049;
+}
+
+body, h2, h3, h4, h5, h6, a {
+    font-family: 'Roboto', sans-serif;
+    color: #1c1c1a;
+}
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    scrollbar-color: #45a049 #f9f9f9;
+}
+
+
+
+/*label {*/
+/*    margin: 5px;*/
+/*    display: inline-block;*/
+/*    min-width: 200px;*/
+/*}*/
+
+/*input {*/
+/*    margin: 5px;*/
+/*    width: 200px;*/
+/*}*/
+
+/*.form-control {*/
+/*    width: auto;*/
+/*}*/
+
+/*input[type=submit] {*/
+/*    background-color: cornflowerblue;*/
+/*    border: none;*/
+/*    color: white;*/
+/*    padding: 5px 2px;*/
+/*    text-align: center;*/
+/*    text-decoration: none;*/
+/*    cursor: pointer;*/
+/*    font-size: 16px;*/
+/*    width: 100px;*/
+/*    border-radius: 5px;*/
+/*}*/
+
+/* ------------------------------Upload CSS ------------------------------ */
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.imageInstructionsContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+}
+
+
+#uploadForm {
+    display: flex;
+    flex-direction: column;
+}
+
+#submitPhotoButton {
+    margin-top: 15px;
+    width: fit-content;
+    padding: 5px;
+}
+
+.buttonDesign {
+    margin-top: 15px;
+    margin-right:50px;
+    width: 70px;
+    height: 30px;
+    padding: 5px;
+    text-align: center;
+}
+
+#upLoadTitle {
+    justify-content: center;
+    display: flex;
+    padding: 15px;
+}
+
+/* ------------------------------- END ------------------------------------*/
+
+/* ------------------Upload container at bottom of user profile------------*/
+
+#uploadContainer {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+
+    margin-bottom: 30px;
+}
+
+/* ------------------------------- END ------------------------------------*/
+
+
+.UserProfilePicContainer {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+
+}
+
+.UserProfilePic {
+    width: 105px;
+    height: 130px;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    margin: 5px;
+    border-radius: 12px;
+}
+
+.UserProfilePic img {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+}
+
+.ChangeProfilePictureButtonContainer {
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 25px;
+    width:23px;
+    height:23px;
+}
+
+#profileForm {
+    margin: auto;
+    width: 30%;
+}
+
+
+#cancel {
+    background-color: indianred;
+    border: none;
+    color: white;
+    padding: 5px 2px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100px;
+    border-radius: 5px;
+}
+
+#user_div div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#user_div h1 {
+    margin: 5%;
+    justify-content: center;
+    display: flex;
+}
+
+#profileForm {
+    width: 550px;
+    overflow: hidden;
+    background-color: rgba(50, 100, 100, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+/*a {*/
+/*    text-decoration: none;*/
+/*    color: blue;*/
+/*}*/
+
+/*p {*/
+/*    color: red;*/
+/*    font-size: 14px;*/
+/*}*/
+
+
+
+
+
