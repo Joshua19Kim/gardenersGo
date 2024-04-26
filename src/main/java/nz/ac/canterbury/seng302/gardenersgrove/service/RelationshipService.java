@@ -52,44 +52,35 @@ public class RelationshipService {
     }
 
     public List<Gardener> getCurrentUserRelationships (Long id) {
-        List<Gardener> currentRelationships = new ArrayList<>();
-        List<Relationships> allRelationships = relationshipRepository.findAll();
-        for (Relationships relationship : allRelationships) {
-            if (relationship.getGardenerId() == id) {
-                currentRelationships.add(gardenerFormService.findById(relationship.getFriendId()).get());
-            } else if (relationship.getFriendId() == id) {
-                currentRelationships.add(gardenerFormService.findById(relationship.getGardenerId()).get());
-            }
-        }
-        return currentRelationships;
+        List<Long> allFriendIds = relationshipRepository.getGardenerFriends(id);
+        return gardenerFormService.getGardenersById(allFriendIds);
     }
 
-    public Optional<Relationships> findById(long id) {
-        return relationshipRepository.findById(id);
+    public List<Gardener> getGardenerPending (Long id) {
+        List<Long> allPendingFriendIds = relationshipRepository.getGardenerPending(id);
+        return gardenerFormService.getGardenersById(allPendingFriendIds);
     }
 
-    public boolean relationshipExists(long gardenerId, long friendId) {
-        return relationshipRepository.existsByGardenerIdAndFriendId(gardenerId, friendId) || relationshipRepository.existsByFriendIdAndGardenerId(friendId, gardenerId);
+    public List<Gardener> getGardenerIncoming (Long id) {
+        List<Long> allIncomingFriendIds = relationshipRepository.getGardenerIncoming(id);
+        return gardenerFormService.getGardenersById(allIncomingFriendIds);
     }
 
 
-//    public String getButtonLabel(long gardenerId, long friendId) {
-//        String buttonLabel = "";
-//        Optional<Relationships> relationship = relationshipRepository.findRelationshipsByGardenerIdAndFriendId(gardenerId, friendId);
-//        if (relationship.get().getStatus() == "accepted") {
-//            buttonLabel = "Remove friend";
-//        }
-//        if (!relationship.isPresent()) {
-//            buttonLabel = "Add friend";
-//        }
-//        if (gardenerId == relationship.get().getGardenerId() && relationship.get().getStatus() == "pending") {
-//            buttonLabel = "Cancel request";
-//        }
-//        if (gardenerId == relationship.get().getFriendId() && relationship.get().getStatus() == "pending") {
-//            buttonLabel = "Remove friend";
-//        }
-//
-//        return buttonLabel;
-//    }
+    public List<Gardener> getGardenerDeclinedRequests(Long id) {
+        List<Long> allDeclinedFriendIds = relationshipRepository.getGardenerDeclinedRequests(id);
+        return gardenerFormService.getGardenersById(allDeclinedFriendIds);
+    }
+
+    public void updateRelationshipStatus(String action, Long gardenerId, Long friendId) {
+        relationshipRepository.updateRelationshipStatus(action, gardenerId, friendId);
+    }
+
+    public List<Gardener> getGardenersWithNoRelationship(List<Gardener> allRelationships, List<Gardener> allGardeners) {
+        List<Gardener> noExistingRelationship = new ArrayList<>(allGardeners);
+        noExistingRelationship.removeAll(allRelationships);
+
+        return noExistingRelationship;
+    }
 
 }

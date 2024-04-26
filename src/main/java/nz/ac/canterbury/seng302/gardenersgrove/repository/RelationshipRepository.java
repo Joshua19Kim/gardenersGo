@@ -22,11 +22,21 @@ public interface RelationshipRepository extends CrudRepository<Relationships, Lo
      * @param id
      * @returns a list of all the accepted relationships of the user
      */
-    @Query("SELECT CASE WHEN gardenerId = ? THEN friend_id ELSE gardener_id END AS friendId FROM Relationships WHERE gardener_id=? or friend_id=? and status = 'accepted'")
-    List<Relationships> getGardenerFriends(Long id);
+    @Query(value = "SELECT CASE WHEN gardener_id = ? THEN friend_id ELSE gardener_id END AS friendId FROM Relationships WHERE gardener_id=? or friend_id=? and status = 'accepted'", nativeQuery = true)
+    List<Long> getGardenerFriends(Long id);
 
-    @Query()
-    List<Relationships> getGardenerPending(long id);
+    @Query(value = "Select friend_id FROM Relationships WHERE gardener_id = ? and status = 'pending'", nativeQuery = true)
+    List<Long> getGardenerPending(long id);
+
+    @Query(value = "Select gardener_id FROM Relationships WHERE friend_id = ? and status = 'pending'", nativeQuery = true)
+    List<Long> getGardenerIncoming(long id);
+
+    @Query(value = "Select friend_id FROM Relationships WHERE gardener_id = ? and status = 'declined'", nativeQuery = true)
+    List<Long> getGardenerDeclinedRequests(long id);
+
+    @Query(value = "UPDATE Relationships SET status = ? WHERE gardener_id = ? and friend_id = ? ", nativeQuery = true)
+    void updateRelationshipStatus(String action, long gardenerId, long friendId);
+
 
 
 

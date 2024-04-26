@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +48,15 @@ public class GardenerFormService {
 
     public Optional<Gardener> getUserByEmailAndPassword(String email, int password) {
         return gardenerFormRepository.findByEmailAndPassword(email, password); // Creating some sort of thread problem?
+    }
+
+    public List<Gardener> getGardenersById (List<Long> ids) {
+        List<Gardener> allGardeners = new ArrayList<>();
+
+        for (long id : ids) {
+            allGardeners.add(findById(id).get());
+        }
+        return allGardeners;
     }
 
 

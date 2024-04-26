@@ -37,6 +37,8 @@ public class ManageFriendsController {
     private Authentication authentication;
     private final AuthenticationManager authenticationManager;
 
+    private List<Gardener> noExistingRelationship;
+
     private Gardener gardener;
 
     @Autowired
@@ -47,97 +49,51 @@ public class ManageFriendsController {
         this.authenticationManager = authenticationManager;
     }
 
+    /**
+     * Get lists of all types of relationships with the current logged-in user. This includes relationships with the status
+     * accepted, pending, incoming and declined. These lists are also used to decrease the current available search pool
+     * in order to prevent the user for searching and sending requests to other users they have an existing relationship
+     * with
+     * @param searchGardener
+     * @param model
+     * @return
+     */
     @GetMapping("/manageFriends")
     public String getManageFriends(@RequestParam(name = "searchGardeners", required = false, defaultValue = "") String searchGardener,
                                    Model model) {
 
         logger.info("GET /manageFriends");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        logger.info("Authentication: " + authentication);
 
         String currentUserEmail = authentication.getPrincipal().toString();
         Optional<Gardener> currentUser = gardenerFormService.findByEmail(currentUserEmail);
 
-        List<Gardener> currentUserRelationships = relationshipService.getCurrentUserRelationships(currentUser.get().getId());
-        for (Gardener user : currentUserRelationships) {
-            logger.info("+++ " + user);
-        }
+        List<Gardener> allCurrentUserRelationships = relationshipService.getCurrentUserRelationships(currentUser.get().getId());
+        List<Gardener> allCurrentUserPending = relationshipService.getGardenerPending(currentUser.get().getId());
+        List<Gardener> allCurrentUserIncoming= relationshipService.getGardenerIncoming(currentUser.get().getId());
+        List<Gardener> allCurrentUserDeclinedRequests = relationshipService.getGardenerDeclinedRequests(currentUser.get().getId());
 
+        model.addAttribute("friends", allCurrentUserRelationships);
+        model.addAttribute("pending", allCurrentUserPending);
+        model.addAttribute("incoming", allCurrentUserIncoming);
+        model.addAttribute("declined", allCurrentUserDeclinedRequests);
 
+        List<Gardener> allRelationships = new ArrayList<>();
+        allRelationships.addAll(allCurrentUserRelationships);
+        allRelationships.addAll(allCurrentUserPending);
+        allRelationships.addAll(allCurrentUserIncoming);
+        allRelationships.addAll(allCurrentUserDeclinedRequests);
 
-        model.addAttribute("currentUserRelationships", currentUserRelationships);
-       // model.addAttribute("buttonLabel", buttonLabel);
+        noExistingRelationship = relationshipService.getGardenersWithNoRelationship(allRelationships, gardenerFormService.getGardeners());
 
-
-        if (authentication instanceof UsernamePasswordAuthenticationToken) {
-            Optional<Gardener> searchResults = searchService.searchGardenersByEmail(searchGardener);
-            model.addAttribute("searchResults", searchResults);
-            return "manageFriends";
-        }
-        return "redirect:/login";
+        return "/manageFriends";
     }
 
     @PostMapping("/manageFriends")
-    public String handleFormSubmission(HttpServletRequest request, Model model) {
+    public String handleFormSubmission(@RequestParam(name = "searchQuery") String searchQuery, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUser = authentication.getPrincipal().toString();
 
-        Authentication authenticationTest = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authenticationTest.getName();
-        Gardener gardenerOptional = gardenerFormService.findByEmail(currentUserEmail).get();
-
-        String searchQuery = request.getParameter("searchQuery");
-        String email = request.getParameter("email");
-        String friendIdStr = request.getParameter("friendId");
-
-        String existingRelationshipErrorMessage = "test";
-        if (email != null && !email.isEmpty() && friendIdStr != null && !friendIdStr.isEmpty()) {
-            logger.info("Friend added email: " + email);
-            long currentUserId = searchService.searchGardenersByEmail(currentUser).get().getId();
-            long friendId = Long.parseLong(friendIdStr);
-
-            Relationships relationships = new Relationships(currentUserId, friendId, "pending");
-            if (!relationshipService.relationshipExists(currentUserId, friendId)) {
-                relationshipService.addRelationship(relationships);
-                logger.info(relationships.toString());
-                existingRelationshipErrorMessage = "Relationship with user already exists";
-
-            } else {
-                logger.info("Relationship already in database");
-                existingRelationshipErrorMessage = "Relationship with user already exists";
-                logger.info(existingRelationshipErrorMessage);
-            }
-
-        }
-
-
-        if (searchQuery != null && !searchQuery.isEmpty()) {
-            logger.info("POST /manageFriends");
-            logger.info("Search query is: " + searchQuery);
-
-            InputValidationService inputValidator = new InputValidationService(gardenerFormService);
-            List<Gardener> foundGardeners = searchService.searchGardenersByFullName(searchQuery);
-            logger.info(foundGardeners.toString());
-            String emptySearchQueryMessage = "";
-            if (inputValidator.checkValidEmail(searchQuery).isEmpty()) {
-                Optional<Gardener> foundGardener = searchService.searchGardenersByEmail(searchQuery);
-                foundGardener.ifPresent(foundGardeners::add);
-            }
-            if (foundGardeners.isEmpty()) {
-                emptySearchQueryMessage = "Nobody with that name or email in Gardener’s Grove";
-            }
-
-            model.addAttribute("currentUser", currentUser);
-            model.addAttribute("searchQuery", searchQuery);
-            model.addAttribute("emptySearchQueryMessage", emptySearchQueryMessage);
-            model.addAttribute("existingRelationshipErrorMessage", existingRelationshipErrorMessage);
-            model.addAttribute("foundGardeners", foundGardeners);
-
-        }
-
-        Authentication newAuth = new UsernamePasswordAuthenticationToken(gardenerOptional.getEmail(), gardenerOptional.getPassword(), gardenerOptional.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication((newAuth));
-
+        List<Gardener> searchResult
 
 
         return "/manageFriends";
