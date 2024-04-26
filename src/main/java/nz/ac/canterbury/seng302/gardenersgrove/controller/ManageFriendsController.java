@@ -88,13 +88,43 @@ public class ManageFriendsController {
         return "/manageFriends";
     }
 
+    /**
+     * Upon post submission, the variable noExistingRelationship is looped through as this is a shorter list with the only
+     * viable search results
+     * @param searchQuery what user submits in search bar
+     * @param friends the current friends that user has
+     * @param pending requests sent by the user
+     * @param incoming requests received by the user
+     * @param declined requests, that were declined by either user or the "friend"
+     * @param model
+     * @return
+     */
     @PostMapping("/manageFriends")
-    public String handleFormSubmission(@RequestParam(name = "searchQuery") String searchQuery, Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUser = authentication.getPrincipal().toString();
+    public String handleFormSubmission(@RequestParam(name = "searchQuery") String searchQuery,
+                                       @RequestParam(name = "friends") String friends,
+                                       @RequestParam(name = "pending") String pending,
+                                       @RequestParam(name = "incoming") String incoming,
+                                       @RequestParam(name = "declined") String declined,
+                                       Model model) {
 
-        List<Gardener> searchResult
+        List<Gardener> searchResults = new ArrayList<>();
+        for (Gardener gardener : noExistingRelationship) {
+            String nameMatch = "";
+            if (gardener.getLastName() == null) {
+                nameMatch = gardener.getFirstName();
+            } else {
+                nameMatch = gardener.getFirstName() + " " + gardener.getLastName();
+            }
+            if (nameMatch == searchQuery || gardener.getEmail() == searchQuery) {
+                searchResults.add(gardener);
+            }
+        }
 
+        model.addAttribute("searchResults", searchResults);
+        model.addAttribute("friends", friends);
+        model.addAttribute("pending", pending);
+        model.addAttribute("incoming", incoming);
+        model.addAttribute("declined", declined);
 
         return "/manageFriends";
     }
