@@ -14,21 +14,32 @@ import org.springframework.ui.Model;
 import java.util.Optional;
 
 @Controller
-public class LostPasswordFormController {
-    Logger logger = LoggerFactory.getLogger(LostPasswordFormController.class);
+public class ForgotPasswordFormController {
+    Logger logger = LoggerFactory.getLogger(ForgotPasswordFormController.class);
     private final GardenerFormService gardenerFormService;
     String confirmationMessage = "An email was sent to the address if it was recognised";
     @Autowired
-    public LostPasswordFormController(GardenerFormService gardenerFormService) {
+    public ForgotPasswordFormController(GardenerFormService gardenerFormService) {
         this.gardenerFormService = gardenerFormService;
     }
+
+    /**
+     * Displays the form for resetting the password if forgotten
+     * @return The lost password form template
+     */
     @GetMapping("/forgotPassword")
-    public String getLostPasswordForm(@RequestParam(name="email") String email, Model model) {
+    public String getLostPasswordForm() {
         logger.info("GET /forgotPassword");
-        model.addAttribute("email", email);
-        return "lostPasswordForm";
+        return "forgotPasswordForm";
     }
 
+    /**
+     * Handles the submission of the lost password form
+     * If the user inputs an email that exists in the database then a unique token is emailed to the email address
+     * @param email The email of the user with the forgotten password
+     * @param model The model for passing data to the view.
+     * @return The template for the lost password form
+     */
     @PostMapping("/forgotPassword")
     public String sendResetPasswordLink(@RequestParam(name="email") String email, Model model) {
         logger.info("POST /forgotPassword");
@@ -36,21 +47,13 @@ public class LostPasswordFormController {
         InputValidationService inputValidator = new InputValidationService(gardenerFormService);
         Optional<String> validEmailError = inputValidator.checkValidEmail(email);
         Optional<String> emailInUseError = inputValidator.checkEmailInUse(email);
-        // i want if validEmailError is empty but emailInUseError is not for ac4
-        // i want if validEmailError is empty and emailInUseError is too for ac3
 
-        // emailValid is either the String stored in validEmailError OR ELSE it is equal to the String stored in emailInUseError otherwise its empty
-        model.addAttribute("emailValid", validEmailError.orElse(emailInUseError.orElse("")));
+        model.addAttribute("returnMessage", validEmailError.orElse(confirmationMessage));
 
-        if (validEmailError.isPresent()) {
-            model.addAttribute("confirmationMessage", "");
-        } else {
-            model.addAttribute("confirmationMessage", confirmationMessage);
-            if (emailInUseError.isEmpty()) {
-                //send link to email
-                return "redirect:/login";
-            }
+        if (emailInUseError.isEmpty() && validEmailError.isEmpty()) {
+            //send link to email
         }
-        return "lostPasswordForm";
+
+        return "forgotPasswordForm";
     }
 }

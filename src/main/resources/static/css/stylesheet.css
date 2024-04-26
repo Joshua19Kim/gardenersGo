@@ -301,6 +301,13 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     cursor: pointer;
     opacity: 1;
 }
+.return p {
+    text-align: center;
+    padding-bottom: 10px;
+}
+.return {
+    padding-top: 10px;
+}
 
 .edit-button {
     background-color: #45a049;
