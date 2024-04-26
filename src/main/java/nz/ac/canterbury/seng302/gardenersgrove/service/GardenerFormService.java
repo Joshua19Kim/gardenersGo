@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +17,13 @@ import java.util.Optional;
 @Service
 public class GardenerFormService {
     private GardenerFormRepository gardenerFormRepository;
+    private LostPasswordTokenRepository lostPasswordTokenRepository;
 
     @Autowired
-    public GardenerFormService(GardenerFormRepository gardenerFormRepository) {
+    public GardenerFormService(GardenerFormRepository gardenerFormRepository,
+                               LostPasswordTokenRepository lostPasswordTokenRepository) {
         this.gardenerFormRepository = gardenerFormRepository;
+        this.lostPasswordTokenRepository = lostPasswordTokenRepository;
     }
     /**
      * Gets all FormResults from persistence
@@ -47,5 +52,10 @@ public class GardenerFormService {
 
     public Optional<Gardener> getUserByEmailAndPassword(String email, int password) {
         return gardenerFormRepository.findByEmailAndPassword(email, password); // Creating some sort of thread problem?
+    }
+
+    public void createLostPasswordTokenForGardener(Gardener gardener, String token) {
+        LostPasswordToken generatedToken = new LostPasswordToken(token, gardener);
+        lostPasswordTokenRepository.save(generatedToken);
     }
 }
