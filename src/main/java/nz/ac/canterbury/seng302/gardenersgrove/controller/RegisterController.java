@@ -149,7 +149,7 @@ public class RegisterController {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 // Add the token to the request session (needed so the authentication can be properly used)
                 request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-                return "redirect:user";
+                return "signupCodeForm";
             }
         }
         return "register";
