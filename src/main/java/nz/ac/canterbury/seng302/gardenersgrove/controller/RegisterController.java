@@ -15,9 +15,14 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -86,15 +91,15 @@ public class RegisterController {
      * @return thymeleaf demoFormTemplate
      */
     @PostMapping("/register")
-    public String submitForm( HttpServletRequest request,
-                              @RequestParam(name="firstName") String firstName,
-                              @RequestParam(name="lastName", required = false) String lastName,
-                              @RequestParam(name="DoB", required = false) LocalDate DoB,
-                              @RequestParam(name="email") String email,
-                              @RequestParam(name="password") String password,
-                              @RequestParam(name = "passwordConfirm") String passwordConfirm,
-                              @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
-                              Model model) {
+    public String submitForm(HttpServletRequest request,
+                             @RequestParam(name="firstName") String firstName,
+                             @RequestParam(name="lastName", required = false) String lastName,
+                             @RequestParam(name="DoB", required = false) LocalDate DoB,
+                             @RequestParam(name="email") String email,
+                             @RequestParam(name="password") String password,
+                             @RequestParam(name = "passwordConfirm") String passwordConfirm,
+                             @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
+                             Model model) {
         logger.info("POST /register");
 
         model.addAttribute("firstName", firstName);
@@ -132,9 +137,12 @@ public class RegisterController {
                 passwordMatchError.isEmpty() &&
                 DoBError.isEmpty() &&
                 passwordStrengthError.isEmpty()) {
+
+
             Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password, "defaultProfilePic.png");
-            newGardener.grantAuthority("ROLE_USER");
             gardenerFormService.addGardener(newGardener);
+
+//            request.setAttribute(("newGardenerAttribute"), newGardener);
 
 //            // Auto-login when registering
 //            // Create a new Authentication with Username and Password (authorities here are optional as the following function fetches these anyway)
@@ -150,8 +158,8 @@ public class RegisterController {
 //                // Add the token to the request session (needed so the authentication can be properly used)
 //                request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 //              }
-            return "signupCodeForm";
 
+            return "signupCodeForm";
         }
         return "register";
     }

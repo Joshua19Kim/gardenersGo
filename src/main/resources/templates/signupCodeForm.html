@@ -14,7 +14,7 @@
                th:name="${_csrf.parameterName}"
                th:value="${_csrf.token}" />
         <div>
-            <input name="signupCode" placeholder="Signup Code" type="text" required/>
+            <input name="signupCode" id="signupCode" placeholder="Signup Code" type="text" required/>
             <p class="errorMessage" th:if="${param.error}" data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
         </div>
         <div style="display: flex; flex-direction: column">
