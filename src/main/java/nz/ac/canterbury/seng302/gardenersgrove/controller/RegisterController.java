@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -96,8 +95,7 @@ public class RegisterController {
                              @RequestParam(name="password") String password,
                              @RequestParam(name = "passwordConfirm") String passwordConfirm,
                              @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
-                             Model model,
-                             RedirectAttributes redirectAttributes) {
+                             Model model) {
         logger.info("POST /register");
 
         model.addAttribute("firstName", firstName);
