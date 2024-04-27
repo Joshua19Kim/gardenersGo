@@ -132,17 +132,11 @@ public class Gardener {
 
     @Override
     public String toString() {
-        String gardenerString = "Gardener{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' ;
+        String gardenerString = firstName;
         if (getLastName() != null) {
-            gardenerString += ", lastName='" + lastName + '\'';
+            gardenerString += " " + lastName;
         }
-
-        gardenerString += ", DoB='" + DoB.toString() + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                "}";
+        gardenerString += " - " + email;
 
         return gardenerString;
     }
