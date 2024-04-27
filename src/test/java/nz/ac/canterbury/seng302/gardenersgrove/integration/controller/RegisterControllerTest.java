@@ -58,7 +58,7 @@ public class RegisterControllerTest {
                         .param("isLastNameOptional", "false")
                 )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:user"));
+                .andExpect(view().name("redirect:/signup"));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class RegisterControllerTest {
                         .param("isLastNameOptional", "true")
                 )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:user"));
+                .andExpect(view().name("redirect:/signup"));
     }
 
     @Test
