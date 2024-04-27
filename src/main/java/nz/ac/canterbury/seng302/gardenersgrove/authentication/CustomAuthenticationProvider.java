@@ -54,6 +54,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (u == null) {
             throw new BadCredentialsException("The email address is unknown, or the password is invalid");
         }
+        if (u.getAuthorities().isEmpty()) {
+            throw new BadCredentialsException("Email not verified");
+        }
         return new UsernamePasswordAuthenticationToken(u.getEmail(), null, u.getAuthorities());
     }
 
