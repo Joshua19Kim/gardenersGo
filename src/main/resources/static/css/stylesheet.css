@@ -233,7 +233,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 .plant-image-container {
     max-width: 100px;
-    max-height: 70px;
     border-radius: 4px;
     position: relative;
 }
@@ -242,6 +241,8 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     width: 100%;
     height: auto;
     border-radius: inherit;
+    max-height: 20vh;
+
 }
 
 .plant-image-container .image-button {
@@ -268,7 +269,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 #form .plant-image-container {
     max-width: 100px;
-    max-height: 70px;
     border-radius: 4px;
     position: relative;
 }
@@ -277,16 +277,18 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     width: 100%;
     height: auto;
     border-radius: inherit;
+    max-height: 20vh;
 }
 
 #form .plant-image-container .image-button {
     position: absolute;
     top: 0;
+    margin: unset;
     right: 10%;
     opacity: 0.5;
     border: none;
     background-color: transparent;
-    color: white; /* Text color */
+    color: black; /* Text color */
     font-size: 20px;
     width: 10px;
     height: 10px;
@@ -298,6 +300,13 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 #form .plant-image-container .image-button:hover {
     cursor: pointer;
     opacity: 1;
+}
+.return p {
+    text-align: center;
+    padding-bottom: 10px;
+}
+.return {
+    padding-top: 10px;
 }
 
 .edit-button {

@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>User Profile</title>
-    <link rel="stylesheet" th:href="@{~/css/stylesheet.css}">
+    <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
 </head>
 <body>
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
@@ -12,7 +12,7 @@
 
 <div class="UserProfilePicContainer">
     <div class="UserProfilePic">
-        <img th:src="@{${'/uploads/' + profilePic}}" alt="Profile Picture">
+        <img th:src="@{'/images/' + ${profilePic}}" alt="Profile Picture">
     </div>
 </div>
 <div >
@@ -28,7 +28,7 @@
 
 
     <div class="formContainer">
-        <form id="uploadForm" action="/user" method="post" enctype="multipart/form-data">
+        <form id="uploadForm" th:action="@{user}" method="post" enctype="multipart/form-data">
             <input type="hidden"
                    th:name="${_csrf.parameterName}"
                    th:value="${_csrf.token}" />
@@ -49,7 +49,7 @@
 </div>
 
 <div id="form">
-    <form action="/user" method="get" id="userForm">
+    <form th:action="@{user}" method="get" id="userForm">
         <label for="firstName"> First Name: </label>
         <span id="firstName" th:text="${firstName}"></span>
         <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit"
@@ -99,9 +99,7 @@
             <button class="buttonDesign" type="button" onclick="enableEditing()">Edit</button>
         </div>
         <div id="saveCancelButtonDiv" style="display: none;">
-            <div>
-                <a th:href="@{password}">Update password</a>
-            </div>
+            <button type="button" onclick="window.location='./password'">Update password</button>
             <input type="submit" value="Save" onclick="console.log('save')"/>
             <button type="button" onclick="disableEditing()">Cancel</button>
         </div>

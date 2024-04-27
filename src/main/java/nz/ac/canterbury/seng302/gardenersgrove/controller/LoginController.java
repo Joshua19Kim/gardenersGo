@@ -39,6 +39,7 @@ public class LoginController {
     public String login(Authentication authentication, HttpServletResponse response) {
         logger.info("GET /");
         logger.info("Authentication: " + authentication);
+        logger.info("DB USERNAME: " + System.getenv("DB_USERNAME"));
 
         // Prevent caching of the page so that we always reload it when we reach it (mainly for when you use the browser back button)
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1

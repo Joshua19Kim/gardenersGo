@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -24,14 +26,17 @@ public class ImageService {
 
     private final Logger logger = LoggerFactory.getLogger(ImageService.class);
     private final GardenerFormService gardenerFormService;
-    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
+
+    private final PlantService plantService;
+    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/src/main/resources/static/images";
     private final int MAX_SIZE = 10*1024*1024;
 
     public List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
 
     @Autowired
-    public ImageService(GardenerFormService gardenerFormService) {
+    public ImageService(GardenerFormService gardenerFormService, PlantService plantService) {
         this.gardenerFormService = gardenerFormService;
+        this.plantService = plantService;
     }
 
     /**
@@ -69,6 +74,39 @@ public class ImageService {
 
             } else {
                 return Optional.of("I made a boo boo"); // Sam THE GOAT
+            }
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Gets credentials to see user can make changes to a plants profile picture. Uses the plants id to generate the
+     * appropriate filename for the image. Assuming image is a valid type, image gets written to
+     * storage. If this chain of events fails then appropriate optional strings are returned
+     *
+     * @param file, the Image
+     * @return Returns a variety of optional strings. These are strings that can be used to display various
+     * warning/diagnosing/success messages.
+     */
+    public Optional<String> savePlantImage(MultipartFile file, Plant plant) {
+
+        try {
+            Files.createDirectories(Paths.get(UPLOAD_DIRECTORY));
+            String fileName = file.getOriginalFilename();
+            logger.info(fileName);
+            //NullPointerException shouldn't affect below line as HTML form prevents an empty upload, i.e. file will never be null
+            String newFileName = "plant_" + plant.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
+            Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);
+            logger.info("File location: " + filePath);
+            if (checkValidImage(file).isEmpty()) {
+                Files.write(filePath, file.getBytes());
+                plant.setImage(newFileName);
+                plantService.addPlant(plant);
+                return Optional.empty();
+            } else {
+                return checkValidImage(file);
             }
         } catch (Exception e) {
             logger.info(e.getMessage());
