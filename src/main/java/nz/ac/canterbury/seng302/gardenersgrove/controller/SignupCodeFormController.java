@@ -50,7 +50,7 @@ public class SignupCodeFormController {
     public String sendSignupForm(@RequestParam(name= "signupCode", required = false, defaultValue = "") String signupCode, Model model) {
         logger.info("POST /signup");
         if (Objects.equals(signupCode, message)) {
-            return "redirect:user";
+            return "redirect:/login";
         }
         return "signupCodeForm";
     }

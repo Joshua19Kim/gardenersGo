@@ -136,21 +136,22 @@ public class RegisterController {
             newGardener.grantAuthority("ROLE_USER");
             gardenerFormService.addGardener(newGardener);
 
-            // Auto-login when registering
-            // Create a new Authentication with Username and Password (authorities here are optional as the following function fetches these anyway)
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password, newGardener.getAuthorities());
-            // Authenticate the token properly with the CustomAuthenticationProvider
-            Authentication authentication = authenticationManager.authenticate(token);
+//            // Auto-login when registering
+//            // Create a new Authentication with Username and Password (authorities here are optional as the following function fetches these anyway)
+//            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password, newGardener.getAuthorities());
+//            // Authenticate the token properly with the CustomAuthenticationProvider
+//            Authentication authentication = authenticationManager.authenticate(token);
+//
+//            // Check if the authentication is actually authenticated (in this example any username/password is accepted so this should never be false)
+//            if (authentication.isAuthenticated()) {
+//                logger.info("user is authenticated");
+//                // Add the authentication to the current security context (Stateful)
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+//                // Add the token to the request session (needed so the authentication can be properly used)
+//                request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+//              }
+            return "signupCodeForm";
 
-            // Check if the authentication is actually authenticated (in this example any username/password is accepted so this should never be false)
-            if (authentication.isAuthenticated()) {
-                logger.info("user is authenticated");
-                // Add the authentication to the current security context (Stateful)
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                // Add the token to the request session (needed so the authentication can be properly used)
-                request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-                return "signupCodeForm";
-            }
         }
         return "register";
     }
