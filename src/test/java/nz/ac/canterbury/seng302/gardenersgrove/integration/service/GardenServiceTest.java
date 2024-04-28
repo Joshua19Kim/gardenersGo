@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import org.junit.jupiter.api.Assertions;
@@ -9,12 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
 @Import(GardenService.class)
 public class GardenServiceTest {
+    Gardener testGardener = new Gardener("Test", "Gardener",
+            LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+            "Password1!", "defaultProfilePic.png");
 
     @Test
     public void GardenAdded_ValidInputs_GardenSavedToRepository() {
@@ -27,6 +32,11 @@ public class GardenServiceTest {
             @Override
             public List<Garden> findAll() {
                 return null;
+            }
+
+            @Override
+            public List<Garden> findByGardenerId(Long gardenerId) {
+                return List.of();
             }
 
             @Override
@@ -87,7 +97,7 @@ public class GardenServiceTest {
 
             }
         });
-        gardenService.addGarden(new Garden("Botanical","Homestead Lane", "100"));
+        gardenService.addGarden(new Garden("Botanical","Homestead Lane", "100", testGardener));
     }
 
     @Autowired
@@ -96,7 +106,7 @@ public class GardenServiceTest {
     @Test
     public void GardenAdded_ValidInputs_GardenReturned() {
         GardenService gardenService = new GardenService(gardenRepository);
-        Garden garden = gardenService.addGarden(new Garden("Botanical","Homestead Lane", "100"));
+        Garden garden = gardenService.addGarden(new Garden("Botanical","Homestead Lane", "100", testGardener));
         Assertions.assertEquals(garden.getName(), "Botanical");
         Assertions.assertEquals(garden.getLocation(), "Homestead Lane");
         Assertions.assertEquals(garden.getSize(), "100");
