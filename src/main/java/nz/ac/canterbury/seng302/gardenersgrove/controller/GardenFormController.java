@@ -2,8 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import static java.lang.Float.parseFloat;
 import static java.lang.Long.parseLong;
 import java.util.Optional;
 
@@ -27,7 +28,6 @@ import java.util.Optional;
 @Controller
 public class GardenFormController {
   Logger logger = LoggerFactory.getLogger(GardenFormController.class);
-
 
   /**
    * Gets the home page that displays the list of gardens
@@ -45,7 +45,14 @@ public class GardenFormController {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     logger.info("Authentication: " + authentication);
-    List<Garden> gardens = gardenService.getGardenResults();
+    String currentUserEmail = authentication.getName();
+    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+    if (gardenerOptional.isPresent()) {
+      gardener = gardenerOptional.get();
+    }
+    Long gardenerId = gardener.getId();
+
+    List<Garden> gardens = gardenService.getGardensByGardenerId(gardenerId);
     model.addAttribute("gardens", gardens);
 
     String requestUri = request.getRequestURI();
@@ -58,14 +65,17 @@ public class GardenFormController {
   }
 
   private final GardenService gardenService;
+  private final GardenerFormService gardenerFormService;
+  private Gardener gardener;
 
   /**
    * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
    * @param gardenService the garden service used to interact with the database
    */
   @Autowired
-  public GardenFormController(GardenService gardenService) {
+  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService) {
     this.gardenService = gardenService;
+    this.gardenerFormService = gardenerFormService;
   }
 
   /**
@@ -101,13 +111,19 @@ public class GardenFormController {
       @RequestParam(name = "location") String location,
       @RequestParam(name = "size") String size,
       @RequestParam(name = "redirect") String redirect,
-      Model model) {
+      Model model,
+      Authentication authentication) {
     logger.info("POST /form");
     String validatedName = ValidityChecker.validateGardenName(name);
     String validatedLocation = ValidityChecker.validateGardenLocation(location);
     String validatedSize = ValidityChecker.validateGardenSize(size);
-
+    String currentUserEmail = authentication.getName();
     boolean isValid = true;
+
+    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+    if (gardenerOptional.isPresent()) {
+      gardener = gardenerOptional.get();
+    }
 
     if (!Objects.equals(name, validatedName)) {
       model.addAttribute("nameError", validatedName);
@@ -125,9 +141,9 @@ public class GardenFormController {
     if (isValid) {
         Garden garden;
       if (Objects.equals(size.trim(), "")) {
-        garden = gardenService.addGarden(new Garden(name, location));
+        garden = gardenService.addGarden(new Garden(name, location, gardener));
       } else {
-        garden = gardenService.addGarden(new Garden(name, location, new BigDecimal(validatedSize).stripTrailingZeros().toPlainString()));
+        garden = gardenService.addGarden(new Garden(name, location, new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(), gardener));
       }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
     } else {
@@ -222,7 +238,7 @@ public class GardenFormController {
     }
 
     if (isValid) {
-      Garden existingGarden = gardenService.getGarden(Long.parseLong(gardenId)).get();
+      Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
       existingGarden.setName(name);
       existingGarden.setLocation(location);
 
@@ -239,7 +255,7 @@ public class GardenFormController {
       model.addAttribute("name", name);
       model.addAttribute("location", location);
       model.addAttribute("size", size.replace(',', '.'));
-      model.addAttribute(gardenService.getGarden(Long.parseLong(gardenId)).get());
+      model.addAttribute(gardenService.getGarden(parseLong(gardenId)).get());
       returnedTemplate = "editGardensFormTemplate";
     }
     return returnedTemplate;

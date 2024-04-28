@@ -25,4 +25,12 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
      * @return A list of all gardens stored in the repository.
      */
     List<Garden> findAll();
+
+    /**
+     * Retrieves a list of gardens by their owner's gardener ID.
+     *
+     * @param gardenerId The identifier of the garden's owner.
+     * @return A list of all gardens with the specified owner stored in the repository.
+     */
+    List<Garden> findByGardenerId(Long gardenerId);
 }
