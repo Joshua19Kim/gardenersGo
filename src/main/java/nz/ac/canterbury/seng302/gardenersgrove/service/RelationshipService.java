@@ -72,8 +72,8 @@ public class RelationshipService {
         return gardenerFormService.getGardenersById(allDeclinedFriendIds);
     }
 
-    public void updateRelationshipStatus(String action, Long gardenerId, Long friendId) {
-        relationshipRepository.updateRelationshipStatus(action, gardenerId, friendId);
+    public void updateRelationshipStatus(String status, Long gardenerId, Long friendId) {
+        relationshipRepository.updateRelationshipStatus(status, gardenerId, friendId);
     }
 
     public List<Gardener> getGardenersWithNoRelationship(List<Gardener> allRelationships, List<Gardener> allGardeners) {

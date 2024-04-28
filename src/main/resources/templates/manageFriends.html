@@ -12,7 +12,7 @@
 <div class="container">
     <div style="display: flex; justify-content: space-between">
         <h1>Manage Friends</h1>
-        <button data-target="#friend-request-modal" data-toggle="modal" id="friend-request-button" class="edit-button"
+        <button data-target="#friend-request-modal" data-toggle="modal" id="friend-request-button" class="button"
                 onclick="displayFriendRequests()" type="button">Friend Requests
         </button>
     </div>
@@ -42,16 +42,56 @@
                     </div>
                     <div class="table-body">
                         <!-- Iterate over search results -->
-                        <div class="friend" id="sent-requests" th:each="pendingRequest : ${pending}">
-                            <!-- Display gardener information -->
-                            <img alt="Profile Picture" th:src="@{${'/uploads/' + pendingRequest.getProfilePicture()}}">
-                            <p th:text="${pendingRequest.toString()}"></p>
+                        <div id="sent-requests">
+                            <div class="friend" th:each="pendingRequest : ${pending}">
+                                <!-- Display gardener information -->
+                                <div class="friend-info">
+                                    <img alt="Profile Picture"
+                                         th:src="@{${'/uploads/' + pendingRequest.getProfilePicture()}}">
+                                    <p th:text="${pendingRequest.toString()}"></p>
+                                </div>
+                                <div class="friend-info">
+                                    <p>Pending</p>
+                                </div>
+                            </div>
+                            <div class="friend" th:each="declinedRequest : ${declined}">
+                                <!-- Display gardener information -->
+                                <div class="friend-info">
+                                <img alt="Profile Picture"
+                                     th:src="@{${'/uploads/' + declinedRequest.getProfilePicture()}}">
+                                <p th:text="${declinedRequest.toString()}"></p>
+                                </div>
+                                <div class="friend-info">
+                                <p>Declined</p>
+                                </div>
+                            </div>
                         </div>
                         <!-- Iterate over search results -->
                         <div class="friend" id="received-requests" th:each="receivedRequest : ${incoming}">
                             <!-- Display gardener information -->
-                            <img alt="Profile Picture" th:src="@{${'/uploads/' + receivedRequest.getProfilePicture()}}">
-                            <p th:text="${receivedRequest.toString()}"></p>
+                            <div class="friend-info">
+                                <img alt="Profile Picture"
+                                     th:src="@{${'/uploads/' + receivedRequest.getProfilePicture()}}">
+                                <p th:text="${receivedRequest.toString()}"></p>
+                            </div>
+                            <div class="friend-info">
+                                <form method="post" th:action="@{/manageRequest}" style="margin-right: 5px;">
+                                    <input type="hidden"
+                                           th:name="${_csrf.parameterName}"
+                                           th:value="${_csrf.token}"/>
+                                    <input name="friendId" th:value="${receivedRequest.getId()}" type="hidden">
+                                    <input name="status" value="accepted" type="hidden">
+                                    <button class="accept-friend-req-btn button">Accept</button>
+                                </form>
+                                <form method="post" th:action="@{/manageRequest}">
+                                    <input type="hidden"
+                                           th:name="${_csrf.parameterName}"
+                                           th:value="${_csrf.token}"/>
+                                    <input name="friendId" th:value="${receivedRequest.getId()}" type="hidden">
+                                    <input name="status" value="declined" type="hidden">
+                                    <button class="decline-friend-req-btn button">Decline</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -77,18 +117,22 @@
         const sentDiv = document.getElementById("sent-requests");
         const receivedDiv = document.getElementById("received-requests")
         if (requestType === "sent") {
-            document.getElementById("sent-btn").style.background = "#d9f7d9";
+            document.getElementById("sent-btn").style.background = "#45a049";
             document.getElementById("received-btn").style.background = "white";
+            document.getElementById("received-btn").style.color = "black";
+            document.getElementById("sent-btn").style.color = "white";
             // If there is a div, then hide/show it
             if (receivedDiv !== null) {
                 receivedDiv.style.display = "none";
             }
             if (sentDiv !== null) {
-                sentDiv.style.display = "flex";
+                sentDiv.style.display = "block";
             }
         } else if (requestType === "received") {
             document.getElementById("sent-btn").style.background = "white";
-            document.getElementById("received-btn").style.background = "#d9f7d9";
+            document.getElementById("received-btn").style.background = "#45a049";
+            document.getElementById("received-btn").style.color = "white";
+            document.getElementById("sent-btn").style.color = "black";
             // If there is a div, then hide/show it
             if (receivedDiv !== null) {
                 receivedDiv.style.display = "flex";
