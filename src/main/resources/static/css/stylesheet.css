@@ -300,7 +300,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     opacity: 1;
 }
 
-.edit-button {
+.button {
     background-color: #45a049;
     color: #fff;
     border: none;
@@ -309,7 +309,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     cursor: pointer;
 }
 
-.edit-button:hover {
+.button:hover {
     background-color: #45a049;
 }
 
@@ -534,12 +534,19 @@ body, h2, h3, h4, h5, h6, a {
     flex-direction: column;
 }
 
+/* Leave the content for the 'my friends' section displaying normally (the modal ones have been changed) */
+.table-body .friend {
+    justify-content: normal;
+}
+
 .friend {
     display: flex;
     padding: 10px;
     border-bottom: 1px solid #d9f7d9;
     align-content: center;
     align-items: center;
+    width: 100%;
+    justify-content: space-between;
 }
 
 .friend p {
@@ -654,11 +661,21 @@ body, h2, h3, h4, h5, h6, a {
 }
 
 #sent-btn {
-    background: #d9f7d9;
+    background: #45a049;
 }
 
 #received-requests {
     display: none;
+    justify-content: space-between;
+}
+
+.friend-info {
+    display: flex;
+    align-items: center;
+}
+
+.decline-friend-req-btn {
+    background: #e64343 !important;
 }
 
 

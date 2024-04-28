@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -20,8 +19,8 @@ public interface RelationshipRepository extends CrudRepository<Relationships, Lo
 
     /**
      *
-     * @param id
-     * @returns a list of all the accepted relationships of the user
+     * @param id find all friends of gardener given gardener id
+     * @return a list of all the accepted relationships of the user
      */
     @Query(value = "SELECT gardener_id FROM Relationships WHERE friend_id = ?1 AND status='accepted' " +
             "UNION " +

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +21,6 @@ import org.slf4j.LoggerFactory;
 public class RelationshipService {
     private final RelationshipRepository relationshipRepository;
     private final GardenerFormService gardenerFormService;
-    private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
-
 
     @Autowired
     public RelationshipService(RelationshipRepository relationshipRepository, GardenerFormService gardenerFormService) {
@@ -39,18 +36,19 @@ public class RelationshipService {
         return relationshipRepository.findAll();
     }
 
+    /**
+     * Adds a Relationship to persistence
+     *
+     * @param relationships object to persist
+     */
+    public void addRelationship(Relationships relationships) {
+        relationshipRepository.save(relationships);
+    }
+
     public Optional<Relationships> getRelationShip(long gardenerId, long friendId) {
         return relationshipRepository.findRelationshipsByGardenerIdAndFriendId(gardenerId, friendId);
     }
 
-    /**
-     * Adds a Relationship to persistence
-     * @param relationships object to persist
-     * @return the saved Relationship object
-     */
-    public Relationships addRelationship(Relationships relationships) {
-        return relationshipRepository.save(relationships);
-    }
 
     public List<Gardener> getCurrentUserRelationships (Long id) {
         List<Long> allFriendIds = relationshipRepository.getGardenerFriends(id);
@@ -73,13 +71,14 @@ public class RelationshipService {
         return gardenerFormService.getGardenersById(allDeclinedFriendIds);
     }
 
-    public void updateRelationshipStatus(String action, Long gardenerId, Long friendId) {
-       Optional<Relationships> potentialRelationship = relationshipRepository.findRelationshipsByGardenerIdAndFriendId(gardenerId, friendId);
-       if(potentialRelationship.isPresent()) {
-           Relationships relationship = potentialRelationship.get();
-           relationship.setStatus(action);
-           relationshipRepository.save(relationship);
-       }
+    public void updateRelationshipStatus(String status, Long gardenerId, Long friendId) {
+        Optional<Relationships> potentialRelationship = relationshipRepository.findRelationshipsByGardenerIdAndFriendId(gardenerId, friendId);
+        if(potentialRelationship.isPresent()) {
+            Relationships relationship = potentialRelationship.get();
+            relationship.setStatus(status);
+            relationshipRepository.save(relationship);
+        }
+
     }
 
     public List<Gardener> getGardenersWithNoRelationship(List<Gardener> allRelationships, List<Gardener> allGardeners) {
