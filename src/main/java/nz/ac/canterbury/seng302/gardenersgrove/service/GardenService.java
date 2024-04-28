@@ -20,7 +20,7 @@ public class GardenService {
      *
      * @param gardenRepository The repository used for accessing garden data.
      */
-    public GardenService(GardenRepository gardenRepository){ this.gardenRepository = gardenRepository;}
+    public GardenService(GardenRepository gardenRepository){this.gardenRepository = gardenRepository;}
 
     /**
      * Retrieves a list of all gardens stored in the repository.
