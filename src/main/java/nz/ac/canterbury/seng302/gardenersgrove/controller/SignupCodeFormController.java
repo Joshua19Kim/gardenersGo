@@ -53,11 +53,15 @@ public class SignupCodeFormController {
                                 @RequestParam(name= "signupCode", required = false, defaultValue = "") String signupCode,
                                 Model model) {
         logger.info("GET /signup");
-        logger.info(request.getSession().getAttribute("newGardenerAttribute").toString());
         if ((request.getSession().getAttribute("newGardenerAttribute")) != null) {
             gardenerId = (Long) request.getSession().getAttribute("newGardenerAttribute");
-            Gardener newGardener = gardenerFormService.findById(gardenerId).get();
-            logger.info("New Gardener: " + newGardener);
+            Optional<Gardener> newGardener = gardenerFormService.findById(gardenerId);
+            if (newGardener.isPresent()) {
+                Gardener gardener = newGardener.get();
+            } else {
+                return "login";
+            }
+            logger.info("New Gardener: " + gardener);
             EmailUserService emailService = new EmailUserService("jxmine456@gmail.com", "Nature's Facebook Signup Code", String.format("""
                 Your unique signup code for Nature's Facebook: %s
                 
