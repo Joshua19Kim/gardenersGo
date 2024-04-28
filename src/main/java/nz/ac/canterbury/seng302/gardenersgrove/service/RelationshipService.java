@@ -3,15 +3,14 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.RelationshipRepository;
-import org.aspectj.asm.internal.Relationship;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,15 +22,13 @@ import org.slf4j.LoggerFactory;
 public class RelationshipService {
     private final RelationshipRepository relationshipRepository;
     private final GardenerFormService gardenerFormService;
-    private final GardenerFormRepository gardenerFormRepository;
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
 
 
     @Autowired
-    public RelationshipService(RelationshipRepository relationshipRepository, GardenerFormService gardenerFormService, GardenerFormRepository gardenerFormRepository) {
+    public RelationshipService(RelationshipRepository relationshipRepository, GardenerFormService gardenerFormService) {
         this.relationshipRepository = relationshipRepository;
         this.gardenerFormService = gardenerFormService;
-        this.gardenerFormRepository = gardenerFormRepository;
     }
 
     /**
@@ -40,6 +37,10 @@ public class RelationshipService {
      */
     public List<Relationships> getRelationships() {
         return relationshipRepository.findAll();
+    }
+
+    public Optional<Relationships> getRelationShip(long gardenerId, long friendId) {
+        return relationshipRepository.findRelationshipsByGardenerIdAndFriendId(gardenerId, friendId);
     }
 
     /**
@@ -73,7 +74,12 @@ public class RelationshipService {
     }
 
     public void updateRelationshipStatus(String action, Long gardenerId, Long friendId) {
-        relationshipRepository.updateRelationshipStatus(action, gardenerId, friendId);
+       Optional<Relationships> potentialRelationship = relationshipRepository.findRelationshipsByGardenerIdAndFriendId(gardenerId, friendId);
+       if(potentialRelationship.isPresent()) {
+           Relationships relationship = potentialRelationship.get();
+           relationship.setStatus(action);
+           relationshipRepository.save(relationship);
+       }
     }
 
     public List<Gardener> getGardenersWithNoRelationship(List<Gardener> allRelationships, List<Gardener> allGardeners) {
