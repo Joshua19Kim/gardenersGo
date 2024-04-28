@@ -52,4 +52,8 @@ public class LostPasswordToken {
     public Date getExpiryDate() {
         return expiryDate;
     }
+
+    public Gardener getGardener() {
+        return gardener;
+    }
 }
