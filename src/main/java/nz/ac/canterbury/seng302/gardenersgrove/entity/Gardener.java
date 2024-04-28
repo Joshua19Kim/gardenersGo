@@ -112,6 +112,8 @@ public class Gardener {
 
     public String getProfilePicture() { return this.profilePicture; }
 
+    public List<Garden> getGardens() { return gardens; }
+
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
     public void setLastName(String lastName) { this.lastName = lastName; }
@@ -125,6 +127,8 @@ public class Gardener {
     }
 
     public void updatePassword(String password) { this.password = password.hashCode(); }
+
+    public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
 
     @Override
     public String toString() {

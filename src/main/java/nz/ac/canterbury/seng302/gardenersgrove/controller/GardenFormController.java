@@ -50,9 +50,8 @@ public class GardenFormController {
     if (gardenerOptional.isPresent()) {
       gardener = gardenerOptional.get();
     }
-    Long gardenerId = gardener.getId();
 
-    List<Garden> gardens = gardenService.getGardensByGardenerId(gardenerId);
+    List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
     model.addAttribute("gardens", gardens);
 
     String requestUri = request.getRequestURI();

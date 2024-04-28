@@ -137,6 +137,13 @@ public class Garden {
   public void setLocation(String location) {this.location = location;}
 
   /**
+   * Sets the owner of the garden.
+   *
+   * @param gardener The owner of the garden.
+   */
+  public void setGardener(Gardener gardener) {this.gardener = gardener;}
+
+  /**
    * Sets the id of the garden
    * @param id the garden id
    */
