@@ -110,11 +110,16 @@ public class ManageFriendsController {
     }
 
     @PostMapping("/manageRequest")
-    public String acceptFriend(@RequestParam (name = "friendId") Long friendId,
+    public String manageFriend(@RequestParam (name = "friendId") Long friendId,
                                @RequestParam (name = "status") String status) {
         String currentEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Gardener> currentGardener = gardenerFormService.findByEmail(currentEmail);
-        currentGardener.ifPresent(value -> relationshipService.updateRelationshipStatus(status, friendId, value.getId()));
+        if (Objects.equals(status, "pending")) {
+            currentGardener.ifPresent(value -> relationshipService.updateRelationshipStatus(status, value.getId(), friendId));
+        } else {
+            currentGardener.ifPresent(value -> relationshipService.updateRelationshipStatus(status, friendId, value.getId()));
+        }
+
         return "redirect:/manageFriends";
     }
 
