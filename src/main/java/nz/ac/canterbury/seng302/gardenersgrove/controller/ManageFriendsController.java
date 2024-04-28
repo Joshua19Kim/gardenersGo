@@ -70,6 +70,7 @@ public class ManageFriendsController {
             allRelationships.addAll(allCurrentUserDeclinedRequests);
 
             noExistingRelationship = relationshipService.getGardenersWithNoRelationship(allRelationships, gardenerFormService.getGardeners());
+            model.addAttribute("searchPool", noExistingRelationship);
 
         } else {
             logger.info("No user with that email");
@@ -87,7 +88,7 @@ public class ManageFriendsController {
      * @return manage friends html
      */
     @PostMapping("/manageFriends")
-    public String handleFormSubmission(@RequestParam(name = "searchQuery") String searchQuery,
+    public String handleFormSubmission(@RequestParam(name = "searchQuery", required = false) String searchQuery,
                                        Model model) {
 
         List<Gardener> searchResults = new ArrayList<>();
@@ -98,14 +99,14 @@ public class ManageFriendsController {
             } else {
                 nameMatch = gardener.getFirstName() + " " + gardener.getLastName();
             }
-            if (nameMatch == searchQuery || gardener.getEmail() == searchQuery) {
+            if (Objects.equals(nameMatch, searchQuery) || Objects.equals(gardener.getEmail(), searchQuery)) {
                 searchResults.add(gardener);
             }
         }
 
         model.addAttribute("searchResults", searchResults);
 
-        return "/manageFriends";
+        return "redirect:/manageFriends";
     }
 
     @PostMapping("/manageRequest")

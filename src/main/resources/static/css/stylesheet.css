@@ -361,34 +361,6 @@ body, h2, h3, h4, h5, h6, a {
 
 
 
-/*label {*/
-/*    margin: 5px;*/
-/*    display: inline-block;*/
-/*    min-width: 200px;*/
-/*}*/
-
-/*input {*/
-/*    margin: 5px;*/
-/*    width: 200px;*/
-/*}*/
-
-/*.form-control {*/
-/*    width: auto;*/
-/*}*/
-
-/*input[type=submit] {*/
-/*    background-color: cornflowerblue;*/
-/*    border: none;*/
-/*    color: white;*/
-/*    padding: 5px 2px;*/
-/*    text-align: center;*/
-/*    text-decoration: none;*/
-/*    cursor: pointer;*/
-/*    font-size: 16px;*/
-/*    width: 100px;*/
-/*    border-radius: 5px;*/
-/*}*/
-
 /* ------------------------------Upload CSS ------------------------------ */
 
 .formContainer {
@@ -522,6 +494,69 @@ body, h2, h3, h4, h5, h6, a {
     border-bottom: 1px solid #45a049;
 }
 
+#add-friend-button {
+    float: right;
+    font-size: 1rem;
+    height: min-content;
+    margin-left: 15px;
+}
+
+.search-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    border-radius: 15px;
+    background: #d9f7d9;
+    width: 100%;
+    font-weight: bold;
+}
+
+
+.search-bar {
+    background-color: yellow;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar input[type=text] {
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid grey;
+    float: left;
+    width: 80%;
+    background: #f1f1f1;
+}
+
+form.search-bar button {
+    float: left;
+    width: 20%;
+    padding: 10px;
+    background: #45a049;
+    color: white;
+    font-size: 17px;
+    border: 1px solid grey;
+    border-left: none; /* Prevent double borders */
+    cursor: pointer;
+}
+form.search-bar button:hover {
+    background: #50cc56;
+}
+
+form.search-bar::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.search-results {
+    background-color: #45a049;
+    padding: 100px;
+    margin-top: 10px;
+    overflow: auto;
+}
+
 #friend-request-button {
     float: right;
     font-size: 1rem;
@@ -601,7 +636,7 @@ body, h2, h3, h4, h5, h6, a {
 }
 
 /* Modal Box */
-.modal .friend-requests {
+.modal .friend-requests, .add-friends {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
@@ -612,15 +647,18 @@ body, h2, h3, h4, h5, h6, a {
     border-radius: 15px;
 }
 
-/* The Close Button for the modal */
+
+/* The Close Button for the modals */
 .close {
+    position: relative;
+    top: 0;
+    right: 10px;
     background: none;
     float: right;
     font-size: 1.5rem;
     font-weight: bold;
     border-radius: 5px;
     border: none;
-
 }
 
 .close:hover,

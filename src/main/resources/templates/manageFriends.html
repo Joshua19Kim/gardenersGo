@@ -6,15 +6,22 @@
     <link rel="stylesheet" th:href="@{css/stylesheet.css}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
+
 </head>
 <body>
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div class="container">
     <div style="display: flex; justify-content: space-between">
         <h1>Manage Friends</h1>
-        <button data-target="#friend-request-modal" data-toggle="modal" id="friend-request-button" class="button"
-                onclick="displayFriendRequests()" type="button">Friend Requests
-        </button>
+
+        <div class="button-container">
+            <button data-target="#add-friend-modal" data-toggle="modal" id="add-friend-button" class="button"
+                    onclick="displaySearchBar()" type="button">Add Friend
+            </button>
+            <button data-target="#friend-request-modal" data-toggle="modal" id="friend-request-button" class="button"
+                    onclick="displayFriendRequests()" type="button">Friend Requests
+            </button>
+        </div>
     </div>
     <div class="friendsContainer">
         <div class="friendManagement">
@@ -29,7 +36,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div aria-hidden="true" class="modal" id="friend-request-modal">
                 <div class="friend-requests">
@@ -96,6 +102,31 @@
                     </div>
                 </div>
             </div>
+
+            <div aria-hidden="true" class="modal" id="add-friend-modal">
+                <div class="add-friends">
+                    <div class="header">
+                        <button class="close" onclick="displaySearchBar()">&times;</button>
+                        <div class="search-table-header">
+                            <h3>Find Gardeners</h3>
+                        </div>
+                    </div>
+                    <div class="table-body">
+                        <!-- https://www.w3schools.com/howto/howto_css_search_button.asp search bar and styling-->
+                        <div class="input-search-bar">
+                            <form class="search-bar"  method="post">
+                                <input type="text" placeholder="Search...">
+                                <button type="submit"><i class="fa fa-search"></i></button>
+                            </form>
+                        </div>
+                        <div class="search-results">
+                            <script>
+
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -111,6 +142,22 @@
                 document.getElementById("friend-request-modal").style.display = "";
                 break;
         }
+    }
+
+    function displaySearchBar() {
+        const searchModal = document.getElementById("add-friend-modal");
+        switch (searchModal.style.display) {
+            case "":
+                document.getElementById("add-friend-modal").style.display = "block";
+                break;
+            case "block":
+                document.getElementById("add-friend-modal").style.display = "";
+                break;
+        }
+    }
+
+    function getSearchResults() {
+        const searchQuery = document.getElementById("search-input").value;
     }
 
     function displayRequest(requestType) {
