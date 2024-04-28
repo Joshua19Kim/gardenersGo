@@ -46,9 +46,9 @@ public class SignupCodeFormController {
     public String getSignupForm(HttpServletRequest request,
                                 @RequestParam(name= "signupCode", required = false, defaultValue = "") String signupCode,
                                 Model model) {
+        logger.info("GET /signup");
         gardenerId = (Long) request.getSession().getAttribute("newGardenerAttribute");
         Gardener newGardener = gardenerFormService.findById(gardenerId).get();
-        logger.info("GET /signup");
         logger.info("New Gardener: " + newGardener);
         EmailUserService emailService = new EmailUserService("jxmine456@gmail.com", "Nature's Facebook Signup Code", String.format("""
                 Your unique signup code for Nature's Facebook: %s
@@ -59,16 +59,20 @@ public class SignupCodeFormController {
     }
 
     @PostMapping("/signup")
-    public ModelAndView sendSignupForm(HttpServletRequest request,
+    public String sendSignupForm(HttpServletRequest request,
                                        @RequestParam(name= "signupCode", required = false, defaultValue = "") String signupCode,
                                        Model model) {
-        Gardener newGardener = gardenerFormService.findById(gardenerId).get();
         logger.info("POST /signup");
-        logger.info("New Gardener: " + gardener);
+        gardenerId = (Long) request.getSession().getAttribute("newGardenerAttribute");
+        Gardener newGardener = gardenerFormService.findById(gardenerId).get();
+        request.getSession().setAttribute("newGardenerAttribute", newGardener.getId());
+        logger.info("New Gardener: " + newGardener);
         if (Objects.equals(signupCode, token)) {
+            logger.info("Granting authority.....");
             newGardener.grantAuthority("ROLE_USER");
-            return new ModelAndView("redirect:/login");
+            logger.info(newGardener.getAuthorities().toString());
+            return "redirect:/login";
         }
-        return new ModelAndView("signupCodeForm");
+        return "signupCodeForm";
     }
 }
