@@ -1,11 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +19,8 @@ public interface RelationshipRepository extends CrudRepository<Relationships, Lo
 
     /**
      *
-     * @param id
-     * @returns a list of all the accepted relationships of the user
+     * @param id find all friends of gardener given gardener id
+     * @return a list of all the accepted relationships of the user
      */
     @Query(value = "SELECT gardener_id FROM Relationships WHERE friend_id = ?1 AND status='accepted' " +
             "UNION " +
@@ -37,14 +35,6 @@ public interface RelationshipRepository extends CrudRepository<Relationships, Lo
 
     @Query(value = "Select friend_id FROM Relationships WHERE gardener_id = ?1 and status = 'declined'", nativeQuery = true)
     List<Long> getGardenerDeclinedRequests(long id);
-
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE Relationships SET status = ?1 WHERE gardener_id = ?2 and friend_id = ?3 ", nativeQuery = true)
-    void updateRelationshipStatus(String action, long gardenerId, long friendId);
-
-
-
 
     Optional<Relationships> findRelationshipsByGardenerIdAndFriendId(long gardenerId, long friendId);
 

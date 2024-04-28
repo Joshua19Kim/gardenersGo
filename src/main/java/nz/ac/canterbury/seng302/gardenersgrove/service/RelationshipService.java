@@ -3,9 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.RelationshipRepository;
-import org.aspectj.asm.internal.Relationship;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,15 +21,11 @@ import org.slf4j.LoggerFactory;
 public class RelationshipService {
     private final RelationshipRepository relationshipRepository;
     private final GardenerFormService gardenerFormService;
-    private final GardenerFormRepository gardenerFormRepository;
-    private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
-
 
     @Autowired
-    public RelationshipService(RelationshipRepository relationshipRepository, GardenerFormService gardenerFormService, GardenerFormRepository gardenerFormRepository) {
+    public RelationshipService(RelationshipRepository relationshipRepository, GardenerFormService gardenerFormService) {
         this.relationshipRepository = relationshipRepository;
         this.gardenerFormService = gardenerFormService;
-        this.gardenerFormRepository = gardenerFormRepository;
     }
 
     /**
@@ -44,12 +38,17 @@ public class RelationshipService {
 
     /**
      * Adds a Relationship to persistence
+     *
      * @param relationships object to persist
-     * @return the saved Relationship object
      */
-    public Relationships addRelationship(Relationships relationships) {
-        return relationshipRepository.save(relationships);
+    public void addRelationship(Relationships relationships) {
+        relationshipRepository.save(relationships);
     }
+
+    public Optional<Relationships> getRelationShip(long gardenerId, long friendId) {
+        return relationshipRepository.findRelationshipsByGardenerIdAndFriendId(gardenerId, friendId);
+    }
+
 
     public List<Gardener> getCurrentUserRelationships (Long id) {
         List<Long> allFriendIds = relationshipRepository.getGardenerFriends(id);
@@ -73,7 +72,13 @@ public class RelationshipService {
     }
 
     public void updateRelationshipStatus(String status, Long gardenerId, Long friendId) {
-        relationshipRepository.updateRelationshipStatus(status, gardenerId, friendId);
+        Optional<Relationships> potentialRelationship = relationshipRepository.findRelationshipsByGardenerIdAndFriendId(gardenerId, friendId);
+        if(potentialRelationship.isPresent()) {
+            Relationships relationship = potentialRelationship.get();
+            relationship.setStatus(status);
+            relationshipRepository.save(relationship);
+        }
+
     }
 
     public List<Gardener> getGardenersWithNoRelationship(List<Gardener> allRelationships, List<Gardener> allGardeners) {
