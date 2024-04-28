@@ -534,6 +534,11 @@ body, h2, h3, h4, h5, h6, a {
     flex-direction: column;
 }
 
+/* Leave the content for the 'my friends' section displaying normally (the modal ones have been changed) */
+.table-body .friend {
+    justify-content: normal;
+}
+
 .friend {
     display: flex;
     padding: 10px;
