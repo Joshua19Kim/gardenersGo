@@ -6,12 +6,15 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import java.time.LocalDate;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 
 public class UserProfileControllerTest {
@@ -35,13 +38,13 @@ public class UserProfileControllerTest {
         gardener = Mockito.mock(Gardener.class);
         inputValidator = Mockito.mock(InputValidationService.class);
         optional = Mockito.mock(Optional.class);
-        gardener.setEmail("testSameEmail@test.test");
+        gardener.setEmail("testEmail@test.test");
     }
 
     @Test
     void GivenGardenerEmailExistingInServer_WhenToShowDetails_ControllerFindsDetailsWithEmail() {
         Authentication authentication = Mockito.mock(Authentication.class);
-        Mockito.when(authentication.getName()).thenReturn("testSameEmail@test.test");
+        Mockito.when(authentication.getName()).thenReturn("testEmail@test.test");
         userProfileController.getUserProfile(null, null, null, null, false, modelMock);
         Mockito.verify(gardenerFormService, times(1)).findByEmail(gardener.getEmail());
     }
@@ -96,4 +99,101 @@ public class UserProfileControllerTest {
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
     }
 
+    @Test
+    void GivenCorrectOldPasswordAndMatchingNewValidPasswords_WhenUserConfirms_SaveNewPasswordWithoutError() {
+        Mockito.when(authentication.getName()).thenReturn("testEmail@test.test");
+        Mockito.when(gardenerFormService.findByEmail("testEmail@test.test")).thenReturn(Optional.of(gardener));
+        String passwordInServer = "Password1!";
+        Mockito.when(gardener.getPassword()).thenReturn(passwordInServer.hashCode());
+
+        String testResult = userProfileController.updatePassword("Password1!","newPassword1!", "newPassword1!", modelMock);
+
+        Mockito.verify(modelMock).addAttribute("passwordCorrect","");
+        Mockito.verify(modelMock).addAttribute("passwordsMatch","");
+        Mockito.verify(modelMock).addAttribute("passwordStrong","");
+        Mockito.verify(gardener, times(1)).updatePassword("newPassword1!");
+        Mockito.verify(gardenerFormService,times(1)).addGardener(gardener);
+        String expectedNextPage = "redirect:/user";
+        assertEquals(expectedNextPage, testResult);
+    }
+
+    @Test
+    void GivenIncorrectOldPasswordAndMatchingNewValidPasswords_WhenUserConfirms_DoNotSaveAndShowsErrorMessage() {
+        Mockito.when(authentication.getName()).thenReturn("testSameEmail@test.test");
+        Mockito.when(gardenerFormService.findByEmail("testSameEmail@test.test")).thenReturn(Optional.of(gardener));
+        String passwordInServer = "Password1!";
+        Mockito.when(gardener.getPassword()).thenReturn(passwordInServer.hashCode());
+
+        String testResult = userProfileController.updatePassword("wrongPassword1!","newPassword1!", "newPassword1!", modelMock);
+
+        Mockito.verify(modelMock).addAttribute("passwordCorrect","Your old password is incorrect.");
+        Mockito.verify(modelMock).addAttribute("passwordsMatch","");
+        Mockito.verify(modelMock).addAttribute("passwordStrong","");
+        Mockito.verify(gardener, times(0)).updatePassword("newPassword1!");
+        Mockito.verify(gardenerFormService,times(0)).addGardener(gardener);
+        String expectedNextPage = "password";
+        assertEquals(expectedNextPage, testResult);
+    }
+
+    @Test
+    void GivenCorrectOldPasswordAndNotMatchingNewValidPasswords_WhenUserConfirms_DoNotSaveAndShowsErrorMessage() {
+        Mockito.when(authentication.getName()).thenReturn("testSameEmail@test.test");
+        Mockito.when(gardenerFormService.findByEmail("testSameEmail@test.test")).thenReturn(Optional.of(gardener));
+        String passwordInServer = "Password1!";
+        Mockito.when(gardener.getPassword()).thenReturn(passwordInServer.hashCode());
+
+        String testResult = userProfileController.updatePassword("Password1!","newDifferentPassword1@@", "newPassword1!", modelMock);
+
+        Mockito.verify(modelMock).addAttribute("passwordCorrect","");
+        Mockito.verify(modelMock).addAttribute("passwordsMatch","Passwords do not match.");
+        Mockito.verify(modelMock).addAttribute("passwordStrong","");
+        Mockito.verify(gardener, times(0)).updatePassword("newPassword1!");
+        Mockito.verify(gardenerFormService,times(0)).addGardener(gardener);
+        String expectedNextPage = "password";
+        assertEquals(expectedNextPage, testResult);
+    }
+
+    @Test
+    void GivenCorrectOldPasswordAndMatchingNewInvalidPasswords_WhenUserConfirms_DoNotSaveAndShowsErrorMessage() {
+        Mockito.when(authentication.getName()).thenReturn("testSameEmail@test.test");
+        Mockito.when(gardenerFormService.findByEmail("testSameEmail@test.test")).thenReturn(Optional.of(gardener));
+        String passwordInServer = "Password1!";
+        Mockito.when(gardener.getPassword()).thenReturn(passwordInServer.hashCode());
+
+        String testResult = userProfileController.updatePassword("Password1!","newpassword", "newpassword", modelMock);
+
+        Mockito.verify(modelMock).addAttribute("passwordCorrect","");
+        Mockito.verify(modelMock).addAttribute("passwordsMatch","");
+        Mockito.verify(modelMock).addAttribute("passwordStrong","Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+        Mockito.verify(gardener, times(0)).updatePassword("newPassword1!");
+        Mockito.verify(gardenerFormService,times(0)).addGardener(gardener);
+        String expectedNextPage = "password";
+        assertEquals(expectedNextPage, testResult);
+    }
+
+    @Test
+    void GivenIncorrectOldPasswordAndNotMatchingNewInvalidPasswords_WhenUserConfirms_DoNotSaveAndShowsErrorMessage() {
+        Mockito.when(authentication.getName()).thenReturn("testSameEmail@test.test");
+        Mockito.when(gardenerFormService.findByEmail("testSameEmail@test.test")).thenReturn(Optional.of(gardener));
+        String passwordInServer = "Password1!";
+        Mockito.when(gardener.getPassword()).thenReturn(passwordInServer.hashCode());
+
+        String testResult = userProfileController.updatePassword("Passwrong1@#","newpass", "newpassword", modelMock);
+
+        Mockito.verify(modelMock).addAttribute("passwordCorrect","Your old password is incorrect.");
+        Mockito.verify(modelMock).addAttribute("passwordsMatch","Passwords do not match.");
+        Mockito.verify(modelMock).addAttribute("passwordStrong","Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+        Mockito.verify(gardener, times(0)).updatePassword("newPassword1!");
+        Mockito.verify(gardenerFormService,times(0)).addGardener(gardener);
+        String expectedNextPage = "password";
+        assertEquals(expectedNextPage, testResult);
+    }
+
+    @Test
+    void GivenUserDoesNotHaveEmailInServer_WhenUserAccessesUpdatePasswordPage_RedirectToLoginPage() {
+        Mockito.when(authentication.getName()).thenReturn("");
+        String testResult = userProfileController.updatePassword("dodgyAccess","dodgyAccess!", "dodgyAccess!", modelMock);
+        String expectedNextPage = "/login";
+        assertEquals(expectedNextPage, testResult);
+    }
 }

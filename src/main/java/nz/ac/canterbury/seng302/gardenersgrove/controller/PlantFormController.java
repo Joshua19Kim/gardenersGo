@@ -4,16 +4,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,17 +39,19 @@ public class PlantFormController {
 
     private final PlantService plantService;
     private final GardenService gardenService;
+    private final ImageService imageService;
 
     /**
-     * Constructor for PlantFormController.
-     *
-     * @param plantService  Service for managing plant-related operations.
-     * @param gardenService Service for managing garden-related operations.
-     */
+    * Constructor for PlantFormController.
+    *
+    * @param plantService Service for managing plant-related operations.
+    * @param gardenService Service for managing garden-related operations.
+    */
     @Autowired
-    public PlantFormController(PlantService plantService, GardenService gardenService) {
+    public PlantFormController(PlantService plantService, GardenService gardenService, ImageService imageService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
+        this.imageService = imageService;
     }
 
     /**
@@ -75,31 +82,32 @@ public class PlantFormController {
         }
     }
 
-    /**
-     * Handles the submission of the plant form.
-     *
-     * @param name        The name of the plant.
-     * @param count       The count of the plant.
-     * @param description The description of the plant.
-     * @param date        The date the plant was planted.
-     * @param gardenId    The ID of the garden to which the plant belongs.
-     * @param model       The model for passing data to the view.
-     * @return The template for the plant form or redirects to the garden details page.
-     */
-    @PostMapping("gardens/details/plants/form")
-    public String submitForm(
-            @RequestParam(name = "name") String name,
-            @RequestParam(name = "count", required = false) String count,
-            @RequestParam(name = "description", required = false) String description,
-            @RequestParam(name = "date", required = false) String date,
-            @RequestParam(name = "gardenId") String gardenId,
-            Model model) {
+  /**
+   * Handles the submission of the plant form.
+   *
+   * @param name The name of the plant.
+   * @param count The count of the plant.
+   * @param description The description of the plant.
+   * @param date The date the plant was planted.
+   * @param gardenId The ID of the garden to which the plant belongs.
+   * @param model The model for passing data to the view.
+   * @return The template for the plant form or redirects to the garden details page.
+   */
+  @PostMapping("gardens/details/plants/form")
+  public String submitForm(
+          @RequestParam(name = "name") String name,
+          @RequestParam(name = "count", required = false) String count,
+          @RequestParam(name = "description", required = false) String description,
+          @RequestParam(name = "date", required = false) String date,
+          @RequestParam(name = "gardenId") String gardenId,
+          @RequestParam("file") MultipartFile file,
+          Model model) {
         logger.info("/gardens/details/plants/form");
         String validatedDate = "";
         if (!date.trim().isEmpty()) {
-            LocalDate localDate = LocalDate.parse(date);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            validatedDate = localDate.format(formatter);
+          LocalDate localDate = LocalDate.parse(date);
+          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+          validatedDate = localDate.format(formatter);
         }
 
         Garden garden = gardenService.getGarden(Long.parseLong(gardenId)).get();
@@ -110,16 +118,23 @@ public class PlantFormController {
         boolean isValid = true;
 
         if (!Objects.equals(name, validatedPlantName)) {
-            model.addAttribute("nameError", validatedPlantName);
-            isValid = false;
+          model.addAttribute("nameError", validatedPlantName);
+          isValid = false;
         }
         if (!Objects.equals(count.replace(",", "."), validatedPlantCount)) {
-            model.addAttribute("countError", validatedPlantCount);
-            isValid = false;
+          model.addAttribute("countError", validatedPlantCount);
+          isValid = false;
         }
         if (!Objects.equals(description, validatedPlantDescription)) {
-            model.addAttribute("descriptionError", validatedPlantDescription);
+          model.addAttribute("descriptionError", validatedPlantDescription);
+          isValid = false;
+        }
+        if(!file.isEmpty()) {
+          Optional<String> uploadMessage = imageService.checkValidImage(file);
+          if(uploadMessage.isPresent()) {
+            model.addAttribute("uploadError", uploadMessage.get());
             isValid = false;
+          }
         }
 
         if (isValid) {
@@ -161,6 +176,12 @@ public class PlantFormController {
                 plant = new Plant(name, garden);
             }
             plantService.addPlant(plant);
+            if(file.isEmpty()) {
+                plant.setImage("placeholder.jpg");
+                plantService.addPlant(plant);
+            } else {
+                imageService.savePlantImage(file, plant);
+            }
             return "redirect:/gardens/details?gardenId=" + gardenId;
         } else {
             List<Garden> gardens = gardenService.getGardenResults();
@@ -211,25 +232,26 @@ public class PlantFormController {
         }
     }
 
-    /**
-     * Handles the submission of the edit plant form.
-     *
-     * @param name        The updated name of the plant.
-     * @param count       The updated count of the plant.
-     * @param description The updated description of the plant.
-     * @param date        The updated date the plant was planted.
-     * @param plantId     The ID of the plant being edited.
-     * @param model       The model for passing data to the view.
-     * @return The template for the edit plant form or redirects to the garden details page.
-     */
-    @PostMapping("gardens/details/plants/edit")
-    public String submitEditPlantForm(
-            @RequestParam(name = "name") String name,
-            @RequestParam(name = "count", required = false) String count,
-            @RequestParam(name = "description", required = false) String description,
-            @RequestParam(name = "date", required = false) String date,
-            @RequestParam(name = "plantId") String plantId,
-            Model model) {
+  /**
+   * Handles the submission of the edit plant form.
+   *
+   * @param name The updated name of the plant.
+   * @param count The updated count of the plant.
+   * @param description The updated description of the plant.
+   * @param date The updated date the plant was planted.
+   * @param plantId The ID of the plant being edited.
+   * @param model The model for passing data to the view.
+   * @return The template for the edit plant form or redirects to the garden details page.
+   */
+  @PostMapping("gardens/details/plants/edit")
+  public String submitEditPlantForm(
+          @RequestParam(name = "name") String name,
+          @RequestParam(name = "count", required = false) String count,
+          @RequestParam(name = "description", required = false) String description,
+          @RequestParam(name = "date", required = false) String date,
+          @RequestParam(name = "plantId") String plantId,
+          @RequestParam("file") MultipartFile file,
+          Model model) {
         logger.info("POST /gardens/details/plants/edit");
         String formattedDate = "";
         if (!date.trim().isEmpty()) {
@@ -257,6 +279,13 @@ public class PlantFormController {
             model.addAttribute("descriptionError", validatedPlantDescription);
             isValid = false;
         }
+        if(!file.isEmpty()) {
+            Optional<String> uploadMessage = imageService.checkValidImage(file);
+            if(uploadMessage.isPresent()) {
+                model.addAttribute("uploadError", uploadMessage.get());
+                isValid = false;
+            }
+        }
 
         if (isValid) {
             plant.setName(validatedPlantName);
@@ -278,7 +307,11 @@ public class PlantFormController {
             } else {
                 plant.setDatePlanted(null);
             }
-            plantService.addPlant(plant);
+            if(!file.isEmpty()) {
+                imageService.savePlantImage(file, plant);
+            } else {
+                plantService.addPlant(plant);
+            }
             return "redirect:/gardens/details?gardenId=" + plant.getGarden().getId();
         } else {
             List<Garden> gardens = gardenService.getGardenResults();
@@ -291,5 +324,34 @@ public class PlantFormController {
             model.addAttribute("garden", plant.getGarden());
             return "editPlantFormTemplate";
         }
+    }
+
+    /**
+     * Updates the picture of the plant from the garden details page. If the picture is valid it will update the picture
+     * for the plant, else it will show an error message
+     * @param file the file of plant picture
+     * @param model (map-like) representation of plant picture for use in thymeleaf
+     * @param plantId the id of the plant to change the profile picture of
+     * @return the garden details page with the updated picture or an error message
+     */
+    @PostMapping("gardens/details/plants/image")
+    public String handleFileUpload(@RequestParam("file") MultipartFile file,
+                                   @RequestParam(name = "plantId") String plantId,
+                                   Model model) {
+
+        Optional<Plant> plant = plantService.getPlant(parseLong(plantId));
+        if(plant.isPresent()) {
+            Optional<String> uploadMessage =  imageService.savePlantImage(file, plant.get());
+            if(uploadMessage.isEmpty()) {
+                return "redirect:/gardens/details?gardenId=" + plant.get().getGarden().getId();
+            } else {
+                return "redirect:/gardens/details?uploadError=" + uploadMessage.get() + "&errorId=" + plantId +
+                        "&gardenId=" + plant.get().getGarden().getId();
+            }
+        } else {
+            return "redirect:/gardens";
+        }
+
+
     }
 }
