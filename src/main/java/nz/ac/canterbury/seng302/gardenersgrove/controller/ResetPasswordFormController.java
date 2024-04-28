@@ -69,7 +69,7 @@ public class ResetPasswordFormController {
             gardenerFormService.addGardener(gardener);
             // Re-authenticates user to catch case when they change their email
             Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication((newAuth));
+            SecurityContextHolder.getContext().setAuthentication((newAuth)); // do i need this part for resetting?
             return "redirect:/login";
         }
         return "resetPasswordForm";

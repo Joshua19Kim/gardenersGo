@@ -48,7 +48,7 @@ public class ForgotPasswordFormController {
     }
 
     /**
-     * Displays the form for resetting the password if forgotten
+     * Displays the form for sending a reset link if the password is forgotten
      * @return The lost password form template
      */
     @GetMapping("/forgotPassword")
@@ -58,7 +58,7 @@ public class ForgotPasswordFormController {
     }
 
     /**
-     * Posts a form response with the email to send lost password link to
+     * Posts a form response with the email to send lost password link to the user
      * @param email User's email
      * @param model (map-like) representation of email and message for use in thymeleaf
      * @return thymeleaf forgotPasswordForm (if error) or redirects to LostPasswordTokenForm if valid
