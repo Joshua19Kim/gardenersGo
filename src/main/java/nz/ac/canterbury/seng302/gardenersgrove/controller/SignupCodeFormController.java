@@ -1,9 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.AuthorityFormService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.util.Objects;
 import java.util.Optional;
 
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 /**
  * This controller class is used to handle requests related to signup code forms
  */
@@ -27,10 +31,12 @@ import java.util.Optional;
 public class SignupCodeFormController {
     private final Logger logger = LoggerFactory.getLogger(SignupCodeFormController.class);
     private final GardenerFormService gardenerFormService;
+    private final AuthorityFormService authorityFormService;
     private Gardener gardener;
     @Autowired
-    public SignupCodeFormController(GardenerFormService gardenerFormService) {
+    public SignupCodeFormController(GardenerFormService gardenerFormService, AuthorityFormService authorityFormService) {
         this.gardenerFormService = gardenerFormService;
+        this.authorityFormService = authorityFormService;
     }
 
     private final String token = "test";
@@ -47,21 +53,25 @@ public class SignupCodeFormController {
                                 @RequestParam(name= "signupCode", required = false, defaultValue = "") String signupCode,
                                 Model model) {
         logger.info("GET /signup");
-        gardenerId = (Long) request.getSession().getAttribute("newGardenerAttribute");
-        Gardener newGardener = gardenerFormService.findById(gardenerId).get();
-        logger.info("New Gardener: " + newGardener);
-        EmailUserService emailService = new EmailUserService("jxmine456@gmail.com", "Nature's Facebook Signup Code", String.format("""
+        logger.info(request.getSession().getAttribute("newGardenerAttribute").toString());
+        if ((request.getSession().getAttribute("newGardenerAttribute")) != null) {
+            gardenerId = (Long) request.getSession().getAttribute("newGardenerAttribute");
+            Gardener newGardener = gardenerFormService.findById(gardenerId).get();
+            logger.info("New Gardener: " + newGardener);
+            EmailUserService emailService = new EmailUserService("jxmine456@gmail.com", "Nature's Facebook Signup Code", String.format("""
                 Your unique signup code for Nature's Facebook: %s
                 
                 If this was not you, you can ignore this message and the account will be deleted after 10 minutes""", token));
-        emailService.sendEmail();
-        return "signupCodeForm";
+            emailService.sendEmail();
+            return "signupCodeForm";
+        }
+    return "register";
     }
 
     @PostMapping("/signup")
     public String sendSignupForm(HttpServletRequest request,
-                                       @RequestParam(name= "signupCode", required = false, defaultValue = "") String signupCode,
-                                       Model model) {
+                                 @RequestParam(name= "signupCode", required = false, defaultValue = "") String signupCode,
+                                 Model model) {
         logger.info("POST /signup");
         gardenerId = (Long) request.getSession().getAttribute("newGardenerAttribute");
         Gardener newGardener = gardenerFormService.findById(gardenerId).get();
@@ -70,7 +80,7 @@ public class SignupCodeFormController {
         if (Objects.equals(signupCode, token)) {
             logger.info("Granting authority.....");
             newGardener.grantAuthority("ROLE_USER");
-            logger.info(newGardener.getAuthorities().toString());
+            gardenerFormService.addGardener(newGardener);
             return "redirect:/login";
         }
         return "signupCodeForm";

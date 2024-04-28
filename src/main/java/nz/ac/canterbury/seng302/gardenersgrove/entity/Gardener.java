@@ -105,6 +105,8 @@ public class Gardener {
 
     public int getPassword() {return password; }
 
+    public String getPasswordString() {return String.valueOf(password);}
+
     public String getProfilePicture() { return this.profilePicture; }
 
     public void setFirstName(String firstName) { this.firstName = firstName; }
@@ -123,17 +125,13 @@ public class Gardener {
 
     @Override
     public String toString() {
-        String gardenerString = "Gardener{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' ;
+        String gardenerString = firstName;
+
         if (getLastName() != null) {
-            gardenerString += ", lastName='" + lastName + '\'';
+            gardenerString += " " + lastName;
         }
 
-        gardenerString += ", DoB='" + DoB.toString() + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                "}";
+        gardenerString += " - " + email;
 
         return gardenerString;
     }

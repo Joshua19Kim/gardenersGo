@@ -24,8 +24,15 @@ public class Authority {
         this.role = role;
     }
 
+    public Authority(Gardener gardener, String role) {
+    }
+
     public String getRole() {
         return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
 

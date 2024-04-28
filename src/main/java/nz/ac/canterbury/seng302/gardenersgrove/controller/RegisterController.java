@@ -136,8 +136,12 @@ public class RegisterController {
 
 
             Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password, "defaultProfilePic.png");
-            gardenerFormService.addGardener(newGardener);
+            newGardener = gardenerFormService.addGardener(newGardener);
             request.getSession().setAttribute("newGardenerAttribute", newGardener.getId());
+
+            if ((request.getSession().getAttribute("newGardenerAttribute")) != null) {
+                return "redirect:/signup";
+            }
 
 //            request.setAttribute(("newGardenerAttribute"), newGardener);
 
@@ -155,8 +159,6 @@ public class RegisterController {
 //                // Add the token to the request session (needed so the authentication can be properly used)
 //                request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 //              }
-
-            return "redirect:/signup";
         }
         return "register";
     }

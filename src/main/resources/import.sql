@@ -30,5 +30,9 @@ INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_pictu
 INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('C', 'C', null, 'c@gmail.com', -1009294837, 'defaultProfilePic.png');
 INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('D', null, DATE '2004-01-07', 'd@gmail.com', -1009294837, 'defaultProfilePic.png');
 
+INSERT INTO authority (gardener_id, role) VALUES (1, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (3, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (4, 'ROLE_USER');
 -- email: a@gmail.com
 -- password: Password1!
