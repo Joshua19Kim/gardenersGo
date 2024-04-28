@@ -242,7 +242,7 @@ public class GardenFormController {
       existingGarden.setLocation(location);
 
       if (Objects.equals(size.trim(), "")) {
-        existingGarden.setSize("0");
+        existingGarden.setSize(null);
         gardenService.addGarden(existingGarden);
       } else {
         existingGarden.setSize(new BigDecimal(validatedSize).stripTrailingZeros().toPlainString());
