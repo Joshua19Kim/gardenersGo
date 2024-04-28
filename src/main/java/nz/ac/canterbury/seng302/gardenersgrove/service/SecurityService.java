@@ -23,7 +23,6 @@ public class SecurityService {
 
     public String validateLostPasswordToken(String token) {
         final Optional<LostPasswordToken> passToken = lostPasswordTokenRepository.findByToken(token);
-//        System.out.println(passToken.get());
         return passToken.isEmpty() ? "invalidToken"
                 : isTokenExpired(passToken.get()) ? "expired"
                 : null;

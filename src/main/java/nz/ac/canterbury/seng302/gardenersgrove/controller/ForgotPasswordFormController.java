@@ -26,7 +26,7 @@ public class ForgotPasswordFormController {
     private final GardenerFormService gardenerFormService;
     private final SecurityService securityService;
 
-    String confirmationMessage = "An email was sent to the address if it was recognised";
+    private final String confirmationMessage = "An email was sent to the address if it was recognised";
 
     @Autowired
     public ForgotPasswordFormController(GardenerFormService gardenerFormService,
@@ -37,7 +37,7 @@ public class ForgotPasswordFormController {
 
     public String constructLostPasswordTokenEmail(String contextPath, Locale locale, String token, Gardener gardener) {
         // PATH MIGHT change
-        String url = contextPath + "/changePassword?token=" + token;
+        String url = contextPath + "/resetPassword?token=" + token;
         // Might need messages.getMessage???
         return ("Reset Password link: " + url);
     }
@@ -73,35 +73,23 @@ public class ForgotPasswordFormController {
 
         InputValidationService inputValidator = new InputValidationService(gardenerFormService);
         Optional<String> validEmailError = inputValidator.checkValidEmail(email);
-        Optional<String> emailInUseError = inputValidator.checkEmailInUse(email);
         model.addAttribute("returnMessage", validEmailError.orElse(confirmationMessage));
 
-        if (emailInUseError.isEmpty() && validEmailError.isEmpty()){
+        if (validEmailError.isEmpty()){
             Optional<Gardener> gardener = gardenerFormService.findByEmail(email);
-            // FROM https://www.baeldung.com/spring-security-registration-i-forgot-my-password
-            String token = UUID.randomUUID().toString();
-            gardenerFormService.createLostPasswordTokenForGardener(gardener.get(), token);
-            String emailMessage = constructLostPasswordTokenEmail(getAppUrl(request), request.getLocale(), token, gardener.get());
-
-            // FOR TESTING:
-            email = "benmoore1.work@gmail.com";
-            EmailUserService emailService = new EmailUserService(email, emailMessage);
-            emailService.sendEmail();
-            return "redirect:/login";
+            if (gardener.isPresent()) {
+                // FROM https://www.baeldung.com/spring-security-registration-i-forgot-my-password
+                String token = UUID.randomUUID().toString();
+                gardenerFormService.createLostPasswordTokenForGardener(gardener.get(), token);
+                String emailMessage = constructLostPasswordTokenEmail(getAppUrl(request), request.getLocale(), token, gardener.get());
+                // FOR TESTING:
+                email = "benmoore1.work@gmail.com";
+                EmailUserService emailService = new EmailUserService(email, emailMessage);
+                emailService.sendEmail(); // Sending email is SLOW
+                return "forgotPasswordForm"; // Email sent
+            }
+            return "forgotPasswordForm"; // Email not in DB
         }
-
-        return "forgotPasswordForm";
-    }
-
-
-    @GetMapping("/changePassword") // Authentication issues (I believe)
-    public String showChangePasswordPage(Locale locale, Model model,
-                                         @RequestParam("token") String token) {
-        logger.info("POST /changePassword");
-        String result = securityService.validateLostPasswordToken(token);
-        if(result == null) {
-            return "redirect:/resetPassword";
-        }
-        return "redirect:/login";
+        return "forgotPasswordForm"; // Email not valid
     }
 }

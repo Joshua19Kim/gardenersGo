@@ -41,9 +41,15 @@ public class ResetPasswordFormController {
      */
     @GetMapping("/resetPassword")
     public String getResetPasswordForm(@RequestParam(name = "token") String token) {
-        Optional<Gardener> tempGardener = securityService.findGardenerbyToken(token);
-        tempGardener.ifPresent(g -> gardener = g); // Referenced from ChatGPT
-        return "resetPasswordForm";
+        logger.info("GET /resetPassword");
+        // Verifies token has associated user and is not expired
+        String result = securityService.validateLostPasswordToken(token);
+        if (result == null) {
+            Optional<Gardener> tempGardener = securityService.findGardenerbyToken(token);
+            tempGardener.ifPresent(g -> gardener = g); // Referenced from ChatGPT
+            return "resetPasswordForm";
+        }
+        return "redirect:/login"; // Token does not exist or is expired
     }
 
     /**

@@ -19,7 +19,7 @@ public class EmailUserService {
      */
     public EmailUserService(String userEmail, String Message) {
         // Simple Java Mail -- https://www.simplejavamail.org/
-        email = EmailBuilder.startingBlank()
+        this.email = EmailBuilder.startingBlank()
                 .from("Do Not Reply", "naturesfacebook@gmail.com")
                 .to("Gardener", userEmail)
                 .withSubject("Nature's Facebook Message")
@@ -27,7 +27,7 @@ public class EmailUserService {
                 .buildEmail();
 
         // Uses gmail SMTP
-        mailer = MailerBuilder
+        this.mailer = MailerBuilder
                 .withSMTPServer("smtp.gmail.com", 587, "naturesfacebook@gmail.com", api_key)
                 .withTransportStrategy(TransportStrategy.SMTP_TLS)
                 .buildMailer();
