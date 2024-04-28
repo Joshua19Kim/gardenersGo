@@ -40,7 +40,7 @@ public class Relationships {
     protected Relationships() {}
 
     /**
-     * Creates a new Gardener object
+     * Creates a new Relationship object
      * @param gardenerId the id of the logged-in user
      * @param friendId the id of the gardener the relationship is with
      * @param status status of the relationship between gardeners e.g. "accepted" or "pending"

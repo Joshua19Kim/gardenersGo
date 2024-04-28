@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import org.springframework.cglib.core.Local;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -116,6 +115,7 @@ public class Gardener {
         }
         return searchResult;
     }
+    public void setId(Long id) { this.id = id; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
     public void setLastName(String lastName) { this.lastName = lastName; }
