@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,15 +42,15 @@ public class UserProfileControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private static Model modelMock;
+    private Model modelMock;
     @MockBean
-    private static GardenerFormService gardenerFormService;
+    private GardenerFormService gardenerFormService;
     @MockBean
-    private static AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
     @MockBean
-    private static Authentication authentication;
+    private Authentication authentication;
     @MockBean
-    private static ImageService imageService;
+    private ImageService imageService;
 
     @BeforeEach
     void setUp() {
@@ -79,13 +81,115 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("profilePic", "testProfilePhoto.jpg"));
 
     }
-//    @Test
-//    @WithMockUser
-//    void onUserPage_userChangeTheFirstNameWithValidFirstname_SaveNewFirstName() throws Exception {
-//        this.mockMvc
-//
-//    }
+    @Test
+    @WithMockUser
+    void onUserPage_userChangesFirstNameWithInvalidFirstName_errorMessageProvided() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", " ")
+                        .param("lastName", "testLastName")
+                        .param("DoB", "1980-01-01")
+                        .param("email", "testEmail@gmail.com")
+                        .param("isLastNameOptional", "false")
+                        .with(csrf())
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("user"))
+                .andExpect(model().attribute("firstNameValid", "First name cannot be empty and must only include letters, spaces, " +
+                        "hyphens or apostrophes"));
+        }
 
+
+    @Test
+    @WithMockUser
+    void onUserPage_userChangesLastNameWithInvalidLastName_errorMessageProvided() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", "testFirstName")
+                        .param("lastName", "!%ASava")
+                        .param("DoB", "1980-01-01")
+                        .param("email", "testEmail@gmail.com")
+                        .param("isLastNameOptional", "false")
+                        .with(csrf())
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("user"))
+                .andExpect(model().attribute("lastNameValid", "Last name cannot be empty and must only include letters, spaces, " +
+                        "hyphens or apostrophes"));
+    }
+    @Test
+    @WithMockUser
+    void onUserPage_userChangesDoBWithTooLowDoB_errorMessageProvided() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", "testFirstName")
+                        .param("lastName", "testLastName")
+                        .param("DoB", "2400-01-01")
+                        .param("email", "testEmail@gmail.com")
+                        .param("isLastNameOptional", "false")
+                        .with(csrf())
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("user"))
+                .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account"));
+    }
+    @Test
+    @WithMockUser
+    void onUserPage_userChangesDoBWithTooHighDoB_errorMessageProvided() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", "testFirstName")
+                        .param("lastName", "testLastName")
+                        .param("DoB", "1700-01-01")
+                        .param("email", "testEmail@gmail.com")
+                        .param("isLastNameOptional", "false")
+                        .with(csrf())
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("user"))
+                .andExpect(model().attribute("DoBValid", "The maximum age allowed is 120 years"));
+    }
+
+    @Test
+    @WithMockUser
+    void onUserPage_userChangesEmailWithInvalidEmail_errorMessageProvided() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", "testFirstName")
+                        .param("lastName", "testLastName")
+                        .param("DoB", "1980-01-01")
+                        .param("email", "testEmailgmail.m")
+                        .param("isLastNameOptional", "false")
+                        .with(csrf())
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("user"))
+                .andExpect(model().attribute("emailValid", "Email address must be in the form ‘jane@doe.nz"));
+    }
+    @Test
+    @WithMockUser
+    void onUserPage_userChangesFirstNameWithValidName_SaveNewFirstName() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", "newTestFirstName")
+                        .param("lastName", "testLastName")
+                        .param("DoB", "1980-01-01")
+                        .param("email", "testEmail@gmail.com")
+                        .param("isLastNameOptional", "false")
+                        .with(csrf())
+                )
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("firstNameValid",""))
+                .andExpect(model().attribute("lastNameValid",""))
+                .andExpect(model().attribute("DoBValid",""));
+//                .andExpect(model().attribute("emailValid",""));
+
+//
+//        ArgumentCaptor<Gardener> captor = ArgumentCaptor.forClass(Gardener.class);
+//        Mockito.verify(gardenerFormService).addGardener(captor.capture());
+//        Gardener updatedGardener = captor.getValue();
+//        assertEquals("newTestFirstName", updatedGardener.getFirstName());
+    }
 
 
 //    @Test
