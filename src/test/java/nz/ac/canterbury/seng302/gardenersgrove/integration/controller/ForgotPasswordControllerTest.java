@@ -1,9 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,8 @@ public class ForgotPasswordControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private GardenerFormService gardenerFormService;
+    @MockBean
+    private TokenService tokenService;
     private InputValidationService inputValidator;
 
     @Test
@@ -41,7 +43,8 @@ public class ForgotPasswordControllerTest {
     void onForgotPasswordPage_validNonExistingEmail_confirmationMessageProvided() throws Exception {
         inputValidator = new InputValidationService(gardenerFormService);
         Mockito.when(inputValidator.checkEmailInUse(Mockito.anyString())).thenReturn(Optional.of(""));
-        ForgotPasswordFormController forgotPasswordFormController = new ForgotPasswordFormController(gardenerFormService);
+        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+        ForgotPasswordFormController forgotPasswordFormController = new ForgotPasswordFormController(gardenerFormService, tokenService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(forgotPasswordFormController).build();
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/forgotPassword")
@@ -53,6 +56,7 @@ public class ForgotPasswordControllerTest {
                 .andExpect(model().attributeExists("returnMessage"))
                 .andExpect(model().attribute("returnMessage","An email was sent to the address if it was recognised"));
     }
+
 
     @Test
     @WithMockUser

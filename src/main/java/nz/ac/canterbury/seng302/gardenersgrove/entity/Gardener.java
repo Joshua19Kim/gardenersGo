@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.cglib.core.Local;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class Gardener {
     private String email;
 
     @Column(nullable = false)
-    private int password;
+    private String password;
 
     @Column(name = "profile_picture")
     private String profilePicture;
@@ -42,6 +43,8 @@ public class Gardener {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "gardener_id")
     private List<Authority> userRoles;
+    // Create an encoder with strength 16
+
 
     /**
      * JPA required no-args constructor
@@ -60,7 +63,7 @@ public class Gardener {
         this.lastName = lastName;
         this.DoB = DoB;
         this.email = email;
-        this.password = password.hashCode();
+        this.password = hashPasword(password);
         this.profilePicture = profilePicture;
     }
 
@@ -81,6 +84,17 @@ public class Gardener {
         List<GrantedAuthority> authorities = new ArrayList<>();
         this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
         return authorities;
+    }
+    public void setUserRoles(List<Authority> userRoles) { this.userRoles = userRoles;}
+
+    public String hashPasword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(password);
+    }
+
+    public boolean comparePassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(password, this.password);
     }
 
     public Long getId() {
@@ -103,9 +117,7 @@ public class Gardener {
         return email;
     }
 
-    public int getPassword() {return password; }
-
-    public String getPasswordString() {return String.valueOf(password);}
+    public String getPassword() {return password; }
 
     public String getProfilePicture() { return this.profilePicture; }
 
@@ -121,18 +133,17 @@ public class Gardener {
         this.profilePicture = imageLocation;
     }
 
-    public void updatePassword(String password) { this.password = password.hashCode(); }
+    public void updatePassword(String password) { this.password = hashPasword(password); }
 
     @Override
     public String toString() {
         String gardenerString = firstName;
-
         if (getLastName() != null) {
             gardenerString += " " + lastName;
         }
-
         gardenerString += " - " + email;
 
         return gardenerString;
     }
+
 }

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
@@ -78,6 +79,10 @@ public class UserProfileController {
             model.addAttribute("profilePic", gardener.getProfilePicture());
         } else {
             model.addAttribute("firstName", "Not Registered");
+        }
+
+        if(isLastNameOptional) {
+            lastName = null;
         }
 
         InputValidationService inputValidator = new InputValidationService(gardenerFormService);
@@ -165,13 +170,13 @@ public class UserProfileController {
      * @return thymeleaf 'user' page or 'login' page
      */
     @GetMapping("/redirectToUserPage")
-    public RedirectView profileButton() {
+    public String profileButton() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Authentication: " + authentication);
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            return new RedirectView("/user");
+            return "/user";
         }
-        return new RedirectView("/login");
+        return "/login";
     }
 
     /**
@@ -220,9 +225,12 @@ public class UserProfileController {
         if (passwordCorrectError.isEmpty() && passwordMatchError.isEmpty() && passwordStrengthError.isEmpty()) {
             gardener.updatePassword(newPassword);
             gardenerFormService.addGardener(gardener);
-            // Re-authenticates user to catch case when they change their email
-            Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication((newAuth));
+
+            String email = gardener.getEmail();
+            String emailMessage = "Your Password has been updated";
+            EmailUserService emailService = new EmailUserService(email, emailMessage);
+            emailService.sendEmail(); // *** Blocking
+
             return "redirect:/user";
         }
 

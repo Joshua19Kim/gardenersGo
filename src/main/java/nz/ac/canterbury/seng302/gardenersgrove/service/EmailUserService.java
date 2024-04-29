@@ -17,12 +17,12 @@ public class EmailUserService {
     /**
      * Constructor initialises email object and mailer object using given parameters
      */
-    public EmailUserService(String userEmail, String subject, String Message) {
+    public EmailUserService(String userEmail, String Message) {
         // Simple Java Mail -- https://www.simplejavamail.org/
         email = EmailBuilder.startingBlank()
                 .from("Do Not Reply", "naturesfacebook@gmail.com")
                 .to(userEmail)
-                .withSubject(subject)
+                .withSubject("Nature's Facebook Signup Code")
                 .withPlainText(Message)
                 .buildEmail();
 
