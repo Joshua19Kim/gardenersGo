@@ -36,7 +36,7 @@ public class GardenFormController {
    * @return the gardens template which defines the user interface for the my gardens page
    */
   @GetMapping("/gardens")
-  public String getGardenHome(Model model, HttpServletRequest request, HttpServletResponse response) {
+  public String getGardenHome(@RequestParam(name="user", required = false) String user, Model model, HttpServletRequest request, HttpServletResponse response) {
     logger.info("GET /gardens/main");
     // Prevent caching of the page so that we always reload it when we reach it (mainly for when you use the browser back button)
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
@@ -51,7 +51,14 @@ public class GardenFormController {
       gardener = gardenerOptional.get();
     }
 
-    List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+    List<Garden> gardens;
+    if(user == null) {
+      gardens = gardenService.getGardensByGardenerId(gardener.getId());
+      model.addAttribute("gardener", gardener);
+    } else {
+      gardens = gardenService.getGardensByGardenerId(parseLong(user, 10));
+      model.addAttribute("gardener", gardenerFormService.findById(parseLong(user, 10)).get());
+    }
     model.addAttribute("gardens", gardens);
 
     String requestUri = request.getRequestURI();
@@ -170,6 +177,7 @@ public class GardenFormController {
   public String gardenDetails(@RequestParam(name = "gardenId") String gardenId,
                               @RequestParam(name = "uploadError", required = false) String uploadError,
                               @RequestParam(name = "errorId", required = false) String errorId,
+                              @RequestParam(name = "userId", required = false) String userId,
                               Model model, HttpServletRequest request) {
     logger.info("GET /gardens/details");
     List<Garden> gardens = gardenService.getGardenResults();
@@ -191,7 +199,12 @@ public class GardenFormController {
         model.addAttribute("uploadError", uploadError);
         model.addAttribute("errorId", errorId);
       }
-      return "gardenDetailsTemplate";
+      if(userId == null || gardener.getId() == parseLong(userId, 10)) {
+        return "gardenDetailsTemplate";
+      } else {
+        return "unauthorizedGardenDetailsTemplate";
+      }
+
     } else {
       return "redirect:/gardens";
     }

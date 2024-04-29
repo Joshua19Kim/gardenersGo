@@ -592,6 +592,12 @@ body, h2, h3, h4, h5, h6, a {
     border-radius: 4px;
 }
 
+.friend a {
+    word-wrap: break-word;
+    white-space: normal;
+    padding-left: 10px;
+}
+
 .friend-status .table-header {
     border-bottom: 1px solid #45a049;
 }

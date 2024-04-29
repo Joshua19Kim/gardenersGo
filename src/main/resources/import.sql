@@ -42,5 +42,10 @@ INSERT INTO plant (name, garden_id, count, description, date_planted, image) VAL
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Fern', 3, '18', 'Shade-loving foliage plant', 'placeholder.jpg');
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Rosemary', 3, '9', 'Aromatic herb for seasoning', 'placeholder.jpg');
 
+INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Tomato Patch', 'Home', '32');
+INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Strawberry Garden', 'Kitchen Garden', '35');
+INSERT INTO garden (gardener_id, name, location, size) VALUES (2, 'Big Garden', 'Backyard', '0');
+INSERT INTO garden (gardener_id, name, location, size) VALUES (3, 'Long Garden', 'Windowsill', '10');
+
 -- email: a@gmail.com
 -- password: Password1!
