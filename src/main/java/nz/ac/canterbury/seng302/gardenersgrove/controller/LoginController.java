@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -47,8 +48,12 @@ public class LoginController {
         response.setHeader("Expires", "0"); // Proxies
 
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
+            if (authentication.getAuthorities().isEmpty()) {
+                return "redirect:/signup";
+            }
             return "redirect:/gardens";
         }
+
         return "login";
     }
 
