@@ -50,7 +50,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("The email address is unknown, or the password is invalid");
         }
 
-        Gardener u = gardenerFormService.getUserByEmailAndPassword(email, password.hashCode()).orElse(null);
+        Gardener u = gardenerFormService.getUserByEmailAndPassword(email, password).orElse(null);
         if (u == null) {
             throw new BadCredentialsException("The email address is unknown, or the password is invalid");
         }

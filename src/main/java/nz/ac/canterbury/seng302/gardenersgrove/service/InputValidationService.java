@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.util.Optional;
 import java.time.LocalDate;
 import java.time.Period;
@@ -38,8 +40,9 @@ public class InputValidationService {
      * @param hashedPasswordInServer password called from the database
      * @return empty optional if password is correct, otherwise error string
      */
-    public Optional<String> checkSavedPassword (String password, int hashedPasswordInServer) {
-        return (password.hashCode() == hashedPasswordInServer) ? Optional.empty() : Optional.of("Your old password is incorrect.");
+    public Optional<String> checkSavedPassword (String password, String hashedPasswordInServer) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return (encoder.matches(password, hashedPasswordInServer)) ? Optional.empty() : Optional.of("Your old password is incorrect.");
     }
 
     /**
