@@ -127,7 +127,7 @@ public class RegisterController {
         model.addAttribute("passwordStrong", passwordStrengthError.orElse(""));
 
         if (firstNameError.isEmpty() &&
-                lastNameError.isEmpty() || lastNameError.isPresent() && isLastNameOptional || isLastNameOptional &&
+                (lastNameError.isEmpty() || isLastNameOptional)  &&
                 validEmailError.isEmpty() &&
                 emailInUseError.isEmpty() &&
                 passwordMatchError.isEmpty() &&
@@ -164,6 +164,7 @@ public class RegisterController {
 //                // Add the token to the request session (needed so the authentication can be properly used)
 //                request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 //              }
+            return "redirect:/signup";
         }
         return "register";
     }
