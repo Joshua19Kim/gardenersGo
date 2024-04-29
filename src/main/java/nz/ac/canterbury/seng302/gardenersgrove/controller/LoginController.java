@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,20 +40,23 @@ public class LoginController {
      * @return redirect to /login if not authenticated, otherwise go to the main page
      */
     @GetMapping("/login")
-    public String login(Authentication authentication, HttpServletResponse response) {
+    public String login(Authentication authentication, HttpServletResponse response, HttpServletRequest request) {
         logger.info("GET /");
         logger.info("Authentication: " + authentication);
         logger.info("DB USERNAME: " + System.getenv("DB_USERNAME"));
-
+        HttpSession session = request.getSession();
+        if (session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION") != null ) {
+            if (session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION").toString().contains("Email not verified")) {
+                session.setAttribute("SPRING_SECURITY_LAST_EXCEPTION", new BadCredentialsException(""));
+                return "redirect:/signup";
+            }
+        }
         // Prevent caching of the page so that we always reload it when we reach it (mainly for when you use the browser back button)
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
         response.setHeader("Pragma", "no-cache"); // HTTP 1.0
         response.setHeader("Expires", "0"); // Proxies
 
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
-            if (authentication.getAuthorities().isEmpty()) {
-                return "redirect:/signup";
-            }
             return "redirect:/gardens";
         }
 

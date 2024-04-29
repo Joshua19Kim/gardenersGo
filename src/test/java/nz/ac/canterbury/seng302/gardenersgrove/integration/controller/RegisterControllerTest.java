@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class RegisterControllerTest {
     private GardenerFormService gardenerFormService;
     @MockBean
     private AuthenticationManager authenticationManager;
+    @MockBean
+    private TokenService tokenService;
     @Test
     @WithMockUser
     void onRegisterPage_noInputGiven_RegisterFormShown() throws Exception {
@@ -45,7 +48,8 @@ public class RegisterControllerTest {
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
 
-        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager);
+
+        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager,tokenService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(registerController).build();
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/register")
@@ -107,7 +111,7 @@ public class RegisterControllerTest {
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
 
-        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager);
+        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager,tokenService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(registerController).build();
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/register")

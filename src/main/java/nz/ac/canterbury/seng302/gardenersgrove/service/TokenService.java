@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
+import org.h2.command.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,12 @@ public class TokenService {
     @Autowired
     public TokenService(LostPasswordTokenRepository lostPasswordTokenRepository) {
         this.lostPasswordTokenRepository = lostPasswordTokenRepository;
+    }
+    public Optional<LostPasswordToken> getTokenFromString(String string) {
+        return lostPasswordTokenRepository.findByToken(string);
+    }
+    public void removeToken(LostPasswordToken token) {
+        lostPasswordTokenRepository.delete(token);
     }
 
     public String validateLostPasswordToken(String token) {

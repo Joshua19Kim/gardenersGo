@@ -5,9 +5,11 @@ import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -22,6 +24,7 @@ public class RegisterControllerTest {
     private RegisterController registerFormController;
     private GardenerFormService gardenerFormService;
     private AuthenticationManager authenticationManager;
+    private TokenService tokenService;
     private Authentication authentication;
     private HttpServletRequest request;
     private HttpSession sessionMock;
@@ -32,7 +35,8 @@ public class RegisterControllerTest {
         gardenerFormService = Mockito.mock(GardenerFormService.class);
         request = Mockito.mock(HttpServletRequest.class);
         authenticationManager = Mockito.mock(AuthenticationManager.class);
-        registerFormController = new RegisterController(gardenerFormService, authenticationManager);
+        tokenService = Mockito.mock(TokenService.class);
+        registerFormController = new RegisterController(gardenerFormService, authenticationManager, tokenService);
         model = Mockito.mock(Model.class);
         assertTrue(true);
     }

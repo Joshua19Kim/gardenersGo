@@ -41,6 +41,9 @@ public class GardenerFormService {
     public void addGardener(Gardener gardener) {
         gardenerFormRepository.save(gardener);
     }
+    public void removeGardener(Gardener gardener) {
+        gardenerFormRepository.delete(gardener);
+    }
 
     public Optional<Gardener> findById(long id) {
         return gardenerFormRepository.findById(id);

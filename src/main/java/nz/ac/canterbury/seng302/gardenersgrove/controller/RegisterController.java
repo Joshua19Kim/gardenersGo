@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.SendSignup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import java.util.Optional;
 public class RegisterController {
     private final GardenerFormService gardenerFormService;
     private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
     /**
@@ -37,9 +40,10 @@ public class RegisterController {
      * @param authenticationManager - object that is used for authentication (checking, adding, removing authentication)
      */
     @Autowired
-    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager) {
+    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager, TokenService tokenService) {
         this.gardenerFormService = gardenerFormService;
         this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
     }
 
     /**
@@ -136,35 +140,17 @@ public class RegisterController {
 
             logger.info("IT WENT THROUGH!");
             Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password, "defaultProfilePic.png");
-            newGardener = gardenerFormService.addGardener(newGardener);
+            gardenerFormService.addGardener(newGardener);
             logger.info(String.valueOf(newGardener));
 
             if (newGardener != null) {
                 logger.info("new gardener not null");
                 logger.info("new gardener id " + newGardener.getId());
-                request.getSession().setAttribute("newGardenerAttribute", newGardener.getId());
-                if ((request.getSession().getAttribute("newGardenerAttribute")) != null) {
-                    logger.info("request: " + request.getSession().getAttribute("newGardenerAttribute").toString());
-                    return "redirect:/signup"; }
+                SendSignup sendSignup = new SendSignup();
+                sendSignup.sendSignupEmail(newGardener, tokenService);
+                return "redirect:/signup";
             }
 
-//            request.setAttribute(("newGardenerAttribute"), newGardener);
-
-//            // Auto-login when registering
-//            // Create a new Authentication with Username and Password (authorities here are optional as the following function fetches these anyway)
-//            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password, newGardener.getAuthorities());
-//            // Authenticate the token properly with the CustomAuthenticationProvider
-//            Authentication authentication = authenticationManager.authenticate(token);
-//
-//            // Check if the authentication is actually authenticated (in this example any username/password is accepted so this should never be false)
-//            if (authentication.isAuthenticated()) {
-//                logger.info("user is authenticated");
-//                // Add the authentication to the current security context (Stateful)
-//                SecurityContextHolder.getContext().setAuthentication(authentication);
-//                // Add the token to the request session (needed so the authentication can be properly used)
-//                request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-//              }
-            return "redirect:/signup";
         }
         return "register";
     }
