@@ -1,30 +1,33 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.ui.Model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -33,24 +36,22 @@ public class UserProfileControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private Model modelMock;
-    @MockBean
     private GardenerFormService gardenerFormService;
-    @MockBean
-    private AuthenticationManager authenticationManager;
-    @MockBean
-    private Optional gardenerOptional;
-    @MockBean
-    private Authentication authentication;
     @MockBean
     private ImageService imageService;
     @MockBean
     private Gardener testGardener;
     @MockBean
-    private UsernamePasswordAuthenticationToken token;
+    private ArgumentCaptor<Gardener> gardenerCaptor;
+    @InjectMocks
+    private UserProfileController userProfileController;
+    @Mock
+    private EmailUserService emailService;
+
 
     @BeforeEach
     void setUp() {
+        Mockito.reset(gardenerFormService);
         //Use this following gardener as the one called from db.
         testGardener = new Gardener(
                 "testFirstName",
@@ -59,13 +60,9 @@ public class UserProfileControllerTest {
                 "testEmail@gmail.com",
                 "testPassword",
                 "testProfilePhoto.jpg");
-//        gardenerFormService = Mockito.mock(GardenerFormService.class);
-//        gardenerFormService.addGardener(testGardener);
-//        authenticationManager = Mockito.mock(AuthenticationManager.class);
-//        token = new UsernamePasswordAuthenticationToken(testGardener.getEmail(), testGardener.getPassword());
-//        authentication = authenticationManager.authenticate(token);
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        Mockito.when(SecurityContextHolder.getContext().getAuthentication()).thenReturn(authentication);
+
+        List<Authority> userRoles = new ArrayList<>();
+        testGardener.setUserRoles(userRoles);
         gardenerFormService.addGardener(testGardener);
         when(gardenerFormService.findByEmail("testEmail@gmail.com")).thenReturn(Optional.of(testGardener));
 
@@ -84,6 +81,18 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("DoB", LocalDate.of(1980, 1, 1)))
                 .andExpect(model().attribute("email", "testEmail@gmail.com"))
                 .andExpect(model().attribute("profilePic", "testProfilePhoto.jpg"));
+
+    }
+    @Test
+    @WithMockUser()
+    void onUserPage_userTrysToAccessWithoutLoggingIn_ShowsNotRegisteredMessage() throws Exception {
+        when(gardenerFormService.findByEmail("test@.com")).thenReturn(Optional.of(testGardener));
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user"))
+                .andExpect(model().attribute("firstName", "Not Registered"));
 
     }
 
@@ -178,38 +187,126 @@ public class UserProfileControllerTest {
     @Test
     @WithMockUser("testEmail@gmail.com")
     void onUserPage_userChangesFirstNameWithValidName_NoErrorProvidedAndSaveNewFirstName() throws Exception {
-        testGardener = new Gardener(
-                "testFirstName",
-                "testLastName",
-                LocalDate.of(1980, 1, 1),
-                "testEmail@gmail.com",
-                "testPassword",
-                "testProfilePhoto.jpg");
-        gardenerFormService = Mockito.mock(GardenerFormService.class);
-        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
-
-//        UserProfileController userProfileController = new UserProfileController(gardenerFormService);
-//        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(userProfileController).build();
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/user")
-                        .param("firstName", "testFirstName")
+                        .param("firstName", "newTestFirstName")
                         .param("lastName", "testLastName")
                         .param("DoB", "1980-01-01")
                         .param("email", "testEmail@gmail.com")
                         .param("isLastNameOptional", "false")
                         .with(csrf())
                 )
-                .andExpect(status().isOk());
-//                .andExpect(model().attribute("firstNameValid",""))
-//                .andExpect(model().attribute("lastNameValid",""))
-//                .andExpect(model().attribute("DoBValid",""));
-//                .andExpect(model().attrrmService = Mockito.mock(GardenerFormService.class);
-//        Mockito.whibute("emailValid",""));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/user"))
+                .andExpect(model().attribute("firstNameValid", Matchers.nullValue()))
+                .andExpect(model().attribute("lastNameValid",Matchers.nullValue()))
+                .andExpect(model().attribute("DoBValid",Matchers.nullValue()))
+                .andExpect(model().attribute("emailValid", Matchers.nullValue()));
 
-//        gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-//        Mockito.verify(gardenerFormService).addGardener(gardenerCaptor.capture());
-//        Gardener updatedGardener = gardenerCaptor.getValue();
-//        assertEquals("newTestFirstName", updatedGardener.getFirstName());
+        ArgumentCaptor<Gardener> gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
+        List<Gardener> addGardener = gardenerCaptor.getAllValues();
+        assertEquals("newTestFirstName", addGardener.get(1).getFirstName());
+    }
+
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    void onUserPage_userChangesLastNameWithValidName_NoErrorProvidedAndSaveNewLastName() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", "testFirstName")
+                        .param("lastName", "newTestLastName")
+                        .param("DoB", "1980-01-01")
+                        .param("email", "testEmail@gmail.com")
+                        .param("isLastNameOptional", "false")
+                        .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/user"))
+                .andExpect(model().attribute("firstNameValid", Matchers.nullValue()))
+                .andExpect(model().attribute("lastNameValid",Matchers.nullValue()))
+                .andExpect(model().attribute("DoBValid",Matchers.nullValue()))
+                .andExpect(model().attribute("emailValid", Matchers.nullValue()));
+
+        ArgumentCaptor<Gardener> gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
+        List<Gardener> addGardener = gardenerCaptor.getAllValues();
+        assertEquals("newTestLastName", addGardener.get(1).getLastName());
+    }
+
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    void onUserPage_userChangesDoBWithValidDoB_NoErrorProvidedAndSaveNewDoB() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", "testFirstName")
+                        .param("lastName", "newTestLastName")
+                        .param("DoB", "2001-12-13")
+                        .param("email", "testEmail@gmail.com")
+                        .param("isLastNameOptional", "false")
+                        .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/user"))
+                .andExpect(model().attribute("firstNameValid", Matchers.nullValue()))
+                .andExpect(model().attribute("lastNameValid",Matchers.nullValue()))
+                .andExpect(model().attribute("DoBValid",Matchers.nullValue()))
+                .andExpect(model().attribute("emailValid", Matchers.nullValue()));
+
+        gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
+        List<Gardener> addGardener = gardenerCaptor.getAllValues();
+        assertEquals(LocalDate.of(2001,12,13), addGardener.get(1).getDoB());
+    }
+
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    void onUserPage_userChangesEmailWithValidEmail_NoErrorProvidedAndSaveNewEmail() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", "testFirstName")
+                        .param("lastName", "newTestLastName")
+                        .param("DoB", "1980-01-01")
+                        .param("email", "newTestEmail@gmail.com")
+                        .param("isLastNameOptional", "false")
+                        .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/user"))
+                .andExpect(model().attribute("firstNameValid", Matchers.nullValue()))
+                .andExpect(model().attribute("lastNameValid",Matchers.nullValue()))
+                .andExpect(model().attribute("DoBValid",Matchers.nullValue()))
+                .andExpect(model().attribute("emailValid", Matchers.nullValue()));
+
+        gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
+        List<Gardener> addGardener = gardenerCaptor.getAllValues();
+        assertEquals("newTestEmail@gmail.com", addGardener.get(1).getEmail());
+    }
+
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    void onUserPage_userPutNewLastNameButTicksNoLastNameBox_NoErrorProvidedAndLastNameBecomesNull() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", "testFirstName")
+                        .param("lastName", "newTestLastName")
+                        .param("DoB", "1980-01-01")
+                        .param("email", "newTestEmail@gmail.com")
+                        .param("isLastNameOptional", "true")
+                        .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/user"))
+                .andExpect(model().attribute("firstNameValid", Matchers.nullValue()))
+                .andExpect(model().attribute("lastNameValid",Matchers.nullValue()))
+                .andExpect(model().attribute("DoBValid",Matchers.nullValue()))
+                .andExpect(model().attribute("emailValid", Matchers.nullValue()));
+
+        gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
+        List<Gardener> addGardener = gardenerCaptor.getAllValues();
+        assertNull(addGardener.get(1).getLastName());
     }
 
     @Test
@@ -254,4 +351,32 @@ public class UserProfileControllerTest {
                 .andExpect(view().name("password"))
                 .andExpect(model().attribute("passwordStrong", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
     }
+
+//    @Test
+//    @WithMockUser("testEmail@gmail.com")
+//    void OnPasswordUpdatePage_userPutValidNewPasswords_saveNewPasswordAndSendConfirmationEmail() throws Exception {
+//        ArgumentCaptor<EmailUserService> emailServiceCaptor = ArgumentCaptor.forClass(EmailUserService.class);
+//
+//        this.mockMvc
+//                .perform(MockMvcRequestBuilders.post("/password")
+//                        .param("oldPassword", "testPassword")
+//                        .param("newPassword", "NewPassWord1@")
+//                        .param("retypePassword", "NewPassWord1@")
+//                        .with(csrf())
+//                )
+//                .andExpect(status().is3xxRedirection())
+//                .andExpect(view().name("redirect:/user"));
+//
+//        gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+//        verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
+//        verify(emailServiceCaptor.getValue(), times(1)).sendEmail();
+//        List<Gardener> addedGardener = gardenerCaptor.getAllValues();
+//        assertEquals("testEmail@gmail.com", addedGardener.get(1).getEmail());
+//
+//        //this will be edited when the password style is changed from hashcode to something more secure.
+////        assertEquals("NewPassWord1@", addedGardener.get(1).getPassword());
+//
+//    }
+//
+
 }

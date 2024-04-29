@@ -81,6 +81,10 @@ public class UserProfileController {
             model.addAttribute("firstName", "Not Registered");
         }
 
+        if(isLastNameOptional) {
+            lastName = null;
+        }
+
         InputValidationService inputValidator = new InputValidationService(gardenerFormService);
 
         Optional<String> firstNameError = Optional.empty();

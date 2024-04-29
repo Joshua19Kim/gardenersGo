@@ -82,6 +82,7 @@ public class Gardener {
         this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
         return authorities;
     }
+    public void setUserRoles(List<Authority> userRoles) { this.userRoles = userRoles;}
 
     public Long getId() {
         return id;
