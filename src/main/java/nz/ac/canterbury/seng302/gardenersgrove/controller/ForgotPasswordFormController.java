@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class ForgotPasswordFormController {
     }
 
     public String getAppUrl(HttpServletRequest request) {
-        return "localhost:8080" + request.getContextPath();
+        return request.getServerName() + ":" + request.getServerPort();
     }
 
     /**
@@ -74,10 +75,11 @@ public class ForgotPasswordFormController {
 
         if (validEmailError.isEmpty()){
             Optional<Gardener> gardener = gardenerFormService.findByEmail(email);
-            if (gardener.isEmpty()) {
+            if (!gardener.isEmpty()) {
                 // FROM https://www.baeldung.com/spring-security-registration-i-forgot-my-password
                 String token = UUID.randomUUID().toString();
                 tokenService.createLostPasswordTokenForGardener(gardener.get(), token);
+//                logger.info("HEY!!!");
                 String emailMessage = constructLostPasswordTokenEmail(getAppUrl(request), request.getLocale(), token, gardener.get());
 
                 // FOR TESTING:
