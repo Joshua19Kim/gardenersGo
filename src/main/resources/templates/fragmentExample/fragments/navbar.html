@@ -29,7 +29,7 @@
     </li>
     <li sec:authorize="isAuthenticated()">
         <a href="#" onclick="logout(event)">Logout</a>
-        <form id="logoutForm" method="POST" style="display: none;" th:action="@{logout}">
+        <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
             <input type="submit" value="Logout"/>
             <!--                old code below: -->
             <!--            <form method="POST" th:action="@{logout}">-->
