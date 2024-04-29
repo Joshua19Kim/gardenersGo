@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -260,9 +261,9 @@ public class InputValidationServiceTest {
     @Test
     void testSamePasswordWithSavedPassword() {
         InputValidationService validate = new InputValidationService(gardenerFormService);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String passwordEntered = "PassworD1@";
-        String passwordInServer = "PassworD1@";
-        int hashedPasswordInServer = passwordInServer.hashCode();
+        String hashedPasswordInServer = encoder.encode("PassworD1@");
         Optional<String> isValid = validate.checkSavedPassword(passwordEntered, hashedPasswordInServer);
         assertTrue(isValid.isEmpty());
     }
@@ -270,9 +271,9 @@ public class InputValidationServiceTest {
     @Test
     void testDifferentPasswordWithSavedPassword() {
         InputValidationService validate = new InputValidationService(gardenerFormService);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String passwordEntered = "PassworD1@";
-        String passwordInServer = "DifferentPassWord1@";
-        int hashedPasswordInServer = passwordInServer.hashCode();
+        String hashedPasswordInServer = encoder.encode("PassworD2@");
         Optional<String> isValid = validate.checkSavedPassword(passwordEntered, hashedPasswordInServer);
         assertTrue(isValid.get().matches("Your old password is incorrect."));
     }

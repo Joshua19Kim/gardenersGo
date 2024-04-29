@@ -35,11 +35,11 @@ public class GardenerFormService {
 
     /**
      * Adds a formResult to persistence
+     *
      * @param gardener object to persist
-     * @return the saved formResult object
      */
-    public Gardener addGardener(Gardener gardener) {
-        return gardenerFormRepository.save(gardener);
+    public void addGardener(Gardener gardener) {
+        gardenerFormRepository.save(gardener);
     }
 
     public Optional<Gardener> findById(long id) {
@@ -50,7 +50,13 @@ public class GardenerFormService {
         return gardenerFormRepository.findByEmail(email);
     }
 
-    public Optional<Gardener> getUserByEmailAndPassword(String email, int password) {
-        return gardenerFormRepository.findByEmailAndPassword(email, password); // Creating some sort of thread problem?
+    public Optional<Gardener> getUserByEmailAndPassword(String email, String password) {
+        Optional<Gardener> gardener = gardenerFormRepository.findByEmail(email);
+        if (gardener.isPresent()) {
+            if (gardener.get().comparePassword(password)) {
+                return gardener;
+            }
+        }
+        return Optional.empty();
     }
 }
