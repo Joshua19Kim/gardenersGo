@@ -43,9 +43,9 @@ public class ForgotPasswordControllerTest {
     void onForgotPasswordPage_validNonExistingEmail_confirmationMessageProvided() throws Exception {
         inputValidator = new InputValidationService(gardenerFormService);
         Mockito.when(inputValidator.checkEmailInUse(Mockito.anyString())).thenReturn(Optional.of(""));
+        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
         ForgotPasswordFormController forgotPasswordFormController = new ForgotPasswordFormController(gardenerFormService, tokenService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(forgotPasswordFormController).build();
-//        MOCK_MVC.perform(MockMvcRequestBuilders.post("/forgotPassword").with(csrf()).param(""))
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/forgotPassword")
                         .with(csrf())

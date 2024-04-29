@@ -224,11 +224,8 @@ public class UserProfileController {
 
             String email = gardener.getEmail();
             String emailMessage = "Your Password has been updated";
-
-            email = "benmoore1.work@gmail.com"; // TESTING
-
             EmailUserService emailService = new EmailUserService(email, emailMessage);
-            emailService.sendEmail(); // Sending email is SLOW
+            emailService.sendEmail(); // *** Blocking
 
             return "redirect:/user";
         }
