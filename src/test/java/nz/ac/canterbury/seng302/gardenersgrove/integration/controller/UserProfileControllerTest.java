@@ -16,6 +16,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -42,6 +45,8 @@ public class UserProfileControllerTest {
     @MockBean
     private Gardener testGardener;
     @MockBean
+    private Authentication authentication;
+    @MockBean
     private ArgumentCaptor<Gardener> gardenerCaptor;
     @InjectMocks
     private UserProfileController userProfileController;
@@ -59,7 +64,7 @@ public class UserProfileControllerTest {
                 LocalDate.of(1980, 1, 1),
                 "testEmail@gmail.com",
                 "testPassword",
-                "testProfilePhoto.jpg");
+                "defaultPhoto.jpg");
 
         List<Authority> userRoles = new ArrayList<>();
         testGardener.setUserRoles(userRoles);
@@ -80,7 +85,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("lastName", "testLastName"))
                 .andExpect(model().attribute("DoB", LocalDate.of(1980, 1, 1)))
                 .andExpect(model().attribute("email", "testEmail@gmail.com"))
-                .andExpect(model().attribute("profilePic", "testProfilePhoto.jpg"));
+                .andExpect(model().attribute("profilePic", "defaultPhoto.jpg"));
 
     }
     @Test
@@ -204,6 +209,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("emailValid", Matchers.nullValue()));
 
         ArgumentCaptor<Gardener> gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
         List<Gardener> addGardener = gardenerCaptor.getAllValues();
         assertEquals("newTestFirstName", addGardener.get(1).getFirstName());
@@ -229,6 +235,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("emailValid", Matchers.nullValue()));
 
         ArgumentCaptor<Gardener> gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
         List<Gardener> addGardener = gardenerCaptor.getAllValues();
         assertEquals("newTestLastName", addGardener.get(1).getLastName());
@@ -254,6 +261,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("emailValid", Matchers.nullValue()));
 
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
         List<Gardener> addGardener = gardenerCaptor.getAllValues();
         assertEquals(LocalDate.of(2001,12,13), addGardener.get(1).getDoB());
@@ -279,6 +287,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("emailValid", Matchers.nullValue()));
 
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
         List<Gardener> addGardener = gardenerCaptor.getAllValues();
         assertEquals("newTestEmail@gmail.com", addGardener.get(1).getEmail());
@@ -304,6 +313,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("emailValid", Matchers.nullValue()));
 
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
         List<Gardener> addGardener = gardenerCaptor.getAllValues();
         assertNull(addGardener.get(1).getLastName());
@@ -349,34 +359,82 @@ public class UserProfileControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("password"))
-                .andExpect(model().attribute("passwordStrong", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
+                .andExpect(model().attribute("passwordStrong"
+                        , "Your password must be at least 8 characters long " +
+                                "and include at least one uppercase letter, " +
+                                "one lowercase letter, one number, and one special character."));
     }
 
-//    @Test
-//    @WithMockUser("testEmail@gmail.com")
-//    void OnPasswordUpdatePage_userPutValidNewPasswords_saveNewPasswordAndSendConfirmationEmail() throws Exception {
-//        ArgumentCaptor<EmailUserService> emailServiceCaptor = ArgumentCaptor.forClass(EmailUserService.class);
-//
-//        this.mockMvc
-//                .perform(MockMvcRequestBuilders.post("/password")
-//                        .param("oldPassword", "testPassword")
-//                        .param("newPassword", "NewPassWord1@")
-//                        .param("retypePassword", "NewPassWord1@")
-//                        .with(csrf())
-//                )
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(view().name("redirect:/user"));
-//
-//        gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-//        verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
-//        verify(emailServiceCaptor.getValue(), times(1)).sendEmail();
-//        List<Gardener> addedGardener = gardenerCaptor.getAllValues();
-//        assertEquals("testEmail@gmail.com", addedGardener.get(1).getEmail());
-//
-//        //this will be edited when the password style is changed from hashcode to something more secure.
-////        assertEquals("NewPassWord1@", addedGardener.get(1).getPassword());
-//
-//    }
-//
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    void OnPasswordUpdatePage_userPutValidNewPasswords_saveNewPasswordAndSendConfirmationEmail() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.post("/password")
+                        .param("oldPassword", "testPassword")
+                        .param("newPassword", "NewPassWord1@")
+                        .param("retypePassword", "NewPassWord1@")
+                        .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/user"));
+
+        gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
+        verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
+        List<Gardener> addedGardener = gardenerCaptor.getAllValues();
+        assertEquals("testEmail@gmail.com", addedGardener.get(1).getEmail());
+    }
+
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    void OnEditProfilePhotoMode_userPutsWrongTypeOfPhotos_errorMessageProvided() throws Exception {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "file",
+                "image.txt",
+                "plain/text",
+                "Hello World!".getBytes()
+        );
+        String uploadMessage = "Image must be of type png, jpg or svg";
+        when(imageService.saveImage(mockMultipartFile)).thenReturn(Optional.of(uploadMessage));
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.multipart("/user")
+                .file(mockMultipartFile)
+                .with(csrf()))
+                .andExpect(view().name("/user"));
+
+        gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
+        verify(gardenerFormService, Mockito.times(1)).addGardener(gardenerCaptor.capture());
+    }
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    void OnEditProfilePhotoPage_userClicksProfileButtonWithAuthentication_redirectUserToUserPage() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/redirectToUserPage")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/user"));
+    }
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    void OnEditProfilePhotoPage_userPutsValidTypeOfPhotos_errorMessageProvided() throws Exception {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "file",
+                "image.jpg",
+                "image/jpeg",
+                "image content".getBytes()
+        );
+        when(imageService.saveImage(mockMultipartFile)).thenReturn(Optional.empty());
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.multipart("/user")
+                        .file(mockMultipartFile)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/user"));
+
+        gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
+        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
+        verify(gardenerFormService, Mockito.times(1)).addGardener(gardenerCaptor.capture());
+    }
 
 }
