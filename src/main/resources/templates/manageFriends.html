@@ -154,8 +154,8 @@
 
         forms.forEach(form => {
             const gardener = Array.from(form.children);
-            console.log(gardener);
-            if (gardener[1].children[3].innerHTML.split(" - ")[0] === searchQuery.toLowerCase() || gardener[1].children[3].innerHTML.split(" - ")[1] === searchQuery.toLowerCase()) {
+            if (gardener[1].children[3].innerHTML.split(" - ")[0] === searchQuery.toLowerCase() ||
+                gardener[1].children[3].innerHTML.split(" - ")[1] === searchQuery.toLowerCase()) {
                 form.style.display = "flex";
                 anyFormDisplayed = true;
             } else {
@@ -195,7 +195,6 @@
         }
     }
 
-
     function displayRequest(requestType) {
         const sentDiv = document.getElementById("sent-requests");
         const receivedDiv = document.getElementById("received-requests")
@@ -225,7 +224,6 @@
             }
         }
     }
-
 
 </script>
 </body>
