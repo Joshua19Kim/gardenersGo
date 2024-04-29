@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.RelationshipRepository;
@@ -10,8 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 /**
  * Service class for FormResults, defined by the @link{Service} annotation.
@@ -26,6 +24,7 @@ public class RelationshipService {
     public RelationshipService(RelationshipRepository relationshipRepository, GardenerFormService gardenerFormService) {
         this.relationshipRepository = relationshipRepository;
         this.gardenerFormService = gardenerFormService;
+
     }
 
     /**
@@ -84,6 +83,7 @@ public class RelationshipService {
     public List<Gardener> getGardenersWithNoRelationship(List<Gardener> allRelationships, List<Gardener> allGardeners) {
         List<Gardener> noExistingRelationship = new ArrayList<>(allGardeners);
         noExistingRelationship.removeAll(allRelationships);
+        // remove current user
 
         return noExistingRelationship;
     }

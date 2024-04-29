@@ -52,7 +52,6 @@ public class GardenerFormService {
 
     public List<Gardener> getGardenersById (List<Long> ids) {
         List<Gardener> allGardeners = new ArrayList<>();
-
         for (long id : ids) {
             allGardeners.add(findById(id).get());
         }

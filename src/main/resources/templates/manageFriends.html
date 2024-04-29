@@ -112,18 +112,25 @@
                             <h3>Find Gardeners</h3>
                         </div>
                     </div>
-                    <div class="table-body">
+                    <div class="search-table-body">
                         <!-- https://www.w3schools.com/howto/howto_css_search_button.asp search bar and styling-->
                         <div class="input-search-bar">
-                            <form class="search-bar"  method="post">
-                                <input type="text" placeholder="Search...">
-                                <button type="submit"><i class="fa fa-search"></i></button>
+                            <form class="search-bar">
+                                <input id="search-input" type="text" placeholder="Search...">
+                                <input id="searchPool" name="searchPool" th:value="${searchPool}" type="hidden">
+                                <button id="search-button" type="button" onclick="filterSearch()"><i class="fa fa-search"></i></button>
                             </form>
                         </div>
-                        <div class="search-results">
-                            <script>
-
-                            </script>
+                        <div id="search-results-container">
+                            <!-- // Javascript populates this div -->
+                            <div class="all-non-friends" id="all-non-friends">
+                                <form method="post" th:action="@{/manageRequest}" th:each="search : ${searchPool}">
+                                    <input name="friendId" th:value="${search.getId()}" type="hidden">
+                                    <input name="status" value="pending" type="hidden">
+                                    <p th:text="${search.toString()}"></p>
+                                    <button class="invite-friend-req-btn button">Invite Friend</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -133,6 +140,21 @@
 </div>
 
 <script>
+
+    function filterSearch() {
+        const searchQuery = document.getElementById("search-input").value;
+        const nonFriends = document.getElementById("all-non-friends");
+        const forms = Array.from(nonFriends.children);
+        forms.forEach(form => {
+            const gardener = Array.from(form.children);
+            console.log(gardener);
+            if (gardener[3].innerHTML.split(" - ")[0] === searchQuery || gardener[3].innerHTML.split(" - ")[1] === searchQuery) {
+                form.style.display = "block";
+            } else {
+                form.style.display = "none";
+            }
+        })
+    }
     function displayFriendRequests() {
         const modal = document.getElementById("friend-request-modal");
         switch (modal.style.display) {
@@ -147,9 +169,12 @@
 
     function displaySearchBar() {
         const searchModal = document.getElementById("add-friend-modal");
+        const searchQuery = document.getElementById("search-input");
         switch (searchModal.style.display) {
             case "":
                 document.getElementById("add-friend-modal").style.display = "block";
+                searchQuery.value = "";
+                showSearchResults(); // clear input when user closes add friend modal
                 break;
             case "block":
                 document.getElementById("add-friend-modal").style.display = "";
@@ -157,9 +182,78 @@
         }
     }
 
-    function getSearchResults() {
+    function getSearchResultsContainer() {
+        const searchResultsContainer = document.getElementById("search-results-container");
         const searchQuery = document.getElementById("search-input").value;
+
+        if (searchResultsContainer.style.display === "" || searchResultsContainer.style.display === "none") {
+            searchResultsContainer.style.display = "block";
+        }
     }
+
+    function filterSearchResults() {
+        const searchQuery = document.getElementById("search-input").value.trim();
+        const noExistingRelationships = document.getElementById("searchPool").value;
+        const noExistingRelationshipsArray = noExistingRelationships.split(',').map(item => item.trim());
+        // Trim the '[' from the first item and ']' from the last item
+        if (noExistingRelationshipsArray.length > 0) {
+            noExistingRelationshipsArray[0] = noExistingRelationshipsArray[0].replace('[', '');
+            noExistingRelationshipsArray[noExistingRelationshipsArray.length - 1] = noExistingRelationshipsArray[noExistingRelationshipsArray.length - 1].replace(']', '');
+        }
+
+        const searchResults = [];
+        console.log(noExistingRelationshipsArray);
+        console.log(searchQuery);
+
+        noExistingRelationshipsArray.forEach(function(gardener) {
+            const [name, email] = gardener.split(' - ').map(item => item.trim());
+            if (name === searchQuery || email === searchQuery) {
+                searchResults.push(gardener);
+            }
+        })
+
+        console.log(searchResults);
+        return searchResults;
+    }
+
+    function showSearchResults() {
+        const searchResults = filterSearchResults();
+        const resultsContainer = document.getElementById("search-results-container");
+        // resultsContainer.innerHTML = ""; // Clear previous results
+
+        searchResults.forEach(function(result) {
+            const [name, email] = result.split(' - ').map(item => item.trim());
+
+            const resultElement = document.createElement("div");
+            const textElement = document.createElement("p");
+            const buttonElement = document.createElement("button");
+
+            textElement.textContent = result;
+            buttonElement.textContent = "Send Request";
+
+            buttonElement.addEventListener("click", function() {
+                // Sam to do: define action to be performed when button is clicked
+                console.log("Button clicked for:", result);
+            });
+
+            resultElement.classList.add("gardener-result-container");
+            textElement.classList.add("gardener-result");
+            buttonElement.classList.add("send-friend-request-button");
+
+            resultElement.appendChild(textElement);
+            resultElement.appendChild(buttonElement);
+            resultsContainer.appendChild(resultElement);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchButton = document.getElementById("search-button");
+        searchButton.addEventListener("click", function() {
+            getSearchResultsContainer();
+            filterSearchResults();
+        });
+    });
+
 
     function displayRequest(requestType) {
         const sentDiv = document.getElementById("sent-requests");
@@ -191,34 +285,37 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var toggleFriendBtns = document.querySelectorAll('.toggleFriendBtn');
-        toggleFriendBtns.forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var email = this.getAttribute('data-email');
-                var friendId = this.getAttribute('data-friendId');
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var toggleFriendBtns = document.querySelectorAll('.toggleFriendBtn');
+    //     toggleFriendBtns.forEach(function (btn) {
+    //         btn.addEventListener('click', function () {
+    //             var email = this.getAttribute('data-email');
+    //             var friendId = this.getAttribute('data-friendId');
+    //
+    //             var form = document.createElement('form');
+    //             form.setAttribute('method', 'post');
+    //             form.setAttribute('action', '/addRelationship');
+    //
+    //             var emailInput = document.createElement('input');
+    //             emailInput.setAttribute('type', 'hidden');
+    //             emailInput.setAttribute('name', 'email');
+    //             emailInput.setAttribute('value', email);
+    //             form.appendChild(emailInput);
+    //
+    //             var friendIdInput = document.createElement('input');
+    //             friendIdInput.setAttribute('type', 'hidden');
+    //             friendIdInput.setAttribute('name', 'friendId');
+    //             friendIdInput.setAttribute('value', friendId);
+    //             form.appendChild(friendIdInput);
+    //
+    //             document.body.appendChild(form);
+    //             form.submit();
+    //         });
+    //     });
+    // });
 
-                var form = document.createElement('form');
-                form.setAttribute('method', 'post');
-                form.setAttribute('action', '/addRelationship');
 
-                var emailInput = document.createElement('input');
-                emailInput.setAttribute('type', 'hidden');
-                emailInput.setAttribute('name', 'email');
-                emailInput.setAttribute('value', email);
-                form.appendChild(emailInput);
 
-                var friendIdInput = document.createElement('input');
-                friendIdInput.setAttribute('type', 'hidden');
-                friendIdInput.setAttribute('name', 'friendId');
-                friendIdInput.setAttribute('value', friendId);
-                form.appendChild(friendIdInput);
-
-                document.body.appendChild(form);
-                form.submit();
-            });
-        });
-    });
 
 </script>
 

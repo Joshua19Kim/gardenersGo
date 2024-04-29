@@ -581,12 +581,34 @@ form.search-bar::after {
     display: table;
 }
 
-.search-results {
-    background-color: #45a049;
-    padding: 100px;
+#search-results-container {
+    /*background-color: #45a049;*/
+    padding: 10px;
     margin-top: 10px;
     overflow: auto;
+    display: none;
+    width: 100%;
 }
+
+.gardener-result-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    align-items: center;
+}
+
+.send-friend-request-button {
+    font-size: 1rem;
+    height: min-content;
+    margin-left: 15px;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #45a049;
+}
+
 
 #friend-request-button {
     float: right;
@@ -752,5 +774,6 @@ form.search-bar::after {
 .decline-friend-req-btn {
     background: #e64343 !important;
 }
+
 
 

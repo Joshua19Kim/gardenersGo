@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SearchService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
@@ -16,10 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 @Controller
@@ -51,6 +49,7 @@ public class ManageFriendsController {
 
         String currentUserEmail = authentication.getPrincipal().toString();
         Optional<Gardener> currentUserOptional = gardenerFormService.findByEmail(currentUserEmail);
+
         if (currentUserOptional.isPresent()) {
             Gardener currentUser = currentUserOptional.get();
             List<Gardener> allCurrentUserRelationships = relationshipService.getCurrentUserRelationships(currentUser.getId());
@@ -69,14 +68,17 @@ public class ManageFriendsController {
             allRelationships.addAll(allCurrentUserIncoming);
             allRelationships.addAll(allCurrentUserDeclinedRequests);
 
-            noExistingRelationship = relationshipService.getGardenersWithNoRelationship(allRelationships, gardenerFormService.getGardeners());
+            List<Gardener> allGardeners = gardenerFormService.getGardeners();
+            noExistingRelationship = relationshipService.getGardenersWithNoRelationship(allRelationships, allGardeners);
+
+            noExistingRelationship.remove(currentUser); // remove if contains current user so that cannot add themselves
+
             model.addAttribute("searchPool", noExistingRelationship);
 
         } else {
             logger.info("No user with that email");
         }
         return "/manageFriends";
-
 
     }
 
@@ -115,7 +117,11 @@ public class ManageFriendsController {
         String currentEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Gardener> currentGardener = gardenerFormService.findByEmail(currentEmail);
         if (Objects.equals(status, "pending")) {
-            currentGardener.ifPresent(value -> relationshipService.updateRelationshipStatus(status, value.getId(), friendId));
+//            currentGardener.ifPresent(value -> relationshipService.updateRelationshipStatus(status, value.getId(), friendId));
+            if (currentGardener.isPresent()) {
+                Relationships relationship = new Relationships(currentGardener.get().getId(), friendId, "pending");
+                relationshipService.addRelationship(relationship);
+            }
         } else {
             currentGardener.ifPresent(value -> relationshipService.updateRelationshipStatus(status, friendId, value.getId()));
         }

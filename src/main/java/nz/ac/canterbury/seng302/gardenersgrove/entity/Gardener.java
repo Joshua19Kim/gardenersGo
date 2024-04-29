@@ -139,6 +139,16 @@ public class Gardener {
 
     public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
 
+    public String getSearchString() {
+        String gardenerString = firstName;
+        if (getLastName() != null) {
+            gardenerString += " " + lastName;
+        }
+        gardenerString += " - " + email;
+        gardenerString += " id(" + id + ")";
+        return gardenerString;
+    }
+
     @Override
     public String toString() {
         String gardenerString = firstName;
