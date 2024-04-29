@@ -25,6 +25,7 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-test
 	testImplementation 'org.springframework.security:spring-security-test:6.2.3'
+	implementation 'org.simplejavamail:simple-java-mail:8.8.0'
 }
 
 tasks.named('test') {
