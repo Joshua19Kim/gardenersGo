@@ -2,22 +2,20 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
-public class SecurityService {
+public class TokenService {
 
     private LostPasswordTokenRepository lostPasswordTokenRepository;
 
     @Autowired
-    public SecurityService(LostPasswordTokenRepository lostPasswordTokenRepository) {
+    public TokenService(LostPasswordTokenRepository lostPasswordTokenRepository) {
         this.lostPasswordTokenRepository = lostPasswordTokenRepository;
     }
 
@@ -36,5 +34,14 @@ public class SecurityService {
 
     public Optional<Gardener> findGardenerbyToken(String token){
         return lostPasswordTokenRepository.findByToken(token).map(LostPasswordToken::getGardener);
+    }
+
+    public void createLostPasswordTokenForGardener(Gardener gardener, String token) {
+        Optional<LostPasswordToken> checkToken = lostPasswordTokenRepository.findByGardener(gardener);
+        if (checkToken.isPresent()) { // Deletes value if present
+            lostPasswordTokenRepository.delete(checkToken.get());
+        }
+        LostPasswordToken generatedToken = new LostPasswordToken(token, gardener);
+        lostPasswordTokenRepository.save(generatedToken);
     }
 }

@@ -1,15 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.SecurityService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,15 +21,15 @@ import java.util.Optional;
 public class ResetPasswordFormController {
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
     private final GardenerFormService gardenerFormService;
-    private final SecurityService securityService;
+    private final TokenService tokenService;
 
     private Gardener gardener;
 
     @Autowired
     public ResetPasswordFormController(GardenerFormService gardenerFormService,
-                                       SecurityService securityService) {
+                                       TokenService tokenService) {
         this.gardenerFormService = gardenerFormService;
-        this.securityService = securityService;
+        this.tokenService = tokenService;
     }
 
     /**
@@ -43,13 +42,16 @@ public class ResetPasswordFormController {
     public String getResetPasswordForm(@RequestParam(name = "token") String token) {
         logger.info("GET /resetPassword");
         // Verifies token has associated user and is not expired
-        String result = securityService.validateLostPasswordToken(token);
+        String result = tokenService.validateLostPasswordToken(token);
         if (result == null) {
-            Optional<Gardener> tempGardener = securityService.findGardenerbyToken(token);
-            tempGardener.ifPresent(g -> gardener = g); // Referenced from ChatGPT
-            return "resetPasswordForm";
+            Optional<Gardener> tempGardener = tokenService.findGardenerbyToken(token);
+            if (tempGardener.isPresent()) {
+                gardener = tempGardener.get();
+                return  "resetPasswordForm";
+            };
+            return "redirect:/login"; // Gardener / Id not present
         }
-        return "redirect:/login"; // Token does not exist or is expired
+        return "redirect:/login?expired"; // Token does not exist or is expired
     }
 
     /**
@@ -73,9 +75,17 @@ public class ResetPasswordFormController {
         if (passwordMatchError.isEmpty() && passwordStrengthError.isEmpty()) {
             gardener.updatePassword(password);
             gardenerFormService.addGardener(gardener);
+
+            // Send email telling user password has been updated
+            String email = gardener.getEmail();
+            String emailMessage = "Your Password has been updated";
+            email = "benmoore1.work@gmail.com"; // TESTING
+            EmailUserService emailService = new EmailUserService(email, emailMessage);
+            emailService.sendEmail(); // Sending email is SLOW
+
             // Re-authenticates user to catch case when they change their email
-            Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication((newAuth)); // do i need this part for resetting?
+//            Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
+//            SecurityContextHolder.getContext().setAuthentication((newAuth)); // do i need this part for resetting?
             return "redirect:/login";
         }
         return "resetPasswordForm";

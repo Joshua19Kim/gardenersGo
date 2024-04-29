@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.SecurityService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +24,15 @@ public class ForgotPasswordFormController {
 
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
     private final GardenerFormService gardenerFormService;
-    private final SecurityService securityService;
+    private final TokenService tokenService;
 
     private final String confirmationMessage = "An email was sent to the address if it was recognised";
 
     @Autowired
     public ForgotPasswordFormController(GardenerFormService gardenerFormService,
-                                        SecurityService securityService) {
+                                        TokenService tokenService) {
         this.gardenerFormService = gardenerFormService;
-        this.securityService = securityService;
+        this.tokenService = tokenService;
     }
 
     public String constructLostPasswordTokenEmail(String contextPath, Locale locale, String token, Gardener gardener) {
@@ -80,7 +80,7 @@ public class ForgotPasswordFormController {
             if (gardener.isPresent()) {
                 // FROM https://www.baeldung.com/spring-security-registration-i-forgot-my-password
                 String token = UUID.randomUUID().toString();
-                gardenerFormService.createLostPasswordTokenForGardener(gardener.get(), token);
+                tokenService.createLostPasswordTokenForGardener(gardener.get(), token);
                 String emailMessage = constructLostPasswordTokenEmail(getAppUrl(request), request.getLocale(), token, gardener.get());
                 // FOR TESTING:
                 email = "benmoore1.work@gmail.com";

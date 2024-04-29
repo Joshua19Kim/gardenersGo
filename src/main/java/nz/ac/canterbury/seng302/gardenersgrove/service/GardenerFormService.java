@@ -53,9 +53,4 @@ public class GardenerFormService {
     public Optional<Gardener> getUserByEmailAndPassword(String email, int password) {
         return gardenerFormRepository.findByEmailAndPassword(email, password); // Creating some sort of thread problem?
     }
-
-    public void createLostPasswordTokenForGardener(Gardener gardener, String token) {
-        LostPasswordToken generatedToken = new LostPasswordToken(token, gardener);
-        lostPasswordTokenRepository.save(generatedToken);
-    }
 }

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class LostPasswordToken {
     private String token;
 
     @OneToOne(targetEntity = Gardener.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "gardener_id")
+    @JoinColumn(nullable = false, name = "token_gardener_id")
     private Gardener gardener;
 
     private Date expiryDate;
