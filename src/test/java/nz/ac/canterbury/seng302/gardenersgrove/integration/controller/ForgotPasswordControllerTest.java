@@ -45,6 +45,7 @@ public class ForgotPasswordControllerTest {
         Mockito.when(inputValidator.checkEmailInUse(Mockito.anyString())).thenReturn(Optional.of(""));
         ForgotPasswordFormController forgotPasswordFormController = new ForgotPasswordFormController(gardenerFormService, tokenService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(forgotPasswordFormController).build();
+//        MOCK_MVC.perform(MockMvcRequestBuilders.post("/forgotPassword").with(csrf()).param(""))
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/forgotPassword")
                         .with(csrf())

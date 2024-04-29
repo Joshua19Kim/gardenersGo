@@ -74,7 +74,7 @@ public class ForgotPasswordFormController {
 
         if (validEmailError.isEmpty()){
             Optional<Gardener> gardener = gardenerFormService.findByEmail(email);
-            if (gardener.isPresent()) {
+            if (gardener.isEmpty()) {
                 // FROM https://www.baeldung.com/spring-security-registration-i-forgot-my-password
                 String token = UUID.randomUUID().toString();
                 tokenService.createLostPasswordTokenForGardener(gardener.get(), token);
