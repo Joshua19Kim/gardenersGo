@@ -56,12 +56,13 @@ public class SignupCodeFormController {
         if ((request.getSession().getAttribute("newGardenerAttribute")) != null) {
             gardenerId = (Long) request.getSession().getAttribute("newGardenerAttribute");
             Optional<Gardener> newGardener = gardenerFormService.findById(gardenerId);
+            logger.info(newGardener.toString());
             if (newGardener.isPresent()) {
                 Gardener gardener = newGardener.get();
+                logger.info("New Gardener: " + gardener);
             } else {
                 return "login";
             }
-            logger.info("New Gardener: " + gardener);
             EmailUserService emailService = new EmailUserService("jxmine456@gmail.com", "Nature's Facebook Signup Code", String.format("""
                 Your unique signup code for Nature's Facebook: %s
                 
