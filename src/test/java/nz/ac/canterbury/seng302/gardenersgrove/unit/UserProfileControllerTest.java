@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unit;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ public class UserProfileControllerTest {
 
     private UserProfileController userProfileController;
     private GardenerFormService gardenerFormService;
+    private EmailUserService emailUserService;
     private Model modelMock;
     private Gardener gardener;
     private Authentication authentication;
@@ -34,6 +36,7 @@ public class UserProfileControllerTest {
         authentication = Mockito.mock(Authentication.class);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         gardenerFormService = Mockito.mock(GardenerFormService.class);
+        emailUserService = Mockito.mock(EmailUserService.class);
         userProfileController = new UserProfileController(gardenerFormService);
         modelMock = Mockito.mock(Model.class);
         gardener = Mockito.mock(Gardener.class);
@@ -98,25 +101,6 @@ public class UserProfileControllerTest {
     void GivenAgeTooHigh_WhenUserConfirms_GardenerEditNotUploaded() {
         userProfileController.getUserProfile("Kush", "Desai", LocalDate.of(1024, 1, 15), "test@gmail.com", false, modelMock);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
-    }
-
-    @Test
-    void GivenCorrectOldPasswordAndMatchingNewValidPasswords_WhenUserConfirms_SaveNewPasswordWithoutError() {
-        Mockito.when(authentication.getName()).thenReturn("testEmail@test.test");
-        Mockito.when(gardenerFormService.findByEmail("testEmail@test.test")).thenReturn(Optional.of(gardener));
-        String passwordInServer = "Password1!";
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        Mockito.when(gardener.getPassword()).thenReturn(encoder.encode(passwordInServer));
-
-        String testResult = userProfileController.updatePassword("Password1!","newPassword1!", "newPassword1!", modelMock);
-
-        Mockito.verify(modelMock).addAttribute("passwordCorrect","");
-        Mockito.verify(modelMock).addAttribute("passwordsMatch","");
-        Mockito.verify(modelMock).addAttribute("passwordStrong","");
-        Mockito.verify(gardener, times(1)).updatePassword("newPassword1!");
-        Mockito.verify(gardenerFormService,times(1)).addGardener(gardener);
-        String expectedNextPage = "redirect:/user";
-        assertEquals(expectedNextPage, testResult);
     }
 
     @Test

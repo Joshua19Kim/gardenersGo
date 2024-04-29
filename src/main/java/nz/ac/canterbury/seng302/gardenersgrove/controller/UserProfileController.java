@@ -225,11 +225,12 @@ public class UserProfileController {
         if (passwordCorrectError.isEmpty() && passwordMatchError.isEmpty() && passwordStrengthError.isEmpty()) {
             gardener.updatePassword(newPassword);
             gardenerFormService.addGardener(gardener);
-            EmailUserService emailService = new EmailUserService(currentUserEmail, "Your password has been updated :D");
-            emailService.sendEmail();
-            // Re-authenticates user to catch case when they change their password
-            Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication((newAuth));
+
+            String email = gardener.getEmail();
+            String emailMessage = "Your Password has been updated";
+            EmailUserService emailService = new EmailUserService(email, emailMessage);
+            emailService.sendEmail(); // *** Blocking
+
             return "redirect:/user";
         }
 
