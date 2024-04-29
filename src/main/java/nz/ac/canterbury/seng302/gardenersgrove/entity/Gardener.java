@@ -43,6 +43,10 @@ public class Gardener {
     @JoinColumn(name = "gardener_id")
     private List<Authority> userRoles;
 
+    /** The list of gardens belonging to the gardener. */
+    @OneToMany(mappedBy = "gardener")
+    private List<Garden> gardens;
+
     /**
      * JPA required no-args constructor
      */
@@ -62,6 +66,7 @@ public class Gardener {
         this.email = email;
         this.password = password.hashCode();
         this.profilePicture = profilePicture;
+        gardens = new ArrayList<>();
     }
 
     public void grantAuthority(String authority) {
@@ -116,6 +121,8 @@ public class Gardener {
         }
         return searchResult;
     }
+    public List<Garden> getGardens() { return gardens; }
+
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
     public void setLastName(String lastName) { this.lastName = lastName; }
@@ -129,6 +136,8 @@ public class Gardener {
     }
 
     public void updatePassword(String password) { this.password = password.hashCode(); }
+
+    public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
 
     @Override
     public String toString() {

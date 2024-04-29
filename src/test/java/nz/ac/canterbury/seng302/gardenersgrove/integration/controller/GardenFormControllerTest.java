@@ -2,9 +2,12 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -12,6 +15,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,19 +27,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = GardenFormController.class)
 public class GardenFormControllerTest {
+    Gardener testGardener = new Gardener("Test", "Gardener",
+            LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+            "Password1!", "defaultProfilePic.png");
+
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private GardenService gardenService;
 
+    @MockBean
+    private GardenerFormService gardenerFormService;
+
     @Test
     @WithMockUser
     public void MyGardensRequested_DefaultValues_GardenDetailsProvided() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam");
+        Garden garden = new Garden("My Garden", "Ilam", testGardener);
         List<Garden> gardens = new ArrayList<>();
         gardens.add(garden);
-        when(gardenService.getGardenResults()).thenReturn(gardens);
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
+        when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
 
         mockMvc
                 .perform((MockMvcRequestBuilders.get("/gardens")))
@@ -44,13 +56,14 @@ public class GardenFormControllerTest {
                 .andExpect(model().attributeExists("gardens"))
                 .andExpect(model().attribute("gardens", gardens));
 
-        verify(gardenService, times(1)).getGardenResults();
+        verify(gardenerFormService, times(1)).findByEmail(any());
+        verify(gardenService, times(1)).getGardensByGardenerId(any());
     }
 
     @Test
     @WithMockUser
     public void GardenDetailsRequested_ExistentIdGiven_GardenDetailsProvided() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam");
+        Garden garden = new Garden("My Garden", "Ilam", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         mockMvc
@@ -79,7 +92,7 @@ public class GardenFormControllerTest {
     @Test
     @WithMockUser
     public void EditGardenDetailsRequested_ExistentIdGiven_GoToEditGardenForm() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam");
+        Garden garden = new Garden("My Garden", "Ilam", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         mockMvc
@@ -109,7 +122,7 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void EditedGardenDetailsSubmitted_ValidValuesWithSize_GardenDetailsUpdated()
             throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", "32");
+        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(gardenService.addGarden(garden)).thenReturn(garden);
         mockMvc
@@ -133,7 +146,7 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void EditedGardenDetailsSubmitted_ValidValuesWithNoSize_GardenDetailsUpdated()
             throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", "32");
+        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(gardenService.addGarden(garden)).thenReturn(garden);
         mockMvc
@@ -150,14 +163,14 @@ public class GardenFormControllerTest {
         verify(gardenService, times(1)).addGarden(garden);
         Assertions.assertEquals("Rose Garden", garden.getName());
         Assertions.assertEquals("Riccarton", garden.getLocation());
-        Assertions.assertEquals("0", garden.getSize());
+        Assertions.assertEquals(null, garden.getSize());
     }
 
     @Test
     @WithMockUser
     public void GardenFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
         List<Garden> gardens = new ArrayList<>();
-        gardens.add(new Garden("My Garden", "Ilam", "32"));
+        gardens.add(new Garden("My Garden", "Ilam", "32", testGardener));
         when(gardenService.getGardenResults()).thenReturn(gardens);
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/form")
                         .param("redirect", ""))
@@ -174,7 +187,7 @@ public class GardenFormControllerTest {
         String name = "My Garden";
         String location = "Ilam";
         String size = "1.0";
-        Garden garden = new Garden(name, location, size);
+        Garden garden = new Garden(name, location, size, testGardener);
         garden.setId(1L);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
