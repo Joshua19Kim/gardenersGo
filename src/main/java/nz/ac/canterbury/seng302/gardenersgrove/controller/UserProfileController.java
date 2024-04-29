@@ -61,6 +61,7 @@ public class UserProfileController {
                                  @RequestParam(name = "DoB", required = false) LocalDate DoB,
                                  @RequestParam(name = "email", required = false) String email,
                                  @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
+                                 @RequestParam(name = "user", required = false) String user,
                                  Model model) {
 
         logger.info("GET /user");
@@ -71,11 +72,18 @@ public class UserProfileController {
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
         if (gardenerOptional.isPresent()) {
             gardener = gardenerOptional.get();
-            model.addAttribute("firstName", gardener.getFirstName());
-            model.addAttribute("lastName", gardener.getLastName());
-            model.addAttribute("DoB", gardener.getDoB());
-            model.addAttribute("email", gardener.getEmail());
-            model.addAttribute("profilePic", gardener.getProfilePicture());
+            if(user != null) {
+                Gardener friend = gardenerFormService.findById(Long.parseLong(user, 10)).get();
+                model.addAttribute("gardener", friend);
+                return "unauthorizedUser";
+            } else {
+                model.addAttribute("firstName", gardener.getFirstName());
+                model.addAttribute("lastName", gardener.getLastName());
+                model.addAttribute("DoB", gardener.getDoB());
+                model.addAttribute("email", gardener.getEmail());
+                model.addAttribute("profilePic", gardener.getProfilePicture());
+            }
+
         } else {
             model.addAttribute("firstName", "Not Registered");
         }
