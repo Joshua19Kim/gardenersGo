@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.ui.Model;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -102,34 +103,13 @@ public class UserProfileControllerTest {
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
     }
 
-    // FIX ME!!!!
-//    @Test
-//    void GivenCorrectOldPasswordAndMatchingNewValidPasswords_WhenUserConfirms_SaveNewPasswordWithoutError() {
-//        Mockito.when(authentication.getName()).thenReturn("testEmail@test.test");
-//        Mockito.when(gardenerFormService.findByEmail("testEmail@test.test")).thenReturn(Optional.of(gardener));
-//        String passwordInServer = "Password1!";
-//        Mockito.when(gardener.getPassword()).thenReturn(passwordInServer.hashCode());
-//
-//        Mockito.doNothing().when(emailUserService).sendEmail();
-//
-//        String testResult = userProfileController.updatePassword("Password1!","newPassword1!", "newPassword1!", modelMock);
-//
-//        Mockito.verify(modelMock).addAttribute("passwordCorrect","");
-//        Mockito.verify(modelMock).addAttribute("passwordsMatch","");
-//        Mockito.verify(modelMock).addAttribute("passwordStrong","");
-//        Mockito.verify(gardener, times(1)).updatePassword("newPassword1!");
-//        Mockito.verify(gardenerFormService,times(1)).addGardener(gardener);
-//        String expectedNextPage = "redirect:/user";
-//        assertEquals(expectedNextPage, testResult);
-//        Mockito.verify(emailUserService, Mockito.never()).sendEmail(); // Checks no email was sent (from GPT)
-//    }
-
     @Test
     void GivenIncorrectOldPasswordAndMatchingNewValidPasswords_WhenUserConfirms_DoNotSaveAndShowsErrorMessage() {
         Mockito.when(authentication.getName()).thenReturn("testSameEmail@test.test");
         Mockito.when(gardenerFormService.findByEmail("testSameEmail@test.test")).thenReturn(Optional.of(gardener));
         String passwordInServer = "Password1!";
-        Mockito.when(gardener.getPassword()).thenReturn(passwordInServer.hashCode());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        Mockito.when(gardener.getPassword()).thenReturn(encoder.encode(passwordInServer));
 
         String testResult = userProfileController.updatePassword("wrongPassword1!","newPassword1!", "newPassword1!", modelMock);
 
@@ -147,7 +127,8 @@ public class UserProfileControllerTest {
         Mockito.when(authentication.getName()).thenReturn("testSameEmail@test.test");
         Mockito.when(gardenerFormService.findByEmail("testSameEmail@test.test")).thenReturn(Optional.of(gardener));
         String passwordInServer = "Password1!";
-        Mockito.when(gardener.getPassword()).thenReturn(passwordInServer.hashCode());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        Mockito.when(gardener.getPassword()).thenReturn(encoder.encode(passwordInServer));
 
         String testResult = userProfileController.updatePassword("Password1!","newDifferentPassword1@@", "newPassword1!", modelMock);
 
@@ -165,7 +146,8 @@ public class UserProfileControllerTest {
         Mockito.when(authentication.getName()).thenReturn("testSameEmail@test.test");
         Mockito.when(gardenerFormService.findByEmail("testSameEmail@test.test")).thenReturn(Optional.of(gardener));
         String passwordInServer = "Password1!";
-        Mockito.when(gardener.getPassword()).thenReturn(passwordInServer.hashCode());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        Mockito.when(gardener.getPassword()).thenReturn(encoder.encode(passwordInServer));
 
         String testResult = userProfileController.updatePassword("Password1!","newpassword", "newpassword", modelMock);
 
@@ -183,7 +165,8 @@ public class UserProfileControllerTest {
         Mockito.when(authentication.getName()).thenReturn("testSameEmail@test.test");
         Mockito.when(gardenerFormService.findByEmail("testSameEmail@test.test")).thenReturn(Optional.of(gardener));
         String passwordInServer = "Password1!";
-        Mockito.when(gardener.getPassword()).thenReturn(passwordInServer.hashCode());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        Mockito.when(gardener.getPassword()).thenReturn(encoder.encode(passwordInServer));
 
         String testResult = userProfileController.updatePassword("Passwrong1@#","newpass", "newpassword", modelMock);
 
