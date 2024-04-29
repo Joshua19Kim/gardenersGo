@@ -54,7 +54,7 @@
                                 <!-- Display gardener information -->
                                 <div class="friend-info">
                                     <img alt="Profile Picture"
-                                         th:src="@{${'/uploads/' + pendingRequest.getProfilePicture()}}">
+                                         th:src="@{${'/images/' + pendingRequest.getProfilePicture()}}">
                                     <p th:text="${pendingRequest.toString()}"></p>
                                 </div>
                                 <div class="friend-info">
@@ -65,7 +65,7 @@
                                 <!-- Display gardener information -->
                                 <div class="friend-info">
                                 <img alt="Profile Picture"
-                                     th:src="@{${'/uploads/' + declinedRequest.getProfilePicture()}}">
+                                     th:src="@{${'/images/' + declinedRequest.getProfilePicture()}}">
                                 <p th:text="${declinedRequest.toString()}"></p>
                                 </div>
                                 <div class="friend-info">
@@ -78,7 +78,7 @@
                             <!-- Display gardener information -->
                             <div class="friend-info">
                                 <img alt="Profile Picture"
-                                     th:src="@{${'/uploads/' + receivedRequest.getProfilePicture()}}">
+                                     th:src="@{${'/images/' + receivedRequest.getProfilePicture()}}">
                                 <p th:text="${receivedRequest.toString()}"></p>
                             </div>
                             <div class="friend-info">
@@ -122,15 +122,19 @@
                             </form>
                         </div>
                         <div id="search-results-container">
-                            <!-- // Javascript populates this div -->
                             <div class="all-non-friends" id="all-non-friends">
-                                <form method="post" th:action="@{/manageRequest}" th:each="search : ${searchPool}">
-                                    <input name="friendId" th:value="${search.getId()}" type="hidden">
-                                    <input name="status" value="pending" type="hidden">
-                                    <p th:text="${search.toString()}"></p>
+                                <form class="friends-to-request" method="post" th:action="@{/manageRequest}" th:each="search : ${searchPool}">
+                                    <div class="picture-and-gardener">
+                                        <input name="friendId" th:value="${search.getId()}" type="hidden">
+                                        <input name="status" value="pending" type="hidden">
+                                        <img alt="Profile Picture"
+                                             th:src="@{${'/images/' + search.getProfilePicture()}}">
+                                        <p th:text="${search.toString()}"></p>
+                                    </div>
                                     <button class="invite-friend-req-btn button">Invite Friend</button>
                                 </form>
                             </div>
+                            <p id="no-results-match-message"></p>
                         </div>
                     </div>
                 </div>
@@ -145,13 +149,21 @@
         const searchQuery = document.getElementById("search-input").value;
         const nonFriends = document.getElementById("all-non-friends");
         const forms = Array.from(nonFriends.children);
+        let anyFormDisplayed = false;
+        document.getElementById("no-results-match-message").textContent = "";
+
         forms.forEach(form => {
             const gardener = Array.from(form.children);
             console.log(gardener);
-            if (gardener[3].innerHTML.split(" - ")[0] === searchQuery || gardener[3].innerHTML.split(" - ")[1] === searchQuery) {
-                form.style.display = "block";
+            if (gardener[1].children[3].innerHTML.split(" - ")[0] === searchQuery || gardener[1].children[3].innerHTML.split(" - ")[1] === searchQuery) {
+                form.style.display = "flex";
+                anyFormDisplayed = true;
             } else {
                 form.style.display = "none";
+            }
+            if (!anyFormDisplayed) {
+                document.getElementById("no-results-match-message")
+                    .textContent = "There is nobody with that name or email in Gardener’s Grove";
             }
         })
     }
@@ -174,7 +186,8 @@
             case "":
                 document.getElementById("add-friend-modal").style.display = "block";
                 searchQuery.value = "";
-                showSearchResults(); // clear input when user closes add friend modal
+                filterSearch();
+                document.getElementById("no-results-match-message").textContent = ""; // clear error message without search being initiated
                 break;
             case "block":
                 document.getElementById("add-friend-modal").style.display = "";
@@ -182,77 +195,77 @@
         }
     }
 
-    function getSearchResultsContainer() {
-        const searchResultsContainer = document.getElementById("search-results-container");
-        const searchQuery = document.getElementById("search-input").value;
+    // function getSearchResultsContainer() {
+    //     const searchResultsContainer = document.getElementById("search-results-container");
+    //     const searchQuery = document.getElementById("search-input").value;
+    //
+    //     if (searchResultsContainer.style.display === "" || searchResultsContainer.style.display === "none") {
+    //         searchResultsContainer.style.display = "block";
+    //     }
+    // }
 
-        if (searchResultsContainer.style.display === "" || searchResultsContainer.style.display === "none") {
-            searchResultsContainer.style.display = "block";
-        }
-    }
+    // function filterSearchResults() {
+    //     const searchQuery = document.getElementById("search-input").value.trim();
+    //     const noExistingRelationships = document.getElementById("searchPool").value;
+    //     const noExistingRelationshipsArray = noExistingRelationships.split(',').map(item => item.trim());
+    //     // Trim the '[' from the first item and ']' from the last item
+    //     if (noExistingRelationshipsArray.length > 0) {
+    //         noExistingRelationshipsArray[0] = noExistingRelationshipsArray[0].replace('[', '');
+    //         noExistingRelationshipsArray[noExistingRelationshipsArray.length - 1] = noExistingRelationshipsArray[noExistingRelationshipsArray.length - 1].replace(']', '');
+    //     }
+    //
+    //     const searchResults = [];
+    //     console.log(noExistingRelationshipsArray);
+    //     console.log(searchQuery);
+    //
+    //     noExistingRelationshipsArray.forEach(function(gardener) {
+    //         const [name, email] = gardener.split(' - ').map(item => item.trim());
+    //         if (name === searchQuery || email === searchQuery) {
+    //             searchResults.push(gardener);
+    //         }
+    //     })
+    //
+    //     console.log(searchResults);
+    //     return searchResults;
+    // }
 
-    function filterSearchResults() {
-        const searchQuery = document.getElementById("search-input").value.trim();
-        const noExistingRelationships = document.getElementById("searchPool").value;
-        const noExistingRelationshipsArray = noExistingRelationships.split(',').map(item => item.trim());
-        // Trim the '[' from the first item and ']' from the last item
-        if (noExistingRelationshipsArray.length > 0) {
-            noExistingRelationshipsArray[0] = noExistingRelationshipsArray[0].replace('[', '');
-            noExistingRelationshipsArray[noExistingRelationshipsArray.length - 1] = noExistingRelationshipsArray[noExistingRelationshipsArray.length - 1].replace(']', '');
-        }
+    // function showSearchResults() {
+    //     const searchResults = filterSearchResults();
+    //     const resultsContainer = document.getElementById("search-results-container");
+    //     // resultsContainer.innerHTML = ""; // Clear previous results
+    //
+    //     searchResults.forEach(function(result) {
+    //         const [name, email] = result.split(' - ').map(item => item.trim());
+    //
+    //         const resultElement = document.createElement("div");
+    //         const textElement = document.createElement("p");
+    //         const buttonElement = document.createElement("button");
+    //
+    //         textElement.textContent = result;
+    //         buttonElement.textContent = "Send Request";
+    //
+    //         buttonElement.addEventListener("click", function() {
+    //             // Sam to do: define action to be performed when button is clicked
+    //             console.log("Button clicked for:", result);
+    //         });
+    //
+    //         resultElement.classList.add("gardener-result-container");
+    //         textElement.classList.add("gardener-result");
+    //         buttonElement.classList.add("send-friend-request-button");
+    //
+    //         resultElement.appendChild(textElement);
+    //         resultElement.appendChild(buttonElement);
+    //         resultsContainer.appendChild(resultElement);
+    //     });
+    // }
 
-        const searchResults = [];
-        console.log(noExistingRelationshipsArray);
-        console.log(searchQuery);
-
-        noExistingRelationshipsArray.forEach(function(gardener) {
-            const [name, email] = gardener.split(' - ').map(item => item.trim());
-            if (name === searchQuery || email === searchQuery) {
-                searchResults.push(gardener);
-            }
-        })
-
-        console.log(searchResults);
-        return searchResults;
-    }
-
-    function showSearchResults() {
-        const searchResults = filterSearchResults();
-        const resultsContainer = document.getElementById("search-results-container");
-        // resultsContainer.innerHTML = ""; // Clear previous results
-
-        searchResults.forEach(function(result) {
-            const [name, email] = result.split(' - ').map(item => item.trim());
-
-            const resultElement = document.createElement("div");
-            const textElement = document.createElement("p");
-            const buttonElement = document.createElement("button");
-
-            textElement.textContent = result;
-            buttonElement.textContent = "Send Request";
-
-            buttonElement.addEventListener("click", function() {
-                // Sam to do: define action to be performed when button is clicked
-                console.log("Button clicked for:", result);
-            });
-
-            resultElement.classList.add("gardener-result-container");
-            textElement.classList.add("gardener-result");
-            buttonElement.classList.add("send-friend-request-button");
-
-            resultElement.appendChild(textElement);
-            resultElement.appendChild(buttonElement);
-            resultsContainer.appendChild(resultElement);
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const searchButton = document.getElementById("search-button");
-        searchButton.addEventListener("click", function() {
-            getSearchResultsContainer();
-            filterSearchResults();
-        });
-    });
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     const searchButton = document.getElementById("search-button");
+    //     searchButton.addEventListener("click", function() {
+    //         getSearchResultsContainer();
+    //         // filterSearchResults();
+    //     });
+    // });
 
 
     function displayRequest(requestType) {
