@@ -154,8 +154,8 @@
 
         forms.forEach(form => {
             const gardener = Array.from(form.children);
-            if (gardener[1].children[3].innerHTML.split(" - ")[0] === searchQuery.toLowerCase() ||
-                gardener[1].children[3].innerHTML.split(" - ")[1] === searchQuery.toLowerCase()) {
+            if (gardener[1].children[3].innerHTML.split(" - ")[0].toLowerCase() === searchQuery.toLowerCase() ||
+                gardener[1].children[3].innerHTML.split(" - ")[1].toLowerCase() === searchQuery.toLowerCase()) {
                 form.style.display = "flex";
                 anyFormDisplayed = true;
             } else {
