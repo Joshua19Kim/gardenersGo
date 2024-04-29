@@ -31,8 +31,9 @@
                     <!-- Iterate over search results -->
                     <div class="friend" th:each="friend : ${friends}">
                         <!-- Display gardener information -->
-                        <img alt="Profile Picture" th:src="@{${'/uploads/' + friend.getProfilePicture()}}">
+                        <img alt="Profile Picture" th:src="@{${'/images/' + friend.getProfilePicture()}}">
                         <p th:text="${friend.toString()}"></p>
+                        <a th:href="@{../gardens(user=${friend.id})}">Gardens</a>
                     </div>
                 </div>
             </div>

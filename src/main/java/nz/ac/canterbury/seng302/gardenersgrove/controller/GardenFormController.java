@@ -1,12 +1,17 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import static java.lang.Float.parseFloat;
 import static java.lang.Long.parseLong;
 import java.util.Optional;
 
@@ -25,7 +29,6 @@ import java.util.Optional;
 public class GardenFormController {
   Logger logger = LoggerFactory.getLogger(GardenFormController.class);
 
-
   /**
    * Gets the home page that displays the list of gardens
    * @param model the model for passing attributes to the view
@@ -33,9 +36,29 @@ public class GardenFormController {
    * @return the gardens template which defines the user interface for the my gardens page
    */
   @GetMapping("/gardens")
-  public String getGardenHome(Model model, HttpServletRequest request) {
+  public String getGardenHome(@RequestParam(name="user", required = false) String user, Model model, HttpServletRequest request, HttpServletResponse response) {
     logger.info("GET /gardens/main");
-    List<Garden> gardens = gardenService.getGardenResults();
+    // Prevent caching of the page so that we always reload it when we reach it (mainly for when you use the browser back button)
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+    response.setHeader("Expires", "0"); // Proxies
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    logger.info("Authentication: " + authentication);
+    String currentUserEmail = authentication.getName();
+    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+    if (gardenerOptional.isPresent()) {
+      gardener = gardenerOptional.get();
+    }
+
+    List<Garden> gardens;
+    if(user == null) {
+      gardens = gardenService.getGardensByGardenerId(gardener.getId());
+      model.addAttribute("gardener", gardener);
+    } else {
+      gardens = gardenService.getGardensByGardenerId(parseLong(user, 10));
+      model.addAttribute("gardener", gardenerFormService.findById(parseLong(user, 10)).get());
+    }
     model.addAttribute("gardens", gardens);
 
     String requestUri = request.getRequestURI();
@@ -48,14 +71,17 @@ public class GardenFormController {
   }
 
   private final GardenService gardenService;
+  private final GardenerFormService gardenerFormService;
+  private Gardener gardener;
 
   /**
    * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
    * @param gardenService the garden service used to interact with the database
    */
   @Autowired
-  public GardenFormController(GardenService gardenService) {
+  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService) {
     this.gardenService = gardenService;
+    this.gardenerFormService = gardenerFormService;
   }
 
   /**
@@ -91,13 +117,19 @@ public class GardenFormController {
       @RequestParam(name = "location") String location,
       @RequestParam(name = "size") String size,
       @RequestParam(name = "redirect") String redirect,
-      Model model) {
+      Model model,
+      Authentication authentication) {
     logger.info("POST /form");
     String validatedName = ValidityChecker.validateGardenName(name);
     String validatedLocation = ValidityChecker.validateGardenLocation(location);
     String validatedSize = ValidityChecker.validateGardenSize(size);
-
+    String currentUserEmail = authentication.getName();
     boolean isValid = true;
+
+    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+    if (gardenerOptional.isPresent()) {
+      gardener = gardenerOptional.get();
+    }
 
     if (!Objects.equals(name, validatedName)) {
       model.addAttribute("nameError", validatedName);
@@ -115,9 +147,9 @@ public class GardenFormController {
     if (isValid) {
         Garden garden;
       if (Objects.equals(size.trim(), "")) {
-        garden = gardenService.addGarden(new Garden(name, location));
+        garden = gardenService.addGarden(new Garden(name, location, gardener));
       } else {
-        garden = gardenService.addGarden(new Garden(name, location, new BigDecimal(validatedSize).stripTrailingZeros().toPlainString()));
+        garden = gardenService.addGarden(new Garden(name, location, new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(), gardener));
       }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
     } else {
@@ -142,7 +174,11 @@ public class GardenFormController {
    * @return The garden details page if the garden exists, else remains on the gardens page
    */
   @GetMapping("gardens/details")
-  public String gardenDetails(@RequestParam(name = "gardenId") String gardenId, Model model, HttpServletRequest request) {
+  public String gardenDetails(@RequestParam(name = "gardenId") String gardenId,
+                              @RequestParam(name = "uploadError", required = false) String uploadError,
+                              @RequestParam(name = "errorId", required = false) String errorId,
+                              @RequestParam(name = "userId", required = false) String userId,
+                              Model model, HttpServletRequest request) {
     logger.info("GET /gardens/details");
     List<Garden> gardens = gardenService.getGardenResults();
     model.addAttribute("gardens", gardens);
@@ -158,7 +194,17 @@ public class GardenFormController {
       model.addAttribute("requestURI", requestUri);
 
       model.addAttribute("garden", garden.get());
-      return "gardenDetailsTemplate";
+
+      if(uploadError != null) {
+        model.addAttribute("uploadError", uploadError);
+        model.addAttribute("errorId", errorId);
+      }
+      if(userId == null || gardener.getId() == parseLong(userId, 10)) {
+        return "gardenDetailsTemplate";
+      } else {
+        return "unauthorizedGardenDetailsTemplate";
+      }
+
     } else {
       return "redirect:/gardens";
     }
@@ -204,12 +250,12 @@ public class GardenFormController {
     }
 
     if (isValid) {
-      Garden existingGarden = gardenService.getGarden(Long.parseLong(gardenId)).get();
+      Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
       existingGarden.setName(name);
       existingGarden.setLocation(location);
 
       if (Objects.equals(size.trim(), "")) {
-        existingGarden.setSize("0");
+        existingGarden.setSize(null);
         gardenService.addGarden(existingGarden);
       } else {
         existingGarden.setSize(new BigDecimal(validatedSize).stripTrailingZeros().toPlainString());
@@ -221,7 +267,7 @@ public class GardenFormController {
       model.addAttribute("name", name);
       model.addAttribute("location", location);
       model.addAttribute("size", size.replace(',', '.'));
-      model.addAttribute(gardenService.getGarden(Long.parseLong(gardenId)).get());
+      model.addAttribute(gardenService.getGarden(parseLong(gardenId)).get());
       returnedTemplate = "editGardensFormTemplate";
     }
     return returnedTemplate;

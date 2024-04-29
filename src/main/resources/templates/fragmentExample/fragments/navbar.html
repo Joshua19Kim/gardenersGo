@@ -7,6 +7,7 @@
         event.preventDefault(); // Prevent the link from navigating
         document.getElementById('logoutForm').submit(); // Submit the hidden logout form
     }
+    console.log("Cookie: " + document.cookie);
 </script>
 <ul>
     <li>
@@ -32,8 +33,9 @@
         <a th:href="@{/manageFriends}">Manage Friends</a>
     </li>
     <li>
+    <li sec:authorize="isAuthenticated()">
         <a href="#" onclick="logout(event)">Logout</a>
-        <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
+        <form id="logoutForm" method="POST" style="display: none;" th:action="@{logout}">
             <input type="submit" value="Logout"/>
             <!--                old code below: -->
             <!--            <form method="POST" th:action="@{logout}">-->

@@ -9,10 +9,10 @@
 
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div id="gardens_list">
-    <h1> List of Gardens </h1>
+    <h1 th:text="${gardener.firstName} + ' ' + ${gardener.lastName} + '\'s Gardens'"></h1>
     <th:block th:each="garden : ${gardens}">
         <div id = "garden-names">
-            <a th:text="${garden.name}" th:href="@{/gardens/details(gardenId=${garden.id})}"></a>
+            <a th:text="${garden.name}" th:href="@{/gardens/details(gardenId=${garden.id}, userId=${gardener.id})}"></a>
         </div>
 
     </th:block>
