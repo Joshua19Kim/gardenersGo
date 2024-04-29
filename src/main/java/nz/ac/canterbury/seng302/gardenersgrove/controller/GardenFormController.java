@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +57,14 @@ public class GardenFormController {
       gardens = gardenService.getGardensByGardenerId(gardener.getId());
       model.addAttribute("gardener", gardener);
     } else {
-      gardens = gardenService.getGardensByGardenerId(parseLong(user, 10));
-      model.addAttribute("gardener", gardenerFormService.findById(parseLong(user, 10)).get());
+      Optional<Gardener> friend = gardenerFormService.findById(parseLong(user, 10));
+      if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+        gardens = gardenService.getGardensByGardenerId(parseLong(user, 10));
+        model.addAttribute("gardener", friend.get());
+      } else {
+        return "redirect:/gardens";
+      }
+
     }
     model.addAttribute("gardens", gardens);
 
@@ -72,6 +79,7 @@ public class GardenFormController {
 
   private final GardenService gardenService;
   private final GardenerFormService gardenerFormService;
+  private final RelationshipService relationshipService;
   private Gardener gardener;
 
   /**
@@ -79,9 +87,10 @@ public class GardenFormController {
    * @param gardenService the garden service used to interact with the database
    */
   @Autowired
-  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService) {
+  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService) {
     this.gardenService = gardenService;
     this.gardenerFormService = gardenerFormService;
+    this.relationshipService = relationshipService;
   }
 
   /**

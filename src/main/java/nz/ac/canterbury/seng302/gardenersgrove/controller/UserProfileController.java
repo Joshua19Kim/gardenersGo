@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class UserProfileController {
 
     @Autowired
     private ImageService imageService;
+
+    @Autowired
+    private RelationshipService relationshipService;
 
     @Autowired
     public UserProfileController(GardenerFormService gardenerFormService) {
@@ -73,9 +77,13 @@ public class UserProfileController {
         if (gardenerOptional.isPresent()) {
             gardener = gardenerOptional.get();
             if(user != null) {
-                Gardener friend = gardenerFormService.findById(Long.parseLong(user, 10)).get();
-                model.addAttribute("gardener", friend);
-                return "unauthorizedUser";
+                Optional<Gardener> friend = gardenerFormService.findById(Long.parseLong(user, 10));
+                if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+                    model.addAttribute("gardener", friend.get());
+                    return "unauthorizedUser";
+                } else {
+                    return "redirect:/user";
+                }
             } else {
                 model.addAttribute("firstName", gardener.getFirstName());
                 model.addAttribute("lastName", gardener.getLastName());
