@@ -127,20 +127,25 @@ public class RegisterController {
         model.addAttribute("passwordStrong", passwordStrengthError.orElse(""));
 
         if (firstNameError.isEmpty() &&
-                lastNameError.isEmpty() &&
+                (lastNameError.isEmpty() || isLastNameOptional)  &&
                 validEmailError.isEmpty() &&
                 emailInUseError.isEmpty() &&
                 passwordMatchError.isEmpty() &&
                 DoBError.isEmpty() &&
                 passwordStrengthError.isEmpty()) {
 
-
+            logger.info("IT WENT THROUGH!");
             Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password, "defaultProfilePic.png");
             newGardener = gardenerFormService.addGardener(newGardener);
-            request.getSession().setAttribute("newGardenerAttribute", newGardener.getId());
+            logger.info(String.valueOf(newGardener));
 
-            if ((request.getSession().getAttribute("newGardenerAttribute")) != null) {
-                return "redirect:/signup";
+            if (newGardener != null) {
+                logger.info("new gardener not null");
+                logger.info("new gardener id " + newGardener.getId());
+                request.getSession().setAttribute("newGardenerAttribute", newGardener.getId());
+                if ((request.getSession().getAttribute("newGardenerAttribute")) != null) {
+                    logger.info("request: " + request.getSession().getAttribute("newGardenerAttribute").toString());
+                    return "redirect:/signup"; }
             }
 
 //            request.setAttribute(("newGardenerAttribute"), newGardener);
@@ -159,6 +164,7 @@ public class RegisterController {
 //                // Add the token to the request session (needed so the authentication can be properly used)
 //                request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 //              }
+            return "redirect:/signup";
         }
         return "register";
     }
