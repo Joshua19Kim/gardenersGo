@@ -155,17 +155,17 @@
         forms.forEach(form => {
             const gardener = Array.from(form.children);
             console.log(gardener);
-            if (gardener[1].children[3].innerHTML.split(" - ")[0] === searchQuery || gardener[1].children[3].innerHTML.split(" - ")[1] === searchQuery) {
+            if (gardener[1].children[3].innerHTML.split(" - ")[0] === searchQuery.toLowerCase() || gardener[1].children[3].innerHTML.split(" - ")[1] === searchQuery.toLowerCase()) {
                 form.style.display = "flex";
                 anyFormDisplayed = true;
             } else {
                 form.style.display = "none";
             }
-            if (!anyFormDisplayed) {
-                document.getElementById("no-results-match-message")
-                    .textContent = "There is nobody with that name or email in Gardener’s Grove";
-            }
         })
+        if (!anyFormDisplayed) {
+            document.getElementById("no-results-match-message")
+                .textContent = "There is nobody with that name or email in Gardener’s Grove";
+        }
     }
     function displayFriendRequests() {
         const modal = document.getElementById("friend-request-modal");
@@ -194,78 +194,6 @@
                 break;
         }
     }
-
-    // function getSearchResultsContainer() {
-    //     const searchResultsContainer = document.getElementById("search-results-container");
-    //     const searchQuery = document.getElementById("search-input").value;
-    //
-    //     if (searchResultsContainer.style.display === "" || searchResultsContainer.style.display === "none") {
-    //         searchResultsContainer.style.display = "block";
-    //     }
-    // }
-
-    // function filterSearchResults() {
-    //     const searchQuery = document.getElementById("search-input").value.trim();
-    //     const noExistingRelationships = document.getElementById("searchPool").value;
-    //     const noExistingRelationshipsArray = noExistingRelationships.split(',').map(item => item.trim());
-    //     // Trim the '[' from the first item and ']' from the last item
-    //     if (noExistingRelationshipsArray.length > 0) {
-    //         noExistingRelationshipsArray[0] = noExistingRelationshipsArray[0].replace('[', '');
-    //         noExistingRelationshipsArray[noExistingRelationshipsArray.length - 1] = noExistingRelationshipsArray[noExistingRelationshipsArray.length - 1].replace(']', '');
-    //     }
-    //
-    //     const searchResults = [];
-    //     console.log(noExistingRelationshipsArray);
-    //     console.log(searchQuery);
-    //
-    //     noExistingRelationshipsArray.forEach(function(gardener) {
-    //         const [name, email] = gardener.split(' - ').map(item => item.trim());
-    //         if (name === searchQuery || email === searchQuery) {
-    //             searchResults.push(gardener);
-    //         }
-    //     })
-    //
-    //     console.log(searchResults);
-    //     return searchResults;
-    // }
-
-    // function showSearchResults() {
-    //     const searchResults = filterSearchResults();
-    //     const resultsContainer = document.getElementById("search-results-container");
-    //     // resultsContainer.innerHTML = ""; // Clear previous results
-    //
-    //     searchResults.forEach(function(result) {
-    //         const [name, email] = result.split(' - ').map(item => item.trim());
-    //
-    //         const resultElement = document.createElement("div");
-    //         const textElement = document.createElement("p");
-    //         const buttonElement = document.createElement("button");
-    //
-    //         textElement.textContent = result;
-    //         buttonElement.textContent = "Send Request";
-    //
-    //         buttonElement.addEventListener("click", function() {
-    //             // Sam to do: define action to be performed when button is clicked
-    //             console.log("Button clicked for:", result);
-    //         });
-    //
-    //         resultElement.classList.add("gardener-result-container");
-    //         textElement.classList.add("gardener-result");
-    //         buttonElement.classList.add("send-friend-request-button");
-    //
-    //         resultElement.appendChild(textElement);
-    //         resultElement.appendChild(buttonElement);
-    //         resultsContainer.appendChild(resultElement);
-    //     });
-    // }
-
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     const searchButton = document.getElementById("search-button");
-    //     searchButton.addEventListener("click", function() {
-    //         getSearchResultsContainer();
-    //         // filterSearchResults();
-    //     });
-    // });
 
 
     function displayRequest(requestType) {
@@ -298,79 +226,8 @@
         }
     }
 
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     var toggleFriendBtns = document.querySelectorAll('.toggleFriendBtn');
-    //     toggleFriendBtns.forEach(function (btn) {
-    //         btn.addEventListener('click', function () {
-    //             var email = this.getAttribute('data-email');
-    //             var friendId = this.getAttribute('data-friendId');
-    //
-    //             var form = document.createElement('form');
-    //             form.setAttribute('method', 'post');
-    //             form.setAttribute('action', '/addRelationship');
-    //
-    //             var emailInput = document.createElement('input');
-    //             emailInput.setAttribute('type', 'hidden');
-    //             emailInput.setAttribute('name', 'email');
-    //             emailInput.setAttribute('value', email);
-    //             form.appendChild(emailInput);
-    //
-    //             var friendIdInput = document.createElement('input');
-    //             friendIdInput.setAttribute('type', 'hidden');
-    //             friendIdInput.setAttribute('name', 'friendId');
-    //             friendIdInput.setAttribute('value', friendId);
-    //             form.appendChild(friendIdInput);
-    //
-    //             document.body.appendChild(form);
-    //             form.submit();
-    //         });
-    //     });
-    // });
-
-
-
 
 </script>
-
-
 </body>
-
 </html>
 
-<!--    <div class="searchBarContainer">-->
-<!--        <form class="search" id="searchForm" method="post" th:action="@{manageFriends}">-->
-<!--            <label for="searchQuery"> Search Gardeners: </label>-->
-<!--            <input autofocus class="form-control" data-cy="searchQuery" id="searchQuery"-->
-<!--                   name="searchQuery" placeholder="Search..." th:value="*{searchQuery}" type="text">-->
-<!--            <button type="submit"><i class="fa fa-search"></i></button>-->
-<!--        </form>-->
-<!--    </div>-->
-
-<!--<div class="displayResultsContainer">-->
-<!--    <p th:text="${existingRelationshipErrorMessage}"></p>-->
-<!--    <ul>-->
-<!--        <li th:if="${foundGardeners != null and not foundGardeners.isEmpty()}">-->
-<!--            &lt;!&ndash; Iterate over search results &ndash;&gt;-->
-<!--            <ul th:each="gardener : ${foundGardeners}">-->
-<!--                <li>-->
-<!--                    &lt;!&ndash; Display gardener information &ndash;&gt;-->
-<!--                    <span th:text="${gardener.getSearchResult()}"></span>-->
-<!--                    <form action="/manageFriends" class="addFriendForm" method="post">-->
-<!--                        <input name="email" th:value="${gardener.getEmail()}" type="hidden">-->
-<!--                        <input name="friendId" th:value="${gardener.getId()}" type="hidden">-->
-<!--                        <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>-->
-<!--                        <button class="toggleFriendBtn" type="submit">Add friend</button>-->
-<!--                    </form>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </li>-->
-<!--    </ul>-->
-<!--    <span th:text="${emptySearchQueryMessage}"></span>-->
-<!--</div>-->
-
-<!--                    <form class="addFriendForm" action="/manageFriends" method="post">-->
-<!--                        <input type="hidden" name="email" th:value="${gardener.getEmail()}">-->
-<!--                        <input type="hidden" name="friendId" th:value="${gardener.getId()}">-->
-<!--                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
-<!--                        <button class="toggleFriendBtn" type="submit">Add friend</button>-->
-<!--                    </form>-->
