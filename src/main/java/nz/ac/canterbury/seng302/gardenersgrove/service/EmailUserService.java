@@ -5,13 +5,14 @@ import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
+import org.springframework.beans.factory.annotation.Value;
 
 public class EmailUserService {
 
-    private final String api_key = System.getenv("SJMP");
+    private String api_key = System.getenv("SJMP");
 
-    private final Email email;
-    private final Mailer mailer;
+    private Email email;
+    private Mailer mailer;
 
     /**
      * Constructor initialises email object and mailer object using given parameters
@@ -20,8 +21,8 @@ public class EmailUserService {
         // Simple Java Mail -- https://www.simplejavamail.org/
         email = EmailBuilder.startingBlank()
                 .from("Do Not Reply", "naturesfacebook@gmail.com")
-                .to("Gardener", userEmail)
-                .withSubject("Nature's Facebook Message")
+                .to(userEmail)
+                .withSubject("Nature's Facebook Signup Code")
                 .withPlainText(Message)
                 .buildEmail();
 
@@ -36,4 +37,3 @@ public class EmailUserService {
         mailer.sendMail(email);
     }
 }
-

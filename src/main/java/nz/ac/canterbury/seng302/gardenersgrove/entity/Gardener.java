@@ -85,6 +85,7 @@ public class Gardener {
         this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
         return authorities;
     }
+    public void setUserRoles(List<Authority> userRoles) { this.userRoles = userRoles;}
 
     public String hashPasword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
