@@ -43,15 +43,17 @@ public class ResetPasswordFormController {
         logger.info("GET /resetPassword");
         // Verifies token has associated user and is not expired
         String result = tokenService.validateLostPasswordToken(token);
-        if (result == null) {
+        if (result == null) { // No issue
             Optional<Gardener> tempGardener = tokenService.findGardenerbyToken(token);
             if (tempGardener.isPresent()) {
                 gardener = tempGardener.get();
                 return  "resetPasswordForm";
             };
             return "redirect:/login"; // Gardener / Id not present
+        } else if (result == "expired") {
+            return "redirect:/login?expired"; // Token is expired
         }
-        return "redirect:/login?expired"; // Token does not exist or is expired
+        return "redirect:/login"; // Token does not exist
     }
 
     /**
@@ -76,16 +78,15 @@ public class ResetPasswordFormController {
             gardener.updatePassword(password);
             gardenerFormService.addGardener(gardener);
 
-            // Send email telling user password has been updated
+
             String email = gardener.getEmail();
             String emailMessage = "Your Password has been updated";
+
             email = "benmoore1.work@gmail.com"; // TESTING
+
             EmailUserService emailService = new EmailUserService(email, emailMessage);
             emailService.sendEmail(); // Sending email is SLOW
 
-            // Re-authenticates user to catch case when they change their email
-//            Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
-//            SecurityContextHolder.getContext().setAuthentication((newAuth)); // do i need this part for resetting?
             return "redirect:/login";
         }
         return "resetPasswordForm";

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
@@ -220,9 +221,15 @@ public class UserProfileController {
         if (passwordCorrectError.isEmpty() && passwordMatchError.isEmpty() && passwordStrengthError.isEmpty()) {
             gardener.updatePassword(newPassword);
             gardenerFormService.addGardener(gardener);
-            // Re-authenticates user to catch case when they change their email
-            Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication((newAuth));
+
+            String email = gardener.getEmail();
+            String emailMessage = "Your Password has been updated";
+
+            email = "benmoore1.work@gmail.com"; // TESTING
+
+            EmailUserService emailService = new EmailUserService(email, emailMessage);
+            emailService.sendEmail(); // Sending email is SLOW
+
             return "redirect:/user";
         }
 

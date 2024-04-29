@@ -36,14 +36,11 @@ public class ForgotPasswordFormController {
     }
 
     public String constructLostPasswordTokenEmail(String contextPath, Locale locale, String token, Gardener gardener) {
-        // PATH MIGHT change
         String url = contextPath + "/resetPassword?token=" + token;
-        // Might need messages.getMessage???
-        return ("Reset Password link: " + url);
+        return ("Reset Password link:\n" + url +"\nThis link will expire after 10 mins.");
     }
 
     public String getAppUrl(HttpServletRequest request) {
-        // MIGHT need: "http://" + request.getServerName() + ":" + request.getServerPort() +
         return "localhost:8080" + request.getContextPath();
     }
 
@@ -82,10 +79,12 @@ public class ForgotPasswordFormController {
                 String token = UUID.randomUUID().toString();
                 tokenService.createLostPasswordTokenForGardener(gardener.get(), token);
                 String emailMessage = constructLostPasswordTokenEmail(getAppUrl(request), request.getLocale(), token, gardener.get());
+
                 // FOR TESTING:
                 email = "benmoore1.work@gmail.com";
+
                 EmailUserService emailService = new EmailUserService(email, emailMessage);
-                emailService.sendEmail(); // Sending email is SLOW
+                emailService.sendEmail(); // Blocks ***
                 return "forgotPasswordForm"; // Email sent
             }
             return "forgotPasswordForm"; // Email not in DB
