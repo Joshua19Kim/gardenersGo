@@ -407,8 +407,8 @@ public class UserProfileControllerTest {
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/redirectToUserPage")
                         .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/user"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("/user"));
     }
     @Test
     @WithMockUser("testEmail@gmail.com")

@@ -170,13 +170,13 @@ public class UserProfileController {
      * @return thymeleaf 'user' page or 'login' page
      */
     @GetMapping("/redirectToUserPage")
-    public RedirectView profileButton() {
+    public String profileButton() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Authentication: " + authentication);
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            return new RedirectView("/user");
+            return "/user";
         }
-        return new RedirectView("/login");
+        return "/login";
     }
 
     /**
