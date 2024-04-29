@@ -18,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -45,12 +44,8 @@ public class UserProfileControllerTest {
     @MockBean
     private Gardener testGardener;
     @MockBean
-    private Authentication authentication;
-    @MockBean
     private ArgumentCaptor<Gardener> gardenerCaptor;
-    @InjectMocks
-    private UserProfileController userProfileController;
-    @Mock
+    @MockBean
     private EmailUserService emailService;
 
 
