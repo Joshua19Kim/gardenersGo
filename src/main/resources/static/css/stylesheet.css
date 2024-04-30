@@ -192,6 +192,12 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     margin-bottom: 20px;
 }
 
+#error-message {
+    font-weight: 700;
+    font-style: italic;
+    text-decoration: underline;
+}
+
 .garden-details p {
     margin-bottom: 10px;
     max-width: inherit;
