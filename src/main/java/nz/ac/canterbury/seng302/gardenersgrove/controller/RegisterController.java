@@ -138,11 +138,9 @@ public class RegisterController {
 
             Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password, "defaultProfilePic.png");
             gardenerFormService.addGardener(newGardener);
+            writeEmail.sendSignupEmail(newGardener, tokenService);
+            return "redirect:/signup";
 
-            if (gardenerFormService.findByEmail(newGardener.getEmail()).isPresent()) {
-                writeEmail.sendSignupEmail(newGardener, tokenService);
-                return "redirect:/signup";
-            }
 
         }
         return "register";

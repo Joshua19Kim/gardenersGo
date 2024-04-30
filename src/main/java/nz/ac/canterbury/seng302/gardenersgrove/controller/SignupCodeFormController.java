@@ -71,10 +71,13 @@ public class SignupCodeFormController {
             Optional<Gardener> tempGardener = tokenService.findGardenerbyToken(signupToken);
             if (tempGardener.isPresent() && tokenService.validateLostPasswordToken(signupToken) == "expired") {
                 gardener = tempGardener.get();
+
                 Optional<LostPasswordToken> tempToken = tokenService.getTokenFromString(signupToken);
                 if (tempToken.isPresent()) {
                     tokenService.removeToken(tempToken.get());
-                    gardenerFormService.removeGardener(gardener);
+                    if (gardener.getAuthorities().isEmpty()) {
+                        gardenerFormService.removeGardener(gardener);
+                    }
                 }
                 return "redirect:/register?expired";
             }
