@@ -7,19 +7,28 @@
 </head>
 <body>
 
-<div id="form">
+<div id="form" class="signup">
     <h1>Please enter your signup code</h1>
     <form method="post" th:action="@{/signup}">
         <div th:if="${param.invalid}" id="error-message">
             <p>Signup code invalid</p>
         </div>
+        <!--        referenced from https://codepen.io/RobertAron/pen/gOLLXLo  -->
+        <fieldset class="signup-code">
+            <legend>Signup Code</legend>
+            <div style="display: flex;">
+                <label for="signupToken1"></label><input name="signupToken" id="signupToken1" type="text" class="signup-input" required>
+                <label for="signupToken2"></label><input name="signupToken" id="signupToken2" type="text" class="signup-input" required>
+                <label for="signupToken3"></label><input name="signupToken" id="signupToken3" type="text" class="signup-input" required>
+                <label for="signupToken4"></label><input name="signupToken" id="signupToken4" type="text" class="signup-input" required>
+                <label for="signupToken5"></label><input name="signupToken" id="signupToken5" type="text" class="signup-input" required>
+                <label for="signupToken6"></label><input name="signupToken" id="signupToken6" type="text" class="signup-input" required>
+                <p class="errorMessage" th:if="${param.error}" data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
+            </div>
+        </fieldset>
         <input type="hidden"
                th:name="${_csrf.parameterName}"
                th:value="${_csrf.token}" />
-        <div>
-            <input name="signupToken" id="signupToken" placeholder="Signup Token" type="text" required/>
-            <p class="errorMessage" th:if="${param.error}" data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
-        </div>
         <div style="display: flex; flex-direction: column">
             <input type="submit" value="Submit"/>
         </div>

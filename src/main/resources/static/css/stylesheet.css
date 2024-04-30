@@ -562,6 +562,66 @@ body, h2, h3, h4, h5, h6, a {
     padding: 15px;
 }
 
+/*signup code form css*/
+
+#form .signup-code input[type="text"] {
+    display: block;
+    height: 32px;
+    padding: 6px 16px;
+    width: calc(100% - 32px); /* Adjusted width */
+    border: none;
+    margin-bottom: 15px;
+}
+
+#form .signup-code {
+    background-color: #d9f7d9; /* Adjusted background color */
+    padding: 20px; /* Adjusted padding */
+    border-radius: 10px; /* Adjusted border radius */
+    margin-bottom: 20px; /* Added margin bottom */
+    align-content: baseline;
+    /*! flex-direction: row; */
+    /*! display: flex; */
+}
+
+#form .signup-code legend {
+    text-align: center; /* Centered legend */
+    margin-bottom: 10px; /* Added margin bottom */
+}
+
+#form .signup-input {
+    font-size: 1.5em;
+    width: calc((100% - 20px) / 6); /* Adjusted width */
+    text-align: center;
+    flex: 1 0 1em;
+    margin: 0 5px 0 5px;
+    border-radius: 5px;
+}
+
+#form .signup .errorMessage {
+    color: red;
+    font-size: 0.7rem;
+    text-align: center; /* Centered error message */
+    margin-top: 10px; /* Added margin top */
+}
+
+#form .signup input[type='submit'] {
+    color: #1c1c1a;
+    display: block;
+    margin: 20px auto 0;
+    width: 100%;
+    height: 40px;
+    border-radius: 25px;
+    border: 1px solid #45a049;
+    font-weight: 700;
+    box-shadow: 2px 3px 1px #777;
+    background: #d9f7d9;
+}
+
+#form .signup input[type='submit']:hover {
+    background: #8af58a;
+    cursor: pointer;
+}
+
 /*a {*/
 /*    text-decoration: none;*/
 /*    color: blue;*/
