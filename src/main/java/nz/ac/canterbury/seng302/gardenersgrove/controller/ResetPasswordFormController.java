@@ -1,10 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +24,16 @@ public class ResetPasswordFormController {
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
     private final GardenerFormService gardenerFormService;
     private final TokenService tokenService;
+    private final WriteEmail writeEmail;
 
     private Gardener gardener;
 
     @Autowired
     public ResetPasswordFormController(GardenerFormService gardenerFormService,
-                                       TokenService tokenService) {
+                                       TokenService tokenService, WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
         this.tokenService = tokenService;
+        this.writeEmail = writeEmail;
     }
 
     /**
@@ -51,6 +55,8 @@ public class ResetPasswordFormController {
             };
             return "redirect:/login"; // Gardener / Id not present
         } else if (result == "expired") {
+            Optional<LostPasswordToken> expiredToken = tokenService.getTokenFromString(token);
+            expiredToken.ifPresent(e -> tokenService.removeToken(e));
             return "redirect:/login?expired"; // Token is expired
         }
         return "redirect:/login"; // Token does not exist
@@ -77,13 +83,7 @@ public class ResetPasswordFormController {
         if (passwordMatchError.isEmpty() && passwordStrengthError.isEmpty()) {
             gardener.updatePassword(password);
             gardenerFormService.addGardener(gardener);
-
-            String email = gardener.getEmail();
-            String emailMessage = "Your Password has been updated";
-            String subject = "Password Updated";
-            EmailUserService emailService = new EmailUserService(email, subject, emailMessage);
-            emailService.sendEmail(); // *** Blocking
-
+            writeEmail.sendPasswordResetConfirmEmail(gardener);
             return "redirect:/login";
         }
         return "resetPasswordForm";

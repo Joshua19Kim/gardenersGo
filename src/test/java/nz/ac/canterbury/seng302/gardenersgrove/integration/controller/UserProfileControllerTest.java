@@ -105,7 +105,7 @@ public class UserProfileControllerTest {
     void onUserPage_userChangesFirstNameWithInvalidFirstName_errorMessageProvided() throws Exception {
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/user")
-                        .param("firstName", " ")
+                        .param("firstName", "")
                         .param("lastName", "testLastName")
                         .param("DoB", "1980-01-01")
                         .param("email", "testEmail@gmail.com")
