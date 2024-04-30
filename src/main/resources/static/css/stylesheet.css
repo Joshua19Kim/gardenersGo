@@ -586,9 +586,31 @@ form.search-bar::after {
     padding: 10px;
     margin-top: 10px;
     overflow: auto;
-    display: none;
+    display: block;
     width: 100%;
+
 }
+
+.friends-to-request {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.friends-to-request img{
+    max-width: 100px;
+    max-height: 70px;
+    border-radius: 4px;
+    margin-right: 20px;
+}
+
+.picture-and-gardener {
+    display: flex;
+    align-items: center;
+}
+
+
 
 .gardener-result-container {
     display: flex;
@@ -705,6 +727,18 @@ form.search-bar::after {
     overflow: auto;
     border-radius: 15px;
 }
+.modal .confirmation{
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 15%;
+    overflow: auto;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 
 /* The Close Button for the modals */
@@ -772,6 +806,21 @@ form.search-bar::after {
 }
 
 .decline-friend-req-btn {
+    background: #e64343 !important;
+}
+
+.cancel {
+    background: #888 !important;
+    margin-left: 20px;
+}
+
+.confirmation-container {
+    display: flex;
+    margin-top: 12px;
+}
+
+.remove-friend-button {
+    margin-left: auto;
     background: #e64343 !important;
 }
 

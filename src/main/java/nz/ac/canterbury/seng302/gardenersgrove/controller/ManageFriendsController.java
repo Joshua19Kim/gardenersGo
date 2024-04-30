@@ -129,5 +129,21 @@ public class ManageFriendsController {
         return "redirect:/manageFriends";
     }
 
+    /**
+     * Removes the instance of the relationship between the friend and the currently logged in user
+     * @param friendId the id of a friend of the currently logged in user
+     * @param model
+     * @return Redirects to the manage friends page
+     */
+    @PostMapping("/removeRelationship")
+    public String removeRelationship(@RequestParam (name = "friendId") Long friendId, Model model) {
+        String currentEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<Gardener> currentGardener = gardenerFormService.findByEmail(currentEmail);
+        if(currentGardener.isPresent()) {
+            relationshipService.deleteRelationShip(currentGardener.get().getId(), friendId);
+        }
+        return "redirect:/manageFriends";
+    }
+
 
 }

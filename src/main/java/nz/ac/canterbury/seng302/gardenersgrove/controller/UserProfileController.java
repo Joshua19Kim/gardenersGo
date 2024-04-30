@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class UserProfileController {
     private ImageService imageService;
 
     @Autowired
+    private RelationshipService relationshipService;
+
+    @Autowired
     public UserProfileController(GardenerFormService gardenerFormService) {
         this.gardenerFormService = gardenerFormService;
     }
@@ -61,6 +65,7 @@ public class UserProfileController {
                                  @RequestParam(name = "DoB", required = false) LocalDate DoB,
                                  @RequestParam(name = "email", required = false) String email,
                                  @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
+                                 @RequestParam(name = "user", required = false) String user,
                                  Model model) {
 
         logger.info("GET /user");
@@ -71,11 +76,22 @@ public class UserProfileController {
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
         if (gardenerOptional.isPresent()) {
             gardener = gardenerOptional.get();
-            model.addAttribute("firstName", gardener.getFirstName());
-            model.addAttribute("lastName", gardener.getLastName());
-            model.addAttribute("DoB", gardener.getDoB());
-            model.addAttribute("email", gardener.getEmail());
-            model.addAttribute("profilePic", gardener.getProfilePicture());
+            if(user != null) {
+                Optional<Gardener> friend = gardenerFormService.findById(Long.parseLong(user, 10));
+                if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+                    model.addAttribute("gardener", friend.get());
+                    return "unauthorizedUser";
+                } else {
+                    return "redirect:/user";
+                }
+            } else {
+                model.addAttribute("firstName", gardener.getFirstName());
+                model.addAttribute("lastName", gardener.getLastName());
+                model.addAttribute("DoB", gardener.getDoB());
+                model.addAttribute("email", gardener.getEmail());
+                model.addAttribute("profilePic", gardener.getProfilePicture());
+            }
+
         } else {
             model.addAttribute("firstName", "Not Registered");
         }
