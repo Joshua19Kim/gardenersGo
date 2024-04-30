@@ -14,15 +14,17 @@ public class SendSignup {
 
     public void sendSignupEmail(Gardener gardener, TokenService tokenService) {
         this.tokenService = tokenService;
+
         String token = UUID.randomUUID().toString();
         tokenService.createLostPasswordTokenForGardener(gardener, token);
         String email = gardener.getEmail();
+        String subject = "Nature's Facebook Signup Code";
         String message = String.format("""
             Your unique signup code for Nature's Facebook: %s
             
             If this was not you, you can ignore this message and the account will be deleted after 10 minutes""", token);
 
-        EmailUserService emailService = new EmailUserService(email, message);
+        EmailUserService emailService = new EmailUserService(email, subject, message);
         emailService.sendEmail();
     }
 }
