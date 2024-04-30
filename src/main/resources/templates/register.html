@@ -12,7 +12,7 @@
     <h1>Register</h1>
     <form method="post" th:action="@{register}" id="registerForm">
         <div th:if="${param.expired}" id="error-message">
-            <p>Signup code invalid</p>
+            <p>Signup code Expired. Please Re-Register</p>
         </div>
         <input type="hidden"
                th:name="${_csrf.parameterName}"

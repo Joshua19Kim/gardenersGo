@@ -16,7 +16,7 @@ import java.util.Date;
 @Entity
 public class LostPasswordToken {
     // 10 minute expiry
-    private static final int EXPIRATION = 1;
+    private static final int EXPIRATION = 10;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
