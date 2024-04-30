@@ -130,7 +130,14 @@ public class RelationshipService {
         if(potentialRelationship.isPresent()) {
             Relationships relationship = potentialRelationship.get();
             relationshipRepository.deleteById(relationship.getId());
+        } else {
+            potentialRelationship = relationshipRepository.findRelationshipsByGardenerIdAndFriendId(friendId, gardenerId);
+            if(potentialRelationship.isPresent()) {
+                Relationships relationship = potentialRelationship.get();
+                relationshipRepository.deleteById(relationship.getId());
+            }
         }
+
     }
 
 }
