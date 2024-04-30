@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /** Represents a garden entity with its name, location, size, and list of plants. */
 @Entity
 public class Garden {
@@ -28,6 +29,10 @@ public class Garden {
   @OneToMany(mappedBy = "garden")
   private List<Plant> plants;
 
+//  @ManyToOne
+//  @JoinColumn(name = "gardener_id")
+//  private Gardener gardener;
+
   /** Default constructor required by JPA. */
   protected Garden() {}
 
@@ -40,6 +45,7 @@ public class Garden {
   public Garden(String name, String location) {
     this.name = name;
     this.location = location;
+//    this.gardener = gardener;
     plants = new ArrayList<>();
   }
 
@@ -54,6 +60,7 @@ public class Garden {
     this.name = name;
     this.location = location;
     this.size = size;
+//    this.gardener = gardener;
     plants = new ArrayList<>();
   }
 

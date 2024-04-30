@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import org.springframework.cglib.core.Local;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -46,6 +45,10 @@ public class Gardener {
     // Create an encoder with strength 16
 
 
+//    /** The list of gardens belonging to the gardener. */
+//    @OneToMany(mappedBy = "gardener")
+//    private List<Garden> gardens;
+
     /**
      * JPA required no-args constructor
      */
@@ -63,8 +66,9 @@ public class Gardener {
         this.lastName = lastName;
         this.DoB = DoB;
         this.email = email;
-        this.password = hashPasword(password);
+        this.password = hashPassword(password);
         this.profilePicture = profilePicture;
+       // gardens = new ArrayList<>();
     }
 
     public void grantAuthority(String authority) {
@@ -87,7 +91,7 @@ public class Gardener {
     }
     public void setUserRoles(List<Authority> userRoles) { this.userRoles = userRoles;}
 
-    public String hashPasword(String password) {
+    public String hashPassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.encode(password);
     }
@@ -121,6 +125,9 @@ public class Gardener {
 
     public String getProfilePicture() { return this.profilePicture; }
 
+    public void setId(Long id) { this.id = id; }
+   // public List<Garden> getGardens() { return gardens; }
+
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
     public void setLastName(String lastName) { this.lastName = lastName; }
@@ -133,7 +140,10 @@ public class Gardener {
         this.profilePicture = imageLocation;
     }
 
-    public void updatePassword(String password) { this.password = hashPasword(password); }
+    public void updatePassword(String password) { this.password = hashPassword(password); }
+
+    // public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
+
 
     @Override
     public String toString() {
@@ -145,5 +155,4 @@ public class Gardener {
 
         return gardenerString;
     }
-
 }

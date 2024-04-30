@@ -221,14 +221,19 @@ public class UserProfileController {
         model.addAttribute("passwordsMatch", passwordMatchError.orElse(""));
         Optional<String> passwordStrengthError = inputValidator.checkStrongPassword(newPassword);
         model.addAttribute("passwordStrong", passwordStrengthError.orElse(""));
+        Optional<String> newPasswordDifferentFromOldPassword = inputValidator.checkOldPasswordDoesNotMatchNewPassword(gardener.getPassword(), newPassword);
+        model.addAttribute("newDifferentFromOld", newPasswordDifferentFromOldPassword.orElse(""));
 
-        if (passwordCorrectError.isEmpty() && passwordMatchError.isEmpty() && passwordStrengthError.isEmpty()) {
+
+        if (passwordCorrectError.isEmpty() && passwordMatchError.isEmpty() && passwordStrengthError.isEmpty() &&
+                newPasswordDifferentFromOldPassword.isEmpty()) {
             gardener.updatePassword(newPassword);
             gardenerFormService.addGardener(gardener);
 
             String email = gardener.getEmail();
             String emailMessage = "Your Password has been updated";
-            EmailUserService emailService = new EmailUserService(email, emailMessage);
+            String subject = "Updated Password";
+            EmailUserService emailService = new EmailUserService(email, subject, emailMessage);
             emailService.sendEmail(); // *** Blocking
 
             return "redirect:/user";
