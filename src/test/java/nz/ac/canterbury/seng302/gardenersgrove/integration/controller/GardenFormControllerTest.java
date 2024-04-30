@@ -365,4 +365,31 @@ public class GardenFormControllerTest {
                 .andExpect(view().name("gardensTemplate"));
 
     }
+
+    @Test
+    @WithMockUser
+    public void testNotFriendsCanNotViewGardens() throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!", "default.png");
+        Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!", "default.png");
+        currentUser.setId(1L);
+        otherUser.setId(2L);
+        gardenerFormService.addGardener(currentUser);
+        gardenerFormService.addGardener(otherUser);
+
+        List<Garden> testGardens = new ArrayList<>();
+        Garden testGarden = new Garden("My Garden", "Ilam", otherUser);
+        testGardens.add(testGarden);
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+        when(gardenService.getGardensByGardenerId(2L)).thenReturn(testGardens);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("gardenId", "2")
+                        .principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardensTemplate"));
+
+    }
 }
