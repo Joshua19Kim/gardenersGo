@@ -16,19 +16,19 @@
             <input type="text" class="form-control" id="name" th:value="${name != null ? name : garden.name}"
                    th:name="name" data-cy="name" autofocus
                    th:classappend="${nameError} ? 'error' : ''">
-            <span th:if="${nameError}" th:text="${nameError}" style="color: red;"></span>
+            <span th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage"></span>
             <br/>
             <label for="location"> Garden Location: </label>
             <input type="text" class="form-control" id="location" th:value="${location != null ? location : garden.location}"
                    th:name="location" data-cy="location" autofocus
                    th:classappend="${locationError} ? 'error' : ''">
-            <span th:if="${locationError}" th:text="${locationError}" style="color: red;"></span>
+            <span th:if="${locationError}" th:text="${locationError}" class="smallErrorMessage"></span>
             <br/>
             <label for="size"> Size (m<sup>2</sup>): </label>
             <input type="text" class="form-control" id="size" th:name="size"
                    th:value="${size != null ? size : garden.size != 0.0 ? garden.size : ''}" data-cy="size" autofocus
                    th:classappend="${sizeError} ? 'error' : ''">
-            <span th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></span>
+            <span th:if="${sizeError}" th:text="${sizeError}" class="smallErrorMessage"></span>
             <br/>
             <button type="submit">Submit</button>
         </form>

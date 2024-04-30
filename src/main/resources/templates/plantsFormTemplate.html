@@ -15,23 +15,23 @@
         <label for="name"> Name: </label>
         <input type="text" class="form-control" th:value="*{name}" id="name" name="name" placeholder="Name"
                th:classappend="${nameError} ? 'error' : ''">
-        <span th:if="${nameError}" th:text="${nameError}" style="color: red;"></span>
+        <span th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage"></span>
         <br/>
         <label for="count"> Plant Count: </label>
         <input type="text" class="form-control" th:value="*{count}" id="count"  name="count" placeholder="How many?"
                th:classappend="${countError} ? 'error' : ''">
-        <span th:if="${countError}" th:text="${countError}" style="color: red;"></span>
+        <span th:if="${countError}" th:text="${countError}" class="smallErrorMessage"></span>
         <br/>
         <label for="description"> Description: </label>
         <br/>
         <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
         <textarea class="form-control" th:value="*{description}" id="description" name="description"  maxlength="512"
                   th:classappend="${descriptionError} ? 'error' : ''">[[${description}]]</textarea>
-        <span th:if="${descriptionError}" th:text="${descriptionError}" style="color: red;"></span>
+        <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
         <br/>
         <label for="datePlanted"> Date Planted: </label>
         <input type="date" class="form-control" th:value="*{date}" id="datePlanted" name="date">
-        <span id="dateError" style="color: red;"></span>
+        <span id="dateError" class="smallErrorMessage"></span>
         <script>
             document.getElementById( "datePlanted" ).addEventListener( "invalid",
                 function( event ) {
@@ -46,7 +46,7 @@
             <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
             <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*" onchange="handleImageChange()">
         </div>
-        <span th:if="${uploadError}" th:text="${uploadError}" style="color: red;"></span>
+        <span th:if="${uploadError}" th:text="${uploadError}" class="smallErrorMessage"></span>
         <br/>
         <button type="submit">Submit</button>
     </form>

@@ -11,8 +11,8 @@
 <div id="form">
     <h1>Register</h1>
     <form method="post" th:action="@{register}" id="registerForm">
-        <div th:if="${param.expired}" id="error-message">
-            <p>Signup code Expired. Please Re-Register</p>
+        <div th:if="${param.expired}" id="error-message" >
+            <p class="errorMessage">Signup code Expired. Please Re-Register</p>
         </div>
         <input type="hidden"
                th:name="${_csrf.parameterName}"
@@ -20,12 +20,12 @@
         <label for="firstName"> First Name: </label>
         <input autofocus class="form-control" data-cy="firstName" id="firstName"
                placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text">
-        <p class="errorMessage" th:text="${firstNameValid}" th:value="*{firstNameValid}"></p>
+        <p class="smallErrorMessage" th:text="${firstNameValid}" th:value="*{firstNameValid}"></p>
         <br/>
         <label for="lastName"> Last Name: </label>
         <input class="form-control" data-cy="lastName" id="lastName" placeholder="Last Name"
                th:name="lastName" th:value="*{lastName}" type="text">
-        <p class="errorMessage" th:text="${lastNameValid}" th:value="*{lastNameValid}"></p>
+        <p class="smallErrorMessage" th:text="${lastNameValid}" th:value="*{lastNameValid}"></p>
         <br/>
         <label for="isLastNameOptional">I have no surname</label>
         <input class="form-control" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
@@ -40,7 +40,7 @@
         <label for="DoB"> Date of Birth: </label>
         <input class="form-control" data-cy="DoB" id="DoB"
                th:name="DoB" th:value="*{DoB}" type="date">
-        <p class="errorMessage" th:text="${DoBValid}"></p>
+        <p class="smallErrorMessage" th:text="${DoBValid}"></p>
         <script>
             document.getElementById( "DoB" ).addEventListener( "invalid",
                 function( event ) {
@@ -52,7 +52,7 @@
         <label for="email"> Email: </label>
         <input class="form-control" data-cy="email" id="email" placeholder="Email"
                th:name="email" th:value="*{email}" type="text">
-        <p class="errorMessage" th:text="${emailValid}" th:value="*{emailValid}"></p>
+        <p class="smallErrorMessage" th:text="${emailValid}" th:value="*{emailValid}"></p>
         <br/>
         <label for="password"> Password: </label>
         <input class="form-control" data-cy="password" id="password" placeholder="Password"
@@ -61,8 +61,8 @@
         <label for="passwordConfirm"> Confirm Password: </label>
         <input type="password" class="form-control" id="passwordConfirm" placeholder="Repeat password"
                th:name="passwordConfirm" data-cy="passwordConfirm">
-        <p class="errorMessage" th:value="*{passwordsMatch}" th:text="${passwordsMatch}"></p>
-        <p class="errorMessage" th:value="*{passwordStrong}" th:text="${passwordStrong}"></p>
+        <p class="smallErrorMessage" th:value="*{passwordsMatch}" th:text="${passwordsMatch}"></p>
+        <p class="smallErrorMessage" th:value="*{passwordStrong}" th:text="${passwordStrong}"></p>
         <br/>
 
 

@@ -100,8 +100,18 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .errorMessage {
+    font-weight: 550;
+    font-style: italic;
     color: red;
-    font-size: 0.7rem;
+    margin: 10px 0 10px 0;
+    font-size: smaller;
+}
+
+.smallErrorMessage {
+    font-size: 14px;
+    font-style: italic;
+    color: red;
+    display: block;
 }
 
 .dropbtn {
@@ -140,7 +150,8 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     padding: 6px 16px;
     width: 100%;
     border: none;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 #form textarea {
@@ -158,12 +169,12 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     resize: vertical;
 }
 #characterCountContainer {
-    font-size: 0.8em;
+    font-size: 0.8750em;
 }
 
 
 #form label {
-    font-size: 0.8em;
+    font-size: 0.8750em;
 }
 
 #form button, #form input[type="submit"] {
@@ -192,13 +203,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     margin-bottom: 20px;
 }
 
-#error-message {
-    font-weight: 600;
-    font-style: italic;
-    color: red;
-    margin: 10px 0 10px 0;
-
-}
 
 .garden-details p {
     margin-bottom: 10px;
@@ -303,6 +307,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     line-height: 1;
     text-align: center;
     vertical-align: top;
+    box-shadow: none;
 }
 
 #form .plant-image-container .image-button:hover {
@@ -310,11 +315,12 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     opacity: 1;
 }
 .return p {
-    text-align: center;
-    padding-bottom: 10px;
-}
-.return {
-    padding-top: 10px;
+    font-size: 14px;
+    font-style: italic;
+    color: red;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .edit-button {
@@ -394,7 +400,7 @@ h1 {
 
 body, h2, h3, h4, h5, h6, a {
     font-family: 'Roboto', sans-serif;
-    color: #0073e6;;
+    color: #1c1c1a;;
 }
 
 
@@ -565,6 +571,11 @@ body, h2, h3, h4, h5, h6, a {
     padding: 15px;
 }
 
+.warningMessageContainer {
+    color: red;
+    font-style: italic;
+}
+
 /*signup code form css*/
 
 #form .signup-code input[type="text"] {
@@ -624,6 +635,11 @@ body, h2, h3, h4, h5, h6, a {
     background: #8af58a;
     cursor: pointer;
 }
+
+.link {
+    color: #0073e6;
+}
+
 
 /*a {*/
 /*    text-decoration: none;*/
