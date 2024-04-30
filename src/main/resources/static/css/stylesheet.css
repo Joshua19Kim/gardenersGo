@@ -193,9 +193,11 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 #error-message {
-    font-weight: 700;
+    font-weight: 600;
     font-style: italic;
-    text-decoration: underline;
+    color: red;
+    margin: 10px 0 10px 0;
+
 }
 
 .garden-details p {
@@ -370,6 +372,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     flex-direction: column;
     overflow: hidden;
     border-radius: 10px;
+    text-align: center;
 }
 
 #garden-names {
@@ -391,7 +394,7 @@ h1 {
 
 body, h2, h3, h4, h5, h6, a {
     font-family: 'Roboto', sans-serif;
-    color: #1c1c1a;
+    color: #0073e6;;
 }
 
 
