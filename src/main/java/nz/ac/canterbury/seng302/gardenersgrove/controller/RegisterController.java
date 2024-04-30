@@ -136,13 +136,10 @@ public class RegisterController {
                 DoBError.isEmpty() &&
                 passwordStrengthError.isEmpty()) {
 
-            logger.info("IT WENT THROUGH!");
             Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password, "defaultProfilePic.png");
             gardenerFormService.addGardener(newGardener);
-            logger.info(String.valueOf(newGardener));
 
-            if (newGardener != null) {
-                logger.info("new gardener not null");
+            if (gardenerFormService.findByEmail(newGardener.getEmail()).isPresent()) {
                 writeEmail.sendSignupEmail(newGardener, tokenService);
                 return "redirect:/signup";
             }

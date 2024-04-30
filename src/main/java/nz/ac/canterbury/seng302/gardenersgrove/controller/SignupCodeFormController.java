@@ -80,7 +80,6 @@ public class SignupCodeFormController {
             }
             else if (tempGardener.isPresent() && tokenService.validateLostPasswordToken(signupToken)== null) {
                 gardener = tempGardener.get();
-                logger.info("Granting authority.....");
                 gardener.grantAuthority("ROLE_USER");
                 gardenerFormService.addGardener(gardener);
                 // Deletes Token after use
