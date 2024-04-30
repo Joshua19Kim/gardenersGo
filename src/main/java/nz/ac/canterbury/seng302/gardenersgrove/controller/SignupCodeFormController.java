@@ -91,6 +91,7 @@ public class SignupCodeFormController {
                 return "redirect:/login";
             }
             return "signupCodeForm";
-            } return "redirect:/register";
+            }
+        return "redirect:/signup?invalid";
     }
 }
