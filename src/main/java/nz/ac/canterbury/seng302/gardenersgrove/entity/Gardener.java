@@ -155,7 +155,7 @@ public class Gardener {
         if (getLastName() != null) {
             gardenerString += " " + lastName;
         }
-        //gardenerString += " - " + email;
+        gardenerString += " - " + email;
 
         return gardenerString;
     }
