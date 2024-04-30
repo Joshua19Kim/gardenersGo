@@ -5,7 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
-import nz.ac.canterbury.seng302.gardenersgrove.util.SendSignup;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +33,16 @@ import java.util.Optional;
 public class UserProfileController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
     private final GardenerFormService gardenerFormService;
-    private final SendSignup sendSignup;
+    private final WriteEmail writeEmail;
     private Gardener gardener;
 
     @Autowired
     private ImageService imageService;
 
     @Autowired
-    public UserProfileController(GardenerFormService gardenerFormService, SendSignup sendSignup) {
+    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
-        this.sendSignup = sendSignup;
+        this.writeEmail = writeEmail;
     }
 
     /**
@@ -231,7 +231,7 @@ public class UserProfileController {
                 newPasswordDifferentFromOldPassword.isEmpty()) {
             gardener.updatePassword(newPassword);
             gardenerFormService.addGardener(gardener);
-            sendSignup.sendPasswordUpdateConfirmEmail(gardener);
+            writeEmail.sendPasswordUpdateConfirmEmail(gardener);
             return "redirect:/user";
         }
 
