@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -330,5 +331,38 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("sizeError", "Garden size must be a positive number"));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
+    }
+
+    @Test
+    @WithMockUser
+    public void testFriendsCanViewGardens() throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!", "default.png");
+        Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!", "default.png");
+        currentUser.setId(1L);
+        currentUser.setId(2L);
+        gardenerFormService.addGardener(currentUser);
+        gardenerFormService.addGardener(otherUser);
+
+        List<Garden> testGardens = new ArrayList<>();
+        Garden testGarden = new Garden("My Garden", "Ilam", otherUser);
+        testGardens.add(testGarden);
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+
+        List<Gardener> relationships = new ArrayList<>();
+        relationships.add(otherUser);
+
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+        when(relationshipService.getCurrentUserRelationships(currentUser.getId())).thenReturn(relationships);
+        when(gardenService.getGardensByGardenerId(2L)).thenReturn(testGardens);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("gardenId", "2")
+                        .principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("gardens", testGardens))
+                .andExpect(model().attribute("gardener", currentUser))
+                .andExpect(view().name("gardensTemplate"));
+
     }
 }
