@@ -16,7 +16,7 @@ Rinlada Tolley - rto52@uclive.ac.nz\
 Kush Desai - kde54@uclive.ac.nz\
 Sam Dawson - sda110@uclive.ac.nz\
 Ben Moore - BenMoore1.work@gmail.com\
-Joshua Byoungsoo Kim - bki42@gmail.com
+Joshua Byoungsoo Kim - bki42@uclive.ac.nz
 
 
 ## Dependencies
