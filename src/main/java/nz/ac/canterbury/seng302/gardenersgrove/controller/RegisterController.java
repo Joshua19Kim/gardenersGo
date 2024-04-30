@@ -5,26 +5,21 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
-import nz.ac.canterbury.seng302.gardenersgrove.util.SendSignup;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Controller for form example.
+ * Controller for user registration
+ * Handles the registration form submission and validation
  * Note the @link{Autowired} annotation giving us access to the @link{FormService} class automatically
  */
 @Controller
@@ -32,20 +27,21 @@ public class RegisterController {
     private final GardenerFormService gardenerFormService;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
-    private final SendSignup sendSignup;
+    private final WriteEmail writeEmail;
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
     /**
      * Constructor for the controller. Sets the gardener form service and authentication manager objects
      * @param gardenerFormService - object that is used to interact with the database
      * @param authenticationManager - object that is used for authentication (checking, adding, removing authentication)
+     * @param writeEmail - service for writing emails
      */
     @Autowired
-    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager, TokenService tokenService, SendSignup sendSignup) {
+    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager, TokenService tokenService, WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
-        this.sendSignup = sendSignup;
+        this.writeEmail = writeEmail;
     }
 
     /**
@@ -90,7 +86,7 @@ public class RegisterController {
      * @param passwordConfirm user's repeated password
      * @param model (map-like) representation of name, language and isJava boolean for use in thymeleaf,
      *              with values being set to relevant parameters provided
-     * @return thymeleaf demoFormTemplate
+     * @return thymeleaf registration form template or redirect to signup confirmation page
      */
     @PostMapping("/register")
     public String submitForm(HttpServletRequest request,
@@ -147,8 +143,7 @@ public class RegisterController {
 
             if (newGardener != null) {
                 logger.info("new gardener not null");
-//                SendSignup sendSignup = new SendSignup();
-                sendSignup.sendSignupEmail(newGardener, tokenService);
+                writeEmail.sendSignupEmail(newGardener, tokenService);
                 return "redirect:/signup";
             }
 

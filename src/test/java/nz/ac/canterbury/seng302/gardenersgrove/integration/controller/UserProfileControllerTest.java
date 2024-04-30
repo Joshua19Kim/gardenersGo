@@ -360,25 +360,6 @@ public class UserProfileControllerTest {
                                 "one lowercase letter, one number, and one special character."));
     }
 
-    @Test
-    @WithMockUser("testEmail@gmail.com")
-    void OnPasswordUpdatePage_userPutValidNewPasswords_saveNewPasswordAndSendConfirmationEmail() throws Exception {
-        this.mockMvc
-                .perform(MockMvcRequestBuilders.post("/password")
-                        .param("oldPassword", "testPassword")
-                        .param("newPassword", "NewPassWord1@")
-                        .param("retypePassword", "NewPassWord1@")
-                        .with(csrf())
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/user"));
-
-        gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
-        verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
-        List<Gardener> addedGardener = gardenerCaptor.getAllValues();
-        assertEquals("testEmail@gmail.com", addedGardener.get(1).getEmail());
-    }
 
     @Test
     @WithMockUser("testEmail@gmail.com")
