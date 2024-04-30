@@ -400,7 +400,7 @@ h1 {
 
 body, h2, h3, h4, h5, h6, a {
     font-family: 'Roboto', sans-serif;
-    color: #1c1c1a;;
+    color: #1c1c1a;
 }
 
 
@@ -411,37 +411,6 @@ body, h2, h3, h4, h5, h6, a {
     font-family: sans-serif;
     scrollbar-color: #45a049 #f9f9f9;
 }
-
-
-
-/*label {*/
-/*    margin: 5px;*/
-/*    display: inline-block;*/
-/*    min-width: 200px;*/
-/*}*/
-
-/*input {*/
-/*    margin: 5px;*/
-/*    width: 200px;*/
-/*}*/
-
-/*.form-control {*/
-/*    width: auto;*/
-/*}*/
-
-/*input[type=submit] {*/
-/*    background-color: cornflowerblue;*/
-/*    border: none;*/
-/*    color: white;*/
-/*    padding: 5px 2px;*/
-/*    text-align: center;*/
-/*    text-decoration: none;*/
-/*    cursor: pointer;*/
-/*    font-size: 16px;*/
-/*    width: 100px;*/
-/*    border-radius: 5px;*/
-/*}*/
-
 /* ------------------------------Upload CSS ------------------------------ */
 
 .formContainer {
@@ -639,18 +608,6 @@ body, h2, h3, h4, h5, h6, a {
 .link {
     color: #0073e6;
 }
-
-
-/*a {*/
-/*    text-decoration: none;*/
-/*    color: blue;*/
-/*}*/
-
-/*p {*/
-/*    color: red;*/
-/*    font-size: 14px;*/
-/*}*/
-
 
 
 
