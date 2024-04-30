@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
@@ -51,7 +52,10 @@ public class ResetPasswordFormController {
             };
             return "redirect:/login"; // Gardener / Id not present
         } else if (result == "expired") {
-            return "redirect:/login?expired"; // Token is expired
+            // Token is expired so delete it
+            Optional<LostPasswordToken> expiredToken = tokenService.getTokenFromString(token);
+            tokenService.removeToken(expiredToken.get());
+            return "redirect:/login?expired";
         }
         return "redirect:/login"; // Token does not exist
     }
