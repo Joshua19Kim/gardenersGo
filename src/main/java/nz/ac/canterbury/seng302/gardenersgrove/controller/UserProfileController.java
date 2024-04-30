@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +33,16 @@ import java.util.Optional;
 public class UserProfileController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
     private final GardenerFormService gardenerFormService;
-
+    private final WriteEmail writeEmail;
     private Gardener gardener;
 
     @Autowired
     private ImageService imageService;
 
     @Autowired
-    public UserProfileController(GardenerFormService gardenerFormService) {
+    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
+        this.writeEmail = writeEmail;
     }
 
     /**
@@ -221,16 +223,15 @@ public class UserProfileController {
         model.addAttribute("passwordsMatch", passwordMatchError.orElse(""));
         Optional<String> passwordStrengthError = inputValidator.checkStrongPassword(newPassword);
         model.addAttribute("passwordStrong", passwordStrengthError.orElse(""));
+        Optional<String> newPasswordDifferentFromOldPassword = inputValidator.checkOldPasswordDoesNotMatchNewPassword(gardener.getPassword(), newPassword);
+        model.addAttribute("newDifferentFromOld", newPasswordDifferentFromOldPassword.orElse(""));
 
-        if (passwordCorrectError.isEmpty() && passwordMatchError.isEmpty() && passwordStrengthError.isEmpty()) {
+
+        if (passwordCorrectError.isEmpty() && passwordMatchError.isEmpty() && passwordStrengthError.isEmpty() &&
+                newPasswordDifferentFromOldPassword.isEmpty()) {
             gardener.updatePassword(newPassword);
             gardenerFormService.addGardener(gardener);
-
-            String email = gardener.getEmail();
-            String emailMessage = "Your Password has been updated";
-            EmailUserService emailService = new EmailUserService(email, emailMessage);
-            emailService.sendEmail(); // *** Blocking
-
+            writeEmail.sendPasswordUpdateConfirmEmail(gardener);
             return "redirect:/user";
         }
 
