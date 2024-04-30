@@ -9,7 +9,7 @@
 
 <div id="form" class="signup">
     <h1>Please enter your signup code</h1>
-    <form method="post" th:action="@{/signup}">
+    <form method="post" th:action="@{/signup}" onsubmit="getCode()">
         <div th:if="${param.invalid}" id="error-message">
             <p>Signup code invalid</p>
         </div>
@@ -24,6 +24,7 @@
                 <label for="signupToken5"></label><input name="signupToken" id="signupToken5" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(5)">
                 <label for="signupToken6"></label><input name="signupToken" id="signupToken6" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(6)">
                 <p class="errorMessage" th:if="${param.error}" data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
+                <input type="hidden" id="signupToken" value="">
             </div>
         </fieldset>
         <input type="hidden"
@@ -38,8 +39,17 @@
     </form>
 </div>
 <script>
+    function getCode() {
+        const tokens = Array.from(document.getElementById("tokens").children);
+        let code = "";
+        tokens.forEach(token => {
+            if (token.className === "signup-input") {
+                code += token.value;
+            }
+        })
+        document.getElementById("signupToken").value = code;
+    }
     function goToNextInput(currToken) {
-
         const currentToken = document.getElementById("signupToken" + currToken);
         if (currentToken.value !== "") {
             const nextToken = currToken + 1 === 7 ? 6 : currToken + 1;

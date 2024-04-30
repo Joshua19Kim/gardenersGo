@@ -67,9 +67,11 @@ public class SignupCodeFormController {
                                  @RequestParam(name= "signupToken", required = false, defaultValue = "") String signupToken,
                                  Model model) {
         logger.info("POST /signup");
-        if (tokenService.validateLostPasswordToken(signupToken) != "invalidToken") {
+        signupToken = signupToken.replaceAll(",", "");
+
+        if (!Objects.equals(tokenService.validateLostPasswordToken(signupToken), "invalidToken")) {
             Optional<Gardener> tempGardener = tokenService.findGardenerbyToken(signupToken);
-            if (tempGardener.isPresent() && tokenService.validateLostPasswordToken(signupToken) == "expired") {
+            if (tempGardener.isPresent() && Objects.equals(tokenService.validateLostPasswordToken(signupToken), "expired")) {
                 gardener = tempGardener.get();
 
                 Optional<LostPasswordToken> tempToken = tokenService.getTokenFromString(signupToken);
