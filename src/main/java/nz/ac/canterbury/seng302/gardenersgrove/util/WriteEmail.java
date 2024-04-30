@@ -5,11 +5,15 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.springframework.stereotype.Component;
+import static nz.ac.canterbury.seng302.gardenersgrove.util.TokenGenerator.generateToken;
 
+import java.util.Locale;
 import java.util.UUID;
 /**
  * Util class for writing and sending emails.
  */
+
+
 @Component
 public class WriteEmail {
     private TokenService tokenService;
@@ -21,8 +25,7 @@ public class WriteEmail {
      */
     public void sendSignupEmail(Gardener gardener, TokenService tokenService) {
         this.tokenService = tokenService;
-
-        String token = UUID.randomUUID().toString();
+        String token = generateToken();
         tokenService.createLostPasswordTokenForGardener(gardener, token);
         String email = gardener.getEmail();
         String subject = "Nature's Facebook Signup Code";
