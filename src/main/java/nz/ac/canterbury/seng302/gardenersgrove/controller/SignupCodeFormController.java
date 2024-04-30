@@ -56,6 +56,12 @@ public class SignupCodeFormController {
             return "signupCodeForm";
     }
 
+    /**
+     * Validates the signup token and assigns the user role (verifies them) to the user
+     * @param signupToken The unique Token with which the user can be identified
+     * @param model For displaying the error messages in thymeleaf
+     * @return Redirect to login page if successful, otherwise back to the signup code form
+     */
     @PostMapping("/signup")
     public String sendSignupForm(
                                  @RequestParam(name= "signupToken", required = false, defaultValue = "") String signupToken,
