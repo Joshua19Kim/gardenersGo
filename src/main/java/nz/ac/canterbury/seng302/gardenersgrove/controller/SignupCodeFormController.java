@@ -72,19 +72,25 @@ public class SignupCodeFormController {
             if (tempGardener.isPresent() && tokenService.validateLostPasswordToken(signupToken) == "expired") {
                 gardener = tempGardener.get();
                 Optional<LostPasswordToken> tempToken = tokenService.getTokenFromString(signupToken);
-                if(tempToken.isPresent()){
+                if (tempToken.isPresent()) {
                     tokenService.removeToken(tempToken.get());
                     gardenerFormService.removeGardener(gardener);
-                    logger.info("need to remove user");}
-                return "redirect:/register";
+                }
+                return "redirect:/register?expired";
             }
             else if (tempGardener.isPresent() && tokenService.validateLostPasswordToken(signupToken)== null) {
                 gardener = tempGardener.get();
                 logger.info("Granting authority.....");
                 gardener.grantAuthority("ROLE_USER");
                 gardenerFormService.addGardener(gardener);
+                // Deletes Token after use
+                Optional<LostPasswordToken> tempToken = tokenService.getTokenFromString(signupToken);
+                if (tempToken.isPresent()) {
+                    tokenService.removeToken(tempToken.get());
+                }
                 return "redirect:/login";
-        }
-        return "signupCodeForm";
-    } return "redirect:/register";
-}}
+            }
+            return "signupCodeForm";
+            } return "redirect:/register";
+    }
+}
