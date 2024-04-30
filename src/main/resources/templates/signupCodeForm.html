@@ -16,13 +16,13 @@
         <!--        referenced from https://codepen.io/RobertAron/pen/gOLLXLo  -->
         <fieldset class="signup-code">
             <legend>Signup Code</legend>
-            <div style="display: flex;">
-                <label for="signupToken1"></label><input name="signupToken" id="signupToken1" type="text" class="signup-input" required>
-                <label for="signupToken2"></label><input name="signupToken" id="signupToken2" type="text" class="signup-input" required>
-                <label for="signupToken3"></label><input name="signupToken" id="signupToken3" type="text" class="signup-input" required>
-                <label for="signupToken4"></label><input name="signupToken" id="signupToken4" type="text" class="signup-input" required>
-                <label for="signupToken5"></label><input name="signupToken" id="signupToken5" type="text" class="signup-input" required>
-                <label for="signupToken6"></label><input name="signupToken" id="signupToken6" type="text" class="signup-input" required>
+            <div style="display: flex;" id="tokens">
+                <label for="signupToken1"></label><input name="signupToken" id="signupToken1" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(1)">
+                <label for="signupToken2"></label><input name="signupToken" id="signupToken2" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(2)">
+                <label for="signupToken3"></label><input name="signupToken" id="signupToken3" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(3)">
+                <label for="signupToken4"></label><input name="signupToken" id="signupToken4" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(4)">
+                <label for="signupToken5"></label><input name="signupToken" id="signupToken5" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(5)">
+                <label for="signupToken6"></label><input name="signupToken" id="signupToken6" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(6)">
                 <p class="errorMessage" th:if="${param.error}" data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
             </div>
         </fieldset>
@@ -37,5 +37,18 @@
         </div>
     </form>
 </div>
+<script>
+    function goToNextInput(currToken) {
+
+        const currentToken = document.getElementById("signupToken" + currToken);
+        if (currentToken.value !== "") {
+            const nextToken = currToken + 1 === 7 ? 6 : currToken + 1;
+            document.getElementById("signupToken" + nextToken).focus();
+        } else {
+            const prevToken = currToken - 1 === 0 ? 1 : currToken - 1;
+            document.getElementById("signupToken" + prevToken).focus();
+        }
+    }
+</script>
 </body>
 </html>
