@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
@@ -49,5 +50,16 @@ public class WriteEmail {
         EmailUserService emailService = new EmailUserService(email, subject, message);
         emailService.sendEmail();
 
+    }
+    /**
+     * Send reset password confirmation email to gardener's email when gardener(user) resets password successfully.
+     * @param gardener Gardener to get the email address
+     */
+    public void sendPasswordResetConfirmEmail(Gardener gardener) {
+        String email = gardener.getEmail();
+        String emailMessage = "Your Password has been updated";
+        String subject = "Password Updated";
+        EmailUserService emailService = new EmailUserService(email, subject, emailMessage);
+        emailService.sendEmail(); // *** Blocking
     }
 }
