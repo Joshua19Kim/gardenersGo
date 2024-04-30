@@ -39,6 +39,8 @@ public class UserProfileController {
     @Autowired
     private ImageService imageService;
 
+    private boolean isFileNotAdded;
+
     @Autowired
     public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
@@ -116,6 +118,14 @@ public class UserProfileController {
         if (email != null && !email.equals(currentUserEmail)) {
             emailInUseError = inputValidator.checkEmailInUse(email);
         }
+
+        if (isFileNotAdded) {
+            model.addAttribute("uploadMessage", "No image uploaded.");
+        } else {
+            model.addAttribute("uploadMessage", "");
+
+        }
+
         model.addAttribute("emailValid", validEmailError.orElse(emailInUseError.orElse("")));
 
         if (firstNameError.isEmpty() &&
@@ -152,6 +162,13 @@ public class UserProfileController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("POST /upload");
+
+        if (file.isEmpty()) {
+            isFileNotAdded = true;
+            return "redirect:/user";
+        } else {
+            isFileNotAdded = false;
+        }
 
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             Optional<String> uploadMessage =  imageService.saveImage(file);
