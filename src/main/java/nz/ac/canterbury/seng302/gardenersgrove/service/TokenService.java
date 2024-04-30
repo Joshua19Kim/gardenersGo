@@ -18,6 +18,13 @@ public class TokenService {
     public TokenService(LostPasswordTokenRepository lostPasswordTokenRepository) {
         this.lostPasswordTokenRepository = lostPasswordTokenRepository;
     }
+    public Optional<LostPasswordToken> getTokenFromString(String string) {
+        return lostPasswordTokenRepository.findByToken(string);
+    }
+    public void removeToken(LostPasswordToken token) {
+        lostPasswordTokenRepository.delete(token);
+    }
+
 
     public String validateLostPasswordToken(String token) {
         final Optional<LostPasswordToken> passToken = lostPasswordTokenRepository.findByToken(token);
