@@ -80,7 +80,8 @@ public class ForgotPasswordFormController {
                 String token = UUID.randomUUID().toString();
                 tokenService.createLostPasswordTokenForGardener(gardener.get(), token);
                 String emailMessage = constructLostPasswordTokenEmail(getAppUrl(request), request.getLocale(), token, gardener.get());
-                EmailUserService emailService = new EmailUserService(email, emailMessage);
+                String subject = "Forgot password?";
+                EmailUserService emailService = new EmailUserService(email, subject, emailMessage);
                 emailService.sendEmail(); // Blocks ***
                 return "forgotPasswordForm"; // Email sent
             }

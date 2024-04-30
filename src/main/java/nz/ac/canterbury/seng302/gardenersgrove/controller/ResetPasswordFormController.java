@@ -83,7 +83,8 @@ public class ResetPasswordFormController {
 
             String email = gardener.getEmail();
             String emailMessage = "Your Password has been updated";
-            EmailUserService emailService = new EmailUserService(email, emailMessage);
+            String subject = "Password Updated";
+            EmailUserService emailService = new EmailUserService(email, subject, emailMessage);
             emailService.sendEmail(); // *** Blocking
 
             return "redirect:/login";

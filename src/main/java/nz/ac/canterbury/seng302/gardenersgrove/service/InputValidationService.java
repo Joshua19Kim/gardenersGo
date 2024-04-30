@@ -24,6 +24,11 @@ public class InputValidationService {
         return (passwordOne.equals(passwordTwo)) ? Optional.empty() : Optional.of("Passwords do not match.");
     }
 
+    public Optional<String> checkOldPasswordDoesNotMatchNewPassword (String oldPassword, String newPassword) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return (encoder.matches(newPassword, oldPassword)) ? Optional.of("New password cannot be the same as old password.") : Optional.empty();
+    }
+
     /**
      * Verify password entered is strong as given by U1-AC12
      * @param password attempted by user
