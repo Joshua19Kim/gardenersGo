@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.SendSignup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,6 +26,7 @@ public class RegisterControllerTest {
     private GardenerFormService gardenerFormService;
     private AuthenticationManager authenticationManager;
     private TokenService tokenService;
+    private SendSignup sendSignup;
     private Authentication authentication;
     private HttpServletRequest request;
     private HttpSession sessionMock;
@@ -36,14 +38,14 @@ public class RegisterControllerTest {
         request = Mockito.mock(HttpServletRequest.class);
         authenticationManager = Mockito.mock(AuthenticationManager.class);
         tokenService = Mockito.mock(TokenService.class);
-        registerFormController = new RegisterController(gardenerFormService, authenticationManager, tokenService);
+        sendSignup = Mockito.mock(SendSignup.class);
+        registerFormController = new RegisterController(gardenerFormService, authenticationManager, tokenService,sendSignup);
         model = Mockito.mock(Model.class);
         assertTrue(true);
     }
 
     @Test
     void GivenValidGardenerInput_WhenUserRegisters_NewGardenerCreated() {
-
         authentication = Mockito.mock(Authentication.class);
         sessionMock = Mockito.mock(HttpSession.class);
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);

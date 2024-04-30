@@ -1,15 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@Component
 public class SendSignup {
     private TokenService tokenService;
 

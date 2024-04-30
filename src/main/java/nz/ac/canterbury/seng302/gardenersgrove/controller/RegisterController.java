@@ -32,6 +32,7 @@ public class RegisterController {
     private final GardenerFormService gardenerFormService;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
+    private final SendSignup sendSignup;
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
     /**
@@ -40,10 +41,11 @@ public class RegisterController {
      * @param authenticationManager - object that is used for authentication (checking, adding, removing authentication)
      */
     @Autowired
-    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager, TokenService tokenService) {
+    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager, TokenService tokenService, SendSignup sendSignup) {
         this.gardenerFormService = gardenerFormService;
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
+        this.sendSignup = sendSignup;
     }
 
     /**
@@ -145,8 +147,7 @@ public class RegisterController {
 
             if (newGardener != null) {
                 logger.info("new gardener not null");
-                logger.info("new gardener id " + newGardener.getId());
-                SendSignup sendSignup = new SendSignup();
+//                SendSignup sendSignup = new SendSignup();
                 sendSignup.sendSignupEmail(newGardener, tokenService);
                 return "redirect:/signup";
             }
