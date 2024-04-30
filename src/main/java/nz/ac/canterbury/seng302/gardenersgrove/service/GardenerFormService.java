@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +17,13 @@ import java.util.Optional;
 @Service
 public class GardenerFormService {
     private GardenerFormRepository gardenerFormRepository;
+    private LostPasswordTokenRepository lostPasswordTokenRepository;
 
     @Autowired
-    public GardenerFormService(GardenerFormRepository gardenerFormRepository) {
+    public GardenerFormService(GardenerFormRepository gardenerFormRepository,
+                               LostPasswordTokenRepository lostPasswordTokenRepository) {
         this.gardenerFormRepository = gardenerFormRepository;
+        this.lostPasswordTokenRepository = lostPasswordTokenRepository;
     }
     /**
      * Gets all FormResults from persistence
@@ -30,11 +35,11 @@ public class GardenerFormService {
 
     /**
      * Adds a formResult to persistence
+     *
      * @param gardener object to persist
-     * @return the saved formResult object
      */
-    public Gardener addGardener(Gardener gardener) {
-        return gardenerFormRepository.save(gardener);
+    public void addGardener(Gardener gardener) {
+        gardenerFormRepository.save(gardener);
     }
 
     public Optional<Gardener> findById(long id) {
@@ -45,7 +50,13 @@ public class GardenerFormService {
         return gardenerFormRepository.findByEmail(email);
     }
 
-    public Optional<Gardener> getUserByEmailAndPassword(String email, int password) {
-        return gardenerFormRepository.findByEmailAndPassword(email, password); // Creating some sort of thread problem?
+    public Optional<Gardener> getUserByEmailAndPassword(String email, String password) {
+        Optional<Gardener> gardener = gardenerFormRepository.findByEmail(email);
+        if (gardener.isPresent()) {
+            if (gardener.get().comparePassword(password)) {
+                return gardener;
+            }
+        }
+        return Optional.empty();
     }
 }
