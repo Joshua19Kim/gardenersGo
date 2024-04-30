@@ -100,7 +100,7 @@
         </div>
         <div id="saveCancelButtonDiv" style="display: none;">
             <button type="button" onclick="window.location='./password'">Update password</button>
-            <input type="submit" value="Save" onclick="console.log('save')"/>
+            <input type="submit" value="Save"/>
             <button type="button" onclick="disableEditing()">Cancel</button>
         </div>
     </form>
@@ -111,7 +111,7 @@
     document.getElementById("userForm").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             var activeElement = document.activeElement;
-            if (activeElement.type === "submit" || activeElement.tagName === "BUTTON") {
+            if (activeElement.id === "emailEdit" || activeElement.type === "submit" || activeElement.tagName === "BUTTON") {
                 return true;
             } else {
                 event.preventDefault();

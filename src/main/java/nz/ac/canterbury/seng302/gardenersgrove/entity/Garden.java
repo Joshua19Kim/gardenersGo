@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /** Represents a garden entity with its name, location, size, and list of plants. */
 @Entity
 public class Garden {
@@ -29,38 +28,41 @@ public class Garden {
   @OneToMany(mappedBy = "garden")
   private List<Plant> plants;
 
-//  @ManyToOne
-//  @JoinColumn(name = "gardener_id")
-//  private Gardener gardener;
+  /** The gardener to which the garden belongs. */
+  @ManyToOne
+  @JoinColumn(name = "gardener_id")
+  private Gardener gardener;
 
   /** Default constructor required by JPA. */
   protected Garden() {}
 
   /**
-   * Constructs a garden with the given name and location.
+   * Constructs a garden with the given name, location and gardener.
    *
    * @param name The name of the garden.
    * @param location The location of the garden.
+   * @param gardener The gardener id for the garden.
    */
-  public Garden(String name, String location) {
+  public Garden(String name, String location, Gardener gardener) {
     this.name = name;
     this.location = location;
-//    this.gardener = gardener;
+    this.gardener = gardener;
     plants = new ArrayList<>();
   }
 
   /**
-   * Constructs a garden with the given name, location, and size.
+   * Constructs a garden with the given name, location, size and gardener.
    *
    * @param name The name of the garden.
    * @param location The location of the garden.
    * @param size The size of the garden.
+   * @param gardener The gardener id for the garden.
    */
-  public Garden(String name, String location, String size) {
+  public Garden(String name, String location, String size, Gardener gardener) {
     this.name = name;
     this.location = location;
     this.size = size;
-//    this.gardener = gardener;
+    this.gardener = gardener;
     plants = new ArrayList<>();
   }
 
@@ -101,6 +103,15 @@ public class Garden {
   }
 
   /**
+   * Retrieves the owner of the garden.
+   *
+   * @return The owner of the garden.
+   */
+  public Gardener getGardener() {
+    return gardener;
+  }
+
+  /**
    * Retrieves the list of plants in the garden.
    *
    * @return The list of plants in the garden.
@@ -126,6 +137,13 @@ public class Garden {
    * @param location the location of the garden
    */
   public void setLocation(String location) {this.location = location;}
+
+  /**
+   * Sets the owner of the garden.
+   *
+   * @param gardener The owner of the garden.
+   */
+  public void setGardener(Gardener gardener) {this.gardener = gardener;}
 
   /**
    * Sets the id of the garden

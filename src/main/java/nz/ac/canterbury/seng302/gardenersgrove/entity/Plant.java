@@ -238,5 +238,11 @@ public class Plant {
      * @param datePlanted the date planted
      */
     public void setDatePlanted(String datePlanted) {this.datePlanted = datePlanted;}
+
+    /**
+     * Sets the garden where the plant is located.
+     * @param garden The garden where the plant is located.
+     */
+    public void setGarden(Garden garden) {this.garden = garden;}
 }
 
