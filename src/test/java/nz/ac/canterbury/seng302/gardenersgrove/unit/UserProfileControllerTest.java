@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.SendSignup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -24,6 +25,7 @@ public class UserProfileControllerTest {
     private UserProfileController userProfileController;
     private GardenerFormService gardenerFormService;
     private EmailUserService emailUserService;
+    private SendSignup sendSignup;
     private Model modelMock;
     private Gardener gardener;
     private Authentication authentication;
@@ -37,7 +39,8 @@ public class UserProfileControllerTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         gardenerFormService = Mockito.mock(GardenerFormService.class);
         emailUserService = Mockito.mock(EmailUserService.class);
-        userProfileController = new UserProfileController(gardenerFormService);
+        sendSignup = Mockito.mock(SendSignup.class);
+        userProfileController = new UserProfileController(gardenerFormService, sendSignup);
         modelMock = Mockito.mock(Model.class);
         gardener = Mockito.mock(Gardener.class);
         inputValidator = Mockito.mock(InputValidationService.class);

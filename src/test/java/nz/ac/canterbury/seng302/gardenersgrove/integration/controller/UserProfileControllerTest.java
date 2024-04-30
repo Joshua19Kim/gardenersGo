@@ -6,6 +6,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.SendSignup;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +49,8 @@ public class UserProfileControllerTest {
     private ArgumentCaptor<Gardener> gardenerCaptor;
     @MockBean
     private EmailUserService emailService;
+    @MockBean
+    private SendSignup mockSendSignup;
 
 
     @BeforeEach
@@ -204,7 +208,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("emailValid", Matchers.nullValue()));
 
         ArgumentCaptor<Gardener> gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
+        //wantedNumberOfInvocation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
         List<Gardener> addGardener = gardenerCaptor.getAllValues();
         assertEquals("newTestFirstName", addGardener.get(1).getFirstName());
@@ -230,7 +234,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("emailValid", Matchers.nullValue()));
 
         ArgumentCaptor<Gardener> gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
+        //wantedNumberOfInvocation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
         List<Gardener> addGardener = gardenerCaptor.getAllValues();
         assertEquals("newTestLastName", addGardener.get(1).getLastName());
@@ -256,7 +260,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("emailValid", Matchers.nullValue()));
 
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
+        //wantedNumberOfInvocation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
         List<Gardener> addGardener = gardenerCaptor.getAllValues();
         assertEquals(LocalDate.of(2001,12,13), addGardener.get(1).getDoB());
@@ -282,7 +286,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("emailValid", Matchers.nullValue()));
 
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
+        //wantedNumberOfInvocation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
         List<Gardener> addGardener = gardenerCaptor.getAllValues();
         assertEquals("newTestEmail@gmail.com", addGardener.get(1).getEmail());
@@ -308,7 +312,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("emailValid", Matchers.nullValue()));
 
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
+        //wantedNumberOfInvocation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
         List<Gardener> addGardener = gardenerCaptor.getAllValues();
         assertNull(addGardener.get(1).getLastName());
@@ -374,8 +378,10 @@ public class UserProfileControllerTest {
                 .andExpect(view().name("redirect:/user"));
 
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
-        verify(gardenerFormService, Mockito.times(2)).addGardener(gardenerCaptor.capture());
+        Mockito.doNothing().when(mockSendSignup).sendPasswordUpdateConfirmEmail(Mockito.any(Gardener.class));
+        //wantedNumberOfInvocation has additional 1 since .addGardener() is called once in test
+        verify(gardenerFormService, times(2)).addGardener(gardenerCaptor.capture());
+        verify(mockSendSignup,times(1)).sendPasswordUpdateConfirmEmail(Mockito.any(Gardener.class));
         List<Gardener> addedGardener = gardenerCaptor.getAllValues();
         assertEquals("testEmail@gmail.com", addedGardener.get(1).getEmail());
     }
@@ -398,7 +404,7 @@ public class UserProfileControllerTest {
                 .andExpect(view().name("/user"));
 
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
+        //wantedNumberOfInvocation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(1)).addGardener(gardenerCaptor.capture());
     }
     @Test
@@ -428,7 +434,7 @@ public class UserProfileControllerTest {
                 .andExpect(view().name("redirect:/user"));
 
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        //wantedNumberOfInvacation has additional 1 since .addGardener() is called once in test
+        //wantedNumberOfInvocation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(1)).addGardener(gardenerCaptor.capture());
     }
 

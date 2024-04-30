@@ -27,4 +27,17 @@ public class SendSignup {
         EmailUserService emailService = new EmailUserService(email, subject, message);
         emailService.sendEmail();
     }
+
+    /**
+     * Send confirmation email to gardener's email when gardener(user) updates password successfully.
+     * @param gardener Gardener to get the email address
+     */
+    public void sendPasswordUpdateConfirmEmail(Gardener gardener) {
+        String email = gardener.getEmail();
+        String message = "Your Password has been updated";
+        String subject = "Updated Password";
+        EmailUserService emailService = new EmailUserService(email, subject, message);
+        emailService.sendEmail();
+
+    }
 }
