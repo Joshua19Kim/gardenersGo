@@ -46,6 +46,10 @@ public class Gardener {
     // Create an encoder with strength 16
 
 
+    /** The list of gardens belonging to the gardener. */
+    @OneToMany(mappedBy = "gardener")
+    private List<Garden> gardens;
+
     /**
      * JPA required no-args constructor
      */
@@ -65,6 +69,7 @@ public class Gardener {
         this.email = email;
         this.password = hashPasword(password);
         this.profilePicture = profilePicture;
+        gardens = new ArrayList<>();
     }
 
     public void grantAuthority(String authority) {
@@ -121,6 +126,8 @@ public class Gardener {
 
     public String getProfilePicture() { return this.profilePicture; }
 
+    public List<Garden> getGardens() { return gardens; }
+
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
     public void setLastName(String lastName) { this.lastName = lastName; }
@@ -134,6 +141,8 @@ public class Gardener {
     }
 
     public void updatePassword(String password) { this.password = hashPasword(password); }
+
+    public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
 
     @Override
     public String toString() {
