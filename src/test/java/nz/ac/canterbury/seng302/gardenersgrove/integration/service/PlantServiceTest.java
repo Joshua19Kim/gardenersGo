@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
@@ -9,16 +10,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
 @Import(PlantService.class)
 public class PlantServiceTest {
+    Gardener testGardener = new Gardener("Test", "Gardener",
+            LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+            "Password1!", "defaultProfilePic.png");
 
     @Test
     public void PlantAdded_ValidInputs_PlantSavedToRepository() {
-        Garden garden = new Garden("Botanical","Homestead Lane", "100");
+        Garden garden = new Garden("Botanical","Homestead Lane", "100", testGardener);
         PlantService plantService = new PlantService(new PlantRepository() {
             @Override
             public Optional<Plant> findById(long id) {
@@ -99,7 +105,7 @@ public class PlantServiceTest {
     @Test
     public void PlantAdded_ValidInputs_PlantReturned() {
         PlantService plantService = new PlantService(plantRepository);
-        Garden garden = new Garden("Botanical","Homestead Lane", "100");
+        Garden garden = new Garden("Botanical","Homestead Lane", "100", testGardener);
         Plant plant = plantService.addPlant(new Plant("Flower","2", "Rose", "08/02/2024", garden));
         Assertions.assertEquals(plant.getName(), "Flower");
         Assertions.assertEquals(plant.getCount(), "2");

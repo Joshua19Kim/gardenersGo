@@ -7,11 +7,18 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
-
+/**
+ * Util class for writing and sending emails.
+ */
 @Component
-public class SendSignup {
+public class WriteEmail {
     private TokenService tokenService;
 
+    /**
+     * Sends a signup email to the given Gardener's email
+     * @param gardener The Gardener to send the email to
+     * @param tokenService  The token service to create the unique LostPasswordToken for the gardener
+     */
     public void sendSignupEmail(Gardener gardener, TokenService tokenService) {
         this.tokenService = tokenService;
 

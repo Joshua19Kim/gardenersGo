@@ -295,7 +295,7 @@ public class PlantFormController {
             if (countPresent) {
                 plant.setCount(new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
             } else {
-                plant.setCount("0");
+                plant.setCount(null);
             }
             if (descriptionPresent) {
                 plant.setDescription(validatedPlantDescription);
