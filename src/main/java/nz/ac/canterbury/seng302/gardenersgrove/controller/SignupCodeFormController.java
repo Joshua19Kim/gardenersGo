@@ -88,7 +88,7 @@ public class SignupCodeFormController {
                 if (tempToken.isPresent()) {
                     tokenService.removeToken(tempToken.get());
                 }
-                return "redirect:/login";
+                return "redirect:/login?signedup";
             }
             return "signupCodeForm";
             }

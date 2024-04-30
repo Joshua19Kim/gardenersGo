@@ -15,6 +15,9 @@
     <div th:if="${param.logout}">
         <p>You have been logged out.</p>
     </div>
+    <div th:if="${param.signedup}">
+        <p>Your account has been activated, please log in</p>
+    </div>
     <div th:if="${param.expired}" id="error-message">
         <p>Reset password link has expired.</p>
     </div>
