@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 
 /**
- * This is a basic spring boot controller, note the @link{Controller} annotation which defines this.
  * This controller defines endpoints as functions with specific HTTP mappings. This controller is used
  * for all the login related routes, as well as routing to the login page by default
  */
@@ -37,7 +36,8 @@ public class LoginController {
 
     /**
      * Method for the /login route
-     * @return redirect to /login if not authenticated, otherwise go to the main page
+     * If user is authenticated, redirects to the main page.
+     * If not authenticated, renders the login page.
      */
     @GetMapping("/login")
     public String login(Authentication authentication, HttpServletResponse response, HttpServletRequest request) {
