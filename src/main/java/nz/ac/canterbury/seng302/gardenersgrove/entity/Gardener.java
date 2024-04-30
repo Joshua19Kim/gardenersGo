@@ -58,9 +58,11 @@ public class Gardener {
     /**
      * Creates a new Gardener object
      * @param firstName first name of user
+     * @param lastName last name of user
      * @param DoB user's date of birth
      * @param email user's email
      * @param password user's password
+     * @param profilePicture user's profile picture
      */
     public Gardener(String firstName, String lastName, LocalDate DoB, String email, String password, String profilePicture) {
         this.firstName = firstName;

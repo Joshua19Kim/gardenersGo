@@ -37,10 +37,11 @@ public class Garden {
   protected Garden() {}
 
   /**
-   * Constructs a garden with the given name and location.
+   * Constructs a garden with the given name, location and gardener.
    *
    * @param name The name of the garden.
    * @param location The location of the garden.
+   * @param gardener The gardener id for the garden.
    */
   public Garden(String name, String location, Gardener gardener) {
     this.name = name;
@@ -50,11 +51,12 @@ public class Garden {
   }
 
   /**
-   * Constructs a garden with the given name, location, and size.
+   * Constructs a garden with the given name, location, size and gardener.
    *
    * @param name The name of the garden.
    * @param location The location of the garden.
    * @param size The size of the garden.
+   * @param gardener The gardener id for the garden.
    */
   public Garden(String name, String location, String size, Gardener gardener) {
     this.name = name;
