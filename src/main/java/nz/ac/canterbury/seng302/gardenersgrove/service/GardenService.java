@@ -20,7 +20,7 @@ public class GardenService {
      *
      * @param gardenRepository The repository used for accessing garden data.
      */
-    public GardenService(GardenRepository gardenRepository){ this.gardenRepository = gardenRepository;}
+    public GardenService(GardenRepository gardenRepository){this.gardenRepository = gardenRepository;}
 
     /**
      * Retrieves a list of all gardens stored in the repository.
@@ -43,5 +43,14 @@ public class GardenService {
      * @return the garden associated with the id
      */
     public Optional<Garden> getGarden(long id) {return gardenRepository.findById(id);}
+
+    /**
+     * Retrieves a list of all gardens from the repository with the specified gardener ID.
+     * @param gardenerId The identifier of the garden's owner.
+     * @return A list of all gardens with the specified owner stored in the repository.
+     */
+    public List<Garden> getGardensByGardenerId(Long gardenerId) {
+        return gardenRepository.findByGardenerId(gardenerId);
+    }
 }
 

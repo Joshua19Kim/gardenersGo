@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -45,9 +46,9 @@ public class Gardener {
     // Create an encoder with strength 16
 
 
-//    /** The list of gardens belonging to the gardener. */
-//    @OneToMany(mappedBy = "gardener")
-//    private List<Garden> gardens;
+    /** The list of gardens belonging to the gardener. */
+    @OneToMany(mappedBy = "gardener")
+    private List<Garden> gardens;
 
     /**
      * JPA required no-args constructor
@@ -57,18 +58,20 @@ public class Gardener {
     /**
      * Creates a new Gardener object
      * @param firstName first name of user
+     * @param lastName last name of user
      * @param DoB user's date of birth
      * @param email user's email
      * @param password user's password
+     * @param profilePicture user's profile picture
      */
     public Gardener(String firstName, String lastName, LocalDate DoB, String email, String password, String profilePicture) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.DoB = DoB;
         this.email = email;
-        this.password = hashPassword(password);
+        this.password = hashPasword(password);
         this.profilePicture = profilePicture;
-       // gardens = new ArrayList<>();
+        gardens = new ArrayList<>();
     }
 
     public void grantAuthority(String authority) {
@@ -91,7 +94,7 @@ public class Gardener {
     }
     public void setUserRoles(List<Authority> userRoles) { this.userRoles = userRoles;}
 
-    public String hashPassword(String password) {
+    public String hashPasword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.encode(password);
     }
@@ -125,8 +128,7 @@ public class Gardener {
 
     public String getProfilePicture() { return this.profilePicture; }
 
-    public void setId(Long id) { this.id = id; }
-   // public List<Garden> getGardens() { return gardens; }
+    public List<Garden> getGardens() { return gardens; }
 
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
@@ -140,10 +142,9 @@ public class Gardener {
         this.profilePicture = imageLocation;
     }
 
-    public void updatePassword(String password) { this.password = hashPassword(password); }
+    public void updatePassword(String password) { this.password = hashPasword(password); }
 
-    // public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
-
+    public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
 
     @Override
     public String toString() {
@@ -155,4 +156,5 @@ public class Gardener {
 
         return gardenerString;
     }
+
 }
