@@ -28,7 +28,7 @@ public class ImageService {
     private final GardenerFormService gardenerFormService;
 
     private final PlantService plantService;
-    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/src/main/resources/images/";
+    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
     private final int MAX_SIZE = 10*1024*1024;
 
     public List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
@@ -76,7 +76,7 @@ public class ImageService {
                 return Optional.of("I made a boo boo"); // Sam THE GOAT
             }
         } catch (Exception e) {
-            logger.info(e.toString());
+            logger.info(e.getMessage());
         }
         return Optional.empty();
     }
