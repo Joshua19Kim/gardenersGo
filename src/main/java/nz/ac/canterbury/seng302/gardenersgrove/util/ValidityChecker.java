@@ -66,8 +66,8 @@ public class ValidityChecker {
         // https://stackoverflow.com/questions/39182829/how-to-check-if-a-string-is-parsable-to-float
         try {
             float newSize = Float.parseFloat(sizeReplaced);
-            if (newSize > 1e12) {
-                return "Garden size must be less than 1 Trillion (1e12)";
+            if (newSize > 1e7) {
+                return "Garden size must be less than 10 Million";
             }
         } catch (NumberFormatException e) {
             return "Garden size must be a valid number with only a decimal place allowed";
@@ -75,9 +75,6 @@ public class ValidityChecker {
 
         if (sizeReplaced.contains("-")) {
             return "Garden size must be a positive number";
-        }
-        if(size.length() > 20) {
-            return "Garden size must be less than 20 characters";
         }
         return sizeReplaced;
     }
@@ -112,16 +109,15 @@ public class ValidityChecker {
         String countReplaced = count.replace(',', '.');
 
         try {
-            Float.parseFloat(countReplaced);
+            float plantSize = Float.parseFloat(countReplaced);
+            if (plantSize > 1e7) {
+                return "Plant count must be less than 10 Million";
+            }
         } catch (NumberFormatException e) {
             return "Plant count must be a positive number";
         }
-
         if (countReplaced.contains("-")) {
             return "Plant count must be a positive number";
-        }
-        if(count.length() > 20) {
-            return "Plant count must be less than 20 characters";
         }
         return countReplaced;
     }

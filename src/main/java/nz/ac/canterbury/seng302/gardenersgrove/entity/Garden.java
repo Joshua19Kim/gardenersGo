@@ -21,7 +21,7 @@ public class Garden {
   private String location;
 
   /** The size of the garden in square units. */
-  @Column(length=20)
+  @Column(length=9)
   private String size;
 
   /** The list of plants in the garden. */

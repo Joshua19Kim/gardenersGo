@@ -164,6 +164,12 @@ public class ValidityCheckerTest {
         String returnedInput = ValidityChecker.validateGardenSize(input);
         Assertions.assertEquals("Garden size must be a valid number with only a decimal place allowed", returnedInput);
     }
+    @Test //should fail
+    public void SizeEntered_LargeInput_ErrorMessageReturned() {
+        String input = "10000001";
+        String returnedInput = ValidityChecker.validateGardenSize(input);
+        Assertions.assertEquals("Garden size must be less than 10 Million", returnedInput);
+    }
 
     @Test
     public void PlantNameEntered_AlphaNumericInput_PlantNameReturned() {
@@ -261,6 +267,12 @@ public class ValidityCheckerTest {
         String input = "1.1.";
         String returnedInput = ValidityChecker.validatePlantCount(input);
         Assertions.assertEquals("Plant count must be a positive number", returnedInput);
+    }
+    @Test //should fail
+    public void PlantCountEntered_LargeInput_ErrorMessageReturned() {
+        String input = "10000001";
+        String returnedInput = ValidityChecker.validatePlantCount(input);
+        Assertions.assertEquals("Plant count must be less than 10 Million", returnedInput);
     }
     @Test // should fail
     public void PlantCountEntered_MultipleCommaInput_ErrorMessageReturned() {
