@@ -17,12 +17,12 @@
         <fieldset class="signup-code">
             <legend>Signup Code</legend>
             <div style="display: flex;" id="tokens">
-                <label for="signupToken1"></label><input name="signupToken" id="signupToken1" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(1)">
-                <label for="signupToken2"></label><input name="signupToken" id="signupToken2" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(2)">
-                <label for="signupToken3"></label><input name="signupToken" id="signupToken3" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(3)">
-                <label for="signupToken4"></label><input name="signupToken" id="signupToken4" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(4)">
-                <label for="signupToken5"></label><input name="signupToken" id="signupToken5" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(5)">
-                <label for="signupToken6"></label><input name="signupToken" id="signupToken6" type="text" maxlength="1" class="signup-input" required oninput="goToNextInput(6)">
+                <label for="signupToken1"></label><input name="signupToken" id="signupToken1" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(1, event)">
+                <label for="signupToken2"></label><input name="signupToken" id="signupToken2" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(2, event)">
+                <label for="signupToken3"></label><input name="signupToken" id="signupToken3" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(3, event)">
+                <label for="signupToken4"></label><input name="signupToken" id="signupToken4" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(4, event)">
+                <label for="signupToken5"></label><input name="signupToken" id="signupToken5" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(5, event)">
+                <label for="signupToken6"></label><input name="signupToken" id="signupToken6" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(6, event)">
                 <p class="errorMessage" th:if="${param.error}" data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
                 <input type="hidden" id="signupToken" value="">
             </div>
@@ -49,14 +49,25 @@
         })
         document.getElementById("signupToken").value = code;
     }
-    function goToNextInput(currToken) {
+    function goToNextInput(currToken, event) {
+        const keyCode = event.keyCode || event.which;
         const currentToken = document.getElementById("signupToken" + currToken);
-        if (currentToken.value !== "") {
-            const nextToken = currToken + 1 === 7 ? 6 : currToken + 1;
-            document.getElementById("signupToken" + nextToken).focus();
-        } else {
-            const prevToken = currToken - 1 === 0 ? 1 : currToken - 1;
-            document.getElementById("signupToken" + prevToken).focus();
+        if (keyCode === 8 && currentToken.value === "") { // 8 is the keycode for backspace
+            const prevToken = currToken - 1;
+            if (prevToken > 0) {
+                document.getElementById("signupToken" + prevToken).focus();
+            }
+        } else if (keyCode === 8 && !(currentToken.value === "")){
+            document.getElementById("signupToken" + currToken).clear();
+            const prevToken = currToken - 1;
+            if (prevToken > 0) {
+                document.getElementById("signupToken" + prevToken).focus();
+            }
+        } else if (keyCode >= 48 && keyCode <= 57 || keyCode >= 65 && keyCode <= 90) { // Checks whether an alphanumeric character is entered
+            const nextToken = currToken + 1;
+            if (nextToken < 7) {
+                document.getElementById("signupToken" + nextToken).focus();
+            }
         }
     }
 </script>
