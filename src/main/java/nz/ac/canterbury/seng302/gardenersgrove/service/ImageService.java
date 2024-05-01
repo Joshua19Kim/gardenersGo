@@ -65,7 +65,7 @@ public class ImageService {
 
                 if (checkValidImage(file).isEmpty()) {
                     Files.write(filePath, file.getBytes());
-                    gardener.setProfilePicture(newFileName);
+                    gardener.setProfilePicture("/uploads/" + newFileName);
                     gardenerFormService.addGardener(gardener);
                     return Optional.empty();
                 } else {
@@ -101,7 +101,7 @@ public class ImageService {
             logger.info("File location: " + filePath);
             if (checkValidImage(file).isEmpty()) {
                 Files.write(filePath, file.getBytes());
-                plant.setImage(newFileName);
+                plant.setImage("/uploads/" + newFileName);
                 plantService.addPlant(plant);
                 return Optional.empty();
             } else {
