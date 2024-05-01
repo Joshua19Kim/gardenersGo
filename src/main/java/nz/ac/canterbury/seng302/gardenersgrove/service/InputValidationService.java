@@ -64,6 +64,9 @@ public class InputValidationService {
         } else if (name.length() > 64) {
             return Optional.of(firstOrLast +" name must " +
                     "be 64 characters long or less");
+        } else if (name == null || name.trim().isEmpty()) {
+            return Optional.of(firstOrLast + " name cannot be empty and must only include letters, spaces, " +
+                    "hyphens or apostrophes");
         } else if (!name.matches(nameRegex)) {
             return Optional.of(firstOrLast + " name cannot be empty and must only include letters, spaces, " +
                     "hyphens or apostrophes");
@@ -71,6 +74,7 @@ public class InputValidationService {
             return Optional.empty();
         }
     }
+
 
     /**
      * Verifies that email matches IETF guidelines on acceptable addresses
