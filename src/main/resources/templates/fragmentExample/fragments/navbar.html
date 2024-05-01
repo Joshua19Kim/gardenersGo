@@ -1,3 +1,5 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
 <h1>Gardener's Grove</h1>
 <script>
     // JavaScript function to submit the logout form
@@ -27,6 +29,10 @@
     <li>
         <a th:href="@{/user}">My Profile</a>
     </li>
+    <li>
+        <a th:href="@{/manageFriends}">Manage Friends</a>
+    </li>
+    <li>
     <li sec:authorize="isAuthenticated()">
         <a href="#" onclick="logout(event)">Logout</a>
         <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
@@ -38,4 +44,5 @@
     </li>
 
 </ul>
+</html>
 

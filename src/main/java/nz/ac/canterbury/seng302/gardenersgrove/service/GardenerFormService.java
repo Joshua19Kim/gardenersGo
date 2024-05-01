@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepos
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +39,8 @@ public class GardenerFormService {
      *
      * @param gardener object to persist
      */
-    public void addGardener(Gardener gardener) {
-        gardenerFormRepository.save(gardener);
+    public Gardener addGardener(Gardener gardener) {
+        return gardenerFormRepository.save(gardener);
     }
     public void removeGardener(Gardener gardener) {
         gardenerFormRepository.delete(gardener);
@@ -62,4 +63,14 @@ public class GardenerFormService {
         }
         return Optional.empty();
     }
+
+    public List<Gardener> getGardenersById (List<Long> ids) {
+        List<Gardener> allGardeners = new ArrayList<>();
+        for (long id : ids) {
+            allGardeners.add(findById(id).get());
+        }
+        return allGardeners;
+    }
+
+
 }

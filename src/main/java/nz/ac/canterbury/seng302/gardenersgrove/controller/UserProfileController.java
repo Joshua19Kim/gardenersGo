@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,9 @@ public class UserProfileController {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private RelationshipService relationshipService;
+
     private boolean isFileNotAdded;
 
     @Autowired
@@ -66,6 +70,7 @@ public class UserProfileController {
                                  @RequestParam(name = "DoB", required = false) LocalDate DoB,
                                  @RequestParam(name = "email", required = false) String email,
                                  @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
+                                 @RequestParam(name = "user", required = false) String user,
                                  Model model) {
 
         logger.info("GET /user");
@@ -76,11 +81,23 @@ public class UserProfileController {
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
         if (gardenerOptional.isPresent()) {
             gardener = gardenerOptional.get();
-            model.addAttribute("firstName", gardener.getFirstName());
-            model.addAttribute("lastName", gardener.getLastName());
-            model.addAttribute("DoB", gardener.getDoB());
-            model.addAttribute("email", gardener.getEmail());
-            model.addAttribute("profilePic", gardener.getProfilePicture());
+            if(user != null) {
+                Optional<Gardener> friend = gardenerFormService.findById(Long.parseLong(user, 10));
+                // If the current user is friends
+                if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+                    model.addAttribute("gardener", friend.get()); // add friend details to the model
+                    return "unauthorizedUser";
+                } else {
+                    return "redirect:/user";
+                }
+            } else {
+                model.addAttribute("firstName", gardener.getFirstName());
+                model.addAttribute("lastName", gardener.getLastName());
+                model.addAttribute("DoB", gardener.getDoB());
+                model.addAttribute("email", gardener.getEmail());
+                model.addAttribute("profilePic", gardener.getProfilePicture());
+            }
+
         } else {
             model.addAttribute("firstName", "Not Registered");
         }

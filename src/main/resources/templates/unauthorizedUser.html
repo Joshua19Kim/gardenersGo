@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>User Profile</title>
+    <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
+</head>
+<body>
+<nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
+<div id="user_div">
+    <h1>User Profile</h1>
+
+    <div class="UserProfilePicContainer">
+        <div class="UserProfilePic">
+            <img th:src="@{'/images/' + ${gardener.getProfilePicture()}}" alt="Profile Picture">
+        </div>
+    </div>
+    <div id="form">
+    <form id="userForm">
+        <label for="firstName"> First Name: </label>
+        <span id="firstName" th:text="${gardener.getFirstName()}"></span>
+        <br/>
+        <label for="lastName"> Last Name: </label>
+        <span id="lastName" th:text="${gardener.getLastName()}"></span>
+        <br/>
+        <label for="DoB"> Date of Birth: </label>
+        <span id="DoB" th:text="${gardener.getDoB()}"></span>
+        <br/>
+        <label for="email"> Email: </label>
+        <span id="email" th:text="${gardener.getEmail()}"></span>
+    </form>
+</div>
+</div>
+</body>
+</html>
