@@ -11,8 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 //@ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -130,6 +129,76 @@ public class InputValidationServiceTest {
     }
 
     @Test
+    void testValidFirstNameHyphens() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String nameToTest = "A-B-C";
+        String first = "First";
+        boolean lastNameNeeded = false;
+        Optional<String> isValid = validate.checkValidName(nameToTest, first, lastNameNeeded);
+        assertTrue(isValid.isEmpty());
+    }
+
+    @Test
+    void testInvalidFirstNameHyphens() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String nameToTest = "---";
+        String first = "First";
+        boolean lastNameNeeded = false;
+        Optional<String> isValid = validate.checkValidName(nameToTest, first, lastNameNeeded);
+        assertFalse(isValid.isEmpty());
+    }
+
+    @Test
+    void testInvalidFirstNameEndWithHyphen() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String nameToTest = "Sam-";
+        String first = "First";
+        boolean lastNameNeeded = false;
+        Optional<String> isValid = validate.checkValidName(nameToTest, first, lastNameNeeded);
+        assertFalse(isValid.isEmpty());
+    }
+
+    @Test
+    void testInvalidFirstNameMultipleSpaces() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String nameToTest = "Sam   bad name";
+        String first = "First";
+        boolean lastNameNeeded = false;
+        Optional<String> isValid = validate.checkValidName(nameToTest, first, lastNameNeeded);
+        assertFalse(isValid.isEmpty());
+    }
+
+    @Test
+    void testInvalidFirstNameMultipleApostrophe() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String nameToTest = "Sa''''test";
+        String first = "First";
+        boolean lastNameNeeded = false;
+        Optional<String> isValid = validate.checkValidName(nameToTest, first, lastNameNeeded);
+        assertFalse(isValid.isEmpty());
+    }
+
+    @Test
+    void testInvalidFirstNameMultipleTypesConsecutive() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String nameToTest = "Sa!-'test";
+        String first = "First";
+        boolean lastNameNeeded = false;
+        Optional<String> isValid = validate.checkValidName(nameToTest, first, lastNameNeeded);
+        assertFalse(isValid.isEmpty());
+    }
+
+    @Test
+    void testValidFirstNameSingleApostrophe() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String nameToTest = "Sa'test'asd";
+        String first = "First";
+        boolean lastNameNeeded = false;
+        Optional<String> isValid = validate.checkValidName(nameToTest, first, lastNameNeeded);
+        assertTrue(isValid.isEmpty());
+    }
+
+    @Test
     void testLongName() {
         InputValidationService validate = new InputValidationService(gardenerFormService);
         String name = "Thisnameisdefinatelylongerthansixtyfourcharactersanditisgoingtofailthetesthahahahahahahahahahah";
@@ -175,7 +244,7 @@ public class InputValidationServiceTest {
     @Test
     void testValidSpecialCharactersName() {
         InputValidationService validate = new InputValidationService(gardenerFormService);
-        String name = "ÄÖÜäöüßĀĒĪŌŪāēīōū-' ";
+        String name = "ÄÖÜäöüßĀĒĪŌŪāēīōū";
         String first  = "First";
         boolean lastName = false;
         Optional<String> isValid = validate.checkValidName(name, first, lastName);
