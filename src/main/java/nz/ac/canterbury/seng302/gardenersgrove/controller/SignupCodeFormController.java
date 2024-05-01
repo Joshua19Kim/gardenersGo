@@ -79,7 +79,7 @@ public class SignupCodeFormController {
                         gardenerFormService.removeGardener(gardener);
                     }
                 }
-                return "redirect:/register?expired";
+                return "redirect:/signup?invalid";
             }
             else if (tempGardener.isPresent() && tokenService.validateLostPasswordToken(signupToken)== null) {
                 gardener = tempGardener.get();
