@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class EmailUserService {
     Logger logger = LoggerFactory.getLogger(EmailUserService.class);
-    @Value("${spring.mail.password}")
-    private String api_key;
+
+    private String api_key = System.getenv("SJMP");
 
     private Email email;
     private Mailer mailer;
@@ -38,7 +38,7 @@ public class EmailUserService {
     }
 
     public void sendEmail() {
-        logger.warn("SJMP: " + api_key);
+
         mailer.sendMail(email);
     }
 }
