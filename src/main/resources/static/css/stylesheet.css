@@ -837,5 +837,12 @@ form.search-bar::after {
     background: #e64343 !important;
 }
 
+.back-link {
+    position: absolute;
+    top: 150px;
+    left: 40px;
+    z-index: 1000;
+}
+
 
 

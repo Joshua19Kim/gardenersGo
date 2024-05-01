@@ -8,8 +8,10 @@
 <body>
 
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
+<a th:href="@{../gardens(user=${gardener.id})}"
+   th:text="'Back to ' + ${gardener.firstName} + (${gardener.lastName != null ? ' ' + gardener.lastName : ''}) + '\'s Gardens'"
+   class="back-link button"></a>
 <div class="container">
-
     <div class="garden-details">
         <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
         <p><strong>Location:</strong> <span th:text="${garden.location}"></span></p>

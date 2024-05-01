@@ -217,7 +217,13 @@ public class GardenFormController {
       if(userId == null || gardener.getId() == parseLong(userId, 10)) {
         return "gardenDetailsTemplate";
       } else {
-        return "unauthorizedGardenDetailsTemplate";
+        Optional<Gardener> friend = gardenerFormService.findById(parseLong(userId, 10));
+        if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+          model.addAttribute("gardener", friend.get());
+          return "unauthorizedGardenDetailsTemplate";
+        } else {
+          return "redirect:/gardens";
+        }
       }
 
     } else {
