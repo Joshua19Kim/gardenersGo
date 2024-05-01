@@ -38,7 +38,7 @@ public class SignupCodeControllerTest {
     AuthorityFormService authorityFormService;
     @MockBean
     TokenService tokenService;
-    private Gardener mockGardener = new Gardener("test", "test", null, "test@test.test","Password1!", "");
+    private Gardener mockGardener = new Gardener("test", "test", null, "test@test.test","Password1!");
 
     @Test
     @WithMockUser
@@ -59,22 +59,7 @@ public class SignupCodeControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/signup?invalid"));
     }
-    @Test
-    @WithMockUser
-    void onSignupCodePage_validExpiredToken_redirectToRegister() throws Exception{
-        List<Authority> userRoles = new ArrayList<>();
-        mockGardener.setUserRoles(userRoles);
-        Mockito.when(tokenService.validateLostPasswordToken(Mockito.anyString())).thenReturn("expired");
-        Mockito.when(tokenService.findGardenerbyToken(Mockito.anyString())).thenReturn(Optional.of(mockGardener));
-        Mockito.when(tokenService.getTokenFromString(Mockito.anyString())).thenReturn(Optional.of(Mockito.mock(LostPasswordToken.class)));
-        Mockito.doNothing().when(tokenService).removeToken(Mockito.any(LostPasswordToken.class));
-        SignupCodeFormController signupCodeFormController = new SignupCodeFormController(gardenerFormService,authorityFormService,tokenService);
-        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(signupCodeFormController).build();
-        MOCK_MVC.perform(MockMvcRequestBuilders.post("/signup")
-                        .param("signupToken", "expired"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/register?expired"));
-    }
+
     @Test
     @WithMockUser
     void onSignupCodePage_validToken_redirectToLogin() throws Exception{

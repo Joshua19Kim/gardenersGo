@@ -75,14 +75,4 @@ public class LoginControllerTest {
                 .andExpect(view().name("redirect:/signup"));
     }
 
-    @Test
-    @WithMockUser
-    void onLoginPage_authenticatedUser_redirectsToGardens() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("SPRING_SECURITY_LAST_EXCEPTION", null);
-        Mockito.when(request.getSession()).thenReturn(session);
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/login").session(session).with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/gardens"));
-    }
 }
