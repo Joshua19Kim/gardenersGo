@@ -81,7 +81,7 @@ public class LoginControllerTest {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("SPRING_SECURITY_LAST_EXCEPTION", null);
         Mockito.when(request.getSession()).thenReturn(session);
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/login").session(session))
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/login").session(session).with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/gardens"));
     }
