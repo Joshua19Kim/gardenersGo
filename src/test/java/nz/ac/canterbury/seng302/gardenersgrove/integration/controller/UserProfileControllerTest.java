@@ -80,7 +80,7 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("lastName", "testLastName"))
                 .andExpect(model().attribute("DoB", LocalDate.of(1980, 1, 1)))
                 .andExpect(model().attribute("email", "testEmail@gmail.com"))
-                .andExpect(model().attribute("profilePic", "defaultPhoto.jpg"));
+                .andExpect(model().attribute("profilePic", "/images/defaultProfilePic.png"));
 
     }
     @Test
