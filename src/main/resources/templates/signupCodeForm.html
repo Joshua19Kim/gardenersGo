@@ -7,26 +7,69 @@
 </head>
 <body>
 
-<div id="form">
+<div id="form" class="signup">
     <h1>Please enter your signup code</h1>
-    <form method="post" th:action="@{/signup}">
+    <form method="post" th:action="@{/signup}" onsubmit="getCode()">
         <div th:if="${param.invalid}" id="error-message">
             <p>Signup code invalid</p>
         </div>
+        <!--        referenced from https://codepen.io/RobertAron/pen/gOLLXLo  -->
+        <fieldset class="signup-code">
+            <legend>Signup Code</legend>
+            <div style="display: flex;" id="tokens">
+                <label for="signupToken1"></label><input name="signupToken" id="signupToken1" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(1, event)">
+                <label for="signupToken2"></label><input name="signupToken" id="signupToken2" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(2, event)">
+                <label for="signupToken3"></label><input name="signupToken" id="signupToken3" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(3, event)">
+                <label for="signupToken4"></label><input name="signupToken" id="signupToken4" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(4, event)">
+                <label for="signupToken5"></label><input name="signupToken" id="signupToken5" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(5, event)">
+                <label for="signupToken6"></label><input name="signupToken" id="signupToken6" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(6, event)">
+                <p class="errorMessage" th:if="${param.error}" data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
+                <input type="hidden" id="signupToken" value="">
+            </div>
+        </fieldset>
         <input type="hidden"
                th:name="${_csrf.parameterName}"
                th:value="${_csrf.token}" />
-        <div>
-            <input name="signupToken" id="signupToken" placeholder="Signup Token" type="text" required/>
-            <p class="errorMessage" th:if="${param.error}" data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
-        </div>
         <div style="display: flex; flex-direction: column">
             <input type="submit" value="Submit"/>
         </div>
         <div class="return">
-            <a th:href="@{login}">Return to Login</a>
+            <a th:href="@{login}" class="link">Return to Login</a>
         </div>
     </form>
 </div>
+<script>
+    function getCode() {
+        const tokens = Array.from(document.getElementById("tokens").children);
+        let code = "";
+        tokens.forEach(token => {
+            if (token.className === "signup-input") {
+                code += token.value;
+            }
+        })
+        document.getElementById("signupToken").value = code;
+    }
+    function goToNextInput(currToken, event) {
+        const keyCode = event.keyCode || event.which;
+        const currentToken = document.getElementById("signupToken" + currToken);
+        if (keyCode === 8 && currentToken.value === "") { // 8 is the keycode for backspace
+            const prevToken = currToken - 1;
+            if (prevToken > 0) {
+                document.getElementById("signupToken" + prevToken).focus();
+            }
+        } else if (keyCode === 8 && !(currentToken.value === "")){
+            document.getElementById("signupToken" + currToken).clear();
+            const prevToken = currToken - 1;
+            if (prevToken > 0) {
+                document.getElementById("signupToken" + prevToken).focus();
+            }
+        } else if (keyCode >= 48 && keyCode <= 57 || keyCode >= 65 && keyCode <= 90) { // Checks whether an alphanumeric character is entered
+            const nextToken = currToken + 1;
+            if (nextToken < 7) {
+                document.getElementById("signupToken" + nextToken).focus();
+            }
+        }
+    }
+</script>
 </body>
 </html>

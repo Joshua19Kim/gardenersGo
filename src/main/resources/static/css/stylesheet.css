@@ -100,8 +100,18 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .errorMessage {
+    font-weight: 550;
+    font-style: italic;
     color: red;
-    font-size: 0.7rem;
+    margin: 10px 0 10px 0;
+    font-size: smaller;
+}
+
+.smallErrorMessage {
+    font-size: 14px;
+    font-style: italic;
+    color: red;
+    display: block;
 }
 
 .dropbtn {
@@ -140,7 +150,8 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     padding: 6px 16px;
     width: 100%;
     border: none;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 #form textarea {
@@ -158,12 +169,12 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     resize: vertical;
 }
 #characterCountContainer {
-    font-size: 0.8em;
+    font-size: 0.8750em;
 }
 
 
 #form label {
-    font-size: 0.8em;
+    font-size: 0.8750em;
 }
 
 #form button, #form input[type="submit"] {
@@ -192,11 +203,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     margin-bottom: 20px;
 }
 
-#error-message {
-    font-weight: 700;
-    font-style: italic;
-    text-decoration: underline;
-}
 
 .garden-details p {
     margin-bottom: 10px;
@@ -301,6 +307,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     line-height: 1;
     text-align: center;
     vertical-align: top;
+    box-shadow: none;
 }
 
 #form .plant-image-container .image-button:hover {
@@ -308,11 +315,12 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     opacity: 1;
 }
 .return p {
-    text-align: center;
-    padding-bottom: 10px;
-}
-.return {
-    padding-top: 10px;
+    font-size: 14px;
+    font-style: italic;
+    color: red;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .button {
@@ -370,6 +378,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     flex-direction: column;
     overflow: hidden;
     border-radius: 10px;
+    text-align: center;
 }
 
 #garden-names {
@@ -534,6 +543,31 @@ body, h2, h3, h4, h5, h6, a {
     padding: 15px;
 }
 
+.warningMessageContainer {
+    color: red;
+    font-style: italic;
+}
+
+/*signup code form css*/
+
+#form .signup-code input[type="text"] {
+    display: block;
+    height: 32px;
+    padding: 6px 16px;
+    width: calc(100% - 32px); /* Adjusted width */
+    border: none;
+    margin-bottom: 15px;
+}
+
+#form .signup-code {
+    background-color: #d9f7d9; /* Adjusted background color */
+    padding: 20px; /* Adjusted padding */
+    border-radius: 10px; /* Adjusted border radius */
+    margin-bottom: 20px; /* Added margin bottom */
+    align-content: baseline;
+    /*! flex-direction: row; */
+    /*! display: flex; */
+}
 .friends-container {
     border-bottom: 1px solid #45a049;
 }
@@ -709,11 +743,48 @@ form.search-bar::after {
 /*    color: blue;*/
 /*}*/
 
-/*p {*/
-/*    color: red;*/
-/*    font-size: 14px;*/
-/*}*/
+#form .signup-code legend {
+    text-align: center; /* Centered legend */
+    margin-bottom: 10px; /* Added margin bottom */
+}
 
+#form .signup-input {
+    font-size: 1.5em;
+    width: calc((100% - 20px) / 6); /* Adjusted width */
+    text-align: center;
+    flex: 1 0 1em;
+    margin: 0 5px 0 5px;
+    border-radius: 5px;
+}
+
+#form .signup .errorMessage {
+    color: red;
+    font-size: 0.7rem;
+    text-align: center; /* Centered error message */
+    margin-top: 10px; /* Added margin top */
+}
+
+#form .signup input[type='submit'] {
+    color: #1c1c1a;
+    display: block;
+    margin: 20px auto 0;
+    width: 100%;
+    height: 40px;
+    border-radius: 25px;
+    border: 1px solid #45a049;
+    font-weight: 700;
+    box-shadow: 2px 3px 1px #777;
+    background: #d9f7d9;
+}
+
+#form .signup input[type='submit']:hover {
+    background: #8af58a;
+    cursor: pointer;
+}
+
+.link {
+    color: #0073e6;
+}
 /* The Modal (background) */
 /* Taken from: https://www.w3schools.com/howto/howto_css_modals.asp*/
 .modal {

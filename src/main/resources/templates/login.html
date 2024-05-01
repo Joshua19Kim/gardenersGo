@@ -18,7 +18,7 @@
     <div th:if="${param.signedup}">
         <p>Your account has been activated, please log in</p>
     </div>
-    <div th:if="${param.expired}" id="error-message">
+    <div th:if="${param.expired}" id="error-message" class="errorMessage">
         <p>Reset password link has expired.</p>
     </div>
     <div>
@@ -28,8 +28,8 @@
     </div>
     <div style="display: flex; flex-direction: column">
         <input type="submit" value="Sign in"/>
-        <a id="createAccount" th:href="@{register}" style="margin-top: 20px">Not Registered? Create an account</a>
-        <a id="forgotPassword" th:href="@{forgotPassword}" style="margin-top: 10px">Forgot your password?</a>
+        <a id="createAccount" th:href="@{register}" style="margin-top: 20px" class="link">Not Registered? Create an account</a>
+        <a id="forgotPassword" th:href="@{forgotPassword}" style="margin-top: 10px" class="link">Forgot your password?</a>
     </div>
 
 </form>

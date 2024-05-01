@@ -42,10 +42,12 @@
             </div>
         </form>
     </div>
+
+    <div class="warningMessageContainer">
+        <p th:text="${uploadMessage}" th:value="*{uploadMessage}" class="errorMessage"></p>
+    </div>
 </div>
-<div class="warningMessageContainer">
-    <p th:text="${uploadMessage}" th:value="*{uploadMessage}"></p>
-</div>
+
 <div id="form">
     <form th:action="@{user}" method="get" id="userForm">
         <label for="firstName"> First Name: </label>
@@ -53,7 +55,7 @@
         <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
                placeholder="First Name" required th:name="firstName" th:value="*{firstName}" type="text" style="display: none;"
                th:classappend="${firstNameValid != '' ? 'error' : ''}">
-        <p class="errorMessage" th:text="${firstNameValid}"></p>
+        <p class="smallErrorMessage" th:text="${firstNameValid}"></p>
         <br/>
 
         <label for="lastName"> Last Name: </label>
@@ -71,14 +73,14 @@
                 document.getElementById('lastNameEdit').disabled = this.checked;
             };
         </script>
-        <p class="errorMessage" th:text="${lastNameValid}"></p>
+        <p class="smallErrorMessage" th:text="${lastNameValid}"></p>
         <br/>
 
         <label for="DoB"> Date of Birth: </label>
         <span id="DoB" th:text="${DoB}"></span>
         <input class="form-control" data-cy="DoB" id="DoBEdit"
                th:name="DoB" th:value="*{DoB}" type="date" style="display: none;">
-        <p class="errorMessage" id = "DoBInvalid" th:text="${DoBValid}"></p>
+        <p class="smallErrorMessage" id = "DoBInvalid" th:text="${DoBValid}"></p>
         <script>
             document.getElementById( "DoBEdit" ).addEventListener( "invalid",
                 function( event ) {
@@ -94,7 +96,7 @@
         <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email" maxlength="320"
                th:name="email" th:value="*{email}" type="text" style="display: none;"
                th:classappend="${emailValid != '' ? 'error' : ''}">
-        <p class="errorMessage" th:text="${emailValid}"></p>
+        <p class="smallErrorMessage" th:text="${emailValid}"></p>
         <br/>
 
         <div id="editButtonDiv">
