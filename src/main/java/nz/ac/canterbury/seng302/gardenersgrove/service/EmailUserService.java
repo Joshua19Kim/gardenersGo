@@ -4,7 +4,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;
-import org.simplejavamail.config.ConfigLoader;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
 import org.slf4j.Logger;
@@ -22,7 +21,6 @@ public class EmailUserService {
      */
     public EmailUserService(String userEmail, String subject, String Message) {
         // Simple Java Mail -- https://www.simplejavamail.org/
-        ConfigLoader.loadProperties("application.properties", true);
         email = EmailBuilder.startingBlank()
                 .from("Do Not Reply", "naturesfacebook@gmail.com")
                 .to(userEmail)

@@ -50,7 +50,7 @@
     <form th:action="@{user}" method="get" id="userForm">
         <label for="firstName"> First Name: </label>
         <span id="firstName" th:text="${firstName}"></span>
-        <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit"
+        <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
                placeholder="First Name" required th:name="firstName" th:value="*{firstName}" type="text" style="display: none;"
                th:classappend="${firstNameValid != '' ? 'error' : ''}">
         <p class="errorMessage" th:text="${firstNameValid}"></p>
@@ -58,7 +58,7 @@
 
         <label for="lastName"> Last Name: </label>
         <span id="lastName" th:text="${lastName}"></span>
-        <input class="form-control" data-cy="lastName" id="lastNameEdit" placeholder="Last Name"
+        <input class="form-control" data-cy="lastName" id="lastNameEdit" placeholder="Last Name" maxlength="255"
                th:name="lastName" th:value="*{lastName}" type="text" style="display: none"
                th:classappend="${lastNameValid != '' ? 'error' : ''}">
         <br/>
@@ -91,7 +91,7 @@
         <br/>
         <label for="email"> Email: </label>
         <span id="email" th:text="${email}"></span>
-        <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email"
+        <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email" maxlength="320"
                th:name="email" th:value="*{email}" type="text" style="display: none;"
                th:classappend="${emailValid != '' ? 'error' : ''}">
         <p class="errorMessage" th:text="${emailValid}"></p>

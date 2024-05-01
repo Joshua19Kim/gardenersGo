@@ -18,13 +18,13 @@
                th:name="${_csrf.parameterName}"
                th:value="${_csrf.token}" />
         <label for="firstName"> First Name: </label>
-        <input autofocus class="form-control" data-cy="firstName" id="firstName"
+        <input autofocus class="form-control" data-cy="firstName" id="firstName" maxlength="255"
                placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
                th:classappend="${(firstNameValid != '' && firstNameValid != null) ? 'error' : ''}">
         <p class="errorMessage" th:text="${firstNameValid}" th:value="*{firstNameValid}"></p>
         <br/>
         <label for="lastName"> Last Name: </label>
-        <input class="form-control" data-cy="lastName" id="lastName" placeholder="Last Name"
+        <input class="form-control" data-cy="lastName" id="lastName" placeholder="Last Name" maxlength="255"
                th:name="lastName" th:value="*{lastName}" type="text"
                th:classappend="${(lastNameValid != '' && lastNameValid != null) ? 'error' : ''}">
         <p class="errorMessage" th:text="${lastNameValid}" th:value="*{lastNameValid}"></p>
@@ -53,18 +53,18 @@
         </script>
         <br/>
         <label for="email"> Email: </label>
-        <input class="form-control" data-cy="email" id="email" placeholder="Email"
+        <input class="form-control" data-cy="email" id="email" placeholder="Email" maxlength="255"
                th:name="email" th:value="*{email}" type="text"
                th:classappend="${(emailValid != '' && emailValid != null) ? 'error' : ''}">
         <p class="errorMessage" th:text="${emailValid}" th:value="*{emailValid}"></p>
         <br/>
         <label for="password"> Password: </label>
-        <input class="form-control" data-cy="password" id="password" placeholder="Password"
+        <input class="form-control" data-cy="password" id="password" placeholder="Password" maxlength="255"
                th:name="password" type="password"
                th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'error' : ''}">
         <br/>
         <label for="passwordConfirm"> Confirm Password: </label>
-        <input type="password" class="form-control" id="passwordConfirm" placeholder="Repeat password"
+        <input type="password" class="form-control" id="passwordConfirm" placeholder="Repeat password" maxlength="255"
                th:name="passwordConfirm" data-cy="passwordConfirm"
                th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'error' : ''}">
         <p class="errorMessage" th:value="*{passwordsMatch}" th:text="${passwordsMatch}"></p>

@@ -35,7 +35,7 @@ public class InputValidationService {
      * @return empty optional if password is strong, otherwise error string
      */
     public Optional<String> checkStrongPassword (String password) {
-        String validRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_])[A-Za-z\\d\\W_]{8,}$";
+        String validRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_])[A-Za-z\\d\\W_]{8,255}$";
         return (password.matches(validRegex) ? Optional.empty() : Optional.of("Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
     }
 
@@ -83,7 +83,11 @@ public class InputValidationService {
      */
     public Optional<String> checkValidEmail (String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        return (email.matches(emailRegex) ? Optional.empty() : Optional.of("Email address must be in the form ‘jane@doe.nz"));
+        if (email.length() > 320) {
+            return Optional.of("Email address must be 320 characters or less");
+        } else {
+            return (email.matches(emailRegex) ? Optional.empty() : Optional.of("Email address must be in the form ‘jane@doe.nz"));
+        }
     }
 
     /**
