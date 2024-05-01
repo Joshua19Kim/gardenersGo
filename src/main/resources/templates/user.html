@@ -51,14 +51,16 @@
         <label for="firstName"> First Name: </label>
         <span id="firstName" th:text="${firstName}"></span>
         <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
-               placeholder="First Name" required th:name="firstName" th:value="*{firstName}" type="text" style="display: none;">
+               placeholder="First Name" required th:name="firstName" th:value="*{firstName}" type="text" style="display: none;"
+               th:classappend="${firstNameValid != '' ? 'error' : ''}">
         <p class="errorMessage" th:text="${firstNameValid}"></p>
         <br/>
 
         <label for="lastName"> Last Name: </label>
         <span id="lastName" th:text="${lastName}"></span>
-        <input class="form-control" data-cy="lastName" id="lastNameEdit" maxlength="255" placeholder="Last Name"
-               th:name="lastName" th:value="*{lastName}" type="text" style="display: none">
+        <input class="form-control" data-cy="lastName" id="lastNameEdit" placeholder="Last Name" maxlength="255"
+               th:name="lastName" th:value="*{lastName}" type="text" style="display: none"
+               th:classappend="${lastNameValid != '' ? 'error' : ''}">
         <br/>
         <input class="form-control" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional" placeholder="Last Name Tick Box Check"
                th:name="isLastNameOptional" type="checkbox" style="display: none;">
@@ -82,14 +84,16 @@
                 function( event ) {
                     event.preventDefault();
                     console.log("invalid date");
+                    document.getElementById("DoBEdit").style.border = "1px solid red";
                     document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";
                 });
         </script>
         <br/>
         <label for="email"> Email: </label>
         <span id="email" th:text="${email}"></span>
-        <input class="form-control" data-cy="email" id="emailEdit" maxlength="320" placeholder="Email"
-               th:name="email" th:value="*{email}" type="text" style="display: none;">
+        <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email" maxlength="320"
+               th:name="email" th:value="*{email}" type="text" style="display: none;"
+               th:classappend="${emailValid != '' ? 'error' : ''}">
         <p class="errorMessage" th:text="${emailValid}"></p>
         <br/>
 

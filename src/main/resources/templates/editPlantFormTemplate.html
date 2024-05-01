@@ -34,6 +34,7 @@
             document.getElementById( "datePlanted" ).addEventListener( "invalid",
                 function( event ) {
                     event.preventDefault();
+                    document.getElementById("datePlanted").style.border = "1px solid red";
                     document.getElementById("dateError").textContent = "Date is not in valid format, DD/MM/YYYY";
                 });
         </script>

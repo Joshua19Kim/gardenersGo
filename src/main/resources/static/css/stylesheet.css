@@ -96,7 +96,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .error {
-    border: 1px solid red;
+    border: 1px solid red !important;
 }
 
 .errorMessage {
@@ -315,7 +315,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     padding-top: 10px;
 }
 
-.edit-button {
+.button {
     background-color: #45a049;
     color: #fff;
     border: none;
@@ -324,7 +324,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     cursor: pointer;
 }
 
-.edit-button:hover {
+.button:hover {
     background-color: #45a049;
 }
 
@@ -404,34 +404,6 @@ body, h2, h3, h4, h5, h6, a {
 }
 
 
-
-/*label {*/
-/*    margin: 5px;*/
-/*    display: inline-block;*/
-/*    min-width: 200px;*/
-/*}*/
-
-/*input {*/
-/*    margin: 5px;*/
-/*    width: 200px;*/
-/*}*/
-
-/*.form-control {*/
-/*    width: auto;*/
-/*}*/
-
-/*input[type=submit] {*/
-/*    background-color: cornflowerblue;*/
-/*    border: none;*/
-/*    color: white;*/
-/*    padding: 5px 2px;*/
-/*    text-align: center;*/
-/*    text-decoration: none;*/
-/*    cursor: pointer;*/
-/*    font-size: 16px;*/
-/*    width: 100px;*/
-/*    border-radius: 5px;*/
-/*}*/
 
 /* ------------------------------Upload CSS ------------------------------ */
 
@@ -562,6 +534,176 @@ body, h2, h3, h4, h5, h6, a {
     padding: 15px;
 }
 
+.friends-container {
+    border-bottom: 1px solid #45a049;
+}
+
+#add-friend-button {
+    float: right;
+    font-size: 1rem;
+    height: min-content;
+    margin-left: 15px;
+}
+
+.search-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    border-radius: 15px;
+    background: #d9f7d9;
+    width: 100%;
+    font-weight: bold;
+}
+
+
+.search-bar {
+    background-color: yellow;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar input[type=text] {
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid grey;
+    float: left;
+    width: 80%;
+    background: #f1f1f1;
+}
+
+form.search-bar button {
+    float: left;
+    width: 20%;
+    padding: 10px;
+    background: #45a049;
+    color: white;
+    font-size: 17px;
+    border: 1px solid grey;
+    border-left: none; /* Prevent double borders */
+    cursor: pointer;
+}
+form.search-bar button:hover {
+    background: #50cc56;
+}
+
+form.search-bar::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+#search-results-container {
+    /*background-color: #45a049;*/
+    padding: 10px;
+    margin-top: 10px;
+    overflow: auto;
+    display: block;
+    width: 100%;
+
+}
+
+.friends-to-request {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.friends-to-request img{
+    max-width: 100px;
+    max-height: 70px;
+    border-radius: 4px;
+    margin-right: 20px;
+}
+
+.picture-and-gardener {
+    display: flex;
+    align-items: center;
+}
+
+
+
+.gardener-result-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    align-items: center;
+}
+
+.send-friend-request-button {
+    font-size: 1rem;
+    height: min-content;
+    margin-left: 15px;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #45a049;
+}
+
+
+#friend-request-button {
+    float: right;
+    font-size: 1rem;
+    height: min-content;
+}
+
+.friend-status {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Leave the content for the 'my friends' section displaying normally (the modal ones have been changed) */
+.table-body .friend {
+    justify-content: normal;
+}
+
+.friend {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #d9f7d9;
+    align-content: center;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.friend p {
+    word-wrap: break-word;
+    white-space: normal;
+    padding-left: 10px;
+}
+
+.friend img{
+    max-width: 100px;
+    max-height: 70px;
+    border-radius: 4px;
+}
+
+.friend a {
+    word-wrap: break-word;
+    white-space: normal;
+    padding-left: 10px;
+}
+
+.friend-status .table-header {
+    border-bottom: 1px solid #45a049;
+}
+
+.friend-status .table-header:nth-child(1) {
+    padding: 10px;
+}
+
+.table-header {
+    background: #d9f7d9;
+    width: 100%;
+    display: flex;
+    font-weight: bold;
+}
 /*a {*/
 /*    text-decoration: none;*/
 /*    color: blue;*/
@@ -572,7 +714,135 @@ body, h2, h3, h4, h5, h6, a {
 /*    font-size: 14px;*/
 /*}*/
 
+/* The Modal (background) */
+/* Taken from: https://www.w3schools.com/howto/howto_css_modals.asp*/
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
 
+/* Modal Box */
+.modal .friend-requests, .add-friends {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    height: 50vh;
+    overflow: auto;
+    border-radius: 15px;
+}
+.modal .confirmation{
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 15%;
+    overflow: auto;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+/* The Close Button for the modals */
+.close {
+    position: relative;
+    top: 0;
+    right: 10px;
+    background: none;
+    float: right;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 5px;
+    border: none;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.friend-requests .header {
+    display: flex;
+    margin-bottom: 5vh;
+}
+
+.friend-requests .table-header {
+    display: flex;
+    justify-content: space-around;
+    background: none;
+    border: 1px solid #d9f7d9;
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+.friend-requests .table-header button {
+    width: 100%;
+    border: none;
+    padding: 2px;
+    border-radius: 5px;
+
+}
+
+.friend-requests .table-header button:hover {
+    cursor: pointer;
+}
+
+#received-btn {
+    background: white;
+}
+
+#sent-btn {
+    background: #45a049;
+}
+
+#received-requests {
+    display: none;
+    justify-content: space-between;
+}
+
+.friend-info {
+    display: flex;
+    align-items: center;
+}
+
+.decline-friend-req-btn {
+    background: #e64343 !important;
+}
+
+.cancel {
+    background: #888 !important;
+    margin-left: 20px;
+}
+
+.confirmation-container {
+    display: flex;
+    margin-top: 12px;
+}
+
+.remove-friend-button {
+    margin-left: auto;
+    background: #e64343 !important;
+}
+
+.back-link {
+    position: absolute;
+    top: 150px;
+    left: 40px;
+    z-index: 1000;
+}
 
 
 

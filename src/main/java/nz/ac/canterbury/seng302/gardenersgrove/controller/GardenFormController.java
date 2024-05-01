@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class GardenFormController {
    * @return the gardens template which defines the user interface for the my gardens page
    */
   @GetMapping("/gardens")
-  public String getGardenHome(Model model, HttpServletRequest request, HttpServletResponse response) {
+  public String getGardenHome(@RequestParam(name="user", required = false) String user, Model model, HttpServletRequest request, HttpServletResponse response) {
     logger.info("GET /gardens/main");
     // Prevent caching of the page so that we always reload it when we reach it (mainly for when you use the browser back button)
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
@@ -51,7 +52,20 @@ public class GardenFormController {
       gardener = gardenerOptional.get();
     }
 
-    List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+    List<Garden> gardens;
+    if(user == null) {
+      gardens = gardenService.getGardensByGardenerId(gardener.getId());
+      model.addAttribute("gardener", gardener);
+    } else {
+      Optional<Gardener> friend = gardenerFormService.findById(parseLong(user, 10));
+      if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+        gardens = gardenService.getGardensByGardenerId(parseLong(user, 10));
+        model.addAttribute("gardener", friend.get());
+      } else {
+        return "redirect:/gardens";
+      }
+
+    }
     model.addAttribute("gardens", gardens);
 
     String requestUri = request.getRequestURI();
@@ -65,6 +79,7 @@ public class GardenFormController {
 
   private final GardenService gardenService;
   private final GardenerFormService gardenerFormService;
+  private final RelationshipService relationshipService;
   private Gardener gardener;
 
   /**
@@ -73,9 +88,10 @@ public class GardenFormController {
    * @param gardenerFormService - object that is used to interact with the database
    */
   @Autowired
-  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService) {
+  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService) {
     this.gardenService = gardenService;
     this.gardenerFormService = gardenerFormService;
+    this.relationshipService = relationshipService;
   }
 
   /**
@@ -176,6 +192,7 @@ public class GardenFormController {
   public String gardenDetails(@RequestParam(name = "gardenId") String gardenId,
                               @RequestParam(name = "uploadError", required = false) String uploadError,
                               @RequestParam(name = "errorId", required = false) String errorId,
+                              @RequestParam(name = "userId", required = false) String userId,
                               Model model, HttpServletRequest request) {
     logger.info("GET /gardens/details");
     List<Garden> gardens = gardenService.getGardenResults();
@@ -197,7 +214,18 @@ public class GardenFormController {
         model.addAttribute("uploadError", uploadError);
         model.addAttribute("errorId", errorId);
       }
-      return "gardenDetailsTemplate";
+      if(userId == null || gardener.getId() == parseLong(userId, 10)) {
+        return "gardenDetailsTemplate";
+      } else {
+        Optional<Gardener> friend = gardenerFormService.findById(parseLong(userId, 10));
+        if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+          model.addAttribute("gardener", friend.get());
+          return "unauthorizedGardenDetailsTemplate";
+        } else {
+          return "redirect:/gardens";
+        }
+      }
+
     } else {
       return "redirect:/gardens";
     }
