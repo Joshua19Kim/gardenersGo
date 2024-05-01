@@ -12,7 +12,7 @@
 
 <div class="UserProfilePicContainer">
     <div class="UserProfilePic">
-        <img th:src="@{'/images/' + ${profilePic}}" alt="Profile Picture">
+        <img th:src="@{${profilePic}}" alt="Profile Picture">
     </div>
 </div>
 <div >
@@ -101,7 +101,7 @@
         <div id="saveCancelButtonDiv" style="display: none;">
             <button type="button" onclick="window.location='./password'">Update password</button>
             <input type="submit" value="Save"/>
-            <button type="button" onclick="disableEditing()">Cancel</button>
+            <button type="button" onclick="disableEditing(); window.location='./user'">Cancel</button>
         </div>
     </form>
 </div>

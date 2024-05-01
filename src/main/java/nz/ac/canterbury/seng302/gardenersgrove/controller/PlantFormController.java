@@ -177,7 +177,7 @@ public class PlantFormController {
             }
             plantService.addPlant(plant);
             if(file.isEmpty()) {
-                plant.setImage("placeholder.jpg");
+                plant.setImage("/images/placeholder.jpg");
                 plantService.addPlant(plant);
             } else {
                 imageService.savePlantImage(file, plant);

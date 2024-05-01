@@ -36,13 +36,13 @@ public class SignupCodeFormController {
     private final AuthorityFormService authorityFormService;
     private final TokenService tokenService;
     private Gardener gardener;
+
     @Autowired
     public SignupCodeFormController(GardenerFormService gardenerFormService, AuthorityFormService authorityFormService, TokenService tokenService) {
         this.gardenerFormService = gardenerFormService;
         this.authorityFormService = authorityFormService;
         this.tokenService = tokenService;
     }
-    private long gardenerId;
 
     /**
      * Handles GET requests to "/signup" endpoint.
@@ -53,19 +53,20 @@ public class SignupCodeFormController {
     @GetMapping("/signup")
     public String getSignupForm() {
         logger.info("GET /signup");
-            return "signupCodeForm";
+        return "signupCodeForm";
     }
 
     /**
      * Validates the signup token and assigns the user role (verifies them) to the user
+     *
      * @param signupToken The unique Token with which the user can be identified
-     * @param model For displaying the error messages in thymeleaf
+     * @param model       For displaying the error messages in thymeleaf
      * @return Redirect to login page if successful, otherwise back to the signup code form
      */
     @PostMapping("/signup")
     public String sendSignupForm(
-                                 @RequestParam(name= "signupToken", required = false, defaultValue = "") String signupToken,
-                                 Model model) {
+            @RequestParam(name = "signupToken", required = false, defaultValue = "") String signupToken,
+            Model model) {
         logger.info("POST /signup");
         signupToken = signupToken.replaceAll(",", "");
 
@@ -81,21 +82,20 @@ public class SignupCodeFormController {
                         gardenerFormService.removeGardener(gardener);
                     }
                 }
-                return "redirect:/register?expired";
+                return "redirect:/signup?invalid";
             }
-            else if (tempGardener.isPresent() && tokenService.validateLostPasswordToken(signupToken)== null) {
-                gardener = tempGardener.get();
-                gardener.grantAuthority("ROLE_USER");
-                gardenerFormService.addGardener(gardener);
-                // Deletes Token after use
-                Optional<LostPasswordToken> tempToken = tokenService.getTokenFromString(signupToken);
-                if (tempToken.isPresent()) {
-                    tokenService.removeToken(tempToken.get());
-                }
-                return "redirect:/login?signedup";
+
+            gardener = tempGardener.get();
+            gardener.grantAuthority("ROLE_USER");
+            gardenerFormService.addGardener(gardener);
+            // Deletes Token after use
+            Optional<LostPasswordToken> tempToken = tokenService.getTokenFromString(signupToken);
+            if (tempToken.isPresent()) {
+                tokenService.removeToken(tempToken.get());
             }
-            return "signupCodeForm";
-            }
+            return "redirect:/login?signedup";
+
+        }
         return "redirect:/signup?invalid";
     }
 }

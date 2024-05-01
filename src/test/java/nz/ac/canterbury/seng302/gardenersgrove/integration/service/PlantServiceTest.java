@@ -20,7 +20,7 @@ import java.util.Optional;
 public class PlantServiceTest {
     Gardener testGardener = new Gardener("Test", "Gardener",
             LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
-            "Password1!", "defaultProfilePic.png");
+            "Password1!");
 
     @Test
     public void PlantAdded_ValidInputs_PlantSavedToRepository() {

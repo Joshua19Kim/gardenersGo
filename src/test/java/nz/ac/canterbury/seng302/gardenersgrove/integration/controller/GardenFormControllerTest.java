@@ -7,7 +7,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class GardenFormControllerTest {
     Gardener testGardener = new Gardener("Test", "Gardener",
             LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
-            "Password1!", "defaultProfilePic.png");
+            "Password1!");
 
     @Autowired
     private MockMvc mockMvc;
