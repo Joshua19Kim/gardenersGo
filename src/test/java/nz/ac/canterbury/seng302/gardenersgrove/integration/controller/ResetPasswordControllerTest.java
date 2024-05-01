@@ -108,7 +108,7 @@ public class ResetPasswordControllerTest {
         inputValidationService = Mockito.mock(InputValidationService.class);
         Mockito.when(inputValidationService.checkPasswordsMatch(Mockito.anyString(),Mockito.anyString())).thenReturn(Optional.empty());
         Mockito.when(inputValidationService.checkStrongPassword(Mockito.anyString())).thenReturn(Optional.empty());
-        Mockito.doNothing().when(gardenerFormService).addGardener(mockGardener);
+        Mockito.when(gardenerFormService.addGardener(mockGardener)).thenReturn(mockGardener);
         Mockito.doNothing().when(mockWriteEmail).sendPasswordUpdateConfirmEmail(mockGardener);
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/resetPassword")

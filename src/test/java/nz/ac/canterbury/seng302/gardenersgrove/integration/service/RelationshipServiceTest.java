@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.RelationshipRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
@@ -32,13 +33,16 @@ public class RelationshipServiceTest {
 
     private RelationshipService relationshipService;
 
+    @Autowired
+    private LostPasswordTokenRepository lostPasswordTokenRepository;
+
     private List<Long> gardenerIds;
 
     private List<Gardener> gardeners;
 
     @BeforeEach
     public void setUp() {
-        gardenerFormService = new GardenerFormService(gardenerFormRepository);
+        gardenerFormService = new GardenerFormService(gardenerFormRepository, lostPasswordTokenRepository);
         relationshipService = new RelationshipService(relationshipRepository, gardenerFormService);
         gardenerIds = new ArrayList<>();
         gardeners = new ArrayList<>();

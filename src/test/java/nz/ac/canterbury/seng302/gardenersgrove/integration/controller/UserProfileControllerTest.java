@@ -3,10 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +48,8 @@ public class UserProfileControllerTest {
     private EmailUserService emailService;
     @MockBean
     private WriteEmail mockWriteEmail;
+    @MockBean
+    private RelationshipService relationshipService;
 
 
     @BeforeEach
@@ -67,6 +66,7 @@ public class UserProfileControllerTest {
 
         List<Authority> userRoles = new ArrayList<>();
         testGardener.setUserRoles(userRoles);
+        testGardener.setId(1L);
         gardenerFormService.addGardener(testGardener);
         when(gardenerFormService.findByEmail("testEmail@gmail.com")).thenReturn(Optional.of(testGardener));
 
@@ -436,6 +436,56 @@ public class UserProfileControllerTest {
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
         //wantedNumberOfInvocation has additional 1 since .addGardener() is called once in test
         verify(gardenerFormService, Mockito.times(1)).addGardener(gardenerCaptor.capture());
+    }
+
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    public void ViewFriendProfileRequested_UserIsFriend_FriendProfileViewed() throws Exception {
+        Gardener friend = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!", "default.png");
+        friend.setId(2L);
+
+        List<Gardener> friends = new ArrayList<>();
+        friends.add(friend);
+
+        when(gardenerFormService.findById(friend.getId())).thenReturn(Optional.of(friend));
+        when(relationshipService.getCurrentUserRelationships(testGardener.getId())).thenReturn(friends);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/user")
+                .param("user", String.valueOf(friend.getId())))
+                .andExpect(model().attribute("gardener", friend))
+                .andExpect(status().isOk())
+                .andExpect(view().name("unauthorizedUser"));
+    }
+
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    public void ViewFriendProfileRequested_UserIsNotFriend_RedirectedToUserProfile() throws Exception {
+        Gardener friend = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!", "default.png");
+        friend.setId(2L);
+
+        List<Gardener> friends = new ArrayList<>();
+
+        when(gardenerFormService.findById(friend.getId())).thenReturn(Optional.of(friend));
+        when(relationshipService.getCurrentUserRelationships(testGardener.getId())).thenReturn(friends);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/user")
+                        .param("user", String.valueOf(friend.getId())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/user"));
+    }
+
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    public void ViewFriendProfileRequested_FriendDoesNotExist_RedirectedToUserProfile() throws Exception {
+
+        Long nonExistentFriendId = 2L;
+
+        when(gardenerFormService.findById(nonExistentFriendId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/user")
+                        .param("user", String.valueOf(nonExistentFriendId)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/user"));
     }
 
 }

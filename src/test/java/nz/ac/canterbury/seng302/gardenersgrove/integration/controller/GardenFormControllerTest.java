@@ -339,7 +339,7 @@ public class GardenFormControllerTest {
         Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!", "default.png");
         Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!", "default.png");
         currentUser.setId(1L);
-        currentUser.setId(2L);
+        otherUser.setId(2L);
         gardenerFormService.addGardener(currentUser);
         gardenerFormService.addGardener(otherUser);
 
