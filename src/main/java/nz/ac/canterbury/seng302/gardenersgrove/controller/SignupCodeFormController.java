@@ -80,7 +80,7 @@ public class SignupCodeFormController {
                         gardenerFormService.removeGardener(gardener);
                     }
                 }
-                return "redirect:/register?expired";
+                return "redirect:/signup?invalid";
             }
 
             gardener = tempGardener.get();
