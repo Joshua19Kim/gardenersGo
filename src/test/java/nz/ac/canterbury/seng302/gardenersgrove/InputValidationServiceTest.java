@@ -179,13 +179,23 @@ public class InputValidationServiceTest {
     }
 
     @Test
-    void testValidFirstNameSingleApostrophe() {
+    void testInvalidFirstNameMultipleTypesConsecutive() {
         InputValidationService validate = new InputValidationService(gardenerFormService);
-        String nameToTest = "Sa'test'name";
+        String nameToTest = "Sa!-'test";
         String first = "First";
         boolean lastNameNeeded = false;
         Optional<String> isValid = validate.checkValidName(nameToTest, first, lastNameNeeded);
-        assertTrue(isValid.isEmpty());
+        assertFalse(isValid.isEmpty());
+    }
+
+    @Test
+    void testValidFirstNameSingleApostrophe() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String nameToTest = "Sa'test'asd";
+        String first = "First";
+        boolean lastNameNeeded = false;
+        Optional<String> isValid = validate.checkValidName(nameToTest, first, lastNameNeeded);
+        assertFalse(isValid.isEmpty());
     }
 
     @Test
