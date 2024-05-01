@@ -18,12 +18,12 @@
                th:name="${_csrf.parameterName}"
                th:value="${_csrf.token}" />
         <label for="firstName"> First Name: </label>
-        <input autofocus class="form-control" data-cy="firstName" id="firstName"
+        <input autofocus class="form-control" data-cy="firstName" id="firstName" maxlength="255"
                placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text">
         <p class="smallErrorMessage" th:text="${firstNameValid}" th:value="*{firstNameValid}"></p>
         <br/>
         <label for="lastName"> Last Name: </label>
-        <input class="form-control" data-cy="lastName" id="lastName" placeholder="Last Name"
+        <input class="form-control" data-cy="lastName" id="lastName" maxlength="255" placeholder="Last Name"
                th:name="lastName" th:value="*{lastName}" type="text">
         <p class="smallErrorMessage" th:text="${lastNameValid}" th:value="*{lastNameValid}"></p>
         <br/>
@@ -50,16 +50,16 @@
         </script>
         <br/>
         <label for="email"> Email: </label>
-        <input class="form-control" data-cy="email" id="email" placeholder="Email"
+        <input class="form-control" data-cy="email" id="email" maxlength="320" placeholder="Email"
                th:name="email" th:value="*{email}" type="text">
         <p class="smallErrorMessage" th:text="${emailValid}" th:value="*{emailValid}"></p>
         <br/>
         <label for="password"> Password: </label>
-        <input class="form-control" data-cy="password" id="password" placeholder="Password"
+        <input class="form-control" data-cy="password" id="password" maxlength="255" placeholder="Password"
                th:name="password" type="password">
         <br/>
         <label for="passwordConfirm"> Confirm Password: </label>
-        <input type="password" class="form-control" id="passwordConfirm" placeholder="Repeat password"
+        <input type="password" class="form-control" id="passwordConfirm" maxlength="255" placeholder="Repeat password"
                th:name="passwordConfirm" data-cy="passwordConfirm">
         <p class="smallErrorMessage" th:value="*{passwordsMatch}" th:text="${passwordsMatch}"></p>
         <p class="smallErrorMessage" th:value="*{passwordStrong}" th:text="${passwordStrong}"></p>
