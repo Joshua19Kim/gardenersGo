@@ -36,7 +36,7 @@
                 <td th:text="${plant.name}"></td>
                 <td>
                     <div class="plant-image-container" id="image">
-                        <img th:src="@{${'../images/' + plant.image}}" alt="Plant" th:id="'currentImage_' + ${plant.id}">
+                        <img th:src="@{${plant.image}}" alt="Plant" th:id="'currentImage_' + ${plant.id}">
                     </div>
                 </td>
                 <td th:if="${plant.count !=0}" th:text="${plant.count}"></td>
