@@ -335,7 +335,7 @@ public class GardenFormControllerTest {
 
     @Test
     @WithMockUser
-    public void testFriendsCanViewGardens() throws Exception {
+    public void ViewFriendsGardensRequested_UserIsFriend_FriendsGardensViewed() throws Exception {
         Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!", "default.png");
         Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!", "default.png");
         currentUser.setId(1L);
@@ -356,19 +356,20 @@ public class GardenFormControllerTest {
         when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
         when(relationshipService.getCurrentUserRelationships(currentUser.getId())).thenReturn(relationships);
         when(gardenService.getGardensByGardenerId(2L)).thenReturn(testGardens);
+        when(gardenerFormService.findById(2L)).thenReturn(Optional.of(otherUser));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("gardenId", "2")
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
                         .principal(authentication))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardens", testGardens))
-                .andExpect(model().attribute("gardener", currentUser))
+                .andExpect(model().attribute("gardener", otherUser))
                 .andExpect(view().name("gardensTemplate"));
 
     }
 
     @Test
     @WithMockUser
-    public void testNotFriendsCanNotViewGardens() throws Exception {
+    public void ViewFriendsGardensRequested_UserIsNotFriend_RedirectedToOwnGardens() throws Exception {
         Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!", "default.png");
         Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!", "default.png");
         currentUser.setId(1L);
@@ -376,20 +377,39 @@ public class GardenFormControllerTest {
         gardenerFormService.addGardener(currentUser);
         gardenerFormService.addGardener(otherUser);
 
-        List<Garden> testGardens = new ArrayList<>();
-        Garden testGarden = new Garden("My Garden", "Ilam", otherUser);
-        testGardens.add(testGarden);
+        List<Gardener> relationships = new ArrayList<>();
 
         Authentication authentication = Mockito.mock(Authentication.class);
         Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
 
         when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
-        when(gardenService.getGardensByGardenerId(2L)).thenReturn(testGardens);
+        when(relationshipService.getCurrentUserRelationships(currentUser.getId())).thenReturn(relationships);
+        when(gardenerFormService.findById(2L)).thenReturn(Optional.of(otherUser));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("gardenId", "2")
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
                         .principal(authentication))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardensTemplate"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens"));
+
+    }
+
+    @Test
+    @WithMockUser
+    public void ViewFriendsGardensRequested_FriendDoesNotExist_RedirectedToOwnGardens() throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!", "default.png");
+        currentUser.setId(1L);
+        gardenerFormService.addGardener(currentUser);
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+        when(gardenerFormService.findById(2L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
+                        .principal(authentication))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens"));
 
     }
 }
