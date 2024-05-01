@@ -47,7 +47,7 @@ public class RelationshipServiceTest {
         gardenerIds = new ArrayList<>();
         gardeners = new ArrayList<>();
         for(int i = 0; i < 5; i++) {
-            Gardener gardener = gardenerFormService.addGardener(new Gardener("Jeff" + i, "Ryan", LocalDate.now(), "test@gmail.com", "-1009294837", "defaultProfilePic.png"));
+            Gardener gardener = gardenerFormService.addGardener(new Gardener("Jeff" + i, "Ryan", LocalDate.now(), "test@gmail.com", "-1009294837"));
             gardenerIds.add(gardener.getId());
             gardeners.add(gardener);
 

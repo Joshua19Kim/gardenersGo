@@ -50,7 +50,7 @@ public class ManageFriendsControllerTest {
     @WithMockUser
     public void testGetManageFriends() throws Exception {
         LocalDate date = LocalDate.of(2000, 1, 1);
-        Gardener currentUser = new Gardener("test", "user", date, "test@test.com", "Password1!", "default.png");
+        Gardener currentUser = new Gardener("test", "user", date, "test@test.com", "Password1!");
         currentUser.setId(999L);
         gardenerFormService.addGardener(currentUser);
 

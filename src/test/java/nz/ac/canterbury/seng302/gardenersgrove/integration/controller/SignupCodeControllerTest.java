@@ -69,7 +69,7 @@ public class SignupCodeControllerTest {
         Mockito.when(tokenService.findGardenerbyToken(Mockito.anyString())).thenReturn(Optional.of(mockGardener));
         Mockito.when(tokenService.getTokenFromString(Mockito.anyString())).thenReturn(Optional.of(Mockito.mock(LostPasswordToken.class)));
         Mockito.doNothing().when(tokenService).removeToken(Mockito.any(LostPasswordToken.class));
-        Mockito.doNothing().when(gardenerFormService).addGardener(Mockito.mock(Gardener.class));
+        Mockito.when(gardenerFormService.addGardener(Mockito.mock(Gardener.class))).thenReturn(Mockito.mock(Gardener.class));
         SignupCodeFormController signupCodeFormController = new SignupCodeFormController(gardenerFormService,authorityFormService,tokenService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(signupCodeFormController).build();
         MOCK_MVC.perform(MockMvcRequestBuilders.post("/signup")

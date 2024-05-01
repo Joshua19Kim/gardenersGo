@@ -438,7 +438,7 @@ public class UserProfileControllerTest {
     @Test
     @WithMockUser("testEmail@gmail.com")
     public void ViewFriendProfileRequested_UserIsFriend_FriendProfileViewed() throws Exception {
-        Gardener friend = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!", "default.png");
+        Gardener friend = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
         friend.setId(2L);
 
         List<Gardener> friends = new ArrayList<>();
@@ -457,7 +457,7 @@ public class UserProfileControllerTest {
     @Test
     @WithMockUser("testEmail@gmail.com")
     public void ViewFriendProfileRequested_UserIsNotFriend_RedirectedToUserProfile() throws Exception {
-        Gardener friend = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!", "default.png");
+        Gardener friend = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
         friend.setId(2L);
 
         List<Gardener> friends = new ArrayList<>();
