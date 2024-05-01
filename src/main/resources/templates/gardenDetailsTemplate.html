@@ -45,7 +45,7 @@
                             <input type="file" th:id="'fileInput_' + ${plant.id}" name="file" style="display: none;" accept="image/*" th:onchange="'handleImageChange(\'' + ${plant.id} + '\');'">
                         </form>
                     </div>
-                    <span th:if="${uploadError} and ${plant.id} == ${errorId}" th:text="${uploadError}" style="color: red;"></span>
+                    <span th:if="${uploadError} and ${plant.id} == ${errorId}" th:text="${uploadError}" class="errorMessage"></span>
                 </td>
                 <td th:if="${plant.count !=0}" th:text="${plant.count}"></td>
                 <td th:if="${plant.count == 0}"></td>
