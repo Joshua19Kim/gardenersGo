@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Garden Details</title>
@@ -41,7 +40,7 @@
                         <form class= "plant-image-container" th:id="'uploadPlantForm_' + ${plant.id}" th:action="@{../gardens/details/plants/image}" method="post" enctype="multipart/form-data">
                             <input type="hidden" th:name="plantId" th:value="${plant.id}" />
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                            <img th:src="@{${'../images/' + plant.image}}" alt="Plant" th:id="'currentImage_' + ${plant.id}">
+                            <img th:src="@{${plant.image}}" alt="Plant" th:id="'currentImage_' + ${plant.id}">
                             <button type="button" class="image-button" th:onclick="'handleImageClick(\'' + ${plant.id} + '\');'">+</button>
                             <input type="file" th:id="'fileInput_' + ${plant.id}" name="file" style="display: none;" accept="image/*" th:onchange="'handleImageChange(\'' + ${plant.id} + '\');'">
                         </form>

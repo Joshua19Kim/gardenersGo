@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Edit Plant</title>
@@ -17,7 +16,7 @@
         <span th:if="${nameError}" th:text="${nameError}" style="color: red;"></span>
         <br/>
         <label for="count"> Plant Count: </label>
-        <input type="text" class="form-control" id="count" name="count" th:value="${count != null ? count : plant.count != 0.0 ? plant.count : ''}"
+        <input type="text" class="form-control" id="count" name="count" th:value="${count != null ? count : (plant.count != 0.0 ? plant.count : '')}"
                th:classappend="${countError} ? 'error' : ''">
         <span th:if="${countError}" th:text="${countError}" style="color: red;"></span>
         <br/>
@@ -42,7 +41,7 @@
         <br/>
         <label for="image"> Image: </label>
         <div class="plant-image-container" id="image">
-            <img th:src="@{${'/images/' + plant.image}}" alt="Plant" id="currentImage">
+            <img th:src="@{plant.image}" alt="Plant" id="currentImage">
             <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
             <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*" onchange="handleImageChange()">
         </div>

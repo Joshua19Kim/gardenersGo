@@ -136,7 +136,7 @@ public class RegisterController {
                 DoBError.isEmpty() &&
                 passwordStrengthError.isEmpty()) {
 
-            Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password, "defaultProfilePic.png");
+            Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password);
             gardenerFormService.addGardener(newGardener);
             writeEmail.sendSignupEmail(newGardener, tokenService);
             return "redirect:/signup";
