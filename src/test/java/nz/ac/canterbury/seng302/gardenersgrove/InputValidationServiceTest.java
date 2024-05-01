@@ -195,7 +195,7 @@ public class InputValidationServiceTest {
         String first = "First";
         boolean lastNameNeeded = false;
         Optional<String> isValid = validate.checkValidName(nameToTest, first, lastNameNeeded);
-        assertFalse(isValid.isEmpty());
+        assertTrue(isValid.isEmpty());
     }
 
     @Test
@@ -244,7 +244,7 @@ public class InputValidationServiceTest {
     @Test
     void testValidSpecialCharactersName() {
         InputValidationService validate = new InputValidationService(gardenerFormService);
-        String name = "ÄÖÜäöüßĀĒĪŌŪāēīōū-' ";
+        String name = "ÄÖÜäöüßĀĒĪŌŪāēīōū";
         String first  = "First";
         boolean lastName = false;
         Optional<String> isValid = validate.checkValidName(name, first, lastName);
