@@ -111,13 +111,18 @@ public class ManageFriendsController {
         return "redirect:/manageFriends";
     }
 
+    /**
+     * Handles all the changes of statuses in relationships such as accepting, declining and sending friend requests
+     * @param friendId the id of the pending friend
+     * @param status the status to change the relationship to
+     * @return Redirects to the manage friends page
+     */
     @PostMapping("/manageRequest")
     public String manageFriend(@RequestParam (name = "friendId") Long friendId,
                                @RequestParam (name = "status") String status) {
         String currentEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Gardener> currentGardener = gardenerFormService.findByEmail(currentEmail);
         if (Objects.equals(status, "pending")) {
-//            currentGardener.ifPresent(value -> relationshipService.updateRelationshipStatus(status, value.getId(), friendId));
             if (currentGardener.isPresent()) {
                 Relationships relationship = new Relationships(currentGardener.get().getId(), friendId, "pending");
                 relationshipService.addRelationship(relationship);
