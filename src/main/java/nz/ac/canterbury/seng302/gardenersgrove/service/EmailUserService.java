@@ -8,10 +8,12 @@ import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 public class EmailUserService {
     Logger logger = LoggerFactory.getLogger(EmailUserService.class);
-    private String api_key = System.getenv("SJMP");
+    @Value("${spring.mail.password}")
+    private String api_key;
 
     private Email email;
     private Mailer mailer;
