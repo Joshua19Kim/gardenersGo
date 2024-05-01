@@ -22,8 +22,8 @@
         <p>Reset password link has expired.</p>
     </div>
     <div>
-        <input name="username" placeholder="Username" type="text"/>
-        <input name="password" placeholder="Password" type="password"/>
+        <input name="username" placeholder="Username" type="text" th:classappend="${param.error} ? 'error' : ''"/>
+        <input name="password" placeholder="Password" type="password" th:classappend="${param.error} ? 'error' : ''"/>
         <p class="errorMessage" th:if="${param.error}" data-th-text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
     </div>
     <div style="display: flex; flex-direction: column">

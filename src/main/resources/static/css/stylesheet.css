@@ -96,7 +96,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .error {
-    border: 1px solid red;
+    border: 1px solid red !important;
 }
 
 .errorMessage {
