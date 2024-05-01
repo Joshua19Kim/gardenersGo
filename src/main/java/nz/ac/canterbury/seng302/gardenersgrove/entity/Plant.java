@@ -26,7 +26,7 @@ public class Plant {
     /**
      * Count of the plant.
      */
-    @Column(length=9)
+    @Column(length=12)
     private String count;
 
     /**

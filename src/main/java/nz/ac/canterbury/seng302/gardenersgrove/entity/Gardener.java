@@ -30,7 +30,7 @@ public class Gardener {
     @Column()
     private LocalDate DoB;
 
-    @Column(nullable = false)
+    @Column(length=320, nullable = false)
     private String email;
 
     @Column(nullable = false)
