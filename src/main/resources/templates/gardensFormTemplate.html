@@ -13,19 +13,19 @@
     <h1> Create New Garden </h1>
     <form id="gardenForm" th:action="@{form(redirect=${requestURI})}" method="post">
       <label for="name"> Name: </label>
-      <input type="text" class="form-control" id="name" placeholder="Name"
+      <input type="text" class="form-control" id="name" maxlength="64" placeholder="Name"
              th:name="name" th:value="*{name}" data-cy="name" autofocus
              th:classappend="${nameError} ? 'error' : ''">
       <span th:if="${nameError}" th:text="${nameError}" style="color: red;"></span>
       <br/>
       <label for="location"> Garden Location: </label>
-      <input type="text" class="form-control" id="location" placeholder="Jack Erskine?"
+      <input type="text" class="form-control" id="location" maxlength="128" placeholder="Jack Erskine?"
              th:name="location" th:value="*{location}" data-cy="location" autofocus
              th:classappend="${locationError} ? 'error' : ''">
       <span th:if="${locationError}" th:text="${locationError}" style="color: red;"></span>
       <br/>
       <label for="size"> Size (m<sup>2</sup>): </label>
-      <input type="text" class="form-control" id="size" placeholder=""
+      <input type="text" class="form-control" id="size" maxlength="12" placeholder=""
              th:name="size" th:value="*{size}" data-cy="size" autofocus
              th:classappend="${sizeError} ? 'error' : ''">
       <span th:if="${sizeError}" th:text="${sizeError}" style="color: red;"></span>
