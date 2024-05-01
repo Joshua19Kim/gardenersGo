@@ -28,7 +28,7 @@ public class ImageService {
     private final GardenerFormService gardenerFormService;
 
     private final PlantService plantService;
-    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/src/main/resources/static/images";
+    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
     private final int MAX_SIZE = 10*1024*1024;
 
     public List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
@@ -65,7 +65,7 @@ public class ImageService {
 
                 if (checkValidImage(file).isEmpty()) {
                     Files.write(filePath, file.getBytes());
-                    gardener.setProfilePicture(newFileName);
+                    gardener.setProfilePicture("/uploads/" + newFileName);
                     gardenerFormService.addGardener(gardener);
                     return Optional.empty();
                 } else {
@@ -101,7 +101,7 @@ public class ImageService {
             logger.info("File location: " + filePath);
             if (checkValidImage(file).isEmpty()) {
                 Files.write(filePath, file.getBytes());
-                plant.setImage(newFileName);
+                plant.setImage("/uploads/" + newFileName);
                 plantService.addPlant(plant);
                 return Optional.empty();
             } else {
