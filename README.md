@@ -12,7 +12,12 @@ SENG302 teaching team\
 Arthur Bell - abe118@uclive.ac.nz\
 Isaac Steele - ist46@uclive.ac.nz\
 Jasmine Ong - jon25@uclive.ac.nz\
-Rinlada Tolley - rto52@uclive.ac.nz
+Rinlada Tolley - rto52@uclive.ac.nz\
+Kush Desai - kde54@uclive.ac.nz\
+Sam Dawson - sda110@uclive.ac.nz\
+Ben Moore - BenMoore1.work@gmail.com\
+Joshua Byoungsoo Kim - bki42@uclive.ac.nz
+
 
 ## Dependencies
 This project requires Java version >= 21, [click here to get the latest stable OpenJDK release (as of time of writing)](https://jdk.java.net/21/)\

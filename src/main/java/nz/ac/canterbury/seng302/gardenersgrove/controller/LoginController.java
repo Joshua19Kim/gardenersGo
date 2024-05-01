@@ -1,10 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -13,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 
 /**
- * This is a basic spring boot controller, note the @link{Controller} annotation which defines this.
  * This controller defines endpoints as functions with specific HTTP mappings. This controller is used
  * for all the login related routes, as well as routing to the login page by default
  */
@@ -33,13 +36,21 @@ public class LoginController {
 
     /**
      * Method for the /login route
-     * @return redirect to /login if not authenticated, otherwise go to the main page
+     * If user is authenticated, redirects to the main page.
+     * If not authenticated, renders the login page.
      */
     @GetMapping("/login")
-    public String login(Authentication authentication, HttpServletResponse response) {
+    public String login(Authentication authentication, HttpServletResponse response, HttpServletRequest request) {
         logger.info("GET /");
         logger.info("Authentication: " + authentication);
-
+        logger.info("DB USERNAME: " + System.getenv("DB_USERNAME"));
+        HttpSession session = request.getSession();
+        if (session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION") != null ) {
+            if (session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION").toString().contains("Email not verified")) {
+                session.setAttribute("SPRING_SECURITY_LAST_EXCEPTION", new BadCredentialsException(""));
+                return "redirect:/signup";
+            }
+        }
         // Prevent caching of the page so that we always reload it when we reach it (mainly for when you use the browser back button)
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
         response.setHeader("Pragma", "no-cache"); // HTTP 1.0
@@ -48,6 +59,7 @@ public class LoginController {
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             return "redirect:/gardens";
         }
+
         return "login";
     }
 

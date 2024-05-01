@@ -4,41 +4,44 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
 import java.util.Optional;
 
 /**
- * Controller for form example.
+ * Controller for user registration
+ * Handles the registration form submission and validation
  * Note the @link{Autowired} annotation giving us access to the @link{FormService} class automatically
  */
 @Controller
 public class RegisterController {
     private final GardenerFormService gardenerFormService;
     private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
+    private final WriteEmail writeEmail;
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
     /**
      * Constructor for the controller. Sets the gardener form service and authentication manager objects
      * @param gardenerFormService - object that is used to interact with the database
      * @param authenticationManager - object that is used for authentication (checking, adding, removing authentication)
+     * @param writeEmail - service for writing emails
      */
     @Autowired
-    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager) {
+    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager, TokenService tokenService, WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
         this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
+        this.writeEmail = writeEmail;
     }
 
     /**
@@ -83,18 +86,18 @@ public class RegisterController {
      * @param passwordConfirm user's repeated password
      * @param model (map-like) representation of name, language and isJava boolean for use in thymeleaf,
      *              with values being set to relevant parameters provided
-     * @return thymeleaf demoFormTemplate
+     * @return thymeleaf registration form template or redirect to signup confirmation page
      */
     @PostMapping("/register")
-    public String submitForm( HttpServletRequest request,
-                              @RequestParam(name="firstName") String firstName,
-                              @RequestParam(name="lastName", required = false) String lastName,
-                              @RequestParam(name="DoB", required = false) LocalDate DoB,
-                              @RequestParam(name="email") String email,
-                              @RequestParam(name="password") String password,
-                              @RequestParam(name = "passwordConfirm") String passwordConfirm,
-                              @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
-                              Model model) {
+    public String submitForm(HttpServletRequest request,
+                             @RequestParam(name="firstName") String firstName,
+                             @RequestParam(name="lastName", required = false) String lastName,
+                             @RequestParam(name="DoB", required = false) LocalDate DoB,
+                             @RequestParam(name="email") String email,
+                             @RequestParam(name="password") String password,
+                             @RequestParam(name = "passwordConfirm") String passwordConfirm,
+                             @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
+                             Model model) {
         logger.info("POST /register");
 
         model.addAttribute("firstName", firstName);
@@ -126,31 +129,19 @@ public class RegisterController {
         model.addAttribute("passwordStrong", passwordStrengthError.orElse(""));
 
         if (firstNameError.isEmpty() &&
-                lastNameError.isEmpty() &&
+                (lastNameError.isEmpty() || isLastNameOptional)  &&
                 validEmailError.isEmpty() &&
                 emailInUseError.isEmpty() &&
                 passwordMatchError.isEmpty() &&
                 DoBError.isEmpty() &&
                 passwordStrengthError.isEmpty()) {
+
             Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password, "defaultProfilePic.png");
-            newGardener.grantAuthority("ROLE_USER");
             gardenerFormService.addGardener(newGardener);
+            writeEmail.sendSignupEmail(newGardener, tokenService);
+            return "redirect:/signup";
 
-            // Auto-login when registering
-            // Create a new Authentication with Username and Password (authorities here are optional as the following function fetches these anyway)
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password, newGardener.getAuthorities());
-            // Authenticate the token properly with the CustomAuthenticationProvider
-            Authentication authentication = authenticationManager.authenticate(token);
 
-            // Check if the authentication is actually authenticated (in this example any username/password is accepted so this should never be false)
-            if (authentication.isAuthenticated()) {
-                logger.info("user is authenticated");
-                // Add the authentication to the current security context (Stateful)
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                // Add the token to the request session (needed so the authentication can be properly used)
-                request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-                return "redirect:user";
-            }
         }
         return "register";
     }

@@ -42,12 +42,10 @@
             </div>
         </form>
     </div>
-
-    <div class="warningMessageContainer">
-        <p th:text="${uploadMessage}" th:value="*{uploadMessage}"></p>
-    </div>
 </div>
-
+<div class="warningMessageContainer">
+    <p th:text="${uploadMessage}" th:value="*{uploadMessage}"></p>
+</div>
 <div id="form">
     <form th:action="@{user}" method="get" id="userForm">
         <label for="firstName"> First Name: </label>

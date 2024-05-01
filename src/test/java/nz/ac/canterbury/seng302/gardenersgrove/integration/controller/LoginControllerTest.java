@@ -34,31 +34,4 @@ public class LoginControllerTest {
                 .perform(MockMvcRequestBuilders.get("/login"))
                 .andExpect(status().isOk());
     }
-
-//  THE FOLLOWING TEST WORKS BUT I THINK ITS CHEATING BECAUSE I THINK IT
-//  JUST BYPASSES SPRING SECURITY INSTEAD
-//  OF ACTUALLY CHECKING IF A USER IS LOGGED IN
-/*    @Test
- *    void onLoginPage_UserIsLoggedIn_RedirectToMainPage() throws Exception {
- *        LoginController loginController = new LoginController();
- *        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(loginController).build();
- *        MOCK_MVC.perform(MockMvcRequestBuilders.get("/login"))
- *                .andExpect(status().is3xxRedirection())
- *                .andExpect(view().name("redirect:/main"));
- *    }
- */
-
-    // This test does not work and I have no idea why. Need to figure this out
-//    @Test
-//    @WithMockUser(username = "test")
-//    void onLoginPage_UserIsLoggedIn_RedirectToMainPage() throws Exception {
-//        this.mockMvc
-//                .perform(MockMvcRequestBuilders.get("/login"))
-//                .andDo(MockMvcResultHandlers.print())
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(view().name("redirect:/main"));
-//    }
-
-
-
 }

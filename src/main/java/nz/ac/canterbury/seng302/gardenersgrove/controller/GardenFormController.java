@@ -85,6 +85,7 @@ public class GardenFormController {
   /**
    * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
    * @param gardenService the garden service used to interact with the database
+   * @param gardenerFormService - object that is used to interact with the database
    */
   @Autowired
   public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService) {
@@ -116,8 +117,9 @@ public class GardenFormController {
    * @param name The name of the garden.
    * @param location The location of the garden.
    * @param size The size of the garden.
-   * @param model The model for passing data to the view.
    * @param redirect the uri to redirect to if the cancel button is pressed
+   * @param model The model for passing data to the view.
+   * @param authentication Used to check whether the user is authenticated
    * @return The name of the template for displaying the garden form.
    */
   @PostMapping("gardens/form")
@@ -178,6 +180,10 @@ public class GardenFormController {
    * Gets the garden based on the id and returns the garden details template
    *
    * @param gardenId the id of the garden to be displayed
+   * @param uploadError An optional parameter indicating the type of upload error encountered.
+   *                    - Can be null if no error occurred.
+   * @param errorId    An optional parameter identifying the specific error encountered.
+   *                    - Can be null if no error occurred.
    * @param model the model
    * @param request the request used to find the current uri
    * @return The garden details page if the garden exists, else remains on the gardens page

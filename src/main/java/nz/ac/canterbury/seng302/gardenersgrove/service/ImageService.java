@@ -95,7 +95,6 @@ public class ImageService {
         try {
             Files.createDirectories(Paths.get(UPLOAD_DIRECTORY));
             String fileName = file.getOriginalFilename();
-            logger.info(fileName);
             //NullPointerException shouldn't affect below line as HTML form prevents an empty upload, i.e. file will never be null
             String newFileName = "plant_" + plant.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
             Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);

@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.util.Optional;
 import java.time.LocalDate;
 import java.time.Period;
@@ -22,6 +24,11 @@ public class InputValidationService {
         return (passwordOne.equals(passwordTwo)) ? Optional.empty() : Optional.of("Passwords do not match.");
     }
 
+    public Optional<String> checkOldPasswordDoesNotMatchNewPassword (String oldPassword, String newPassword) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return (encoder.matches(newPassword, oldPassword)) ? Optional.of("New password cannot be the same as old password.") : Optional.empty();
+    }
+
     /**
      * Verify password entered is strong as given by U1-AC12
      * @param password attempted by user
@@ -38,8 +45,9 @@ public class InputValidationService {
      * @param hashedPasswordInServer password called from the database
      * @return empty optional if password is correct, otherwise error string
      */
-    public Optional<String> checkSavedPassword (String password, int hashedPasswordInServer) {
-        return (password.hashCode() == hashedPasswordInServer) ? Optional.empty() : Optional.of("Your old password is incorrect.");
+    public Optional<String> checkSavedPassword (String password, String hashedPasswordInServer) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return (encoder.matches(password, hashedPasswordInServer)) ? Optional.empty() : Optional.of("Your old password is incorrect.");
     }
 
     /**
@@ -50,7 +58,7 @@ public class InputValidationService {
      * @return empty optional if input is valid, otherwise return error string
      */
     public Optional<String> checkValidName (String name, String firstOrLast, boolean isLastNameOptional) {
-        String nameRegex = "^[A-Za-zÄÖÜäöüßĀĒĪŌŪāēīōū]+[A-Za-zÄÖÜäöüßĀĒĪŌŪāēīōū' -]*$";
+        String nameRegex = "^[\\p{L} \\-'À-ÖØ-öø-ÿ]+$";
         if (isLastNameOptional) {
             return Optional.empty();
         } else if (name.length() > 64) {

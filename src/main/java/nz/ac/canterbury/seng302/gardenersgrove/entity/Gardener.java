@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class Gardener {
     private String email;
 
     @Column(nullable = false)
-    private int password;
+    private String password;
 
     @Column(name = "profile_picture")
     private String profilePicture;
@@ -41,6 +42,8 @@ public class Gardener {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "gardener_id")
     private List<Authority> userRoles;
+    // Create an encoder with strength 16
+
 
     /** The list of gardens belonging to the gardener. */
     @OneToMany(mappedBy = "gardener")
@@ -54,16 +57,18 @@ public class Gardener {
     /**
      * Creates a new Gardener object
      * @param firstName first name of user
+     * @param lastName last name of user
      * @param DoB user's date of birth
      * @param email user's email
      * @param password user's password
+     * @param profilePicture user's profile picture
      */
     public Gardener(String firstName, String lastName, LocalDate DoB, String email, String password, String profilePicture) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.DoB = DoB;
         this.email = email;
-        this.password = password.hashCode();
+        this.password = hashPasword(password);
         this.profilePicture = profilePicture;
         gardens = new ArrayList<>();
     }
@@ -86,6 +91,17 @@ public class Gardener {
         this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
         return authorities;
     }
+    public void setUserRoles(List<Authority> userRoles) { this.userRoles = userRoles;}
+
+    public String hashPasword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(password);
+    }
+
+    public boolean comparePassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(password, this.password);
+    }
 
     public Long getId() {
         return id;
@@ -107,7 +123,7 @@ public class Gardener {
         return email;
     }
 
-    public int getPassword() {return password; }
+    public String getPassword() {return password; }
 
     public String getProfilePicture() { return this.profilePicture; }
 
@@ -135,7 +151,7 @@ public class Gardener {
         this.profilePicture = imageLocation;
     }
 
-    public void updatePassword(String password) { this.password = password.hashCode(); }
+    public void updatePassword(String password) { this.password = hashPasword(password); }
 
     public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
 
@@ -159,4 +175,5 @@ public class Gardener {
 
         return gardenerString;
     }
+
 }

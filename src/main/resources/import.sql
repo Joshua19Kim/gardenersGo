@@ -1,20 +1,3 @@
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('A', 'A', DATE '2004-01-07', 'a@gmail.com', -1009294837, 'defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('B', 'B', DATE '2004-01-07', 'b@gmail.com', -1009294837, 'defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('C', 'C', null, 'c@gmail.com', -1009294837, 'defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('D', null, DATE '2004-01-07', 'd@gmail.com', -1009294837, 'defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('E', null, DATE '2004-01-07', 'e@gmail.com', -1009294837, 'defaultProfilePic.png');
-
-ALTER TABLE relationships ADD CONSTRAINT unique_gardener_friend UNIQUE (gardener_id, friend_id);
-
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('Sam', 'Dawson', DATE '2003-01-12', 'test@gmail.com', -1009294837, 'defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('Sam', 'Dawson', DATE '1998-04-07', 'test1@gmail.com', -1009294837, 'defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('Sam', 'Dawson', DATE '2000-11-01', 'test2@gmail.com', -1009294837, 'defaultProfilePic.png');
-
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 2, 'accepted');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (4, 1, 'pending');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 3, 'declined');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 5, 'pending');
-
 INSERT INTO garden (name, location, size) VALUES ('Garden', 'Home', '32');
 INSERT INTO garden (name, location, size) VALUES ('Vegetable Garden', 'Kitchen Garden', '35');
 INSERT INTO garden (name, location, size) VALUES ('Fruit Garden', 'Backyard', '0');
@@ -42,10 +25,27 @@ INSERT INTO plant (name, garden_id, count, description, date_planted, image) VAL
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Fern', 3, '18', 'Shade-loving foliage plant', 'placeholder.jpg');
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Rosemary', 3, '9', 'Aromatic herb for seasoning', 'placeholder.jpg');
 
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('A', 'A', DATE '2004-01-07', 'a@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', 'defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('B', 'B', DATE '2004-01-07', 'b@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', 'defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('C', 'C', null, 'c@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', 'defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('D', null, DATE '2004-01-07', 'd@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', 'defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('E', null, DATE '2004-01-07', 'e@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', 'defaultProfilePic.png');
+
+INSERT INTO authority (gardener_id, role) VALUES (1, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (3, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (4, 'ROLE_USER');
+
 INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Tomato Patch', 'Home', '32');
 INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Strawberry Garden', 'Kitchen Garden', '35');
 INSERT INTO garden (gardener_id, name, location, size) VALUES (2, 'Big Garden', 'Backyard', '0');
 INSERT INTO garden (gardener_id, name, location, size) VALUES (3, 'Long Garden', 'Windowsill', '10');
 
+ALTER TABLE relationships ADD CONSTRAINT unique_gardener_friend UNIQUE (gardener_id, friend_id);
+
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 2, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (4, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 3, 'declined');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 5, 'pending');
 -- email: a@gmail.com
 -- password: Password1!

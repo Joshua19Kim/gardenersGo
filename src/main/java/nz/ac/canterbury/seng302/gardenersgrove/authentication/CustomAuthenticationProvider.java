@@ -1,13 +1,18 @@
 package nz.ac.canterbury.seng302.gardenersgrove.authentication;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.SignupCodeFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * Custom Authentication Provider class, to allow for handling authentication in any way we see fit.
@@ -21,6 +26,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
      */
     private final GardenerFormService gardenerFormService;
 
+    private final Logger logger = LoggerFactory.getLogger(SignupCodeFormController.class);
     /**
      * @param gardenerFormService Gardener service for custom authentication using our own user objects to be injected in
      */
@@ -50,9 +56,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("The email address is unknown, or the password is invalid");
         }
 
-        Gardener u = gardenerFormService.getUserByEmailAndPassword(email, password.hashCode()).orElse(null);
+        Gardener u = gardenerFormService.getUserByEmailAndPassword(email, password).orElse(null);
         if (u == null) {
             throw new BadCredentialsException("The email address is unknown, or the password is invalid");
+        }
+
+        if ((u.getAuthorities().isEmpty())) {
+            throw new BadCredentialsException("Email not verified");
         }
         return new UsernamePasswordAuthenticationToken(u.getEmail(), null, u.getAuthorities());
     }

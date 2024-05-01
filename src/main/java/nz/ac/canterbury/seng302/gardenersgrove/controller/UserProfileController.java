@@ -1,10 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,7 @@ import java.util.Optional;
 public class UserProfileController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
     private final GardenerFormService gardenerFormService;
-
+    private final WriteEmail writeEmail;
     private Gardener gardener;
 
     @Autowired
@@ -41,9 +43,12 @@ public class UserProfileController {
     @Autowired
     private RelationshipService relationshipService;
 
+    private boolean isFileNotAdded;
+
     @Autowired
-    public UserProfileController(GardenerFormService gardenerFormService) {
+    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
+        this.writeEmail = writeEmail;
     }
 
     /**
@@ -97,6 +102,10 @@ public class UserProfileController {
             model.addAttribute("firstName", "Not Registered");
         }
 
+        if(isLastNameOptional) {
+            lastName = null;
+        }
+
         InputValidationService inputValidator = new InputValidationService(gardenerFormService);
 
         Optional<String> firstNameError = Optional.empty();
@@ -126,6 +135,14 @@ public class UserProfileController {
         if (email != null && !email.equals(currentUserEmail)) {
             emailInUseError = inputValidator.checkEmailInUse(email);
         }
+
+        if (isFileNotAdded) {
+            model.addAttribute("uploadMessage", "No image uploaded.");
+        } else {
+            model.addAttribute("uploadMessage", "");
+
+        }
+
         model.addAttribute("emailValid", validEmailError.orElse(emailInUseError.orElse("")));
 
         if (firstNameError.isEmpty() &&
@@ -163,6 +180,13 @@ public class UserProfileController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("POST /upload");
 
+        if (file.isEmpty()) {
+            isFileNotAdded = true;
+            return "redirect:/user";
+        } else {
+            isFileNotAdded = false;
+        }
+
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             Optional<String> uploadMessage =  imageService.saveImage(file);
             if (uploadMessage.isEmpty()) {
@@ -182,13 +206,13 @@ public class UserProfileController {
      * @return thymeleaf 'user' page or 'login' page
      */
     @GetMapping("/redirectToUserPage")
-    public RedirectView profileButton() {
+    public String profileButton() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Authentication: " + authentication);
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            return new RedirectView("/user");
+            return "/user";
         }
-        return new RedirectView("/login");
+        return "/login";
     }
 
     /**
@@ -233,13 +257,15 @@ public class UserProfileController {
         model.addAttribute("passwordsMatch", passwordMatchError.orElse(""));
         Optional<String> passwordStrengthError = inputValidator.checkStrongPassword(newPassword);
         model.addAttribute("passwordStrong", passwordStrengthError.orElse(""));
+        Optional<String> newPasswordDifferentFromOldPassword = inputValidator.checkOldPasswordDoesNotMatchNewPassword(gardener.getPassword(), newPassword);
+        model.addAttribute("newDifferentFromOld", newPasswordDifferentFromOldPassword.orElse(""));
 
-        if (passwordCorrectError.isEmpty() && passwordMatchError.isEmpty() && passwordStrengthError.isEmpty()) {
+
+        if (passwordCorrectError.isEmpty() && passwordMatchError.isEmpty() && passwordStrengthError.isEmpty() &&
+                newPasswordDifferentFromOldPassword.isEmpty()) {
             gardener.updatePassword(newPassword);
             gardenerFormService.addGardener(gardener);
-            // Re-authenticates user to catch case when they change their email
-            Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication((newAuth));
+            writeEmail.sendPasswordUpdateConfirmEmail(gardener);
             return "redirect:/user";
         }
 

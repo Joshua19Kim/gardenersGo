@@ -44,8 +44,8 @@ public class ValidityChecker {
         if (!location.matches(regex)) {
             return "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
         }
-        if(location.length() > 64) {
-            return "Location must be less than 64 characters";
+        if(location.length() > 128) {
+            return "Location must be less than 128 characters";
         }
 
         return location;
@@ -65,9 +65,12 @@ public class ValidityChecker {
 
         // https://stackoverflow.com/questions/39182829/how-to-check-if-a-string-is-parsable-to-float
         try {
-            Float.parseFloat(sizeReplaced);
+            float newSize = Float.parseFloat(sizeReplaced);
+            if (newSize > 1e12) {
+                return "Garden size must be less than 1 Trillion (1e12)";
+            }
         } catch (NumberFormatException e) {
-            return "Garden size must be a positive number";
+            return "Garden size must be a valid number with only a decimal place allowed";
         }
 
         if (sizeReplaced.contains("-")) {
