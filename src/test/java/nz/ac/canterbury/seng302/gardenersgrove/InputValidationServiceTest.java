@@ -1,9 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InputValidationServiceTest {
 
     private final GardenerFormService gardenerFormService;
+    private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
+
 
     @Autowired
     public InputValidationServiceTest(GardenerFormService gardenerFormService) {
@@ -114,6 +119,28 @@ public class InputValidationServiceTest {
     void testValidPassword9Characters() {
         InputValidationService validate = new InputValidationService(gardenerFormService);
         String password = "ABC123sd!";
+        Optional<String> isValid = validate.checkStrongPassword(password);
+        assertTrue(isValid.isEmpty());
+    }
+
+    @Test
+    void testInvalidPassword256CharactersTooLong() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String password = "Password1!Password1!Password1!Password1!Password1!Password1!" +
+                "Password1!Password1!Password1!Password1!Password1!Password1!Password1!" +
+                "Password1!Password1!Password1!Password1!Password1!Password1!Password1!" +
+                "Password1!Password1!Password1!Password1!Password1!Passwo";
+        Optional<String> isValid = validate.checkStrongPassword(password);
+        assertFalse(isValid.isEmpty());
+    }
+
+    @Test
+    void testValidPassword255Characters() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String password = "Password1!Password1!Password1!Password1!Password1!Password1!" +
+                "Password1!Password1!Password1!Password1!Password1!Password1!Password1!" +
+                "Password1!Password1!Password1!Password1!Password1!Password1!Password1!" +
+                "Password1!Password1!Password1!Password1!Password1!Passw";
         Optional<String> isValid = validate.checkStrongPassword(password);
         assertTrue(isValid.isEmpty());
     }
@@ -277,6 +304,35 @@ public class InputValidationServiceTest {
         Optional<String> isValid = validate.checkValidEmail(email);
         assertTrue(isValid.isEmpty());
     }
+
+    @Test
+    void testValidEmail320CharactersTotal() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String email = "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
+                "cdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd" +
+                "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
+                "cdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd" +
+                "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
+                "cdabcdabcdabcdabcdabcdabcdab@gmail.com";
+        Optional<String> isValid = validate.checkValidEmail(email);
+        assertTrue(isValid.isEmpty());
+    }
+
+    @Test
+    void testInvalidEmail321CharactersTotal() {
+        InputValidationService validate = new InputValidationService(gardenerFormService);
+        String email = "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
+                "cdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd" +
+                "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
+                "cdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd" +
+                "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
+                "cdabcdabcdabcdabcdabcdabcdabc@gmail.com";
+        Optional<String> isValid = validate.checkValidEmail(email);
+        logger.info(isValid.toString());
+        assertFalse(isValid.isEmpty());
+    }
+
+
 
     @Test
     void testInvalidSpecialCharacterEmail() {
