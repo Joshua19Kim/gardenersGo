@@ -58,7 +58,7 @@ public class InputValidationService {
      * @return empty optional if input is valid, otherwise return error string
      */
     public Optional<String> checkValidName (String name, String firstOrLast, boolean isLastNameOptional) {
-        String nameRegex = "^[\\p{L} \\-'À-ÖØ-öø-ÿ]+$";
+        String nameRegex = "^(?=.*[\\p{L}])[\\p{L} \\-'À-ÖØ-öø-ÿ]+$";
         if (isLastNameOptional) {
             return Optional.empty();
         } else if (name.length() > 64) {
