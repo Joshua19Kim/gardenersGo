@@ -127,6 +127,16 @@ public class Gardener {
 
     public String getProfilePicture() { return this.profilePicture; }
 
+    public String getSearchResult() {
+        String searchResult = "";
+        if (lastName == null) {
+            searchResult = firstName + " " + email;
+        } else {
+            searchResult = firstName + " " + lastName + " " + "- " + email;
+        }
+        return searchResult;
+    }
+    public void setId(Long id) { this.id = id; }
     public List<Garden> getGardens() { return gardens; }
 
     public void setFirstName(String firstName) { this.firstName = firstName; }
@@ -144,6 +154,16 @@ public class Gardener {
     public void updatePassword(String password) { this.password = hashPasword(password); }
 
     public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
+
+    public String getSearchString() {
+        String gardenerString = firstName;
+        if (getLastName() != null) {
+            gardenerString += " " + lastName;
+        }
+        gardenerString += " - " + email;
+        gardenerString += " id(" + id + ")";
+        return gardenerString;
+    }
 
     @Override
     public String toString() {

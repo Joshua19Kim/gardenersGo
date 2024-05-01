@@ -52,7 +52,7 @@ public class UserProfileControllerTest {
     void GivenGardenerEmailExistingInServer_WhenToShowDetails_ControllerFindsDetailsWithEmail() {
         Authentication authentication = Mockito.mock(Authentication.class);
         Mockito.when(authentication.getName()).thenReturn("testEmail@test.test");
-        userProfileController.getUserProfile(null, null, null, null, false, modelMock);
+        userProfileController.getUserProfile(null, null, null, null, false, null, modelMock);
         Mockito.verify(gardenerFormService, times(1)).findByEmail(gardener.getEmail());
     }
 
@@ -65,19 +65,19 @@ public class UserProfileControllerTest {
         // ONLY works when the email is the same as the submitted one
         Mockito.when(gardener.getEmail()).thenReturn("new@new.new");
         Mockito.when(authentication.getName()).thenReturn("new@new.new");
-        userProfileController.getUserProfile("Ben", "Moore", LocalDate.of(2001, 11, 11), "new@new.new", false, modelMock);
+        userProfileController.getUserProfile("Ben", "Moore", LocalDate.of(2001, 11, 11), "new@new.new", false, null,modelMock);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
     }
 
     @Test
     void GivenInvalidFirstNameEdit_WhenUserConfirms_GardenerEditNotUploaded() {
-        userProfileController.getUserProfile("$#@", "Desai", LocalDate.of(2004, 1, 15), "test@gmail.com", false, modelMock);
+        userProfileController.getUserProfile("$#@", "Desai", LocalDate.of(2004, 1, 15), "test@gmail.com", false, null, modelMock);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
     }
 
     @Test
     void GivenInvalidLastNameEdit_WhenLastNameIsNotOptional_GardenerEditNotUploaded() {
-        userProfileController.getUserProfile("Kush", "$#@", LocalDate.of(2004, 1, 15), "test@gmail.com", false, modelMock);
+        userProfileController.getUserProfile("Kush", "$#@", LocalDate.of(2004, 1, 15), "test@gmail.com", false, null, modelMock);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
     }
 
@@ -90,19 +90,19 @@ public class UserProfileControllerTest {
         // ONLY works when the email is the same as the submitted one
         Mockito.when(gardener.getEmail()).thenReturn("test@gmail.com");
         Mockito.when(authentication.getName()).thenReturn("test@gmail.com");
-        userProfileController.getUserProfile("Kush", "$#@", LocalDate.of(2004, 1, 15), "test@gmail.com", true, modelMock);
+        userProfileController.getUserProfile("Kush", "$#@", LocalDate.of(2004, 1, 15), "test@gmail.com", true, null, modelMock);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
     }
 
     @Test
     void GivenAgeTooLow_WhenUserConfirms_GardenerEditNotUploaded() {
-        userProfileController.getUserProfile("Kush", "Desai", LocalDate.of(2024, 1, 15), "test@gmail.com", false, modelMock);
+        userProfileController.getUserProfile("Kush", "Desai", LocalDate.of(2024, 1, 15), "test@gmail.com", false, null, modelMock);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
     }
 
     @Test
     void GivenAgeTooHigh_WhenUserConfirms_GardenerEditNotUploaded() {
-        userProfileController.getUserProfile("Kush", "Desai", LocalDate.of(1024, 1, 15), "test@gmail.com", false, modelMock);
+        userProfileController.getUserProfile("Kush", "Desai", LocalDate.of(1024, 1, 15), "test@gmail.com", false, null, modelMock);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
     }
 
