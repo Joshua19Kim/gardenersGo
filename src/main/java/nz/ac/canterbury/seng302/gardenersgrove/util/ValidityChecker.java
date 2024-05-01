@@ -73,7 +73,7 @@ public class ValidityChecker {
                 return "Garden size must be less than 10 Million";
             }
         } catch (NumberFormatException e) {
-            return "Garden size must be a valid number with only a decimal place allowed";
+            return "Garden size must be a positive number";
         }
 
         if(size.length() > 512) {
