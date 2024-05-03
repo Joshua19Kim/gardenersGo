@@ -31,7 +31,7 @@
                     <!-- Iterate over search results -->
                     <div class="friend" th:each="friend : ${friends}">
                         <!-- Display gardener information -->
-                        <img alt="Profile Picture" th:src="@{${'/images/' + friend.getProfilePicture()}}">
+                        <img alt="Profile Picture" th:src="@{${friend.getProfilePicture()}}">
                         <p th:text="${friend.toString()}"></p>
                         <a th:href="@{../gardens(user=${friend.id})}">View Gardens</a>
                         <a th:href="@{../user(user=${friend.id})}">View Profile</a>
@@ -75,7 +75,7 @@
                                 <!-- Display gardener information -->
                                 <div class="friend-info">
                                     <img alt="Profile Picture"
-                                         th:src="@{${'/images/' + pendingRequest.getProfilePicture()}}">
+                                         th:src="@{${pendingRequest.getProfilePicture()}}">
                                     <p th:text="${pendingRequest.toString()}"></p>
 
                                 </div>
@@ -94,7 +94,7 @@
                                 <!-- Display gardener information -->
                                 <div class="friend-info">
                                 <img alt="Profile Picture"
-                                     th:src="@{${'/images/' + declinedRequest.getProfilePicture()}}">
+                                     th:src="@{${declinedRequest.getProfilePicture()}}">
                                 <p th:text="${declinedRequest.toString()}"></p>
                                 </div>
                                 <div class="friend-info">
@@ -107,7 +107,7 @@
                             <!-- Display gardener information -->
                             <div class="friend-info">
                                 <img alt="Profile Picture"
-                                     th:src="@{${'/images/' + receivedRequest.getProfilePicture()}}">
+                                     th:src="@{${receivedRequest.getProfilePicture()}}">
                                 <p th:text="${receivedRequest.toString()}"></p>
                             </div>
                             <div class="friend-info">
@@ -157,7 +157,7 @@
                                         <input name="friendId" th:value="${search.getId()}" type="hidden">
                                         <input name="status" value="pending" type="hidden">
                                         <img alt="Profile Picture"
-                                             th:src="@{${'/images/' + search.getProfilePicture()}}">
+                                             th:src="@{${search.getProfilePicture()}}">
                                         <p th:text="${search.toString()}"></p>
                                     </div>
                                     <button class="invite-friend-req-btn button">Invite Friend</button>
