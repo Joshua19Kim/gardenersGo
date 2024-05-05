@@ -1,9 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,10 @@ public class ForgotPasswordControllerTest {
     private GardenerFormService gardenerFormService;
     @MockBean
     private TokenService tokenService;
+    @MockBean
+    private EmailUserService emailService;
+    @MockBean
+    private WriteEmail writeEmail;
     private InputValidationService inputValidator;
 
     @Test
@@ -44,7 +50,7 @@ public class ForgotPasswordControllerTest {
         inputValidator = new InputValidationService(gardenerFormService);
         Mockito.when(inputValidator.checkEmailInUse(Mockito.anyString())).thenReturn(Optional.of(""));
         Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
-        ForgotPasswordFormController forgotPasswordFormController = new ForgotPasswordFormController(gardenerFormService, tokenService);
+        ForgotPasswordFormController forgotPasswordFormController = new ForgotPasswordFormController(gardenerFormService, tokenService, emailService, writeEmail);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(forgotPasswordFormController).build();
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/forgotPassword")

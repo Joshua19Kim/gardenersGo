@@ -18,14 +18,16 @@ import java.util.UUID;
 @Component
 public class WriteEmail {
     private TokenService tokenService;
+    private EmailUserService emailService;
 
     /**
      * Sends a signup email to the given Gardener's email
      * @param gardener The Gardener to send the email to
      * @param tokenService  The token service to create the unique LostPasswordToken for the gardener
      */
-    public void sendSignupEmail(Gardener gardener, TokenService tokenService) {
+    public void sendSignupEmail(Gardener gardener, TokenService tokenService, EmailUserService emailService) {
         this.tokenService = tokenService;
+        this.emailService = emailService;
         String token = generateToken();
         tokenService.createLostPasswordTokenForGardener(gardener, token);
         String email = gardener.getEmail();
@@ -35,8 +37,7 @@ public class WriteEmail {
             
             If this was not you, you can ignore this message and the account will be deleted after 10 minutes""", token);
 
-        EmailUserService emailService = new EmailUserService(email, subject, message);
-        emailService.sendEmail();
+        emailService.sendEmail(email, subject, message);
     }
 
     /**
@@ -47,8 +48,7 @@ public class WriteEmail {
         String email = gardener.getEmail();
         String message = "Your Password has been updated";
         String subject = "Updated Password";
-        EmailUserService emailService = new EmailUserService(email, subject, message);
-        emailService.sendEmail();
+        emailService.sendEmail(email, subject, message);
 
     }
     /**
@@ -57,9 +57,13 @@ public class WriteEmail {
      */
     public void sendPasswordResetConfirmEmail(Gardener gardener) {
         String email = gardener.getEmail();
-        String emailMessage = "Your Password has been updated";
+        String message = "Your Password has been updated";
         String subject = "Password Updated";
-        EmailUserService emailService = new EmailUserService(email, subject, emailMessage);
-        emailService.sendEmail(); // *** Blocking
+        emailService.sendEmail(email, subject, message); // *** Blocking
+    }
+
+    // TODO: Maybe change this so most of the email is constructed here and not in ForgotPasswordController?
+    public void sendPasswordForgotEmail(String email, String subject, String emailMessage) {
+        emailService.sendEmail(email, subject, emailMessage); // *** Blocking
     }
 }

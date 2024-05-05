@@ -8,37 +8,34 @@ import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+@Service
 public class EmailUserService {
     Logger logger = LoggerFactory.getLogger(EmailUserService.class);
-    @Value("${spring.mail.password}")
     private String api_key;
 
-    private final Email email;
-    private final Mailer mailer;
+    @Autowired
+    public EmailUserService(@Value("${email.password}") String api_key) {
+        this.api_key = api_key;
+    }
 
-    /**
-     * Constructor initialises email object and mailer object using given parameters
-     */
-    public EmailUserService(String userEmail, String subject, String Message) {
-        // Simple Java Mail -- https://www.simplejavamail.org/
-        email = EmailBuilder.startingBlank()
+    public void sendEmail(String userEmail, String subject, String message) {
+        Email email = EmailBuilder.startingBlank()
                 .from("Do Not Reply", "naturesfacebook@gmail.com")
                 .to(userEmail)
                 .withSubject(subject)
-                .withPlainText(Message)
+                .withPlainText(message)
                 .buildEmail();
-
-        // Uses gmail SMTP
-        mailer = MailerBuilder
+        // Uses Gmail SMTP
+        Mailer mailer = MailerBuilder
                 .withSMTPServer("smtp.gmail.com", 587, "naturesfacebook@gmail.com", api_key)
                 .withTransportStrategy(TransportStrategy.SMTP_TLS)
                 .buildMailer();
-    }
 
-    public void sendEmail() {
-        logger.warn("spring mail: " + api_key);
+        logger.warn("Spring mail: " + api_key);
         mailer.sendMail(email);
     }
 }

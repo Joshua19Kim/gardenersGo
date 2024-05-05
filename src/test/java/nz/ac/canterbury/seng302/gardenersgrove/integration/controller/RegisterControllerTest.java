@@ -3,11 +3,13 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,6 +40,8 @@ public class RegisterControllerTest {
     private TokenService tokenService;
     @MockBean
     private WriteEmail mockWriteEmail;
+    @MockBean
+    private EmailUserService emailService;
     @Test
     @WithMockUser
     void onRegisterPage_noInputGiven_RegisterFormShown() throws Exception {
@@ -54,9 +58,9 @@ public class RegisterControllerTest {
         Authentication authentication = Mockito.mock(Authentication.class);
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
-        Mockito.doNothing().when(mockWriteEmail).sendSignupEmail(Mockito.any(Gardener.class), Mockito.any(TokenService.class));
+        Mockito.doNothing().when(mockWriteEmail).sendSignupEmail(Mockito.any(Gardener.class), Mockito.any(TokenService.class), Mockito.any(EmailUserService.class));
 
-        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager,tokenService, mockWriteEmail);
+        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager,tokenService, emailService, mockWriteEmail);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(registerController).build();
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/register")
@@ -118,7 +122,7 @@ public class RegisterControllerTest {
         Authentication authentication = Mockito.mock(Authentication.class);
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
-        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager,tokenService, mockWriteEmail);
+        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager,tokenService, emailService, mockWriteEmail);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(registerController).build();
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/register")

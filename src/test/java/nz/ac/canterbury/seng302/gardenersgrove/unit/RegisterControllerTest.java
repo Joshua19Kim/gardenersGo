@@ -1,9 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unit;
 
+import com.sanctionco.jmail.Email;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
@@ -26,6 +28,7 @@ public class RegisterControllerTest {
     private AuthenticationManager authenticationManager;
     private TokenService tokenService;
     private WriteEmail writeEmail;
+    private EmailUserService emailService;
     private Authentication authentication;
     private HttpServletRequest request;
     private HttpSession sessionMock;
@@ -38,7 +41,8 @@ public class RegisterControllerTest {
         authenticationManager = Mockito.mock(AuthenticationManager.class);
         tokenService = Mockito.mock(TokenService.class);
         writeEmail = Mockito.mock(WriteEmail.class);
-        registerFormController = new RegisterController(gardenerFormService, authenticationManager, tokenService, writeEmail);
+        emailService = Mockito.mock(EmailUserService.class);
+        registerFormController = new RegisterController(gardenerFormService, authenticationManager, tokenService, emailService, writeEmail);
         model = Mockito.mock(Model.class);
         assertTrue(true);
     }

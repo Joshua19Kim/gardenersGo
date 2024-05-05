@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove;
+package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;

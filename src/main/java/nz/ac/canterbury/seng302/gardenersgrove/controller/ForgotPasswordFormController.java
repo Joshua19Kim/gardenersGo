@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +27,20 @@ public class ForgotPasswordFormController {
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
     private final GardenerFormService gardenerFormService;
     private final TokenService tokenService;
+    private final WriteEmail writeEmail;
+    private final EmailUserService emailService;
 
     private final String confirmationMessage = "An email was sent to the address if it was recognised";
 
     @Autowired
     public ForgotPasswordFormController(GardenerFormService gardenerFormService,
-                                        TokenService tokenService) {
+                                        TokenService tokenService,
+                                        EmailUserService emailService,
+                                        WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
         this.tokenService = tokenService;
+        this.emailService = emailService;
+        this.writeEmail = writeEmail;
     }
 
     public String constructLostPasswordTokenEmail(String contextPath, Locale locale, String token, Gardener gardener) {
@@ -81,8 +88,7 @@ public class ForgotPasswordFormController {
                 tokenService.createLostPasswordTokenForGardener(gardener.get(), token);
                 String emailMessage = constructLostPasswordTokenEmail(getAppUrl(request), request.getLocale(), token, gardener.get());
                 String subject = "Forgot password?";
-                EmailUserService emailService = new EmailUserService(email, subject, emailMessage);
-                emailService.sendEmail(); // Blocks ***
+                writeEmail.sendPasswordForgotEmail(email, subject, emailMessage); // Blocks ***
                 return "forgotPasswordForm"; // Email sent
             }
             return "forgotPasswordForm"; // Email not in DB
