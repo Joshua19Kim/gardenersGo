@@ -12,7 +12,7 @@
 
     <div class="UserProfilePicContainer">
         <div class="UserProfilePic">
-            <img th:src="@{'/images/' + ${gardener.getProfilePicture()}}" alt="Profile Picture">
+            <img th:src="@{${gardener.getProfilePicture()}}" alt="Profile Picture">
         </div>
     </div>
     <div id="form">
