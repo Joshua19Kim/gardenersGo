@@ -6,11 +6,11 @@ import java.util.Optional;
 import java.time.LocalDate;
 import java.time.Period;
 
-public class InputValidationService {
+public class InputValidationUtil {
 
     private final GardenerFormService gardenerFormService;
 
-    public InputValidationService(GardenerFormService gardenerFormService) {
+    public InputValidationUtil(GardenerFormService gardenerFormService) {
         this.gardenerFormService = gardenerFormService;
     }
 

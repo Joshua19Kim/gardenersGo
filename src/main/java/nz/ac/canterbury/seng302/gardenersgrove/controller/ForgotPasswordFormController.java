@@ -3,11 +3,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
-import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +75,7 @@ public class ForgotPasswordFormController {
 
         model.addAttribute("email", email);
 
-        InputValidationService inputValidator = new InputValidationService(gardenerFormService);
+        InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
         Optional<String> validEmailError = inputValidator.checkValidEmail(email);
         model.addAttribute("returnMessage", validEmailError.orElse(confirmationMessage));
 

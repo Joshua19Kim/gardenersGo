@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
@@ -110,7 +110,7 @@ public class RegisterController {
         model.addAttribute("email", email);
         model.addAttribute("password", password);
 
-        InputValidationService inputValidator = new InputValidationService(gardenerFormService);
+        InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
         Optional<String> firstNameError = inputValidator.checkValidName(firstName, "First", false);
         model.addAttribute("firstNameValid", firstNameError.orElse(""));
         Optional<String> lastNameError = inputValidator.checkValidName(lastName, "Last", isLastNameOptional);

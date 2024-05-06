@@ -1,9 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,27 +10,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 //@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class InputValidationServiceTest {
+public class InputValidationUtilTest {
 
     private final GardenerFormService gardenerFormService;
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
 
 
     @Autowired
-    public InputValidationServiceTest(GardenerFormService gardenerFormService) {
+    public InputValidationUtilTest(GardenerFormService gardenerFormService) {
         this.gardenerFormService = gardenerFormService;
     }
 
     @Test
     void testMatchingPassword() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password1 = "password";
         String password2 = "password";
         Optional<String> isValid = validate.checkPasswordsMatch(password1, password2);
@@ -40,7 +38,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testDifferentCapitalisation() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password1 = "password";
         String password2 = "PASSWORD";
         Optional<String> isValid = validate.checkPasswordsMatch(password1, password2);
@@ -49,7 +47,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testDifferentPassword() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password1 = "HelloWorld";
         String password2 = "ByeMoon";
         Optional<String> isValid = validate.checkPasswordsMatch(password1, password2);
@@ -58,7 +56,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testNullPassword() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password = "";
         Optional<String> isValid = validate.checkStrongPassword(password);
         assertTrue(isValid.get().matches("Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
@@ -67,7 +65,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testLongPasswordNoSpecial() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password = "morethaneight";
         Optional<String> isValid = validate.checkStrongPassword(password);
         assertTrue(isValid.get().matches("Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
@@ -76,7 +74,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testLongSpecialNoLetter() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password = "!@#$%^&**()";
         Optional<String> isValid = validate.checkStrongPassword(password);
         assertTrue(isValid.get().matches("Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
@@ -85,7 +83,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testLongSpecialNoLowercase() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password = "ABCDEG!@#$";
         Optional<String> isValid = validate.checkStrongPassword(password);
         assertTrue(isValid.get().matches("Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
@@ -94,14 +92,14 @@ public class InputValidationServiceTest {
 
     @Test
     void testLongSpecialAlphaNoNumber() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password = "ABCDEG!@#$aa";
         Optional<String> isValid = validate.checkStrongPassword(password);
         assertTrue(isValid.get().matches("Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
     }
     @Test
     void testInvalidPassword7Characters() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password = "AB23sd!";
         Optional<String> isValid = validate.checkStrongPassword(password);
         assertEquals(isValid.get(), "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
@@ -109,7 +107,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testValidPassword8Characters() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password = "ABC12sd!";
         Optional<String> isValid = validate.checkStrongPassword(password);
         assertTrue(isValid.isEmpty());
@@ -117,7 +115,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testValidPassword9Characters() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password = "ABC123sd!";
         Optional<String> isValid = validate.checkStrongPassword(password);
         assertTrue(isValid.isEmpty());
@@ -125,7 +123,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testInvalidPassword256CharactersTooLong() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password = "Password1!Password1!Password1!Password1!Password1!Password1!" +
                 "Password1!Password1!Password1!Password1!Password1!Password1!Password1!" +
                 "Password1!Password1!Password1!Password1!Password1!Password1!Password1!" +
@@ -136,7 +134,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testValidPassword255Characters() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String password = "Password1!Password1!Password1!Password1!Password1!Password1!" +
                 "Password1!Password1!Password1!Password1!Password1!Password1!Password1!" +
                 "Password1!Password1!Password1!Password1!Password1!Password1!Password1!" +
@@ -147,7 +145,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testValidFirstName() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String name = "Brad";
         String first  = "First";
         boolean lastName = false;
@@ -157,7 +155,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testValidFirstNameHyphens() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String nameToTest = "A-B-C";
         String first = "First";
         boolean lastNameNeeded = false;
@@ -167,7 +165,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testInvalidFirstNameHyphens() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String nameToTest = "---";
         String first = "First";
         boolean lastNameNeeded = false;
@@ -177,7 +175,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testInvalidFirstNameEndWithHyphen() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String nameToTest = "Sam-";
         String first = "First";
         boolean lastNameNeeded = false;
@@ -187,7 +185,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testInvalidFirstNameMultipleSpaces() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String nameToTest = "Sam   bad name";
         String first = "First";
         boolean lastNameNeeded = false;
@@ -197,7 +195,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testInvalidFirstNameMultipleApostrophe() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String nameToTest = "Sa''''test";
         String first = "First";
         boolean lastNameNeeded = false;
@@ -207,7 +205,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testInvalidFirstNameMultipleTypesConsecutive() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String nameToTest = "Sa!-'test";
         String first = "First";
         boolean lastNameNeeded = false;
@@ -217,7 +215,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testValidFirstNameSingleApostrophe() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String nameToTest = "Sa'test'asd";
         String first = "First";
         boolean lastNameNeeded = false;
@@ -227,7 +225,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testLongName() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String name = "Thisnameisdefinatelylongerthansixtyfourcharactersanditisgoingtofailthetesthahahahahahahahahahah";
         String first  = "First";
         boolean lastName = false;
@@ -237,7 +235,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testNullFirstName() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String name = "";
         String first  = "First";
         boolean lastName = false;
@@ -248,7 +246,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testNullLastNameCheckboxUnselected() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String name = "";
         String first  = "Last";
         boolean lastName = false;
@@ -259,7 +257,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testNullLastNameCheckboxSelected() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String name = "";
         String last  = "Last";
         boolean lastName = true;
@@ -270,7 +268,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testValidSpecialCharactersName() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String name = "ÄÖÜäöüßĀĒĪŌŪāēīōū";
         String first  = "First";
         boolean lastName = false;
@@ -280,7 +278,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testInvalidSpecialCharacterName() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String name = "%";
         String first = "First";
         boolean lastName = false;
@@ -291,7 +289,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testNumbersInEmail() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "sky123@yahoo.com";
         Optional<String> isValid = validate.checkValidEmail(email);
         assertTrue(isValid.isEmpty());
@@ -299,7 +297,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testNormalEmail() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "sda110@uclive.ac.nz";
         Optional<String> isValid = validate.checkValidEmail(email);
         assertTrue(isValid.isEmpty());
@@ -307,7 +305,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testValidEmail320CharactersTotal() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
                 "cdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd" +
                 "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
@@ -320,7 +318,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testInvalidEmail321CharactersTotal() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
                 "cdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd" +
                 "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
@@ -336,7 +334,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testInvalidSpecialCharacterEmail() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "$@gmail.com";
         Optional<String> isValid = validate.checkValidEmail(email);
         assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
@@ -345,7 +343,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testStartWithPeriod() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = ".failure@gmail.com";
         Optional<String> isValid = validate.checkValidEmail(email);
         assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
@@ -353,7 +351,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testEndWithPeriod() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "failure.@gmail.com";
         Optional<String> isValid = validate.checkValidEmail(email);
         assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
@@ -361,7 +359,7 @@ public class InputValidationServiceTest {
 
     @Test
     void ConsecutivePeriods() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "this...fails@gmail.com";
         Optional<String> isValid = validate.checkValidEmail(email);
         assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
@@ -369,7 +367,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testValidHyphenInSuffix() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "username@hot-mail.co.nz";
         Optional<String> isValid = validate.checkValidEmail(email);
         assertTrue(isValid.isEmpty());
@@ -377,7 +375,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testSuffixLongerThanSeven() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "longsuffix@uc.christchurch";
         Optional<String> isValid = validate.checkValidEmail(email);
         assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
@@ -385,7 +383,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testSamePasswordWithSavedPassword() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String passwordEntered = "PassworD1@";
         String hashedPasswordInServer = encoder.encode("PassworD1@");
@@ -395,7 +393,7 @@ public class InputValidationServiceTest {
 
     @Test
     void testDifferentPasswordWithSavedPassword() {
-        InputValidationService validate = new InputValidationService(gardenerFormService);
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String passwordEntered = "PassworD1@";
         String hashedPasswordInServer = encoder.encode("PassworD2@");
