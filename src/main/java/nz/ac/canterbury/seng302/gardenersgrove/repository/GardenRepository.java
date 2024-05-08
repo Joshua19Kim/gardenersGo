@@ -29,11 +29,9 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
 
     /**
      * Retrieves a list of gardens by their owner's gardener ID.
-     * Gardens with a null gardener ID (those from the last sprint) are displayed for all users.
      *
      * @param gardenerId The identifier of the garden's owner.
      * @return A list of all gardens with the specified owner stored in the repository.
      */
-    @Query(value = "SELECT * FROM Garden g WHERE g.gardener_id = :gardenerId OR g.gardener_id IS NULL", nativeQuery = true)
     List<Garden> findByGardenerId(Long gardenerId);
 }
