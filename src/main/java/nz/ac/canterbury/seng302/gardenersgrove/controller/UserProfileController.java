@@ -109,24 +109,29 @@ public class UserProfileController {
         Optional<String> firstNameError = Optional.empty();
         if (firstName != null) {
             firstNameError = inputValidator.checkValidName(firstName, "First", isLastNameOptional);
+            model.addAttribute("firstName", firstName);
         }
         model.addAttribute("firstNameValid", firstNameError.orElse(""));
 
         Optional<String> lastNameError = Optional.empty();
         if (lastName != null) {
             lastNameError = inputValidator.checkValidName(lastName, "Last", isLastNameOptional);
+            model.addAttribute("lastName", lastName);
+            model.addAttribute("isLastNameOptional", isLastNameOptional);
         }
         model.addAttribute("lastNameValid", lastNameError.orElse(""));
 
         Optional<String> DoBError = Optional.empty();
         if (DoB != null) {
             DoBError = inputValidator.checkDoB(DoB);
+            model.addAttribute("DoB", DoB);
         }
         model.addAttribute("DoBValid", DoBError.orElse(""));
 
         Optional<String> validEmailError = Optional.empty();
         if (email != null) {
             validEmailError = inputValidator.checkValidEmail(email);
+            model.addAttribute("email", email);
         }
 
         Optional<String> emailInUseError = Optional.empty();
@@ -236,9 +241,9 @@ public class UserProfileController {
      */
     @PostMapping("/password")
     public String updatePassword(@RequestParam(name = "oldPassword", required = false) String oldPassword,
-                              @RequestParam(name = "newPassword", required = false) String newPassword,
-                              @RequestParam(name = "retypePassword", required = false) String retypePassword,
-                              Model model) {
+                                 @RequestParam(name = "newPassword", required = false) String newPassword,
+                                 @RequestParam(name = "retypePassword", required = false) String retypePassword,
+                                 Model model) {
         logger.info("POST /password");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
