@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +55,17 @@ public class UserProfileController {
     }
 
     /**
+     * Retrieve an optional of a gardener using the current authentication
+     * We will always have to check whether the gardener was retrieved in the calling method, so the return type was left as an optional
+     * @return An optional of the requested gardener
+     */
+    public Optional<Gardener> getGardenerFromAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+        return gardenerFormService.findByEmail(currentUserEmail);
+    }
+
+    /**
      * Retrieve user's details (first name, last name, date of birth, email and also check the existence of last name.) based on the current authentication
      * If the edit button is clicked in user.html, all the details will be editable.
      * When the save button is clicked, all the existed/edited details will be checked for validation and saved if all pass the tests.
@@ -79,11 +89,9 @@ public class UserProfileController {
 
         logger.info("GET /user");
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
-
-        Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         List<Garden> gardens;
+
         if (gardenerOptional.isPresent()) {
             gardener = gardenerOptional.get();
             gardens = gardenService.getGardensByGardenerId(gardener.getId());
@@ -143,6 +151,9 @@ public class UserProfileController {
         }
 
         Optional<String> emailInUseError = Optional.empty();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+
         if (email != null && !email.equals(currentUserEmail)) {
             emailInUseError = inputValidator.checkEmailInUse(email);
         }
@@ -233,16 +244,13 @@ public class UserProfileController {
     @GetMapping("/password")
     public String passwordForm(Model model) {
         logger.info("GET /password");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        List<Garden> gardens;
 
-        Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
-        List<Garden> gardens = new ArrayList<>();
-        if (gardenerOptional.isPresent()) {
-            gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
-        }
+        gardenerOptional.ifPresent(value -> gardener = value);
+
+        gardens = gardenService.getGardensByGardenerId(gardener.getId());
         model.addAttribute("gardens", gardens);
-
         return "password";
     }
 
@@ -264,9 +272,7 @@ public class UserProfileController {
                                  Model model) {
         logger.info("POST /password");
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
-        Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
 
         if (gardenerOptional.isEmpty()) {return "/login";}
