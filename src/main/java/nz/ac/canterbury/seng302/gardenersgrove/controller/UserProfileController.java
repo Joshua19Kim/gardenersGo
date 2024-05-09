@@ -83,7 +83,7 @@ public class UserProfileController {
         String currentUserEmail = authentication.getName();
 
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
-        List<Garden> gardens = new ArrayList<>();
+        List<Garden> gardens;
         if (gardenerOptional.isPresent()) {
             gardener = gardenerOptional.get();
             gardens = gardenService.getGardensByGardenerId(gardener.getId());
