@@ -43,7 +43,7 @@
         <br/>
         <label for="image"> Image: </label>
         <div class="plant-image-container" id="image">
-            <img src="/images/placeholder.jpg" alt="Plant" id="currentImage">
+            <img th:src="@{'/images/placeholder.jpg'}" alt="Plant" id="currentImage">
             <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
             <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*" onchange="handleImageChange()">
         </div>

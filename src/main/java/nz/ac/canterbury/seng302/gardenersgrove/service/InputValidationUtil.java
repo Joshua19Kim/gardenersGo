@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.time.LocalDate;
 import java.time.Period;
@@ -59,7 +60,7 @@ public class InputValidationUtil {
      */
     public Optional<String> checkValidName (String name, String firstOrLast, boolean isLastNameOptional) {
         String nameRegex = "[\\p{L}]+((?:[-' ]?\\p{L}+)?)*";
-        if (isLastNameOptional) {
+        if (isLastNameOptional && Objects.equals(firstOrLast, "Last")) {
             return Optional.empty();
         } else if (name.length() > 64) {
             return Optional.of(firstOrLast +" name must " +
