@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import static java.lang.Long.parseLong;
@@ -104,7 +105,15 @@ public class GardenFormController {
   @GetMapping("gardens/form")
   public String form(@RequestParam(name = "redirect") String redirectUri, Model model) {
     logger.info("GET /form");
-    List<Garden> gardens = gardenService.getGardenResults();
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String currentUserEmail = authentication.getName();
+
+    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+    List<Garden> gardens = new ArrayList<>();
+    if (gardenerOptional.isPresent()) {
+      gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+    }
     model.addAttribute("gardens", gardens);
     model.addAttribute("requestURI", redirectUri);
     return "gardensFormTemplate";
@@ -195,7 +204,16 @@ public class GardenFormController {
                               @RequestParam(name = "userId", required = false) String userId,
                               Model model, HttpServletRequest request) {
     logger.info("GET /gardens/details");
-    List<Garden> gardens = gardenService.getGardenResults();
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String currentUserEmail = authentication.getName();
+
+    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+    List<Garden> gardens = new ArrayList<>();
+    if (gardenerOptional.isPresent()) {
+      gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+    }
+
     model.addAttribute("gardens", gardens);
 
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
@@ -305,7 +323,16 @@ public class GardenFormController {
   @GetMapping("gardens/edit")
   public String editGarden(@RequestParam(name = "gardenId") String gardenId, Model model, HttpServletRequest request) {
     logger.info("GET gardens/edit");
-    List<Garden> gardens = gardenService.getGardenResults();
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String currentUserEmail = authentication.getName();
+
+    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+    List<Garden> gardens = new ArrayList<>();
+    if (gardenerOptional.isPresent()) {
+      gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+    }
+
     model.addAttribute("gardens", gardens);
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
