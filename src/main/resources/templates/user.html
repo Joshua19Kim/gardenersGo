@@ -8,111 +8,87 @@
 <body>
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div id="user_div">
-<h1>User Profile</h1>
-
-<div class="UserProfilePicContainer">
-    <div class="UserProfilePic">
-        <img th:src="@{${profilePic}}" alt="Profile Picture">
+    <h1>User Profile</h1>
+    <div class="UserProfilePicContainer">
+        <form th:action="@{user}" method="post" enctype="multipart/form-data" id="uploadImageForm">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <img th:src="@{${profilePic}}" alt="Profile Picture" id="currentProfilePic">
+            <button type="button" class="image-button" onclick="handleImageClick()">+</button>
+            <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*"
+                   onchange="handleImageChange()">
+        </form>
     </div>
-</div>
-<div >
-    <button class="ChangeProfilePictureButtonContainer" type="button" id="changePicture" onclick=toggleUploadContainer()> + </button>
-</div>
-
-<div id="uploadContainer"  style="display: none;">
-    <h3 id="upLoadTitle">Upload New Profile Image</h3>
-    <div class="imageInstructionsContainer">
-        <h4>Picture must be less than 10MB</h4>
-        <h4>Picture must be of type jpg, png, or svg</h4>
+    <div class="warningMessageContainer">
+        <p th:text="${uploadMessage}" th:value="*{uploadMessage}" class="errorMessage"></p>
     </div>
 
+    <div id="form">
+        <form th:action="@{user}" method="get" id="userForm">
+            <label for="firstName"> First Name: </label>
+            <span id="firstName" th:text="${firstName}"></span>
+            <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
+                   placeholder="First Name" required th:name="firstName" th:value="*{firstName}" type="text"
+                   style="display: none;"
+                   th:classappend="${firstNameValid != '' ? 'error' : ''}">
+            <p class="smallErrorMessage" th:text="${firstNameValid}"></p>
+            <br/>
 
-    <div class="formContainer">
-        <form id="uploadForm" th:action="@{user}" method="post" enctype="multipart/form-data">
-            <input type="hidden"
-                   th:name="${_csrf.parameterName}"
-                   th:value="${_csrf.token}" />
-            <div class="uploadLabelContainer">
-                <label for="file">Choose an image:</label>
-                <input type="file" id="file" name="file" accept="image/*" placeholder="Choose an image">
+            <label for="lastName"> Last Name: </label>
+            <span id="lastName" th:text="${lastName}"></span>
+            <input class="form-control" data-cy="lastName" id="lastNameEdit" placeholder="Last Name" maxlength="255"
+                   th:name="lastName" th:value="*{lastName}" type="text" style="display: none"
+                   th:classappend="${lastNameValid != '' ? 'error' : ''}">
+            <br/>
+            <input class="form-control" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
+                   placeholder="Last Name Tick Box Check"
+                   th:name="isLastNameOptional" type="checkbox" style="display: none;">
+            <label id="isLastNameOptionalLabelEdit" style="display: none;">I have no surname</label>
+            <script>
+                document.getElementById('isLastNameOptional').checked = false;
+                document.getElementById('isLastNameOptional').onchange = function () {
+                    document.getElementById('lastNameEdit').disabled = this.checked;
+                };
+            </script>
+            <p class="smallErrorMessage" th:text="${lastNameValid}"></p>
+            <br/>
+
+            <label for="DoB"> Date of Birth: </label>
+            <span id="DoB" th:text="${DoB}"></span>
+            <input class="form-control" data-cy="DoB" id="DoBEdit"
+                   th:name="DoB" th:value="*{DoB}" type="date" style="display: none;">
+            <p class="smallErrorMessage" id="DoBInvalid" th:text="${DoBValid}"></p>
+            <script>
+                document.getElementById("DoBEdit").addEventListener("invalid",
+                    function (event) {
+                        event.preventDefault();
+                        console.log("invalid date");
+                        document.getElementById("DoBEdit").style.border = "1px solid red";
+                        document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";
+                    });
+            </script>
+            <br/>
+            <label for="email"> Email: </label>
+            <span id="email" th:text="${email}"></span>
+            <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email" maxlength="320"
+                   th:name="email" th:value="*{email}" type="text" style="display: none;"
+                   th:classappend="${emailValid != '' ? 'error' : ''}">
+            <p class="smallErrorMessage" th:text="${emailValid}"></p>
+            <br/>
+
+            <div id="editButtonDiv">
+                <button class="buttonDesign" type="button" onclick="enableEditing()">Edit</button>
             </div>
-            <div class="submitButtonContainer">
-                <button class="buttonDesign" type="submit">Upload</button>
-                <button class="buttonDesign" type="reset" onclick="window.location='./user'">Cancel</button>
+            <div id="saveCancelButtonDiv" style="display: none;">
+                <button type="button" onclick="window.location='./password'">Update password</button>
+                <input type="submit" value="Save"/>
+                <button type="button" onclick="disableEditing(); window.location='./user'">Cancel</button>
             </div>
         </form>
     </div>
-
-</div>
-<div class="warningMessageContainer">
-    <p th:text="${uploadMessage}" th:value="*{uploadMessage}" class="errorMessage"></p>
-</div>
-
-<div id="form">
-    <form th:action="@{user}" method="get" id="userForm">
-        <label for="firstName"> First Name: </label>
-        <span id="firstName" th:text="${firstName}"></span>
-        <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
-               placeholder="First Name" required th:name="firstName" th:value="*{firstName}" type="text" style="display: none;"
-               th:classappend="${firstNameValid != '' ? 'error' : ''}">
-        <p class="smallErrorMessage" th:text="${firstNameValid}"></p>
-        <br/>
-
-        <label for="lastName"> Last Name: </label>
-        <span id="lastName" th:text="${lastName}"></span>
-        <input class="form-control" data-cy="lastName" id="lastNameEdit" placeholder="Last Name" maxlength="255"
-               th:name="lastName" th:value="*{lastName}" type="text" style="display: none"
-               th:classappend="${lastNameValid != '' ? 'error' : ''}">
-        <br/>
-        <input class="form-control" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional" placeholder="Last Name Tick Box Check"
-               th:name="isLastNameOptional" type="checkbox" style="display: none;">
-        <label id="isLastNameOptionalLabelEdit" style="display: none;">I have no surname</label>
-        <script>
-            document.getElementById('isLastNameOptional').checked = false;
-            document.getElementById('isLastNameOptional').onchange = function () {
-                document.getElementById('lastNameEdit').disabled = this.checked;
-            };
-        </script>
-        <p class="smallErrorMessage" th:text="${lastNameValid}"></p>
-        <br/>
-
-        <label for="DoB"> Date of Birth: </label>
-        <span id="DoB" th:text="${DoB}"></span>
-        <input class="form-control" data-cy="DoB" id="DoBEdit"
-               th:name="DoB" th:value="*{DoB}" type="date" style="display: none;">
-        <p class="smallErrorMessage" id = "DoBInvalid" th:text="${DoBValid}"></p>
-        <script>
-            document.getElementById( "DoBEdit" ).addEventListener( "invalid",
-                function( event ) {
-                    event.preventDefault();
-                    console.log("invalid date");
-                    document.getElementById("DoBEdit").style.border = "1px solid red";
-                    document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";
-                });
-        </script>
-        <br/>
-        <label for="email"> Email: </label>
-        <span id="email" th:text="${email}"></span>
-        <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email" maxlength="320"
-               th:name="email" th:value="*{email}" type="text" style="display: none;"
-               th:classappend="${emailValid != '' ? 'error' : ''}">
-        <p class="smallErrorMessage" th:text="${emailValid}"></p>
-        <br/>
-
-        <div id="editButtonDiv">
-            <button class="buttonDesign" type="button" onclick="enableEditing()">Edit</button>
-        </div>
-        <div id="saveCancelButtonDiv" style="display: none;">
-            <button type="button" onclick="window.location='./password'">Update password</button>
-            <input type="submit" value="Save"/>
-            <button type="button" onclick="disableEditing(); window.location='./user'">Cancel</button>
-        </div>
-    </form>
-</div>
 </div>
 
 <script type="text/javascript">
-    document.getElementById("userForm").addEventListener("keydown", function(event) {
+    document.getElementById("userForm").addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             var activeElement = document.activeElement;
             if (activeElement.id === "emailEdit" || activeElement.type === "submit" || activeElement.tagName === "BUTTON") {
@@ -124,16 +100,15 @@
     });
 </script>
 <script>
-    function toggleUploadContainer() {
-        let toggleState = document.getElementById("uploadContainer");
-        if (toggleState.style.display === "flex") {
-            toggleState.style.display = "none";
-        } else {
-            toggleState.style.display = "flex";
-        }
+    function handleImageClick() {
+        document.getElementById('fileInput').click();
     }
+
+    function handleImageChange() {
+        document.getElementById('uploadImageForm').submit();
+    }
+
     function enableEditing() {
-        toggleUploadContainer()
         document.getElementById('editButtonDiv').style.display = 'none';
         document.getElementById('saveCancelButtonDiv').style.display = 'block';
 
@@ -159,7 +134,6 @@
     }
 
     function disableEditing() {
-        toggleUploadContainer()
         document.getElementById('editButtonDiv').style.display = 'block';
         document.getElementById('saveCancelButtonDiv').style.display = 'none';
 
@@ -177,7 +151,7 @@
         document.getElementById('email').style.display = 'inline';
         document.getElementById('emailEdit').style.display = 'none';
 
-        window.location.href='/user'
+        window.location.href = '/user'
     }
 </script>
 <script th:inline="javascript">
