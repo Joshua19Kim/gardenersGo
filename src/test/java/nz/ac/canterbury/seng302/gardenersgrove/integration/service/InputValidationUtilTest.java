@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import org.junit.jupiter.api.Test;
@@ -19,12 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InputValidationUtilTest {
 
     private final GardenerFormService gardenerFormService;
+    private final GardenService gardenService;
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
 
 
     @Autowired
-    public InputValidationUtilTest(GardenerFormService gardenerFormService) {
+    public InputValidationUtilTest(GardenerFormService gardenerFormService, GardenService gardenService) {
         this.gardenerFormService = gardenerFormService;
+        this.gardenService = gardenService;
     }
 
     @Test

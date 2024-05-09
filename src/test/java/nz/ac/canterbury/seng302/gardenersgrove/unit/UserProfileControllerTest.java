@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unit;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.times;
 public class UserProfileControllerTest {
 
     private UserProfileController userProfileController;
+    private GardenService gardenService;
     private GardenerFormService gardenerFormService;
     private EmailUserService emailUserService;
     private WriteEmail writeEmail;
@@ -39,7 +41,8 @@ public class UserProfileControllerTest {
         gardenerFormService = Mockito.mock(GardenerFormService.class);
         emailUserService = Mockito.mock(EmailUserService.class);
         writeEmail = Mockito.mock(WriteEmail.class);
-        userProfileController = new UserProfileController(gardenerFormService, writeEmail);
+        gardenService = Mockito.mock(GardenService.class);
+        userProfileController = new UserProfileController(gardenerFormService, gardenService, writeEmail);
         modelMock = Mockito.mock(Model.class);
         gardener = Mockito.mock(Gardener.class);
         inputValidator = Mockito.mock(InputValidationUtil.class);
