@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,6 +35,7 @@ import java.util.Optional;
 @Controller
 public class UserProfileController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
+    private final GardenService gardenService;
     private final GardenerFormService gardenerFormService;
     private final WriteEmail writeEmail;
     private Gardener gardener;
@@ -44,8 +49,9 @@ public class UserProfileController {
     private boolean isFileNotAdded;
 
     @Autowired
-    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail) {
+    public UserProfileController(GardenerFormService gardenerFormService, GardenService gardenService, WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
+        this.gardenService = gardenService;
         this.writeEmail = writeEmail;
     }
 
@@ -77,8 +83,10 @@ public class UserProfileController {
         String currentUserEmail = authentication.getName();
 
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+        List<Garden> gardens = new ArrayList<>();
         if (gardenerOptional.isPresent()) {
             gardener = gardenerOptional.get();
+            gardens = gardenService.getGardensByGardenerId(gardener.getId());
             if(user != null) {
                 Optional<Gardener> friend = gardenerFormService.findById(Long.parseLong(user, 10));
                 // If the current user is friends
@@ -95,7 +103,7 @@ public class UserProfileController {
                 model.addAttribute("email", gardener.getEmail());
                 model.addAttribute("profilePic", gardener.getProfilePicture());
             }
-
+            model.addAttribute("gardens", gardens);
         } else {
             model.addAttribute("firstName", "Not Registered");
         }
@@ -218,8 +226,18 @@ public class UserProfileController {
      * @return 'Update password' page
      */
     @GetMapping("/password")
-    public String passwordForm() {
+    public String passwordForm(Model model) {
         logger.info("GET /password");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+
+        Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+        List<Garden> gardens = new ArrayList<>();
+        if (gardenerOptional.isPresent()) {
+            gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+        }
+        model.addAttribute("gardens", gardens);
+
         return "password";
     }
 
