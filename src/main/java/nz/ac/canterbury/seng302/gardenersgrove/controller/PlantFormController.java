@@ -2,8 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
@@ -23,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,6 +42,7 @@ public class PlantFormController {
 
     private final PlantService plantService;
     private final GardenService gardenService;
+    private final GardenerFormService gardenerFormService;
     private final ImageService imageService;
 
     /**
@@ -48,9 +52,11 @@ public class PlantFormController {
     * @param gardenService Service for managing garden-related operations.
     */
     @Autowired
-    public PlantFormController(PlantService plantService, GardenService gardenService, ImageService imageService) {
+    public PlantFormController(PlantService plantService, GardenService gardenService,
+                               GardenerFormService gardenerFormService, ImageService imageService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
+        this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
     }
 
@@ -65,9 +71,18 @@ public class PlantFormController {
     @GetMapping("gardens/details/plants/form")
     public String form(@RequestParam(name = "gardenId") String gardenId, Model model, HttpServletRequest request) {
         logger.info("GET /gardens/details/plants/form");
-        List<Garden> gardens = gardenService.getGardenResults();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+
+        Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+        List<Garden> gardens = new ArrayList<>();
+        if (gardenerOptional.isPresent()) {
+            gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+        }
         model.addAttribute("gardens", gardens);
         Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
+
         if (garden.isPresent()) {
             String requestUri = request.getRequestURI();
             String queryString = request.getQueryString();
@@ -206,7 +221,16 @@ public class PlantFormController {
     @GetMapping("gardens/details/plants/edit")
     public String editPlant(@RequestParam(name = "plantId") String plantId, Model model, HttpServletRequest request) {
         logger.info("GET /gardens/details/plants/edit");
-        List<Garden> gardens = gardenService.getGardenResults();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+
+        Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+        List<Garden> gardens = new ArrayList<>();
+        if (gardenerOptional.isPresent()) {
+            gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+        }
+
         model.addAttribute("gardens", gardens);
         Optional<Plant> plant = plantService.getPlant(parseLong(plantId));
         if (plant.isPresent()) {

@@ -31,7 +31,8 @@ public class ManageFriendsController {
     private List<Gardener> noExistingRelationship = new ArrayList<>();
 
     @Autowired
-    public ManageFriendsController(GardenerFormService gardenerFormService, GardenService gardenService, SearchService searchService, RelationshipService relationshipService, AuthenticationManager authenticationManager) {
+    public ManageFriendsController(GardenerFormService gardenerFormService, GardenService gardenService,
+                                   SearchService searchService, RelationshipService relationshipService, AuthenticationManager authenticationManager) {
         this.gardenerFormService = gardenerFormService;
         this.gardenService = gardenService;
         this.relationshipService = relationshipService;
