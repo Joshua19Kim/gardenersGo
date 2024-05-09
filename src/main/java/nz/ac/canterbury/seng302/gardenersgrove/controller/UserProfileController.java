@@ -87,6 +87,7 @@ public class UserProfileController {
         if (gardenerOptional.isPresent()) {
             gardener = gardenerOptional.get();
             gardens = gardenService.getGardensByGardenerId(gardener.getId());
+            model.addAttribute("gardens", gardens);
             if(user != null) {
                 Optional<Gardener> friend = gardenerFormService.findById(Long.parseLong(user, 10));
                 // If the current user is friends
@@ -103,7 +104,6 @@ public class UserProfileController {
                 model.addAttribute("email", gardener.getEmail());
                 model.addAttribute("profilePic", gardener.getProfilePicture());
             }
-            model.addAttribute("gardens", gardens);
         } else {
             model.addAttribute("firstName", "Not Registered");
         }

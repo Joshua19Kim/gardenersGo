@@ -62,6 +62,9 @@ public class GardenFormController {
       if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
         gardens = gardenService.getGardensByGardenerId(parseLong(user, 10));
         model.addAttribute("gardener", friend.get());
+        List<Garden> userGardens;
+        userGardens = gardenService.getGardensByGardenerId(gardener.getId());
+        model.addAttribute("userGardens", userGardens);
       } else {
         return "redirect:/gardens";
       }
