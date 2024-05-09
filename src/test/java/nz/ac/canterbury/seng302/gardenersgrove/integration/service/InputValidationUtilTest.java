@@ -20,14 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InputValidationUtilTest {
 
     private final GardenerFormService gardenerFormService;
-    private final GardenService gardenService;
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
 
 
     @Autowired
-    public InputValidationUtilTest(GardenerFormService gardenerFormService, GardenService gardenService) {
+    public InputValidationUtilTest(GardenerFormService gardenerFormService) {
         this.gardenerFormService = gardenerFormService;
-        this.gardenService = gardenService;
     }
 
     @Test
