@@ -74,7 +74,8 @@ public class GardenFormController {
       requestUri = requestUri + "?" + queryString;
     }
     String contextPath = request.getContextPath();
-    requestUri.replace(contextPath + "/", "/");
+    logger.debug(contextPath);
+    requestUri = requestUri.replace(contextPath + "/", "/");
     model.addAttribute("requestURI", requestUri);
     return "gardensTemplate";
   }
