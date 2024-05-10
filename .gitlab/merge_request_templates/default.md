@@ -1,3 +1,9 @@
+## REVIEWEE CHECKLIST
+- - [ ] Merged dev into your branch 
+- - [ ] Fixed merge conflicts
+- - [ ] All tests passed 
+- - [ ] Did relevant manual testing
+
 ## MERGE DESCRIPTION
 
 
