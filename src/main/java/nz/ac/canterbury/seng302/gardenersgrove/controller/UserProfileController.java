@@ -214,6 +214,10 @@ public class UserProfileController {
             if (uploadMessage.isEmpty()) {
                 return "redirect:/user";
             } else {
+                Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+                gardenerOptional.ifPresent(value -> gardener = value);
+                List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());;
+                model.addAttribute("gardens", gardens);
                 model.addAttribute("uploadMessage", uploadMessage.get());
                 model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
                 return "/user";
@@ -273,6 +277,9 @@ public class UserProfileController {
         logger.info("POST /password");
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+        model.addAttribute("gardens", gardens);
         InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
 
         if (gardenerOptional.isEmpty()) {return "/login";}
