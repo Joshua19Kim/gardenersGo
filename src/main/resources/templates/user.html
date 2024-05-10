@@ -13,7 +13,7 @@
         <form th:action="@{user}" method="post" enctype="multipart/form-data" id="uploadImageForm">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <img th:src="@{${profilePic}}" alt="Profile Picture" id="currentProfilePic">
-            <button type="button" class="image-button" onclick="handleImageClick()">+</button>
+            <button type="button" class="image-button" id="fileInputBtn" onclick="handleImageClick()">+</button>
             <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*"
                    onchange="handleImageChange()">
         </form>
@@ -164,7 +164,7 @@
     var emailValid = /*[[${emailValid}]]*/ '';
     var uploadMessage = /*[[${uploadMessage}]]*/ '';
 
-    if (firstNameValid !== '' || lastNameValid !== '' || DoBValid !== '' || emailValid !== '') {
+    if ((firstNameValid !== '' || lastNameValid !== '' || DoBValid !== '' || emailValid !== '')) {
         console.log("edit");
         enableEditing();
     }

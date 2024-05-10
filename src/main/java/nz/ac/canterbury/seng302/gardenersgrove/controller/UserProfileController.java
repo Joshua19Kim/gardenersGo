@@ -197,6 +197,16 @@ public class UserProfileController {
             } else {
                 model.addAttribute("uploadMessage", uploadMessage.get());
                 model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
+                model.addAttribute("firstName", gardenerFormService.findByEmail(authentication.getName()).get().getFirstName());
+                model.addAttribute("lastName", gardenerFormService.findByEmail(authentication.getName()).get().getLastName());
+                model.addAttribute("DoB", gardenerFormService.findByEmail(authentication.getName()).get().getDoB());
+                model.addAttribute("email", gardenerFormService.findByEmail(authentication.getName()).get().getEmail());
+                model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
+                model.addAttribute("firstNameValid", "");
+                model.addAttribute("lastNameValid", "");
+                model.addAttribute("DoBValid", "");
+                model.addAttribute("emailValid", "");
+
                 return "/user";
             }
         }
