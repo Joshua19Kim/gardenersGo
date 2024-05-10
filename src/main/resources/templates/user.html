@@ -39,10 +39,12 @@
                    th:name="lastName" th:value="*{lastName}" type="text" style="display: none"
                    th:classappend="${lastNameValid != '' ? 'error' : ''}">
             <br/>
-            <input class="form-control" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
-                   placeholder="Last Name Tick Box Check"
-                   th:name="isLastNameOptional" type="checkbox" style="display: none;">
-            <label id="isLastNameOptionalLabelEdit" style="display: none;">I have no surname</label>
+            <div id="surnameCheck">
+                <label id="isLastNameOptionalLabelEdit" style="display: none;">I have no surname:</label>
+                <input class="form-control" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
+                       placeholder="Last Name Tick Box Check"
+                       th:name="isLastNameOptional" type="checkbox" style="display: none;">
+            </div>
             <script>
                 document.getElementById('isLastNameOptional').checked = false;
                 document.getElementById('isLastNameOptional').onchange = function () {
@@ -160,6 +162,8 @@
     var lastNameValid = /*[[${lastNameValid}]]*/ '';
     var DoBValid = /*[[${DoBValid}]]*/ '';
     var emailValid = /*[[${emailValid}]]*/ '';
+    var uploadMessage = /*[[${uploadMessage}]]*/ '';
+
     if (firstNameValid !== '' || lastNameValid !== '' || DoBValid !== '' || emailValid !== '') {
         console.log("edit");
         enableEditing();

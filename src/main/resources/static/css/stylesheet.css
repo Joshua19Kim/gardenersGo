@@ -167,6 +167,13 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     overflow-y: auto;
     resize: vertical;
 }
+#form .surnameCheck {
+    display: inline;
+    margin-top: 3px;
+}
+#form .surnameCheck input{
+    width: 50%;
+}
 
 #characterCountContainer {
     font-size: 0.8750em;
@@ -484,16 +491,9 @@ body, h2, h3, h4, h5, h6, a {
 
 #user_div h1 {
     margin: 5%;
+    margin-bottom: 2%;
     justify-content: center;
     display: flex;
-}
-
-#profileForm {
-    width: 550px;
-    overflow: hidden;
-    background-color: rgba(50, 100, 100, 0.3);
-    border-radius: 10px;
-    padding: 15px;
 }
 
 .warningMessageContainer {
