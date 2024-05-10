@@ -4,6 +4,7 @@
 - - [ ] All tests passed 
 - - [ ] Did relevant manual testing
 - - [ ] Add merge description to the request
+- - [ ] Make sure that you are merging into DEV (do not merge into MAIN!!!)
 - - [ ] Make sure delete branch is checked
 
 ## MERGE DESCRIPTION
