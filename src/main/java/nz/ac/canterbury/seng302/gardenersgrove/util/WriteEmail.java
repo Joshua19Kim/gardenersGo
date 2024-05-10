@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
@@ -60,10 +61,38 @@ public class WriteEmail {
         String message = "Your Password has been updated";
         String subject = "Password Updated";
         emailService.sendEmail(email, subject, message); // *** Blocking
+
+    /**
+     * Get the url of the current server to create the reset password link
+     * @Param request
+     */
+    }    public String getAppUrl(HttpServletRequest request) {
+        return request.getServerName() + ":" + request.getServerPort();
     }
 
-    // TODO: Maybe change this so most of the email is constructed here and not in ForgotPasswordController?
-    public void sendPasswordForgotEmail(String email, String subject, String emailMessage) {
+    /**
+     *
+     * @param contextPath
+     * @param token
+     * @return the content of the email which is the link to reset the users password
+     */
+    public String constructLostPasswordTokenEmail(String contextPath, String token) {
+        String url = contextPath + "/resetPassword?token=" + token;
+        return ("Reset Password link:\n" + url +"\nThis link will expire after 10 mins.");
+    }
+
+    /**
+     * Send forgot password email to gardener's email when gardener(user) forgets password.
+     * Sends an email with a link that takes user to a form where they can reset their password
+     * @param gardener Gardener to get the email address
+     */
+    public void sendPasswordForgotEmail(Gardener gardener, HttpServletRequest request) {
+        // FROM https://www.baeldung.com/spring-security-registration-i-forgot-my-password
+        String token = UUID.randomUUID().toString();
+        tokenService.createLostPasswordTokenForGardener(gardener, token);
+        String email = gardener.getEmail();
+        String emailMessage = constructLostPasswordTokenEmail(getAppUrl(request), token);
+        String subject = "Forgot password?";
         emailService.sendEmail(email, subject, emailMessage); // *** Blocking
     }
 }

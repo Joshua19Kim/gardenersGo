@@ -42,15 +42,6 @@ public class ForgotPasswordFormController {
         this.writeEmail = writeEmail;
     }
 
-    public String constructLostPasswordTokenEmail(String contextPath, Locale locale, String token, Gardener gardener) {
-        String url = contextPath + "/resetPassword?token=" + token;
-        return ("Reset Password link:\n" + url +"\nThis link will expire after 10 mins.");
-    }
-
-    public String getAppUrl(HttpServletRequest request) {
-        return request.getServerName() + ":" + request.getServerPort();
-    }
-
     /**
      * Displays the form for sending a reset link if the password is forgotten
      * @return The lost password form template
@@ -82,12 +73,8 @@ public class ForgotPasswordFormController {
         if (validEmailError.isEmpty()){
             Optional<Gardener> gardener = gardenerFormService.findByEmail(email);
             if (gardener.isPresent()) {
-                // FROM https://www.baeldung.com/spring-security-registration-i-forgot-my-password
-                String token = UUID.randomUUID().toString();
-                tokenService.createLostPasswordTokenForGardener(gardener.get(), token);
-                String emailMessage = constructLostPasswordTokenEmail(getAppUrl(request), request.getLocale(), token, gardener.get());
-                String subject = "Forgot password?";
-                writeEmail.sendPasswordForgotEmail(email, subject, emailMessage); // Blocks ***
+
+                writeEmail.sendPasswordForgotEmail(gardener.get(), request); // Blocks ***
                 return "forgotPasswordForm"; // Email sent
             }
             return "forgotPasswordForm"; // Email not in DB

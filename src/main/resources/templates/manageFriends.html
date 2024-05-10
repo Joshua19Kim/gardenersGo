@@ -33,8 +33,8 @@
                         <!-- Display gardener information -->
                         <img alt="Profile Picture" th:src="@{${friend.getProfilePicture()}}">
                         <p th:text="${friend.toString()}"></p>
-                        <a th:href="@{../gardens(user=${friend.id})}">View Gardens</a>
-                        <a th:href="@{../user(user=${friend.id})}">View Profile</a>
+                        <a th:href="@{/gardens(user=${friend.id})}">View Gardens</a>
+                        <a th:href="@{/user(user=${friend.id})}">View Profile</a>
                         <button data-target="#remove-friend-modal" data-toggle="modal" id="friend-remove-button"
                                 class="remove-friend-button button"
                                 th:onclick="'displayConfirmRemove(\'' + ${friend.id} + '\');'" type="button">Remove
