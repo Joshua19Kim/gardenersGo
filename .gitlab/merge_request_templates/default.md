@@ -4,13 +4,13 @@
 - - [ ] All tests passed 
 - - [ ] Did relevant manual testing
 - - [ ] Add merge description to the request
-- - [ ] Make sure that you are merging into DEV (do not merge into MAIN!!!)
 - - [ ] Make sure delete branch is checked
 
 ## MERGE DESCRIPTION
 
 
 ## MERGE REQUEST CHECKLIST
+- - [ ] Make sure that that the merge request is merging into DEV (do not merge into MAIN!!)
 - - [ ] The task has met all of the measurable outcomes that were set. 
 - - [ ] Task meets the relevant ACs 
 - - [ ] The task has been tested (unit and/or acceptance testing) and the tests are passing. 
