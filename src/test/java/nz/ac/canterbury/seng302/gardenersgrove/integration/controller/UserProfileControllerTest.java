@@ -403,7 +403,7 @@ public class UserProfileControllerTest {
                 .perform(MockMvcRequestBuilders.multipart("/user")
                 .file(mockMultipartFile)
                 .with(csrf()))
-                .andExpect(view().name("user"));
+                .andExpect(view().name("/user"));
 
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
         //wantedNumberOfInvocation has additional 1 since .addGardener() is called once in test
