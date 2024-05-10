@@ -21,6 +21,7 @@ import java.util.UUID;
 public class WriteEmail {
     private TokenService tokenService;
 
+    @Autowired
     private EmailUserService emailService;
 
     /**
@@ -28,9 +29,8 @@ public class WriteEmail {
      * @param gardener The Gardener to send the email to
      * @param tokenService  The token service to create the unique LostPasswordToken for the gardener
      */
-    public void sendSignupEmail(Gardener gardener, TokenService tokenService, EmailUserService emailService) {
+    public void sendSignupEmail(Gardener gardener, TokenService tokenService) {
         this.tokenService = tokenService;
-        this.emailService = emailService;
         String token = generateToken();
         tokenService.createLostPasswordTokenForGardener(gardener, token);
         String email = gardener.getEmail();
@@ -47,7 +47,7 @@ public class WriteEmail {
      * Send confirmation email to gardener's email when gardener(user) updates password successfully.
      * @param gardener Gardener to get the email address
      */
-    public void sendPasswordUpdateConfirmEmail(Gardener gardener, EmailUserService emailService) {
+    public void sendPasswordUpdateConfirmEmail(Gardener gardener) {
         String email = gardener.getEmail();
         String message = "Your Password has been updated";
         String subject = "Updated Password";
