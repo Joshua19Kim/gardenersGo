@@ -197,10 +197,10 @@ public class UserProfileController {
             } else {
                 model.addAttribute("uploadMessage", uploadMessage.get());
                 model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
-                return "/user";
+                return "user";
             }
         }
-        return "/login";
+        return "login";
     }
 
     /**Check whether there is the authentication of current user to change the profile photo.
@@ -213,9 +213,9 @@ public class UserProfileController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Authentication: " + authentication);
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            return "/user";
+            return "user";
         }
-        return "/login";
+        return "login";
     }
 
     /**
@@ -251,7 +251,7 @@ public class UserProfileController {
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
         InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
 
-        if (gardenerOptional.isEmpty()) {return "/login";}
+        if (gardenerOptional.isEmpty()) {return "login";}
 
         gardener = gardenerOptional.get();
         Optional<String> passwordCorrectError = inputValidator.checkSavedPassword(oldPassword, gardener.getPassword());
