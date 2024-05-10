@@ -4,6 +4,7 @@
 - - [ ] All tests passed 
 - - [ ] Did relevant manual testing
 - - [ ] Add merge description to the request
+- - [ ] Make sure delete branch is checked
 
 ## MERGE DESCRIPTION
 
