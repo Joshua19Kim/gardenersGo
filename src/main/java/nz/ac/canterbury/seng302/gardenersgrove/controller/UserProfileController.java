@@ -1,10 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -106,29 +104,34 @@ public class UserProfileController {
             lastName = null;
         }
 
-        InputValidationService inputValidator = new InputValidationService(gardenerFormService);
+        InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
 
         Optional<String> firstNameError = Optional.empty();
         if (firstName != null) {
             firstNameError = inputValidator.checkValidName(firstName, "First", isLastNameOptional);
+            model.addAttribute("firstName", firstName);
         }
         model.addAttribute("firstNameValid", firstNameError.orElse(""));
 
         Optional<String> lastNameError = Optional.empty();
         if (lastName != null) {
             lastNameError = inputValidator.checkValidName(lastName, "Last", isLastNameOptional);
+            model.addAttribute("lastName", lastName);
+            model.addAttribute("isLastNameOptional", isLastNameOptional);
         }
         model.addAttribute("lastNameValid", lastNameError.orElse(""));
 
         Optional<String> DoBError = Optional.empty();
         if (DoB != null) {
             DoBError = inputValidator.checkDoB(DoB);
+            model.addAttribute("DoB", DoB);
         }
         model.addAttribute("DoBValid", DoBError.orElse(""));
 
         Optional<String> validEmailError = Optional.empty();
         if (email != null) {
             validEmailError = inputValidator.checkValidEmail(email);
+            model.addAttribute("email", email);
         }
 
         Optional<String> emailInUseError = Optional.empty();
@@ -194,10 +197,10 @@ public class UserProfileController {
             } else {
                 model.addAttribute("uploadMessage", uploadMessage.get());
                 model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
-                return "/user";
+                return "user";
             }
         }
-        return "/login";
+        return "login";
     }
 
     /**Check whether there is the authentication of current user to change the profile photo.
@@ -210,9 +213,9 @@ public class UserProfileController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("Authentication: " + authentication);
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            return "/user";
+            return "user";
         }
-        return "/login";
+        return "login";
     }
 
     /**
@@ -238,17 +241,17 @@ public class UserProfileController {
      */
     @PostMapping("/password")
     public String updatePassword(@RequestParam(name = "oldPassword", required = false) String oldPassword,
-                              @RequestParam(name = "newPassword", required = false) String newPassword,
-                              @RequestParam(name = "retypePassword", required = false) String retypePassword,
-                              Model model) {
+                                 @RequestParam(name = "newPassword", required = false) String newPassword,
+                                 @RequestParam(name = "retypePassword", required = false) String retypePassword,
+                                 Model model) {
         logger.info("POST /password");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = authentication.getName();
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
-        InputValidationService inputValidator = new InputValidationService(gardenerFormService);
+        InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
 
-        if (gardenerOptional.isEmpty()) {return "/login";}
+        if (gardenerOptional.isEmpty()) {return "login";}
 
         gardener = gardenerOptional.get();
         Optional<String> passwordCorrectError = inputValidator.checkSavedPassword(oldPassword, gardener.getPassword());

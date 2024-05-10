@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ public class ForgotPasswordControllerTest {
     private EmailUserService emailService;
     @MockBean
     private WriteEmail writeEmail;
-    private InputValidationService inputValidator;
+    private InputValidationUtil inputValidator;
 
     @Test
     @WithMockUser
@@ -47,7 +47,7 @@ public class ForgotPasswordControllerTest {
     @Test
     @WithMockUser
     void onForgotPasswordPage_validNonExistingEmail_confirmationMessageProvided() throws Exception {
-        inputValidator = new InputValidationService(gardenerFormService);
+        inputValidator = new InputValidationUtil(gardenerFormService);
         Mockito.when(inputValidator.checkEmailInUse(Mockito.anyString())).thenReturn(Optional.of(""));
         Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
         ForgotPasswordFormController forgotPasswordFormController = new ForgotPasswordFormController(gardenerFormService, tokenService, emailService, writeEmail);

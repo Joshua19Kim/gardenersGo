@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.authentication;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.SignupCodeFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -11,8 +11,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 /**
  * Custom Authentication Provider class, to allow for handling authentication in any way we see fit.
@@ -44,11 +42,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(Authentication authentication) {
-        InputValidationService inputValidationService = new InputValidationService(gardenerFormService);
+        InputValidationUtil inputValidationUtil = new InputValidationUtil(gardenerFormService);
         String email = String.valueOf(authentication.getName());
         String password = String.valueOf(authentication.getCredentials());
 
-        if (email == null || email.isEmpty() || inputValidationService.checkValidEmail(email).isPresent()) {
+        if (email == null || email.isEmpty() || inputValidationUtil.checkValidEmail(email).isPresent()) {
             throw new BadCredentialsException("Email address must be in the form 'jane@doe.nz'");
         }
 

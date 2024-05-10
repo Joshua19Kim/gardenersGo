@@ -4,11 +4,10 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,7 +28,7 @@ public class UserProfileControllerTest {
     private Model modelMock;
     private Gardener gardener;
     private Authentication authentication;
-    private InputValidationService inputValidator;
+    private InputValidationUtil inputValidator;
     private Optional optional;
 
 
@@ -43,7 +42,7 @@ public class UserProfileControllerTest {
         userProfileController = new UserProfileController(gardenerFormService, writeEmail);
         modelMock = Mockito.mock(Model.class);
         gardener = Mockito.mock(Gardener.class);
-        inputValidator = Mockito.mock(InputValidationService.class);
+        inputValidator = Mockito.mock(InputValidationUtil.class);
         optional = Mockito.mock(Optional.class);
         gardener.setEmail("testEmail@test.test");
     }
@@ -186,7 +185,7 @@ public class UserProfileControllerTest {
     void GivenUserDoesNotHaveEmailInServer_WhenUserAccessesUpdatePasswordPage_RedirectToLoginPage() {
         Mockito.when(authentication.getName()).thenReturn("");
         String testResult = userProfileController.updatePassword("dodgyAccess","dodgyAccess!", "dodgyAccess!", modelMock);
-        String expectedNextPage = "/login";
+        String expectedNextPage = "login";
         assertEquals(expectedNextPage, testResult);
     }
 }

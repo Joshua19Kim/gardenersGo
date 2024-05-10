@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ResetPasswordFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ public class ResetPasswordControllerTest {
     @MockBean
     private TokenService tokenService;
     @MockBean
-    private InputValidationService inputValidationService;
+    private InputValidationUtil inputValidationUtil;
     private Gardener mockGardener = new Gardener("test", "test", null, "test@test.test","Password1!");
     @MockBean
     private WriteEmail mockWriteEmail;
@@ -101,9 +101,9 @@ public class ResetPasswordControllerTest {
                         .param("token", "valid")
                 );
         //-------------------------------------------------------------------
-        inputValidationService = Mockito.mock(InputValidationService.class);
-        Mockito.when(inputValidationService.checkPasswordsMatch(Mockito.anyString(),Mockito.anyString())).thenReturn(Optional.empty());
-        Mockito.when(inputValidationService.checkStrongPassword(Mockito.anyString())).thenReturn(Optional.empty());
+        inputValidationUtil = Mockito.mock(InputValidationUtil.class);
+        Mockito.when(inputValidationUtil.checkPasswordsMatch(Mockito.anyString(),Mockito.anyString())).thenReturn(Optional.empty());
+        Mockito.when(inputValidationUtil.checkStrongPassword(Mockito.anyString())).thenReturn(Optional.empty());
         Mockito.when(gardenerFormService.addGardener(mockGardener)).thenReturn(mockGardener);
         Mockito.doNothing().when(mockWriteEmail).sendPasswordUpdateConfirmEmail(mockGardener);
         MOCK_MVC
@@ -118,9 +118,9 @@ public class ResetPasswordControllerTest {
     @Test
     @WithMockUser
     void onResetPasswordPage_weakPasswordsGiven_stayOnResetPasswordPage() throws Exception {
-        inputValidationService = Mockito.mock(InputValidationService.class);
-        Mockito.when(inputValidationService.checkPasswordsMatch(Mockito.anyString(),Mockito.anyString())).thenReturn(Optional.empty());
-        Mockito.when(inputValidationService.checkStrongPassword(Mockito.anyString())).thenReturn(Optional.of("Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
+        inputValidationUtil = Mockito.mock(InputValidationUtil.class);
+        Mockito.when(inputValidationUtil.checkPasswordsMatch(Mockito.anyString(),Mockito.anyString())).thenReturn(Optional.empty());
+        Mockito.when(inputValidationUtil.checkStrongPassword(Mockito.anyString())).thenReturn(Optional.of("Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
         ResetPasswordFormController resetPasswordFormController = new ResetPasswordFormController(gardenerFormService, tokenService, mockWriteEmail);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(resetPasswordFormController).build();
         MOCK_MVC
@@ -134,9 +134,9 @@ public class ResetPasswordControllerTest {
     @Test
     @WithMockUser
     void onResetPasswordPage_differentPasswordsGiven_stayOnResetPasswordPage() throws Exception {
-        inputValidationService = Mockito.mock(InputValidationService.class);
-        Mockito.when(inputValidationService.checkPasswordsMatch(Mockito.anyString(),Mockito.anyString())).thenReturn(Optional.of("Passwords do not match."));
-        Mockito.when(inputValidationService.checkStrongPassword(Mockito.anyString())).thenReturn(Optional.empty());
+        inputValidationUtil = Mockito.mock(InputValidationUtil.class);
+        Mockito.when(inputValidationUtil.checkPasswordsMatch(Mockito.anyString(),Mockito.anyString())).thenReturn(Optional.of("Passwords do not match."));
+        Mockito.when(inputValidationUtil.checkStrongPassword(Mockito.anyString())).thenReturn(Optional.empty());
         ResetPasswordFormController resetPasswordFormController = new ResetPasswordFormController(gardenerFormService, tokenService, mockWriteEmail);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(resetPasswordFormController).build();
         MOCK_MVC

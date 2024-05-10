@@ -78,7 +78,7 @@ public class ManageFriendsController {
         } else {
             logger.info("No user with that email");
         }
-        return "/manageFriends";
+        return "manageFriends";
 
     }
 
