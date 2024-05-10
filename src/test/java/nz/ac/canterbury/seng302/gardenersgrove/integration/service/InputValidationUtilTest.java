@@ -1,7 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
@@ -21,6 +23,12 @@ public class InputValidationUtilTest {
 
     private final GardenerFormService gardenerFormService;
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
+
+    @MockBean
+    private ForgotPasswordFormController forgotPasswordFormController;
+
+    @MockBean
+    private EmailUserService emailUserService;
 
 
     @Autowired
