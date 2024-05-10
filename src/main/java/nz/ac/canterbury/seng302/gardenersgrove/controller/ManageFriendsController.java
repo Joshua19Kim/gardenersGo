@@ -86,7 +86,7 @@ public class ManageFriendsController {
             logger.info("No user with that email");
         }
         model.addAttribute("gardens", gardens);
-        return "/manageFriends";
+        return "manageFriends";
 
     }
 
