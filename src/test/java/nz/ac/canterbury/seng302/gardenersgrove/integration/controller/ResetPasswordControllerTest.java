@@ -45,7 +45,7 @@ public class ResetPasswordControllerTest {
                         .param("token", "invalid")
                 )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/login"));
+                .andExpect(view().name("redirect:/login?expired"));
     }
     @Test
     @WithMockUser

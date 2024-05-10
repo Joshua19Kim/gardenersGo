@@ -57,7 +57,7 @@ public class ResetPasswordFormController {
             expiredToken.ifPresent(e -> tokenService.removeToken(e));
             return "redirect:/login?expired"; // Token is expired
         }
-        return "redirect:/login"; // Token does not exist
+        return "redirect:/login?expired"; // Token does not exist
     }
 
     /**
