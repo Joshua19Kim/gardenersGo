@@ -207,7 +207,7 @@ public class UserProfileController {
                 model.addAttribute("DoBValid", "");
                 model.addAttribute("emailValid", "");
 
-                return "/user";
+                return "user";
             }
         }
         return "login";
