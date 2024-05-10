@@ -48,6 +48,8 @@ public class ResetPasswordFormController {
         if (result == null) { // No issue
             Optional<Gardener> tempGardener = tokenService.findGardenerbyToken(token);
             if (tempGardener.isPresent()) {
+                Optional<LostPasswordToken> usedToken = tokenService.getTokenFromString(token);
+                usedToken.ifPresent(e -> tokenService.removeToken(e));
                 gardener = tempGardener.get();
                 return  "resetPasswordForm";
             }
