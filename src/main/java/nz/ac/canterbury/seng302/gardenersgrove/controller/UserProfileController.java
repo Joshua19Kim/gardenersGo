@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
@@ -33,6 +34,7 @@ public class UserProfileController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
     private final GardenerFormService gardenerFormService;
     private final WriteEmail writeEmail;
+    private final EmailUserService emailService;
     private Gardener gardener;
 
     @Autowired
@@ -44,8 +46,9 @@ public class UserProfileController {
     private boolean isFileNotAdded;
 
     @Autowired
-    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail) {
+    public UserProfileController(GardenerFormService gardenerFormService, EmailUserService emailService, WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
+        this.emailService = emailService;
         this.writeEmail = writeEmail;
     }
 
@@ -268,7 +271,7 @@ public class UserProfileController {
                 newPasswordDifferentFromOldPassword.isEmpty()) {
             gardener.updatePassword(newPassword);
             gardenerFormService.addGardener(gardener);
-            writeEmail.sendPasswordUpdateConfirmEmail(gardener);
+            writeEmail.sendPasswordUpdateConfirmEmail(gardener, emailService);
             return "redirect:/user";
         }
 
