@@ -3,6 +3,7 @@
 - - [ ] Fixed merge conflicts
 - - [ ] All tests passed 
 - - [ ] Did relevant manual testing
+- - [ ] Add merge description to the request
 
 ## MERGE DESCRIPTION
 
