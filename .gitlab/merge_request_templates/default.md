@@ -8,6 +8,7 @@
 
 ## MERGE DESCRIPTION
 
+## MANUAL TESTING LINK
 
 ## MERGE REQUEST CHECKLIST
 - - [ ] Make sure that that the merge request is merging into DEV (do not merge into MAIN!!)
