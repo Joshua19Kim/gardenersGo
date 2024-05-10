@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import static java.lang.Long.parseLong;
@@ -192,7 +194,7 @@ public class GardenFormController {
    * @return The garden details page if the garden exists, else remains on the gardens page
    */
   @GetMapping("gardens/details")
-  public String gardenDetails(@RequestParam(name = "gardenId") String gardenId,
+  public String gardenDetails(@RequestParam(name = "gardenId", required = false) String gardenId,
                               @RequestParam(name = "uploadError", required = false) String uploadError,
                               @RequestParam(name = "errorId", required = false) String errorId,
                               @RequestParam(name = "userId", required = false) String userId,
@@ -201,6 +203,9 @@ public class GardenFormController {
     List<Garden> gardens = gardenService.getGardenResults();
     model.addAttribute("gardens", gardens);
 
+    if (gardenId == null) {
+      return "redirect:/gardens";
+    }
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
 
@@ -228,11 +233,78 @@ public class GardenFormController {
           return "redirect:/gardens";
         }
       }
+    }
+    return "redirect:/gardens";
+  }
 
-    } else {
+  /**
+   * Posts a form response with a new Gardener
+   * @param isGardenPublic is public checkbox selected
+   * @param gardenId id for Garden being viewed
+   * @param model (map-like) representation of isGardenPublic boolean for use in thymeleaf,
+   *              with value being set to relevant parameter provided
+   * @return thymeleaf Garden Details form template
+   */
+  @PostMapping("/gardens/details")
+  public String submitForm(@RequestParam(name = "isGardenPublic", required = false) boolean isGardenPublic,
+                           @RequestParam(name = "gardenId") String gardenId,
+
+                           @RequestParam(name = "uploadError", required = false) String uploadError,
+                           @RequestParam(name = "errorId", required = false) String errorId,
+                           @RequestParam(name = "userId", required = false) String userId,
+
+                           Model model, HttpServletRequest request) {
+    logger.info("POST /gardens/details");
+
+    model.addAttribute("isGardenPublic", isGardenPublic);
+
+    List<Garden> gardens = gardenService.getGardenResults();
+    model.addAttribute("gardens", gardens);
+
+    if (gardenId == null) {
       return "redirect:/gardens";
     }
+    Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
+    if (garden.isPresent()) {
+
+      Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
+      existingGarden.setIsGardenPublic(isGardenPublic);
+      gardenService.addGarden(existingGarden);
+
+      String requestUri = request.getRequestURI();
+      String queryString = request.getQueryString();
+      if (queryString != null) {
+        requestUri = requestUri + "?" + queryString;
+      }
+      model.addAttribute("requestURI", requestUri);
+
+      model.addAttribute("garden", garden.get());
+
+      if(uploadError != null) {
+        model.addAttribute("uploadError", uploadError);
+        model.addAttribute("errorId", errorId);
+      }
+      if(userId == null || gardener.getId() == parseLong(userId, 10)) {
+        return "gardenDetailsTemplate";
+      } else {
+        Optional<Gardener> friend = gardenerFormService.findById(parseLong(userId, 10));
+        if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+          model.addAttribute("gardener", friend.get());
+          return "unauthorizedGardenDetailsTemplate";
+        } else {
+          return "redirect:/gardens";
+        }
+      }
+    }
+    return "redirect:/gardens";
+
+
+
+//    return "gardenDetailsTemplate";
   }
+
+
+
 
   /**
    * Updates the details of a garden in the database based on the details provided in the form

@@ -1,7 +1,7 @@
-INSERT INTO garden (name, location, size) VALUES ('Garden', 'Home', '32');
-INSERT INTO garden (name, location, size) VALUES ('Vegetable Garden', 'Kitchen Garden', '35');
-INSERT INTO garden (name, location, size) VALUES ('Fruit Garden', 'Backyard', '0');
-INSERT INTO garden (name, location, size) VALUES ('Herb Garden', 'Windowsill', '10');
+INSERT INTO garden (name, location, size, PUBLIC_GARDEN) VALUES ('Garden', 'Home', '32', false);
+INSERT INTO garden (name, location, size, PUBLIC_GARDEN) VALUES ('Vegetable Garden', 'Kitchen Garden', '35', false);
+INSERT INTO garden (name, location, size, PUBLIC_GARDEN) VALUES ('Fruit Garden', 'Backyard', '0', false);
+INSERT INTO garden (name, location, size, PUBLIC_GARDEN) VALUES ('Herb Garden', 'Windowsill', '10', false);
 
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('My Plant', 1, '2', 'Rose', '/images/placeholder.jpg');
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('My Plant 2', 1, '29', 'Daisy', '/images/placeholder.jpg');
@@ -51,10 +51,10 @@ INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (3, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (4, 'ROLE_USER');
 
-INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Tomato Patch', 'Home', '32');
-INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Strawberry Garden', 'Kitchen Garden', '35');
-INSERT INTO garden (gardener_id, name, location, size) VALUES (2, 'Big Garden', 'Backyard', '0');
-INSERT INTO garden (gardener_id, name, location, size) VALUES (3, 'Long Garden', 'Windowsill', '10');
+INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Tomato Patch', 'Home', '32', false);
+INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Strawberry Garden', 'Kitchen Garden', '35', false);
+INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (2, 'Big Garden', 'Backyard', '0', false);
+INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (3, 'Long Garden', 'Windowsill', '10', false);
 
 ALTER TABLE relationships ADD CONSTRAINT unique_gardener_friend UNIQUE (gardener_id, friend_id);
 
