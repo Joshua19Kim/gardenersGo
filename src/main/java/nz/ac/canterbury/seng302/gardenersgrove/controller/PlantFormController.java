@@ -55,6 +55,23 @@ public class PlantFormController {
     }
 
     /**
+     * Gets the current URI and removes the contextPath to ensure it works on deployed instances.
+     * This URI is used to redirect to the previous page from the create garden form.
+     * @param request the request made by the application
+     * @return the current URI used to know what page to go back to in the create garden form
+     */
+    public String getRequestURI(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        String queryString = request.getQueryString();
+        if (queryString != null) {
+            requestUri = requestUri + "?" + queryString;
+        }
+        String contextPath = request.getContextPath();
+        requestUri = requestUri.replace(contextPath + "/", "/");
+        return requestUri;
+    }
+
+    /**
      * Displays the form for adding a new plant to a garden.
      *
      * @param gardenId The ID of the garden to which the plant is being added.
@@ -69,12 +86,7 @@ public class PlantFormController {
         model.addAttribute("gardens", gardens);
         Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
         if (garden.isPresent()) {
-            String requestUri = request.getRequestURI();
-            String queryString = request.getQueryString();
-            if (queryString != null) {
-                requestUri = requestUri + "?" + queryString;
-            }
-            model.addAttribute("requestURI", requestUri);
+            model.addAttribute("requestURI", getRequestURI(request));
             model.addAttribute("garden", garden.get());
             return "plantsFormTemplate";
         } else {
@@ -101,6 +113,7 @@ public class PlantFormController {
           @RequestParam(name = "date", required = false) String date,
           @RequestParam(name = "gardenId") String gardenId,
           @RequestParam("file") MultipartFile file,
+          HttpServletRequest request,
           Model model) {
         logger.info("/gardens/details/plants/form");
         String validatedDate = "";
@@ -138,42 +151,19 @@ public class PlantFormController {
         }
 
         if (isValid) {
-            Plant plant;
+            Plant plant = new Plant(name, garden);
             boolean countPresent = !Objects.equals(validatedPlantCount.trim(), "");
             boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
             boolean datePresent = !Objects.equals(date.trim(), "");
 
-            if (countPresent && descriptionPresent && datePresent) {
-                // All optional fields are present
-                plant =
-                        new Plant(
-                                name,
-                                new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString(),
-                                validatedPlantDescription,
-                                validatedDate,
-                                garden);
-            } else if (countPresent && descriptionPresent) {
-                // Count and Description are present
-                plant =
-                        new Plant(name, new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString(), validatedPlantDescription, garden);
-            } else if (countPresent && datePresent) {
-                // Count and Date are present
-                plant = new Plant(name, validatedDate, garden, new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
-            } else if (descriptionPresent && datePresent) {
-                // Description and Date are present
-                plant = new Plant(name, garden, validatedPlantDescription, validatedDate);
-            } else if (countPresent) {
-                // Only Count is present
-                plant = new Plant(name, new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString(), garden);
-            } else if (descriptionPresent) {
-                // Only Description is present
-                plant = new Plant(garden, name, validatedPlantDescription);
-            } else if (datePresent) {
-                // Only Date is present
-                plant = new Plant(name, garden, validatedDate);
-            } else {
-                // Only name is present
-                plant = new Plant(name, garden);
+            if (countPresent) {
+                plant.setCount(new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
+            }
+            if (descriptionPresent) {
+                plant.setDescription(validatedPlantDescription);
+            }
+            if (datePresent) {
+                plant.setDatePlanted(validatedDate);
             }
             plantService.addPlant(plant);
             if(file.isEmpty()) {
@@ -185,6 +175,7 @@ public class PlantFormController {
             return "redirect:/gardens/details?gardenId=" + gardenId;
         } else {
             List<Garden> gardens = gardenService.getGardenResults();
+            model.addAttribute("requestURI", getRequestURI(request));
             model.addAttribute("gardens", gardens);
             model.addAttribute("name", name);
             model.addAttribute("count", count);
@@ -210,12 +201,7 @@ public class PlantFormController {
         model.addAttribute("gardens", gardens);
         Optional<Plant> plant = plantService.getPlant(parseLong(plantId));
         if (plant.isPresent()) {
-            String requestUri = request.getRequestURI();
-            String queryString = request.getQueryString();
-            if (queryString != null) {
-                requestUri = requestUri + "?" + queryString;
-            }
-            model.addAttribute("requestURI", requestUri);
+            model.addAttribute("requestURI", getRequestURI(request));
             model.addAttribute("plant", plant.get());
             model.addAttribute("garden", plant.get().getGarden());
 
@@ -251,6 +237,7 @@ public class PlantFormController {
           @RequestParam(name = "date", required = false) String date,
           @RequestParam(name = "plantId") String plantId,
           @RequestParam("file") MultipartFile file,
+          HttpServletRequest request,
           Model model) {
         logger.info("POST /gardens/details/plants/edit");
         String formattedDate = "";
@@ -315,6 +302,7 @@ public class PlantFormController {
             return "redirect:/gardens/details?gardenId=" + plant.getGarden().getId();
         } else {
             List<Garden> gardens = gardenService.getGardenResults();
+            model.addAttribute("requestURI", getRequestURI(request));
             model.addAttribute("gardens", gardens);
             model.addAttribute("name", name);
             model.addAttribute("count", count);

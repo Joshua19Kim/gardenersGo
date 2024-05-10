@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
@@ -50,6 +51,23 @@ public class UserProfileController {
     }
 
     /**
+     * Gets the current URI and removes the contextPath to ensure it works on deployed instances.
+     * This URI is used to redirect to the previous page from the create garden form.
+     * @param request the request made by the application
+     * @return the current URI used to know what page to go back to in the create garden form
+     */
+    public String getRequestURI(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        String queryString = request.getQueryString();
+        if (queryString != null) {
+            requestUri = requestUri + "?" + queryString;
+        }
+        String contextPath = request.getContextPath();
+        requestUri = requestUri.replace(contextPath + "/", "/");
+        return requestUri;
+    }
+
+    /**
      * Retrieve user's details (first name, last name, date of birth, email and also check the existence of last name.) based on the current authentication
      * If the edit button is clicked in user.html, all the details will be editable.
      * When the save button is clicked, all the existed/edited details will be checked for validation and saved if all pass the tests.
@@ -69,12 +87,15 @@ public class UserProfileController {
                                  @RequestParam(name = "email", required = false) String email,
                                  @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
                                  @RequestParam(name = "user", required = false) String user,
+                                 HttpServletRequest request,
                                  Model model) {
 
         logger.info("GET /user");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = authentication.getName();
+
+        model.addAttribute("requestURI", getRequestURI(request));
 
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
         if (gardenerOptional.isPresent()) {
@@ -178,7 +199,9 @@ public class UserProfileController {
      * @return thymeleaf 'user' page after updating successfully to reload user's details, otherwise thymeleaf login page
      */
     @PostMapping("/user")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, Model model) {
+    public String handleFileUpload(@RequestParam("file") MultipartFile file,
+                                   HttpServletRequest request,
+                                   Model model) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("POST /upload");
@@ -195,6 +218,7 @@ public class UserProfileController {
             if (uploadMessage.isEmpty()) {
                 return "redirect:/user";
             } else {
+                model.addAttribute("requestURI", getRequestURI(request));
                 model.addAttribute("uploadMessage", uploadMessage.get());
                 model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
                 return "user";
@@ -223,8 +247,9 @@ public class UserProfileController {
      * @return 'Update password' page
      */
     @GetMapping("/password")
-    public String passwordForm() {
+    public String passwordForm(Model model, HttpServletRequest request) {
         logger.info("GET /password");
+        model.addAttribute("requestURI", getRequestURI(request));
         return "password";
     }
 
@@ -243,6 +268,7 @@ public class UserProfileController {
     public String updatePassword(@RequestParam(name = "oldPassword", required = false) String oldPassword,
                                  @RequestParam(name = "newPassword", required = false) String newPassword,
                                  @RequestParam(name = "retypePassword", required = false) String retypePassword,
+                                 HttpServletRequest request,
                                  Model model) {
         logger.info("POST /password");
 
@@ -250,6 +276,8 @@ public class UserProfileController {
         String currentUserEmail = authentication.getName();
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
         InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
+
+        model.addAttribute("requestURI", getRequestURI(request));
 
         if (gardenerOptional.isEmpty()) {return "login";}
 

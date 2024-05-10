@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -34,6 +35,23 @@ public class ManageFriendsController {
     }
 
     /**
+     * Gets the current URI and removes the contextPath to ensure it works on deployed instances.
+     * This URI is used to redirect to the previous page from the create garden form.
+     * @param request the request made by the application
+     * @return the current URI used to know what page to go back to in the create garden form
+     */
+    public String getRequestURI(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        String queryString = request.getQueryString();
+        if (queryString != null) {
+            requestUri = requestUri + "?" + queryString;
+        }
+        String contextPath = request.getContextPath();
+        requestUri = requestUri.replace(contextPath + "/", "/");
+        return requestUri;
+    }
+
+    /**
      * Get lists of all types of relationships with the current logged-in user. This includes relationships with the status
      * accepted, pending, incoming and declined. These lists are also used to decrease the current available search pool
      * in order to prevent the user for searching and sending requests to other users they have an existing relationship
@@ -43,9 +61,11 @@ public class ManageFriendsController {
      * @return manage friend html
      */
     @GetMapping("/manageFriends")
-    public String getManageFriends(Authentication authentication, Model model) {
+    public String getManageFriends(Authentication authentication, Model model, HttpServletRequest request) {
 
         logger.info("GET /manageFriends");
+
+        model.addAttribute("requestURI", getRequestURI(request));
 
         String currentUserEmail = authentication.getPrincipal().toString();
         Optional<Gardener> currentUserOptional = gardenerFormService.findByEmail(currentUserEmail);

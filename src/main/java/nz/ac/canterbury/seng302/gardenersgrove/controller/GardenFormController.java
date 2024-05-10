@@ -31,6 +31,23 @@ public class GardenFormController {
   Logger logger = LoggerFactory.getLogger(GardenFormController.class);
 
   /**
+   * Gets the current URI and removes the contextPath to ensure it works on deployed instances.
+   * This URI is used to redirect to the previous page from the create garden form.
+   * @param request the request made by the application
+   * @return the current URI used to know what page to go back to in the create garden form
+   */
+  public String getRequestURI(HttpServletRequest request) {
+    String requestUri = request.getRequestURI();
+    String queryString = request.getQueryString();
+    if (queryString != null) {
+      requestUri = requestUri + "?" + queryString;
+    }
+    String contextPath = request.getContextPath();
+    requestUri = requestUri.replace(contextPath + "/", "/");
+    return requestUri;
+  }
+
+  /**
    * Gets the home page that displays the list of gardens
    * @param model the model for passing attributes to the view
    * @param request the request used to find the current uri
@@ -67,16 +84,7 @@ public class GardenFormController {
 
     }
     model.addAttribute("gardens", gardens);
-
-    String requestUri = request.getRequestURI();
-    String queryString = request.getQueryString();
-    if (queryString != null) {
-      requestUri = requestUri + "?" + queryString;
-    }
-    String contextPath = request.getContextPath();
-    logger.debug(contextPath);
-    requestUri = requestUri.replace(contextPath + "/", "/");
-    model.addAttribute("requestURI", requestUri);
+    model.addAttribute("requestURI", getRequestURI(request));
     return "gardensTemplate";
   }
 
@@ -204,12 +212,7 @@ public class GardenFormController {
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
 
-      String requestUri = request.getRequestURI();
-      String queryString = request.getQueryString();
-      if (queryString != null) {
-        requestUri = requestUri + "?" + queryString;
-      }
-      model.addAttribute("requestURI", requestUri);
+      model.addAttribute("requestURI", getRequestURI(request));
 
       model.addAttribute("garden", garden.get());
 
@@ -250,7 +253,7 @@ public class GardenFormController {
       @RequestParam(name = "location") String location,
       @RequestParam(name = "size") String size,
       @RequestParam(name = "gardenId") String gardenId,
-      Model model) {
+      Model model, HttpServletRequest request) {
     logger.info("POST gardens/edit");
 
     String validatedName = ValidityChecker.validateGardenName(name);
@@ -292,6 +295,7 @@ public class GardenFormController {
       model.addAttribute("location", location);
       model.addAttribute("size", size.replace(',', '.'));
       model.addAttribute(gardenService.getGarden(parseLong(gardenId)).get());
+      model.addAttribute("requestURI", getRequestURI(request));
       returnedTemplate = "editGardensFormTemplate";
     }
     return returnedTemplate;
@@ -312,12 +316,7 @@ public class GardenFormController {
     model.addAttribute("gardens", gardens);
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
-      String requestUri = request.getRequestURI();
-      String queryString = request.getQueryString();
-      if (queryString != null) {
-        requestUri = requestUri + "?" + queryString;
-      }
-      model.addAttribute("requestURI", requestUri);
+      model.addAttribute("requestURI", getRequestURI(request));
       model.addAttribute("garden", garden.get());
       return "editGardensFormTemplate";
     } else {
