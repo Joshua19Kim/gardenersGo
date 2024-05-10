@@ -2,13 +2,13 @@
 - - [ ] Merged dev into your branch 
 - - [ ] Fixed merge conflicts
 - - [ ] All tests passed 
-- - [ ] Did relevant manual testing
+- - [ ] Did relevant manual testing and specified it in the manual testing column
 - - [ ] Add merge description to the request
 - - [ ] Make sure delete branch is checked
 
 ## MERGE DESCRIPTION
 
-## MANUAL TESTING LINK
+## MANUAL TESTING 
 https://docs.google.com/spreadsheets/d/1DNgNIImW8IDq6zZwMjNLyR00aWvIsctb-yj8jZbuT8E/edit?usp=sharing
 
 Stories/ ACS tested:
