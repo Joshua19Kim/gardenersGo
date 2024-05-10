@@ -11,7 +11,8 @@
 ## MANUAL TESTING 
 https://docs.google.com/spreadsheets/d/1DNgNIImW8IDq6zZwMjNLyR00aWvIsctb-yj8jZbuT8E/edit?usp=sharing
 
-Stories/ ACS tested:
+Story tested:
+ACS tested: 
 
 ## MERGE REQUEST CHECKLIST
 - - [ ] Make sure that that the merge request is merging into DEV (do not merge into MAIN!!)
