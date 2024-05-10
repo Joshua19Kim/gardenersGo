@@ -49,7 +49,7 @@ public class ResetPasswordFormController {
             Optional<Gardener> tempGardener = tokenService.findGardenerbyToken(token);
             if (tempGardener.isPresent()) {
                 Optional<LostPasswordToken> usedToken = tokenService.getTokenFromString(token);
-                usedToken.ifPresent(e -> tokenService.removeToken(e));
+                usedToken.ifPresent(e -> tokenService.removeToken(e)); // Deletes token after One use
                 gardener = tempGardener.get();
                 return  "resetPasswordForm";
             }
@@ -59,7 +59,7 @@ public class ResetPasswordFormController {
             expiredToken.ifPresent(e -> tokenService.removeToken(e));
             return "redirect:/login?expired"; // Token is expired
         }
-        return "redirect:/login?expired"; // Token does not exist
+        return "redirect:/login"; // Token does not exist
     }
 
     /**
