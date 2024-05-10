@@ -211,6 +211,40 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     white-space: normal;
 }
 
+.container {
+    position: relative;
+}
+
+.left-details-container {
+    display: inline-grid;
+}
+
+.right-details-container {
+    display: inline-grid;
+    position: absolute;
+    right: 0;
+    height: 17%;
+    margin-right: 2%;
+}
+
+.public-checkbox-container {
+    position: absolute;
+    bottom: 0;
+}
+
+#public-checkbox-label {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #45a049;
+    padding-right: 10px;
+    vertical-align: middle;
+}
+
+#isGardenPublic {
+    height: 30px;
+    width: 30px;
+    vertical-align: middle;
+}
 
 .plant-list-container {
     overflow-y: auto;
