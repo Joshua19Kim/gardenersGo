@@ -78,7 +78,7 @@ public class ManageFriendsControllerTest {
                 .andExpect(model().attribute("pending", pending))
                 .andExpect(model().attribute("incoming", incoming))
                 .andExpect(model().attribute("declined", declined))
-                .andExpect(view().name("/manageFriends"));
+                .andExpect(view().name("manageFriends"));
 
     }
 
