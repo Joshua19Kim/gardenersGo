@@ -8,10 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.*;
 
 /**
  *  A class used to check whether an input string contains offensive language, based on a user defined list.
@@ -25,9 +22,14 @@ public class WordFilter {
     static Map<String, String[]> words = new HashMap<>();
     static int largestWordLength = 0;
 
+    static {
+        loadConfigs();
+    }
+
     /**
      * Loads the list of words from the .csv file into a HashMap. If a banned word has words that are to be ignored in
      * combination with it, these are loaded into the HashMap also.
+     * Wordlist was sourced from: <a href="https://github.com/coffee-and-fun/google-profanity-words">...</a>
      */
     public static void loadConfigs() {
         try {
@@ -83,46 +85,58 @@ public class WordFilter {
     }
 
     /**
-     * Iterates over a String input and checks whether a banned word was found, then checks if the word should be
-     * ignored.
-     * @param input The string input that is to be checked for offensive words.
-     * @return A list of offensive words found in the input string.
+     * Helper method to find bad words in a string. Returns a set so that duplicated can be filtered later.
+     * @param input The input string to be checked for bad words.
+     * @return A Set containing the bad words found.
      */
-    public static ArrayList<String> containsBadWords(String input) {
-        if(input == null) {
-            return new ArrayList<>();
-        }
-
-        input = replaceLeetspeak(input);
-        ArrayList<String> badWords = new ArrayList<>();
+    private static Set<String> findBadWords(String input) {
+        Set<String> badWords = new HashSet<>();
         input = input.toLowerCase().replaceAll("[^a-zA-Z]", "");
 
         // Iterate over each letter in the word.
-        for(int start = 0; start < input.length(); start++) {
+        for (int start = 0; start < input.length(); start++) {
             // From each letter, keep going to find bad words until either the end of the sentence is reached, or the max word length is reached.
-            for(int offset = 1; offset < (input.length()+1 - start) && offset < largestWordLength; offset++)  {
+            for (int offset = 1; offset < (input.length() + 1 - start) && offset < largestWordLength; offset++) {
                 String wordToCheck = input.substring(start, start + offset);
-                if(words.containsKey(wordToCheck)) {
+                if (words.containsKey(wordToCheck)) {
                     // Check whether the word should be ignored.
                     String[] ignoreCheck = words.get(wordToCheck);
                     boolean ignore = false;
-                    for (String string : ignoreCheck) {
-                        if (input.contains(string)) {
+                    for (String s : ignoreCheck) {
+                        if (input.contains(s)) {
                             ignore = true;
                             break;
                         }
                     }
-                    if(!ignore) {
+                    if (!ignore) {
                         badWords.add(wordToCheck);
                     }
                 }
             }
         }
+        return badWords;
+    }
 
-        for(String s: badWords) {
+    /**
+     * Iterates over a String input and checks whether a banned word was found, then checks if the word should be
+     * ignored. The original input and leetspeak-replaced input are both checked.
+     * @param input The string input that is to be checked for offensive words.
+     * @return A list of offensive words found in the input string.
+     */
+    public static ArrayList<String> containsBadWords(String input) {
+        if (input == null) {
+            return new ArrayList<>();
+        }
+
+        Set<String> badWords = findBadWords(input); // Check original input
+        String cleanedInput = replaceLeetspeak(input);
+        badWords.addAll(findBadWords(cleanedInput)); // Check leetspeak-replaced input
+
+        ArrayList<String> badWordsList = new ArrayList<>(badWords);
+        for (String s : badWordsList) {
             logger.info("{} detected as a banned word", s);
         }
-        return badWords;
+        return badWordsList;
     }
 
     /**
@@ -130,7 +144,7 @@ public class WordFilter {
      * @param input The string input that is to be checked for offensive words.
      * @return A boolean value that is true if bad words were found and false if not.
      */
-    public static Boolean badWordsFound(String input) {
+    public static Boolean doesContainBadWords(String input) {
         ArrayList<String> badWords = containsBadWords(input);
         return !badWords.isEmpty();
     }
