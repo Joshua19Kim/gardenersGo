@@ -1,0 +1,27 @@
+
+.autocomplete-container {
+    position: relative;
+    width: 300px;
+    margin: 20px auto;
+}
+#address-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
+.autocomplete-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    width: calc(100% - 2px);
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+.autocomplete-results.visible {
+    display: block;
+}
+

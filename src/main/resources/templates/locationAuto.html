@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Address Autocomplete</title>
+    <link rel="stylesheet" th:href="@{/css/autocomplete.css}">
+
+</head>
+<body>
+    <form method="get" th:action="@{locationAuto}" id="locationForm">
+        <div class="autocomplete-container">
+            <input type="text" id="address-input" placeholder="Enter your address">
+            <div class="autocomplete-results" id="autocomplete-results"></div>
+        </div>
+
+        <div class="autocomplete-container">
+            <label for="suburb">Suburb:</label>
+            <input type="text" id="suburb">
+            <br/>
+            <label for="city">City:</label>
+            <input type="text" id="city">
+            <br/>
+            <label for="state">State:</label>
+            <input type="text" id="state">
+            <br/>
+            <label for="country">Country:</label>
+            <input type="text" id="country">
+            <br/>
+            <label for="postcode">Postcode:</label>
+            <input type="text" id="postcode">
+            <br/>
+        </div>
+        <script th:src="@{/javascript/locationAutocomplete.js}"></script>
+    </form>
+
+</body>
+</html>
