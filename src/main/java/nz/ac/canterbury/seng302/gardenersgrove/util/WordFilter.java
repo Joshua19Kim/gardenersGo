@@ -1,3 +1,5 @@
+// This class was adapted from: https://gist.github.com/PimDeWitte/c04cc17bc5fa9d7e3aee6670d4105941
+
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
 import org.slf4j.Logger;
@@ -65,7 +67,7 @@ public class WordFilter {
     }
 
     /**
-     * Replaces leetspeak characters in the input string with their alphabetical equivalents.
+     * Helper method that replaces leetspeak characters in the input string with their alphabetical equivalents.
      * @param input The input string possibly containing leetspeak characters.
      * @return A string with leetspeak characters replaced by their alphabetical equivalents.
      */
