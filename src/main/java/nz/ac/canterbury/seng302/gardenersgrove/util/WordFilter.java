@@ -31,7 +31,7 @@ public class WordFilter {
      * combination with it, these are loaded into the HashMap also.
      * Wordlist was sourced from: <a href="https://github.com/coffee-and-fun/google-profanity-words">...</a>
      */
-    public static void loadConfigs() {
+    private static void loadConfigs() {
         try {
             BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/static/wordlists/words.csv"));
             String line = "";
@@ -73,7 +73,7 @@ public class WordFilter {
      * @param input The input string possibly containing leetspeak characters.
      * @return A string with leetspeak characters replaced by their alphabetical equivalents.
      */
-    public static String replaceLeetspeak(String input) {
+    private static String replaceLeetspeak(String input) {
         input = input.replaceAll("0", "o")
                 .replaceAll("1", "i")
                 .replaceAll("3", "e")
@@ -123,7 +123,7 @@ public class WordFilter {
      * @param input The string input that is to be checked for offensive words.
      * @return A list of offensive words found in the input string.
      */
-    public static ArrayList<String> containsBadWords(String input) {
+    private static ArrayList<String> containsBadWords(String input) {
         if (input == null) {
             return new ArrayList<>();
         }
