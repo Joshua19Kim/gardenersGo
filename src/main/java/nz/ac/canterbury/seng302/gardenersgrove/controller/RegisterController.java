@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
@@ -28,7 +27,6 @@ public class RegisterController {
     private final GardenerFormService gardenerFormService;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
-    private final EmailUserService emailService;
     private final WriteEmail writeEmail;
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
@@ -39,11 +37,10 @@ public class RegisterController {
      * @param writeEmail - service for writing emails
      */
     @Autowired
-    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager, TokenService tokenService, EmailUserService emailService, WriteEmail writeEmail) {
+    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager, TokenService tokenService, WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
-        this.emailService = emailService;
         this.writeEmail = writeEmail;
     }
 
@@ -142,7 +139,7 @@ public class RegisterController {
 
             Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password);
             gardenerFormService.addGardener(newGardener);
-            writeEmail.sendSignupEmail(newGardener, tokenService, emailService);
+            writeEmail.sendSignupEmail(newGardener, tokenService);
             return "redirect:/signup";
 
 

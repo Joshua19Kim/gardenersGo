@@ -16,7 +16,7 @@
                 <button class="dropbtn">My Gardens</button>
             </a>
             <div class="dropdown-content">
-                <th:block th:each="garden : ${gardens}">
+                <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
                     <!-- Iterate over the list of gardens and display them -->
                     <a th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a>
                 </th:block>
