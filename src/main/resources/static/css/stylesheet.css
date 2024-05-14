@@ -228,7 +228,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .public-checkbox-container {
-    position: absolute;
+    /*position: absolute;*/
     bottom: 0;
 }
 

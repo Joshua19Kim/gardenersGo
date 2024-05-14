@@ -267,7 +267,7 @@ public class GardenFormController {
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
 
-      Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
+      Garden existingGarden = garden.get();
       existingGarden.setIsGardenPublic(isGardenPublic);
       gardenService.addGarden(existingGarden);
 

@@ -35,7 +35,7 @@ public class Garden {
 
   /** The publicity of the garden */
   @Column
-  private boolean publicGarden;
+  private boolean publicGarden; // WILL break on deployed instance!!!
 
   /** Default constructor required by JPA. */
   protected Garden() {}

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.Long.parseLong;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -79,6 +80,7 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("garden", garden));
 
         verify(gardenService, times(1)).getGarden(1L);
+        Assertions.assertFalse(garden.getIsGardenPublic());
     }
 
     @Test
@@ -142,9 +144,29 @@ public class GardenFormControllerTest {
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertFalse(garden.getIsGardenPublic());
         Assertions.assertEquals("Rose Garden", garden.getName());
         Assertions.assertEquals("Riccarton", garden.getLocation());
         Assertions.assertEquals("100", garden.getSize());
+    }
+
+    @Test
+    @WithMockUser
+    public void GardenPublicCheckboxTicked_GardenPublicityUpdated()
+            throws Exception {
+        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/details?gardenId=1")
+                                .param("isGardenPublic", "true")
+                                .with(csrf())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardenDetailsTemplate"));
+        verify(gardenService, times(1)).getGarden(1L);
+        verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertTrue(garden.getIsGardenPublic());
     }
 
     @Test
@@ -166,6 +188,7 @@ public class GardenFormControllerTest {
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertFalse(garden.getIsGardenPublic());
         Assertions.assertEquals("Rose Garden", garden.getName());
         Assertions.assertEquals("Riccarton", garden.getLocation());
         Assertions.assertEquals(null, garden.getSize());
