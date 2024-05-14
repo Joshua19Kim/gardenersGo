@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.Long.parseLong;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -191,7 +190,7 @@ public class GardenFormControllerTest {
         Assertions.assertFalse(garden.getIsGardenPublic());
         Assertions.assertEquals("Rose Garden", garden.getName());
         Assertions.assertEquals("Riccarton", garden.getLocation());
-        Assertions.assertEquals(null, garden.getSize());
+        Assertions.assertNull(garden.getSize());
     }
 
     @Test
