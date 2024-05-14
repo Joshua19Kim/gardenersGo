@@ -24,6 +24,10 @@ public class Garden {
   @Column(length=12)
   private String size;
 
+  /** The description of the garden. */
+  @Column(length=512)
+  private String description;
+
   /** The list of plants in the garden. */
   @OneToMany(mappedBy = "garden")
   private List<Plant> plants;
