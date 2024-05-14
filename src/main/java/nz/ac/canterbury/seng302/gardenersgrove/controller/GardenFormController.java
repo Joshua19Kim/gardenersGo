@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import com.google.gson.internal.LinkedTreeMap;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -7,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import static java.lang.Long.parseLong;
@@ -29,6 +34,25 @@ import java.util.Optional;
 @Controller
 public class GardenFormController {
   Logger logger = LoggerFactory.getLogger(GardenFormController.class);
+  private final GardenService gardenService;
+  private final GardenerFormService gardenerFormService;
+  private final RelationshipService relationshipService;
+  private Gardener gardener;
+
+  private final WeatherService weatherService;
+
+  /**
+   * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
+   * @param gardenService the garden service used to interact with the database
+   * @param gardenerFormService - object that is used to interact with the database
+   */
+  @Autowired
+  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService, WeatherService weatherService) {
+    this.gardenService = gardenService;
+    this.gardenerFormService = gardenerFormService;
+    this.relationshipService = relationshipService;
+    this.weatherService = weatherService;
+  }
 
   /**
    * Gets the home page that displays the list of gardens
@@ -48,9 +72,7 @@ public class GardenFormController {
     logger.info("Authentication: " + authentication);
     String currentUserEmail = authentication.getName();
     Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
-    if (gardenerOptional.isPresent()) {
-      gardener = gardenerOptional.get();
-    }
+      gardenerOptional.ifPresent(value -> gardener = value);
 
     List<Garden> gardens;
     if(user == null) {
@@ -75,23 +97,6 @@ public class GardenFormController {
     }
     model.addAttribute("requestURI", requestUri);
     return "gardensTemplate";
-  }
-
-  private final GardenService gardenService;
-  private final GardenerFormService gardenerFormService;
-  private final RelationshipService relationshipService;
-  private Gardener gardener;
-
-  /**
-   * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
-   * @param gardenService the garden service used to interact with the database
-   * @param gardenerFormService - object that is used to interact with the database
-   */
-  @Autowired
-  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService) {
-    this.gardenService = gardenService;
-    this.gardenerFormService = gardenerFormService;
-    this.relationshipService = relationshipService;
   }
 
   /**
@@ -320,5 +325,21 @@ public class GardenFormController {
     } else {
       return "redirect:/gardens";
     }
+  }
+
+  /**
+   * Gets the temperature of christchurch and logs it
+   * @return the temperature as a string of a given city
+   */
+  @GetMapping("gardens/weather")
+  public String editGarden(@RequestParam(name = "location") String location) throws IOException, URISyntaxException {
+    HashMap<String, LinkedTreeMap<String, Object>> currentWeather = weatherService.getCurrentWeather(location);
+    if (currentWeather != null) {
+      logger.info(location + " temperature: " + currentWeather.get("current").get("temp_c").toString());
+    } else {
+      logger.info("incorrect location");
+    }
+
+    return "redirect:/gardens";
   }
 }

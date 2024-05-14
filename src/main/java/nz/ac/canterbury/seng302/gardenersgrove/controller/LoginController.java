@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -59,11 +58,6 @@ public class LoginController {
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             return "redirect:/gardens";
         }
-
-        String currentWeather = WeatherService.getCurrentWeather("London");
-        String forecast = WeatherService.getForecast("london");
-        logger.info("CURRENT WEATHER: " + currentWeather);
-        logger.info("FORECAST WEATHER: " + forecast);
 
         return "login";
     }
