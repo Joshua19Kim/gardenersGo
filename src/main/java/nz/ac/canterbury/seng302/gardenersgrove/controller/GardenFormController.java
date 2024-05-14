@@ -3,10 +3,12 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +95,7 @@ public class GardenFormController {
   private final GardenService gardenService;
   private final GardenerFormService gardenerFormService;
   private final RelationshipService relationshipService;
+  private final TagService tagService;
   private Gardener gardener;
 
   /**
@@ -101,10 +104,11 @@ public class GardenFormController {
    * @param gardenerFormService - object that is used to interact with the database
    */
   @Autowired
-  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService) {
+  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService, TagService tagService) {
     this.gardenService = gardenService;
     this.gardenerFormService = gardenerFormService;
     this.relationshipService = relationshipService;
+      this.tagService = tagService;
   }
 
   /**
@@ -347,5 +351,20 @@ public class GardenFormController {
     } else {
       return "redirect:/gardens";
     }
+  }
+
+  @PostMapping("gardens/addTag")
+  public String addTag(
+          @RequestParam(name = "tag-input") String tag,
+          @RequestParam(name = "gardenId") long id,
+          Model model) {
+
+    logger.info("POST /addTag");
+    model.addAttribute("tag-input", tag);
+    Tag newTag = new Tag(tag, gardenService.getGarden(id).get());
+    tagService.addTag(newTag);
+
+    return "redirect:/gardens/details?gardenId=" + id;
+
   }
 }

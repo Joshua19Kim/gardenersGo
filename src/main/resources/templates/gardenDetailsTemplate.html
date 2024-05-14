@@ -23,9 +23,10 @@
                 </div>
             </div>
             <div class="input-search-bar">
-                <form class="search-bar">
-                    <input id="search-input" type="text" placeholder="Add tag...">
-                    <button id="search-button" type="button" onclick="">Submit</button>
+                <form class="search-bar" method="post" th:action="@{addTag}">
+                    <input th:name="tag-input" id="tag-input" type="text" placeholder="Add tag...">
+                    <input th:name="gardenId" th:value="${garden.id}" type="hidden">
+                    <button id="search-button" type="submit">Submit</button>
                 </form>
             </div>
 
@@ -39,7 +40,7 @@
             <strong>Size:</strong> <span th:if="${garden.size != null}" th:text="${garden.size + ' m^2'}"></span>
         </p>
         <p>
-<!--            # <strong>Tags:</strong><span th:if="${garden.tags != null}" th:each="tag: ${garden.tags}"></span> */-->
+<!--            <strong>Tags:</strong><span th:if="${garden.tags != null}" th:each="tag: ${garden.tags}"></span> */-->
         </p>
     </div>
     <h4>Plants:</h4>
