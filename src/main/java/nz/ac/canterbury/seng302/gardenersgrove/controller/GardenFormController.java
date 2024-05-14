@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import static java.lang.Long.parseLong;
@@ -50,6 +51,17 @@ public class GardenFormController {
   }
 
   /**
+   * Retrieve an optional of a gardener using the current authentication
+   * We will always have to check whether the gardener was retrieved in the calling method, so the return type was left as an optional
+   * @return An optional of the requested gardener
+   */
+  public Optional<Gardener> getGardenerFromAuthentication() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String currentUserEmail = authentication.getName();
+    return gardenerFormService.findByEmail(currentUserEmail);
+  }
+
+  /**
    * Gets the home page that displays the list of gardens
    * @param model the model for passing attributes to the view
    * @param request the request used to find the current uri
@@ -63,13 +75,8 @@ public class GardenFormController {
     response.setHeader("Pragma", "no-cache"); // HTTP 1.0
     response.setHeader("Expires", "0"); // Proxies
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    logger.info("Authentication: " + authentication);
-    String currentUserEmail = authentication.getName();
-    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
-    if (gardenerOptional.isPresent()) {
-      gardener = gardenerOptional.get();
-    }
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+    gardenerOptional.ifPresent(value -> gardener = value);
 
     List<Garden> gardens;
     if(user == null) {
@@ -80,6 +87,9 @@ public class GardenFormController {
       if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
         gardens = gardenService.getGardensByGardenerId(parseLong(user, 10));
         model.addAttribute("gardener", friend.get());
+        List<Garden> userGardens;
+        userGardens = gardenService.getGardensByGardenerId(gardener.getId());
+        model.addAttribute("userGardens", userGardens);
       } else {
         return "redirect:/gardens";
       }
@@ -100,7 +110,11 @@ public class GardenFormController {
   @GetMapping("gardens/form")
   public String form(@RequestParam(name = "redirect") String redirectUri, Model model) {
     logger.info("GET /form");
-    List<Garden> gardens = gardenService.getGardenResults();
+
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+    gardenerOptional.ifPresent(value -> gardener = value);
+    List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+
     model.addAttribute("gardens", gardens);
     model.addAttribute("requestURI", redirectUri);
     return "gardensFormTemplate";
@@ -134,9 +148,7 @@ public class GardenFormController {
     boolean isValid = true;
 
     Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
-    if (gardenerOptional.isPresent()) {
-      gardener = gardenerOptional.get();
-    }
+    gardenerOptional.ifPresent(value -> gardener = value);
 
     if (!Objects.equals(name, validatedName)) {
       model.addAttribute("nameError", validatedName);
@@ -160,7 +172,7 @@ public class GardenFormController {
       }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
     } else {
-      List<Garden> gardens = gardenService.getGardenResults();
+      List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
       model.addAttribute("gardens", gardens);
       model.addAttribute("requestURI",redirect);
       model.addAttribute("name", name);
@@ -191,7 +203,13 @@ public class GardenFormController {
                               @RequestParam(name = "userId", required = false) String userId,
                               Model model, HttpServletRequest request) {
     logger.info("GET /gardens/details");
-    List<Garden> gardens = gardenService.getGardenResults();
+
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+    List<Garden> gardens = new ArrayList<>();
+    if (gardenerOptional.isPresent()) {
+      gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+    }
+
     model.addAttribute("gardens", gardens);
 
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
@@ -274,7 +292,7 @@ public class GardenFormController {
         gardenService.addGarden(existingGarden);
       }
     } else {
-      List<Garden> gardens = gardenService.getGardenResults();
+      List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
       model.addAttribute("gardens", gardens);
       model.addAttribute("name", name);
       model.addAttribute("location", location);
@@ -297,7 +315,13 @@ public class GardenFormController {
   @GetMapping("gardens/edit")
   public String editGarden(@RequestParam(name = "gardenId") String gardenId, Model model, HttpServletRequest request) {
     logger.info("GET gardens/edit");
-    List<Garden> gardens = gardenService.getGardenResults();
+
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+    List<Garden> gardens = new ArrayList<>();
+    if (gardenerOptional.isPresent()) {
+      gardens = gardenService.getGardensByGardenerId(gardener.getId());
+    }
+
     model.addAttribute("gardens", gardens);
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {

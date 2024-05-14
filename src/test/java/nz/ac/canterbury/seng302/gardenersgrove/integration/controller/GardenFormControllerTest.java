@@ -180,7 +180,8 @@ public class GardenFormControllerTest {
     public void GardenFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
         List<Garden> gardens = new ArrayList<>();
         gardens.add(new Garden("My Garden", "Ilam", "32", testGardener));
-        when(gardenService.getGardenResults()).thenReturn(gardens);
+        when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/form")
                         .param("redirect", ""))
                 .andExpect(status().isOk())

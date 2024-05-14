@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import static nz.ac.canterbury.seng302.gardenersgrove.util.TokenGenerator.generateToken;
 
@@ -19,6 +20,8 @@ import java.util.UUID;
 @Component
 public class WriteEmail {
     private TokenService tokenService;
+
+    @Autowired
     private EmailUserService emailService;
 
     /**
@@ -26,9 +29,8 @@ public class WriteEmail {
      * @param gardener The Gardener to send the email to
      * @param tokenService  The token service to create the unique LostPasswordToken for the gardener
      */
-    public void sendSignupEmail(Gardener gardener, TokenService tokenService, EmailUserService emailService) {
+    public void sendSignupEmail(Gardener gardener, TokenService tokenService) {
         this.tokenService = tokenService;
-        this.emailService = emailService;
         String token = generateToken();
         tokenService.createLostPasswordTokenForGardener(gardener, token);
         String email = gardener.getEmail();

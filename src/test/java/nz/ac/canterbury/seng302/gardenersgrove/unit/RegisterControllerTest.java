@@ -42,7 +42,7 @@ public class RegisterControllerTest {
         tokenService = Mockito.mock(TokenService.class);
         writeEmail = Mockito.mock(WriteEmail.class);
         emailService = Mockito.mock(EmailUserService.class);
-        registerFormController = new RegisterController(gardenerFormService, authenticationManager, tokenService, emailService, writeEmail);
+        registerFormController = new RegisterController(gardenerFormService, authenticationManager, tokenService, writeEmail);
         model = Mockito.mock(Model.class);
         assertTrue(true);
     }

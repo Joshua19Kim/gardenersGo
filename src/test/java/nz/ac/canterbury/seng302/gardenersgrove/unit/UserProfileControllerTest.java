@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
@@ -21,12 +22,12 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 public class UserProfileControllerTest {
 
     private UserProfileController userProfileController;
+    private GardenService gardenService;
     private GardenerFormService gardenerFormService;
     private EmailUserService emailUserService;
     private WriteEmail writeEmail;
@@ -49,7 +50,8 @@ public class UserProfileControllerTest {
         gardenerFormService = Mockito.mock(GardenerFormService.class);
         emailUserService = Mockito.mock(EmailUserService.class);
         writeEmail = Mockito.mock(WriteEmail.class);
-        userProfileController = new UserProfileController(gardenerFormService, writeEmail, requestService);
+        gardenService = Mockito.mock(GardenService.class);
+        userProfileController = new UserProfileController(gardenerFormService, gardenService, writeEmail, requestService);
         modelMock = Mockito.mock(Model.class);
         gardener = Mockito.mock(Gardener.class);
         inputValidator = Mockito.mock(InputValidationUtil.class);
@@ -68,9 +70,9 @@ public class UserProfileControllerTest {
     @Test
     void GivenValidGardenerEdit_WhenUserConfirms_GardenerEditUploaded() {
         Mockito.when(authentication.getName()).thenReturn("new@new.new");
-        Mockito.when(gardenerFormService.findByEmail(Mockito.any())).thenReturn(Optional.ofNullable(gardener));
+        Mockito.when(gardenerFormService.findByEmail(any())).thenReturn(Optional.ofNullable(gardener));
         Mockito.when(optional.get()).thenReturn(gardener);
-        Mockito.when(inputValidator.checkValidEmail(Mockito.any())).thenReturn(Optional.empty());
+        Mockito.when(inputValidator.checkValidEmail(any())).thenReturn(Optional.empty());
         // ONLY works when the email is the same as the submitted one
         Mockito.when(gardener.getEmail()).thenReturn("new@new.new");
         Mockito.when(authentication.getName()).thenReturn("new@new.new");
@@ -93,9 +95,9 @@ public class UserProfileControllerTest {
     @Test
     void GivenInvalidLastName_WhenLastNameIsOptional_NewGardenerCreated() {
         Mockito.when(authentication.getName()).thenReturn("test@gmail.com");
-        Mockito.when(gardenerFormService.findByEmail(Mockito.any())).thenReturn(Optional.ofNullable(gardener));
+        Mockito.when(gardenerFormService.findByEmail(any())).thenReturn(Optional.ofNullable(gardener));
         Mockito.when(optional.get()).thenReturn(gardener);
-        Mockito.when(inputValidator.checkValidEmail(Mockito.any())).thenReturn(Optional.empty());
+        Mockito.when(inputValidator.checkValidEmail(any())).thenReturn(Optional.empty());
         // ONLY works when the email is the same as the submitted one
         Mockito.when(gardener.getEmail()).thenReturn("test@gmail.com");
         Mockito.when(authentication.getName()).thenReturn("test@gmail.com");

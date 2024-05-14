@@ -2,8 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,8 +43,10 @@ public class PlantFormController {
 
     private final PlantService plantService;
     private final GardenService gardenService;
+    private final GardenerFormService gardenerFormService;
     private final ImageService imageService;
     private final RequestService requestService;
+    private Gardener gardener;
 
     /**
     * Constructor for PlantFormController.
@@ -50,13 +55,25 @@ public class PlantFormController {
     * @param gardenService Service for managing garden-related operations.
     */
     @Autowired
-    public PlantFormController(PlantService plantService, GardenService gardenService, ImageService imageService, RequestService requestService) {
+    public PlantFormController(PlantService plantService, GardenService gardenService, RequestService requestService,
+                               GardenerFormService gardenerFormService, ImageService imageService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
+        this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
         this.requestService = requestService;
     }
 
+    /**
+     * Retrieve an optional of a gardener using the current authentication
+     * We will always have to check whether the gardener was retrieved in the calling method, so the return type was left as an optional
+     * @return An optional of the requested gardener
+     */
+    public Optional<Gardener> getGardenerFromAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+        return gardenerFormService.findByEmail(currentUserEmail);
+    }
 
     /**
      * Displays the form for adding a new plant to a garden.
@@ -69,9 +86,15 @@ public class PlantFormController {
     @GetMapping("gardens/details/plants/form")
     public String form(@RequestParam(name = "gardenId") String gardenId, Model model, HttpServletRequest request) {
         logger.info("GET /gardens/details/plants/form");
-        List<Garden> gardens = gardenService.getGardenResults();
+
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        List<Garden> gardens = new ArrayList<>();
+        if (gardenerOptional.isPresent()) {
+            gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+        }
         model.addAttribute("gardens", gardens);
         Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
+
         if (garden.isPresent()) {
             model.addAttribute("requestURI", requestService.getRequestURI(request));
             model.addAttribute("garden", garden.get());
@@ -161,7 +184,9 @@ public class PlantFormController {
             }
             return "redirect:/gardens/details?gardenId=" + gardenId;
         } else {
-            List<Garden> gardens = gardenService.getGardenResults();
+            Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+            gardenerOptional.ifPresent(value -> gardener = value);
+            List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
             model.addAttribute("requestURI", requestService.getRequestURI(request));
             model.addAttribute("gardens", gardens);
             model.addAttribute("name", name);
@@ -184,7 +209,13 @@ public class PlantFormController {
     @GetMapping("gardens/details/plants/edit")
     public String editPlant(@RequestParam(name = "plantId") String plantId, Model model, HttpServletRequest request) {
         logger.info("GET /gardens/details/plants/edit");
-        List<Garden> gardens = gardenService.getGardenResults();
+
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        List<Garden> gardens = new ArrayList<>();
+        if (gardenerOptional.isPresent()) {
+            gardens = gardenService.getGardensByGardenerId(gardener.getId());
+        }
+
         model.addAttribute("gardens", gardens);
         Optional<Plant> plant = plantService.getPlant(parseLong(plantId));
         if (plant.isPresent()) {
@@ -288,7 +319,9 @@ public class PlantFormController {
             }
             return "redirect:/gardens/details?gardenId=" + plant.getGarden().getId();
         } else {
-            List<Garden> gardens = gardenService.getGardenResults();
+            Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+            gardenerOptional.ifPresent(value -> gardener = value);
+            List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
             model.addAttribute("requestURI", requestService.getRequestURI(request));
             model.addAttribute("gardens", gardens);
             model.addAttribute("name", name);

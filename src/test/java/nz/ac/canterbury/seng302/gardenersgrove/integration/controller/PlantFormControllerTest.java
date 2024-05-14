@@ -26,6 +26,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.securityContext;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = {GardenFormController.class, PlantFormController.class})
@@ -472,7 +473,11 @@ public class PlantFormControllerTest {
     @WithMockUser
     public void PlantFormSubmitted_DescriptionOverLimit_ErrorMessageAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        List<Garden> gardens = new ArrayList<>();
+        gardens.add(garden);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
+        when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
 
         String name = "My Plant";
         String count = "2";

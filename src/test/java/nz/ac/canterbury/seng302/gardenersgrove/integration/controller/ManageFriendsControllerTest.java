@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ManageFriendsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
@@ -41,6 +42,9 @@ public class ManageFriendsControllerTest {
     private GardenerFormService gardenerFormService;
     @MockBean
     private RequestService requestService;
+
+    @MockBean
+    private GardenService gardenService; // is needed
 
     @MockBean
     private SearchService searchService; // is needed
