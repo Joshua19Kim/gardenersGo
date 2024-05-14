@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ public class PlantFormController {
     private final PlantService plantService;
     private final GardenService gardenService;
     private final ImageService imageService;
+    private final RequestService requestService;
 
     /**
     * Constructor for PlantFormController.
@@ -48,28 +50,13 @@ public class PlantFormController {
     * @param gardenService Service for managing garden-related operations.
     */
     @Autowired
-    public PlantFormController(PlantService plantService, GardenService gardenService, ImageService imageService) {
+    public PlantFormController(PlantService plantService, GardenService gardenService, ImageService imageService, RequestService requestService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
         this.imageService = imageService;
+        this.requestService = requestService;
     }
 
-    /**
-     * Gets the current URI and removes the contextPath to ensure it works on deployed instances.
-     * This URI is used to redirect to the previous page from the create garden form.
-     * @param request the request made by the application
-     * @return the current URI used to know what page to go back to in the create garden form
-     */
-    public String getRequestURI(HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            requestUri = requestUri + "?" + queryString;
-        }
-        String contextPath = request.getContextPath();
-        requestUri = requestUri.replace(contextPath + "/", "/");
-        return requestUri;
-    }
 
     /**
      * Displays the form for adding a new plant to a garden.
@@ -86,7 +73,7 @@ public class PlantFormController {
         model.addAttribute("gardens", gardens);
         Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
         if (garden.isPresent()) {
-            model.addAttribute("requestURI", getRequestURI(request));
+            model.addAttribute("requestURI", requestService.getRequestURI(request));
             model.addAttribute("garden", garden.get());
             return "plantsFormTemplate";
         } else {
@@ -175,7 +162,7 @@ public class PlantFormController {
             return "redirect:/gardens/details?gardenId=" + gardenId;
         } else {
             List<Garden> gardens = gardenService.getGardenResults();
-            model.addAttribute("requestURI", getRequestURI(request));
+            model.addAttribute("requestURI", requestService.getRequestURI(request));
             model.addAttribute("gardens", gardens);
             model.addAttribute("name", name);
             model.addAttribute("count", count);
@@ -201,7 +188,7 @@ public class PlantFormController {
         model.addAttribute("gardens", gardens);
         Optional<Plant> plant = plantService.getPlant(parseLong(plantId));
         if (plant.isPresent()) {
-            model.addAttribute("requestURI", getRequestURI(request));
+            model.addAttribute("requestURI", requestService.getRequestURI(request));
             model.addAttribute("plant", plant.get());
             model.addAttribute("garden", plant.get().getGarden());
 
@@ -302,7 +289,7 @@ public class PlantFormController {
             return "redirect:/gardens/details?gardenId=" + plant.getGarden().getId();
         } else {
             List<Garden> gardens = gardenService.getGardenResults();
-            model.addAttribute("requestURI", getRequestURI(request));
+            model.addAttribute("requestURI", requestService.getRequestURI(request));
             model.addAttribute("gardens", gardens);
             model.addAttribute("name", name);
             model.addAttribute("count", count);

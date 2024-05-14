@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SearchService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,29 +27,14 @@ public class ManageFriendsController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
     private final GardenerFormService gardenerFormService;
     private final RelationshipService relationshipService;
+    private final RequestService requestService;
     private List<Gardener> noExistingRelationship = new ArrayList<>();
 
     @Autowired
-    public ManageFriendsController(GardenerFormService gardenerFormService, SearchService searchService, RelationshipService relationshipService, AuthenticationManager authenticationManager) {
+    public ManageFriendsController(GardenerFormService gardenerFormService, RequestService requestService, SearchService searchService, RelationshipService relationshipService, AuthenticationManager authenticationManager) {
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
-    }
-
-    /**
-     * Gets the current URI and removes the contextPath to ensure it works on deployed instances.
-     * This URI is used to redirect to the previous page from the create garden form.
-     * @param request the request made by the application
-     * @return the current URI used to know what page to go back to in the create garden form
-     */
-    public String getRequestURI(HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            requestUri = requestUri + "?" + queryString;
-        }
-        String contextPath = request.getContextPath();
-        requestUri = requestUri.replace(contextPath + "/", "/");
-        return requestUri;
+        this.requestService = requestService;
     }
 
     /**
@@ -65,7 +51,7 @@ public class ManageFriendsController {
 
         logger.info("GET /manageFriends");
 
-        model.addAttribute("requestURI", getRequestURI(request));
+        model.addAttribute("requestURI", requestService.getRequestURI(request));
 
         String currentUserEmail = authentication.getPrincipal().toString();
         Optional<Gardener> currentUserOptional = gardenerFormService.findByEmail(currentUserEmail);

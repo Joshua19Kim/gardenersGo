@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,18 +36,20 @@ public class UserProfileControllerTest {
     private InputValidationUtil inputValidator;
     private Optional optional;
     private HttpServletRequest mockRequest;
+    private RequestService requestService;
 
 
     @BeforeEach
     public void setUp() {
         authentication = Mockito.mock(Authentication.class);
         mockRequest = Mockito.mock(HttpServletRequest.class);
+        requestService = Mockito.mock(RequestService.class);
         Mockito.when(mockRequest.getRequestURI()).thenReturn("");
         SecurityContextHolder.getContext().setAuthentication(authentication);
         gardenerFormService = Mockito.mock(GardenerFormService.class);
         emailUserService = Mockito.mock(EmailUserService.class);
         writeEmail = Mockito.mock(WriteEmail.class);
-        userProfileController = new UserProfileController(gardenerFormService, writeEmail);
+        userProfileController = new UserProfileController(gardenerFormService, writeEmail, requestService);
         modelMock = Mockito.mock(Model.class);
         gardener = Mockito.mock(Gardener.class);
         inputValidator = Mockito.mock(InputValidationUtil.class);

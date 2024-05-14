@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,22 +30,23 @@ import java.util.Optional;
 @Controller
 public class GardenFormController {
   Logger logger = LoggerFactory.getLogger(GardenFormController.class);
+  private final GardenService gardenService;
+  private final GardenerFormService gardenerFormService;
+  private final RelationshipService relationshipService;
+  private final RequestService requestService;
+  private Gardener gardener;
 
   /**
-   * Gets the current URI and removes the contextPath to ensure it works on deployed instances.
-   * This URI is used to redirect to the previous page from the create garden form.
-   * @param request the request made by the application
-   * @return the current URI used to know what page to go back to in the create garden form
+   * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
+   * @param gardenService the garden service used to interact with the database
+   * @param gardenerFormService - object that is used to interact with the database
    */
-  public String getRequestURI(HttpServletRequest request) {
-    String requestUri = request.getRequestURI();
-    String queryString = request.getQueryString();
-    if (queryString != null) {
-      requestUri = requestUri + "?" + queryString;
-    }
-    String contextPath = request.getContextPath();
-    requestUri = requestUri.replace(contextPath + "/", "/");
-    return requestUri;
+  @Autowired
+  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService, RequestService requestService) {
+    this.gardenService = gardenService;
+    this.gardenerFormService = gardenerFormService;
+    this.relationshipService = relationshipService;
+    this.requestService = requestService;
   }
 
   /**
@@ -84,25 +86,8 @@ public class GardenFormController {
 
     }
     model.addAttribute("gardens", gardens);
-    model.addAttribute("requestURI", getRequestURI(request));
+    model.addAttribute("requestURI", requestService.getRequestURI(request));
     return "gardensTemplate";
-  }
-
-  private final GardenService gardenService;
-  private final GardenerFormService gardenerFormService;
-  private final RelationshipService relationshipService;
-  private Gardener gardener;
-
-  /**
-   * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
-   * @param gardenService the garden service used to interact with the database
-   * @param gardenerFormService - object that is used to interact with the database
-   */
-  @Autowired
-  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService) {
-    this.gardenService = gardenService;
-    this.gardenerFormService = gardenerFormService;
-    this.relationshipService = relationshipService;
   }
 
   /**
@@ -212,7 +197,7 @@ public class GardenFormController {
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
 
-      model.addAttribute("requestURI", getRequestURI(request));
+      model.addAttribute("requestURI", requestService.getRequestURI(request));
 
       model.addAttribute("garden", garden.get());
 
@@ -295,7 +280,7 @@ public class GardenFormController {
       model.addAttribute("location", location);
       model.addAttribute("size", size.replace(',', '.'));
       model.addAttribute(gardenService.getGarden(parseLong(gardenId)).get());
-      model.addAttribute("requestURI", getRequestURI(request));
+      model.addAttribute("requestURI", requestService.getRequestURI(request));
       returnedTemplate = "editGardensFormTemplate";
     }
     return returnedTemplate;
@@ -316,7 +301,7 @@ public class GardenFormController {
     model.addAttribute("gardens", gardens);
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
-      model.addAttribute("requestURI", getRequestURI(request));
+      model.addAttribute("requestURI", requestService.getRequestURI(request));
       model.addAttribute("garden", garden.get());
       return "editGardensFormTemplate";
     } else {

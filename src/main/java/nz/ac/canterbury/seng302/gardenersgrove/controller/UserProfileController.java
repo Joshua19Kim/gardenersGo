@@ -2,11 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
+import org.apache.coyote.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,7 @@ import java.util.Optional;
 public class UserProfileController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
     private final GardenerFormService gardenerFormService;
+    private final RequestService requestService;
     private final WriteEmail writeEmail;
     private Gardener gardener;
 
@@ -45,27 +44,12 @@ public class UserProfileController {
     private boolean isFileNotAdded;
 
     @Autowired
-    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail) {
+    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail, RequestService requestService) {
         this.gardenerFormService = gardenerFormService;
         this.writeEmail = writeEmail;
+        this.requestService = requestService;
     }
 
-    /**
-     * Gets the current URI and removes the contextPath to ensure it works on deployed instances.
-     * This URI is used to redirect to the previous page from the create garden form.
-     * @param request the request made by the application
-     * @return the current URI used to know what page to go back to in the create garden form
-     */
-    public String getRequestURI(HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            requestUri = requestUri + "?" + queryString;
-        }
-        String contextPath = request.getContextPath();
-        requestUri = requestUri.replace(contextPath + "/", "/");
-        return requestUri;
-    }
 
     /**
      * Retrieve user's details (first name, last name, date of birth, email and also check the existence of last name.) based on the current authentication
@@ -95,7 +79,7 @@ public class UserProfileController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = authentication.getName();
 
-        model.addAttribute("requestURI", getRequestURI(request));
+        model.addAttribute("requestURI", requestService.getRequestURI(request));
 
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
         if (gardenerOptional.isPresent()) {
@@ -218,7 +202,7 @@ public class UserProfileController {
             if (uploadMessage.isEmpty()) {
                 return "redirect:/user";
             } else {
-                model.addAttribute("requestURI", getRequestURI(request));
+                model.addAttribute("requestURI", requestService.getRequestURI(request));
                 model.addAttribute("uploadMessage", uploadMessage.get());
                 model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
                 return "user";
@@ -249,7 +233,7 @@ public class UserProfileController {
     @GetMapping("/password")
     public String passwordForm(Model model, HttpServletRequest request) {
         logger.info("GET /password");
-        model.addAttribute("requestURI", getRequestURI(request));
+        model.addAttribute("requestURI", requestService.getRequestURI(request));
         return "password";
     }
 
@@ -277,7 +261,7 @@ public class UserProfileController {
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
         InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
 
-        model.addAttribute("requestURI", getRequestURI(request));
+        model.addAttribute("requestURI", requestService.getRequestURI(request));
 
         if (gardenerOptional.isEmpty()) {return "login";}
 
