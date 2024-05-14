@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,4 +46,6 @@ public class TagService {
      * @return the tag that matches id
      */
     public Optional<Tag> getTag(Long id) { return tagRepository.findById(id); }
+
+    public List<String> getTags(Long id) { return tagRepository.getTagsByGardenId(id); }
 }

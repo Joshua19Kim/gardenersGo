@@ -40,7 +40,10 @@
             <strong>Size:</strong> <span th:if="${garden.size != null}" th:text="${garden.size + ' m^2'}"></span>
         </p>
         <p>
-<!--            <strong>Tags:</strong><span th:if="${garden.tags != null}" th:each="tag: ${garden.tags}"></span> */-->
+            <strong>Tags:</strong>
+            <span th:if="${tags != null}" th:each="tag : ${tags}">
+                <span th:text="${tag}"></span>
+            </span>
         </p>
     </div>
     <h4>Plants:</h4>

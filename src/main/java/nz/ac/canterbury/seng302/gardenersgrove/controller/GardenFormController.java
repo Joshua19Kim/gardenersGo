@@ -234,6 +234,8 @@ public class GardenFormController {
       model.addAttribute("requestURI", requestUri);
 
       model.addAttribute("garden", garden.get());
+      model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
+      logger.info(tagService.getTags(parseLong(gardenId)).toString());
 
       if(uploadError != null) {
         model.addAttribute("uploadError", uploadError);
