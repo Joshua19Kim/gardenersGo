@@ -76,7 +76,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     background-color: #f9f9f9;
     min-width: 160px;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-    z-index: 1;
+    z-index: 100;
 }
 
 
@@ -367,6 +367,18 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     border-radius: 4px; /* Rounded corners */
     cursor: pointer;
 }
+
+.container .garden-details-links .add-tag-button {
+    background-color: #45a049;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    font-size: 18px;
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer;
+    text-decoration: underline; /* for consistency with other links*/
+}
+
 
 .container .garden-details-links .add-plant-button:hover {
     background-color: #45a049;
@@ -746,7 +758,7 @@ form.search-bar::after {
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 100; /* Sit on top */
     left: 0;
     top: 0;
     width: 100%; /* Full width */
@@ -757,7 +769,7 @@ form.search-bar::after {
 }
 
 /* Modal Box */
-.modal .friend-requests, .add-friends {
+.modal .friend-requests, .add-friends, .add-tags {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
