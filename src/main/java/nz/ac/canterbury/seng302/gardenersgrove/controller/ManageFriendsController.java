@@ -1,10 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SearchService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +30,16 @@ public class ManageFriendsController {
     private final GardenerFormService gardenerFormService;
     private final GardenService gardenService;
     private final RelationshipService relationshipService;
+    private final RequestService requestService;
     private List<Gardener> noExistingRelationship = new ArrayList<>();
 
     @Autowired
-    public ManageFriendsController(GardenerFormService gardenerFormService, GardenService gardenService,
+    public ManageFriendsController(GardenerFormService gardenerFormService, RequestService requestService, GardenService gardenService,
                                    SearchService searchService, RelationshipService relationshipService, AuthenticationManager authenticationManager) {
         this.gardenerFormService = gardenerFormService;
         this.gardenService = gardenService;
         this.relationshipService = relationshipService;
+        this.requestService = requestService;
     }
 
     /**
@@ -48,9 +52,11 @@ public class ManageFriendsController {
      * @return manage friend html
      */
     @GetMapping("/manageFriends")
-    public String getManageFriends(Authentication authentication, Model model) {
+    public String getManageFriends(Authentication authentication, Model model, HttpServletRequest request) {
 
         logger.info("GET /manageFriends");
+
+        model.addAttribute("requestURI", requestService.getRequestURI(request));
 
         String currentUserEmail = authentication.getPrincipal().toString();
         Optional<Gardener> currentUserOptional = gardenerFormService.findByEmail(currentUserEmail);
