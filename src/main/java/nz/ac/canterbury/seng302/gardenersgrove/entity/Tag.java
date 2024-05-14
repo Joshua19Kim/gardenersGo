@@ -13,7 +13,7 @@ public class Tag {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "garden_id")
+    @JoinColumn(name = "garden")
     private Garden garden;
 
     protected Tag() {}
