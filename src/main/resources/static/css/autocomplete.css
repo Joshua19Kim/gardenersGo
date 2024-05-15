@@ -25,3 +25,7 @@
     display: block;
 }
 
+.blue-bold {
+    color: blue;
+    font-weight: bold;
+}
