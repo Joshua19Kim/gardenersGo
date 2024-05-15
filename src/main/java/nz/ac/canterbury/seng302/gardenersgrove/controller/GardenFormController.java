@@ -332,14 +332,11 @@ public class GardenFormController {
    * @return the temperature as a string of a given city
    */
   @GetMapping("gardens/weather")
-  public String editGarden(@RequestParam(name = "location") String location) throws IOException, URISyntaxException {
+  public String editGarden(@RequestParam(name = "location") String location, Model model) throws IOException, URISyntaxException {
     HashMap<String, LinkedTreeMap<String, Object>> currentWeather = weatherService.getCurrentWeather(location);
-    if (currentWeather != null) {
-      logger.info(location + " temperature: " + currentWeather.get("current").get("temp_c").toString());
-    } else {
-      logger.info("incorrect location");
+    if (currentWeather != null && !currentWeather.isEmpty()) {
+      model.addAttribute("temperature", currentWeather.get("current").get("temp_c"));
     }
-
-    return "redirect:/gardens";
+    return "weatherTemplate";
   }
 }
