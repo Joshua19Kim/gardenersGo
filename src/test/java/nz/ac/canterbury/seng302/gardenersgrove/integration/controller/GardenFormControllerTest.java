@@ -1,11 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import com.google.gson.internal.LinkedTreeMap;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,12 +19,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static java.util.Map.entry;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -48,6 +50,9 @@ public class GardenFormControllerTest {
 
     @MockBean
     private RequestService requestService;
+
+    @MockBean
+    private WeatherService weatherService;
 
     @Test
     @WithMockUser
@@ -416,5 +421,33 @@ public class GardenFormControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens"));
 
+    }
+
+    @Test
+    @WithMockUser
+    public void GetTemperatureOfCity_CityExists_TemperatureReturned() throws Exception {
+        HashMap<String, LinkedTreeMap<String, Object>> mockWeather = new HashMap<>();
+        LinkedTreeMap<String, Object> currentWeather = new LinkedTreeMap<>();
+        currentWeather.put("temp_c", 20.0F);
+        mockWeather.put("current", currentWeather);
+        when(weatherService.getCurrentWeather("Christchurch")).thenReturn(mockWeather);
+
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, weatherService);
+        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        MOCK_MVC
+                .perform((MockMvcRequestBuilders.get("/gardens/weather").param("location", "Christchurch")))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("temperature", 20.0F));
+    }
+
+    @Test
+    @WithMockUser
+    public void GetTemperatureOfCity_CityDoesntExist_TemperatureNotReturned() throws Exception {
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, weatherService);
+        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        MOCK_MVC
+                .perform((MockMvcRequestBuilders.get("/gardens/weather").param("location", "FAKECITY123")))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeDoesNotExist("temperature"));
     }
 }
