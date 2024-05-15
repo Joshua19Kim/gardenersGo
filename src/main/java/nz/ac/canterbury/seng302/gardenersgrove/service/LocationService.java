@@ -27,7 +27,6 @@ public class LocationService {
 
     public HttpResponse<String> sendRequest(String query) throws IOException, InterruptedException {
     logger.info("SENDING REQUEST");
-    logger.info(api_key);
     String encodedQuery = URLEncoder.encode(query.trim(), "UTF-8");
     String url = "https://us1.locationiq.com/v1/autocomplete?q=" + encodedQuery + "&key=" + this.api_key;
     HttpRequest request = HttpRequest.newBuilder()
