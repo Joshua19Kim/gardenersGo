@@ -49,6 +49,8 @@ public class UserProfileControllerTest {
     private WriteEmail mockWriteEmail;
     @MockBean
     private RelationshipService relationshipService;
+    @MockBean
+    private RequestService requestService;
 
 
     @BeforeEach
