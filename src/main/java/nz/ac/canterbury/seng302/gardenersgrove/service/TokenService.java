@@ -26,6 +26,14 @@ public class TokenService {
         lostPasswordTokenRepository.delete(token);
     }
 
+    public Optional<LostPasswordToken> getTokenFromString(String token){
+        return lostPasswordTokenRepository.findByToken(token);
+    }
+
+    public void removeToken(LostPasswordToken token) {
+        lostPasswordTokenRepository.delete(token);
+    }
+
     public String validateLostPasswordToken(String token) {
         final Optional<LostPasswordToken> passToken = lostPasswordTokenRepository.findByToken(token);
         return passToken.isEmpty() ? "invalidToken"
