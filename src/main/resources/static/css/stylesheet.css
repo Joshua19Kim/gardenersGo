@@ -395,6 +395,30 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     white-space: normal;
 }
 
+.garden-details-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.weather-display-container {
+    width: 500px;
+    height: 200px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 20px;
+    margin-left: 20px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.weather-display-column {
+    display: flex;
+    flex-direction: column;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;

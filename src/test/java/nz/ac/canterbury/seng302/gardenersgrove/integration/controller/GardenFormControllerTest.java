@@ -432,7 +432,7 @@ public class GardenFormControllerTest {
         mockWeather.put("current", currentWeather);
         when(weatherService.getCurrentWeather("Christchurch")).thenReturn(mockWeather);
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, weatherService);
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/weather").param("location", "Christchurch")))
@@ -443,7 +443,7 @@ public class GardenFormControllerTest {
     @Test
     @WithMockUser
     public void GetTemperatureOfCity_CityDoesntExist_TemperatureNotReturned() throws Exception {
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, weatherService);
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/weather").param("location", "FAKECITY123")))

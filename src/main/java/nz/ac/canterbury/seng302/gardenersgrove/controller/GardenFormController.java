@@ -50,7 +50,7 @@ public class GardenFormController {
    * @param gardenerFormService - object that is used to interact with the database
    */
   @Autowired
-  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService, RequestService requestService, , WeatherService weatherService) {
+  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService, RequestService requestService, WeatherService weatherService) {
     this.gardenService = gardenService;
     this.gardenerFormService = gardenerFormService;
     this.relationshipService = relationshipService;
@@ -209,12 +209,13 @@ public class GardenFormController {
                               @RequestParam(name = "uploadError", required = false) String uploadError,
                               @RequestParam(name = "errorId", required = false) String errorId,
                               @RequestParam(name = "userId", required = false) String userId,
-                              Model model, HttpServletRequest request) {
+                              Model model, HttpServletRequest request) throws IOException, URISyntaxException {
     logger.info("GET /gardens/details");
 
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
     List<Garden> gardens = new ArrayList<>();
     if (gardenerOptional.isPresent()) {
+      gardener = gardenerOptional.get();
       gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
     }
 
@@ -232,6 +233,14 @@ public class GardenFormController {
         model.addAttribute("errorId", errorId);
       }
       if(userId == null || gardener.getId() == parseLong(userId, 10)) {
+        HashMap<String, LinkedTreeMap<String, Object>> currentWeather = weatherService.getCurrentWeather(garden.get().getLocation());
+        if (currentWeather != null && !currentWeather.isEmpty()) {
+          model.addAttribute("temperature", currentWeather.get("current").get("temp_c"));
+          LinkedTreeMap<String, Object> condition = (LinkedTreeMap<String, Object>) currentWeather.get("current").get("condition");
+          model.addAttribute("weatherImage", condition.get("icon"));
+          model.addAttribute("weatherDescription", condition.get("text"));
+          model.addAttribute("humidity", currentWeather.get("current").get("humidity"));
+        }
         return "gardenDetailsTemplate";
       } else {
         Optional<Gardener> friend = gardenerFormService.findById(parseLong(userId, 10));
