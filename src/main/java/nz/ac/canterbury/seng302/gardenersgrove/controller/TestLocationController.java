@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.GetMapping;
  * It is linked with locationAuto page
  */
 @Controller
-public class TempLocationController {
+public class TestLocationController {
 
-    private final Logger logger = LoggerFactory.getLogger(TempLocationController.class);
+    private final Logger logger = LoggerFactory.getLogger(TestLocationController.class);
 
-    @GetMapping("/locationAuto")
+    @GetMapping("/testLocationAuto")
     public String getLocationForm() {
-        logger.info("GET /locationAuto");
+        logger.info("GET /testLocationAuto");
 
-        return "/locationAuto";
+        return "testLocationAuto";
     }
 
 
