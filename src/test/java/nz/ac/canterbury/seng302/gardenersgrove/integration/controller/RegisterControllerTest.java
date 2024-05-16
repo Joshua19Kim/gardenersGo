@@ -40,8 +40,7 @@ public class RegisterControllerTest {
     private TokenService tokenService;
     @MockBean
     private WriteEmail mockWriteEmail;
-    @MockBean
-    private EmailUserService emailService;
+
     @Test
     @WithMockUser
     void onRegisterPage_noInputGiven_RegisterFormShown() throws Exception {
@@ -58,9 +57,9 @@ public class RegisterControllerTest {
         Authentication authentication = Mockito.mock(Authentication.class);
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
-        Mockito.doNothing().when(mockWriteEmail).sendSignupEmail(Mockito.any(Gardener.class), Mockito.any(TokenService.class), Mockito.any(EmailUserService.class));
+        Mockito.doNothing().when(mockWriteEmail).sendSignupEmail(Mockito.any(Gardener.class), Mockito.any(TokenService.class));
 
-        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager,tokenService, emailService, mockWriteEmail);
+        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager,tokenService, mockWriteEmail);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(registerController).build();
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/register")
@@ -122,7 +121,7 @@ public class RegisterControllerTest {
         Authentication authentication = Mockito.mock(Authentication.class);
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
-        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager,tokenService, emailService, mockWriteEmail);
+        RegisterController registerController = new RegisterController(gardenerFormService, authenticationManager,tokenService, mockWriteEmail);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(registerController).build();
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/register")

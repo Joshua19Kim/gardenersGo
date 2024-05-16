@@ -1,8 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SearchService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +28,18 @@ import java.util.*;
 public class ManageFriendsController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
     private final GardenerFormService gardenerFormService;
+    private final GardenService gardenService;
     private final RelationshipService relationshipService;
+    private final RequestService requestService;
     private List<Gardener> noExistingRelationship = new ArrayList<>();
 
     @Autowired
-    public ManageFriendsController(GardenerFormService gardenerFormService, SearchService searchService, RelationshipService relationshipService, AuthenticationManager authenticationManager) {
+    public ManageFriendsController(GardenerFormService gardenerFormService, RequestService requestService, GardenService gardenService,
+                                   SearchService searchService, RelationshipService relationshipService, AuthenticationManager authenticationManager) {
         this.gardenerFormService = gardenerFormService;
+        this.gardenService = gardenService;
         this.relationshipService = relationshipService;
+        this.requestService = requestService;
     }
 
     /**
@@ -43,15 +52,19 @@ public class ManageFriendsController {
      * @return manage friend html
      */
     @GetMapping("/manageFriends")
-    public String getManageFriends(Authentication authentication, Model model) {
+    public String getManageFriends(Authentication authentication, Model model, HttpServletRequest request) {
 
         logger.info("GET /manageFriends");
 
+        model.addAttribute("requestURI", requestService.getRequestURI(request));
+
         String currentUserEmail = authentication.getPrincipal().toString();
         Optional<Gardener> currentUserOptional = gardenerFormService.findByEmail(currentUserEmail);
+        List<Garden> gardens = new ArrayList<>();
 
         if (currentUserOptional.isPresent()) {
             Gardener currentUser = currentUserOptional.get();
+            gardens = gardenService.getGardensByGardenerId(currentUser.getId());
             List<Gardener> allCurrentUserRelationships = relationshipService.getCurrentUserRelationships(currentUser.getId());
             List<Gardener> allCurrentUserPending = relationshipService.getGardenerPending(currentUser.getId());
             List<Gardener> allCurrentUserIncoming = relationshipService.getGardenerIncoming(currentUser.getId());
@@ -78,6 +91,7 @@ public class ManageFriendsController {
         } else {
             logger.info("No user with that email");
         }
+        model.addAttribute("gardens", gardens);
         return "manageFriends";
 
     }

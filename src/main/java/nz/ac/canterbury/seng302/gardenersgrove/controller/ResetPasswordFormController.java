@@ -49,11 +49,13 @@ public class ResetPasswordFormController {
         if (result == null) { // No issue
             Optional<Gardener> tempGardener = tokenService.findGardenerbyToken(token);
             if (tempGardener.isPresent()) {
+                Optional<LostPasswordToken> usedToken = tokenService.getTokenFromString(token);
+                usedToken.ifPresent(e -> tokenService.removeToken(e)); // Deletes token after One use
                 gardener = tempGardener.get();
                 return  "resetPasswordForm";
-            };
+            }
             return "redirect:/login"; // Gardener / Id not present
-        } else if (result == "expired") {
+        } else if (result.equals("expired")) {
             Optional<LostPasswordToken> expiredToken = tokenService.getTokenFromString(token);
             expiredToken.ifPresent(e -> tokenService.removeToken(e));
             return "redirect:/login?expired"; // Token is expired
@@ -66,7 +68,7 @@ public class ResetPasswordFormController {
      * @param password The new password
      * @param retypePassword The re-entered new password
      * @param model (map-like) representation of error messages for use in thymeleaf
-     * @return
+     * @return resetPasswordForm if input is invalid, otherwise redirects to login page
      */
     @PostMapping("/resetPassword")
     public String sendResetPasswordForm(@RequestParam(name = "password") String password,

@@ -36,6 +36,8 @@ public class UserProfileControllerTest {
     @MockBean
     private GardenerFormService gardenerFormService;
     @MockBean
+    private GardenService gardenService; // Tests fill fail without this
+    @MockBean
     private ImageService imageService;
     @MockBean
     private Gardener testGardener;
@@ -47,6 +49,8 @@ public class UserProfileControllerTest {
     private WriteEmail mockWriteEmail;
     @MockBean
     private RelationshipService relationshipService;
+    @MockBean
+    private RequestService requestService;
 
 
     @BeforeEach

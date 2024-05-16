@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -44,6 +45,9 @@ public class GardenFormControllerTest {
 
     @MockBean
     private RelationshipService relationshipService;
+
+    @MockBean
+    private RequestService requestService;
 
     @Test
     @WithMockUser
@@ -198,7 +202,8 @@ public class GardenFormControllerTest {
     public void GardenFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
         List<Garden> gardens = new ArrayList<>();
         gardens.add(new Garden("My Garden", "Ilam", "32", testGardener));
-        when(gardenService.getGardenResults()).thenReturn(gardens);
+        when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/form")
                         .param("redirect", ""))
                 .andExpect(status().isOk())

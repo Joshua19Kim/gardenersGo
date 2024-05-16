@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.securityContext;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = {GardenFormController.class, PlantFormController.class})
@@ -48,6 +50,8 @@ public class PlantFormControllerTest {
 
     @MockBean
     private ImageService imageService;
+    @MockBean
+    private RequestService requestService;
 
     @MockBean
     private RelationshipService relationshipService;
@@ -469,7 +473,11 @@ public class PlantFormControllerTest {
     @WithMockUser
     public void PlantFormSubmitted_DescriptionOverLimit_ErrorMessageAddedAndViewUpdated() throws Exception {
         Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        List<Garden> gardens = new ArrayList<>();
+        gardens.add(garden);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
+        when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
 
         String name = "My Plant";
         String count = "2";
@@ -535,6 +543,7 @@ public class PlantFormControllerTest {
         List<Garden> gardens = new ArrayList<>();
         when(gardenService.getGardenResults()).thenReturn(gardens);
         when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
+        when(requestService.getRequestURI(any(HttpServletRequest.class))).thenReturn("/gardens/details/plants/edit");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/details/plants/edit")
                         .param("plantId", plantId)
