@@ -64,9 +64,7 @@ public class GardenFormController {
     logger.info("Authentication: " + authentication);
     String currentUserEmail = authentication.getName();
     Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
-    if (gardenerOptional.isPresent()) {
-      gardener = gardenerOptional.get();
-    }
+    gardenerOptional.ifPresent(g -> gardener = g);
 
     List<Garden> gardens;
     if(user == null) {
@@ -140,9 +138,7 @@ public class GardenFormController {
     boolean isValid = true;
 
     Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
-    if (gardenerOptional.isPresent()) {
-      gardener = gardenerOptional.get();
-    }
+    gardenerOptional.ifPresent(g -> gardener = g);
 
     if (!Objects.equals(name, validatedName)) {
       model.addAttribute("nameError", validatedName);
