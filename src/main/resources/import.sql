@@ -66,8 +66,18 @@ INSERT INTO garden (gardener_id, name, location, size) VALUES (3, 'Long Garden',
 ALTER TABLE relationships ADD CONSTRAINT unique_gardener_friend UNIQUE (gardener_id, friend_id);
 
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 2, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 10, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 11, 'accepted');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (4, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (6, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (7, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (8, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (9, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 12, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 13, 'pending');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 3, 'declined');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 14, 'declined');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 15, 'declined');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 5, 'pending');
 -- email: a@gmail.com
 -- password: Password1!
