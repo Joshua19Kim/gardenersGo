@@ -29,6 +29,22 @@ import java.util.Optional;
 @Controller
 public class GardenFormController {
   Logger logger = LoggerFactory.getLogger(GardenFormController.class);
+  private final GardenService gardenService;
+  private final GardenerFormService gardenerFormService;
+  private final RelationshipService relationshipService;
+  private Gardener gardener;
+
+  /**
+   * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
+   * @param gardenService the garden service used to interact with the database
+   * @param gardenerFormService - object that is used to interact with the database
+   */
+  @Autowired
+  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService) {
+    this.gardenService = gardenService;
+    this.gardenerFormService = gardenerFormService;
+    this.relationshipService = relationshipService;
+  }
 
   /**
    * Gets the home page that displays the list of gardens
@@ -78,23 +94,6 @@ public class GardenFormController {
     requestUri = requestUri.replace(contextPath + "/", "/");
     model.addAttribute("requestURI", requestUri);
     return "gardensTemplate";
-  }
-
-  private final GardenService gardenService;
-  private final GardenerFormService gardenerFormService;
-  private final RelationshipService relationshipService;
-  private Gardener gardener;
-
-  /**
-   * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
-   * @param gardenService the garden service used to interact with the database
-   * @param gardenerFormService - object that is used to interact with the database
-   */
-  @Autowired
-  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService) {
-    this.gardenService = gardenService;
-    this.gardenerFormService = gardenerFormService;
-    this.relationshipService = relationshipService;
   }
 
   /**
@@ -295,10 +294,6 @@ public class GardenFormController {
       }
     }
     return "redirect:/gardens";
-
-
-
-//    return "gardenDetailsTemplate";
   }
 
 
