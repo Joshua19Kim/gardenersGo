@@ -31,8 +31,6 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test:6.2.3'
 	implementation 'org.simplejavamail:simple-java-mail:8.8.0'
 
-	implementation 'com.google.code.gson:gson:2.9.0'
-
 	//Cucumber dependencies
 	testImplementation 'io.cucumber:cucumber-java:7.15.0'
 	testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.15.0'
