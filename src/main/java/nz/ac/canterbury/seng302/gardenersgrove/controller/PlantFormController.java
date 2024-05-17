@@ -90,7 +90,8 @@ public class PlantFormController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         List<Garden> gardens = new ArrayList<>();
         if (gardenerOptional.isPresent()) {
-            gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+            gardener = gardenerOptional.get();
+            gardens = gardenService.getGardensByGardenerId(gardener.getId());
         }
         model.addAttribute("gardens", gardens);
         Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
@@ -213,6 +214,7 @@ public class PlantFormController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         List<Garden> gardens = new ArrayList<>();
         if (gardenerOptional.isPresent()) {
+            gardener = gardenerOptional.get();
             gardens = gardenService.getGardensByGardenerId(gardener.getId());
         }
 
