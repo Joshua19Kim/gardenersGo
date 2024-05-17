@@ -1,13 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
+import org.apache.coyote.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +34,7 @@ public class UserProfileController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
     private final GardenService gardenService;
     private final GardenerFormService gardenerFormService;
+    private final RequestService requestService;
     private final WriteEmail writeEmail;
     private Gardener gardener;
 
@@ -48,10 +47,11 @@ public class UserProfileController {
     private boolean isFileNotAdded;
 
     @Autowired
-    public UserProfileController(GardenerFormService gardenerFormService, GardenService gardenService, WriteEmail writeEmail) {
+    public UserProfileController(GardenerFormService gardenerFormService, GardenService gardenService, WriteEmail writeEmail, RequestService requestService) {
         this.gardenerFormService = gardenerFormService;
         this.gardenService = gardenService;
         this.writeEmail = writeEmail;
+        this.requestService = requestService;
     }
 
     /**
@@ -85,12 +85,15 @@ public class UserProfileController {
                                  @RequestParam(name = "email", required = false) String email,
                                  @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
                                  @RequestParam(name = "user", required = false) String user,
+                                 HttpServletRequest request,
                                  Model model) {
 
         logger.info("GET /user");
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         List<Garden> gardens;
+
+        model.addAttribute("requestURI", requestService.getRequestURI(request));
 
         if (gardenerOptional.isPresent()) {
             gardener = gardenerOptional.get();
@@ -197,7 +200,9 @@ public class UserProfileController {
      * @return thymeleaf 'user' page after updating successfully to reload user's details, otherwise thymeleaf login page
      */
     @PostMapping("/user")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, Model model) {
+    public String handleFileUpload(@RequestParam("file") MultipartFile file,
+                                   HttpServletRequest request,
+                                   Model model) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("POST /upload");
@@ -218,6 +223,7 @@ public class UserProfileController {
                 gardenerOptional.ifPresent(value -> gardener = value);
                 List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());;
                 model.addAttribute("gardens", gardens);
+                model.addAttribute("requestURI", requestService.getRequestURI(request));
                 model.addAttribute("uploadMessage", uploadMessage.get());
                 model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
                 model.addAttribute("firstName", gardenerFormService.findByEmail(authentication.getName()).get().getFirstName());
@@ -256,8 +262,9 @@ public class UserProfileController {
      * @return 'Update password' page
      */
     @GetMapping("/password")
-    public String passwordForm(Model model) {
+    public String passwordForm(Model model, HttpServletRequest request) {
         logger.info("GET /password");
+        model.addAttribute("requestURI", requestService.getRequestURI(request));
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         List<Garden> gardens;
 
@@ -283,12 +290,15 @@ public class UserProfileController {
     public String updatePassword(@RequestParam(name = "oldPassword", required = false) String oldPassword,
                                  @RequestParam(name = "newPassword", required = false) String newPassword,
                                  @RequestParam(name = "retypePassword", required = false) String retypePassword,
+                                 HttpServletRequest request,
                                  Model model) {
         logger.info("POST /password");
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
         InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
+
+        model.addAttribute("requestURI", requestService.getRequestURI(request));
 
         if (gardenerOptional.isEmpty()) {return "login";}
 
