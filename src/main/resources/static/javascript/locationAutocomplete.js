@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const addressInput = document.getElementById('address-input');
     const suburbInput = document.getElementById('suburb');
     const cityInput = document.getElementById('city');
-    const stateInput = document.getElementById('state');
     const countryInput = document.getElementById('country');
     const postcodeInput = document.getElementById('postcode');
     const autocompleteResults = document.getElementById('autocomplete-results');
@@ -71,7 +70,6 @@ document.addEventListener('DOMContentLoaded', function() {
         addressInput.value = addressInputValue.trim();
         suburbInput.value = address.address.suburb || '';
         cityInput.value = address.address.city || '';
-        stateInput.value = address.address.state || '';
         countryInput.value = address.address.country || '';
         postcodeInput.value = address.address.postcode || '';
     }
