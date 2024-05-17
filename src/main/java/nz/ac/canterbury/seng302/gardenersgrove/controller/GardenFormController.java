@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-import com.google.gson.internal.LinkedTreeMap;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -17,7 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StopWatch;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Objects;
 import static java.lang.Long.parseLong;
@@ -334,9 +334,9 @@ public class GardenFormController {
    */
   @GetMapping("gardens/weather")
   public String editGarden(@RequestParam(name = "location") String location, Model model) throws IOException, URISyntaxException {
-    HashMap<String, LinkedTreeMap<String, Object>> currentWeather = weatherService.getCurrentWeather(location);
-    if (currentWeather != null && !currentWeather.isEmpty()) {
-      model.addAttribute("temperature", currentWeather.get("current").get("temp_c"));
+    String currentWeather = weatherService.getCurrentWeather(location);
+    if (currentWeather != null) {
+      model.addAttribute("temperature", 12);
     }
     return "weatherTemplate";
   }

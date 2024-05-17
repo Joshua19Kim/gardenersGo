@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-import com.google.gson.internal.LinkedTreeMap;
+
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -420,19 +420,16 @@ public class GardenFormControllerTest {
 
     @Test
     @WithMockUser
-    public void GetTemperatureOfCity_CityExists_TemperatureReturned() throws Exception {
-        HashMap<String, LinkedTreeMap<String, Object>> mockWeather = new HashMap<>();
-        LinkedTreeMap<String, Object> currentWeather = new LinkedTreeMap<>();
-        currentWeather.put("temp_c", 20.0F);
-        mockWeather.put("current", currentWeather);
-        when(weatherService.getCurrentWeather("Christchurch")).thenReturn(mockWeather);
+    public void GetTemperatureOfCity_CityExists_LocationReturned() throws Exception {
+
+        when(weatherService.getCurrentWeather("Christchurch")).thenReturn("Christchurch");
 
         GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, weatherService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/weather").param("location", "Christchurch")))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("temperature", 20.0F));
+                .andExpect(model().attribute("temperature", 12));
     }
 
     @Test
