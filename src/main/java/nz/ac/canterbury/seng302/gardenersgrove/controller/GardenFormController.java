@@ -234,13 +234,12 @@ public class GardenFormController {
         model.addAttribute("errorId", errorId);
       }
       if(userId == null || gardener.getId() == parseLong(userId, 10)) {
-        HashMap<String, LinkedTreeMap<String, Object>> currentWeather = weatherService.getCurrentWeather(garden.get().getLocation());
-        if (currentWeather != null && !currentWeather.isEmpty()) {
-          model.addAttribute("temperature", currentWeather.get("current").get("temp_c"));
-          LinkedTreeMap<String, Object> condition = (LinkedTreeMap<String, Object>) currentWeather.get("current").get("condition");
-          model.addAttribute("weatherImage", ((String) condition.get("icon")).replace("64x64", "128x128"));
-          model.addAttribute("weatherDescription", condition.get("text"));
-          model.addAttribute("humidity", currentWeather.get("current").get("humidity"));
+        Weather currentWeather = weatherService.getCurrentWeather(garden.get().getLocation());
+        if (currentWeather != null) {
+          model.addAttribute("temperature", currentWeather.getTemperature());
+          model.addAttribute("weatherImage", currentWeather.getWeatherImage());
+          model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
+          model.addAttribute("humidity", currentWeather.getHumidity());
         }
         return "gardenDetailsTemplate";
       } else {

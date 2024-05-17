@@ -34,6 +34,7 @@ public class WeatherService {
 
     @Cacheable(value = "currentWeather", key="#location")
     public Weather getCurrentWeather(String location) throws IOException, URISyntaxException {
+        location = location.replace(" ", "-");
         String uri = CURRENT_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no";
         URL url = new URI(uri).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

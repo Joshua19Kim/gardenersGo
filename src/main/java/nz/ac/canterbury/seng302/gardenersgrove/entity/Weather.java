@@ -31,7 +31,7 @@ public class Weather {
 
     public void setCurrent(JsonNode current) {
         this.current = current;
-        this.weatherImage = current.get("condition").get("icon").asText();
+        this.weatherImage = current.get("condition").get("icon").asText().replace("64x64", "128x128");
         this.weatherDescription = current.get("condition").get("text").asText();
         this.temperature = current.get("temp_c").floatValue();
         this.humidity = current.get("humidity").floatValue();
