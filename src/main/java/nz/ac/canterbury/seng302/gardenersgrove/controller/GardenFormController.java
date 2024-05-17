@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,28 @@ import java.util.Optional;
 @Controller
 public class GardenFormController {
   Logger logger = LoggerFactory.getLogger(GardenFormController.class);
+  private final GardenService gardenService;
+  private final GardenerFormService gardenerFormService;
+  private final RelationshipService relationshipService;
+  private final RequestService requestService;
+  private final TagService tagService;
+
+  private Gardener gardener;
+
+  /**
+   * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
+   * @param gardenService the garden service used to interact with the database
+   * @param gardenerFormService - object that is used to interact with the database
+   */
+  @Autowired
+  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService, RequestService requestService, TagService tagService) {
+    this.gardenService = gardenService;
+    this.gardenerFormService = gardenerFormService;
+    this.relationshipService = relationshipService;
+    this.requestService = requestService;
+    this.tagService = tagService;
+
+  }
 
   /**
    * Retrieve an optional of a gardener using the current authentication
@@ -79,36 +102,8 @@ public class GardenFormController {
 
     }
     model.addAttribute("gardens", gardens);
-
-    String requestUri = request.getRequestURI();
-    String queryString = request.getQueryString();
-    if (queryString != null) {
-      requestUri = requestUri + "?" + queryString;
-    }
-    String contextPath = request.getContextPath();
-    logger.debug(contextPath);
-    requestUri = requestUri.replace(contextPath + "/", "/");
-    model.addAttribute("requestURI", requestUri);
+    model.addAttribute("requestURI", requestService.getRequestURI(request));
     return "gardensTemplate";
-  }
-
-  private final GardenService gardenService;
-  private final GardenerFormService gardenerFormService;
-  private final RelationshipService relationshipService;
-  private final TagService tagService;
-  private Gardener gardener;
-
-  /**
-   * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
-   * @param gardenService the garden service used to interact with the database
-   * @param gardenerFormService - object that is used to interact with the database
-   */
-  @Autowired
-  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService, TagService tagService) {
-    this.gardenService = gardenService;
-    this.gardenerFormService = gardenerFormService;
-    this.relationshipService = relationshipService;
-      this.tagService = tagService;
   }
 
   /**
@@ -218,7 +213,8 @@ public class GardenFormController {
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
     List<Garden> gardens = new ArrayList<>();
     if (gardenerOptional.isPresent()) {
-      gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+      gardener =gardenerOptional.get();
+      gardens = gardenService.getGardensByGardenerId(gardener.getId());
     }
 
     model.addAttribute("gardens", gardens);
@@ -226,12 +222,7 @@ public class GardenFormController {
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
 
-      String requestUri = request.getRequestURI();
-      String queryString = request.getQueryString();
-      if (queryString != null) {
-        requestUri = requestUri + "?" + queryString;
-      }
-      model.addAttribute("requestURI", requestUri);
+      model.addAttribute("requestURI", requestService.getRequestURI(request));
 
       model.addAttribute("garden", garden.get());
       model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
@@ -274,7 +265,7 @@ public class GardenFormController {
       @RequestParam(name = "location") String location,
       @RequestParam(name = "size") String size,
       @RequestParam(name = "gardenId") String gardenId,
-      Model model) {
+      Model model, HttpServletRequest request) {
     logger.info("POST gardens/edit");
 
     String validatedName = ValidityChecker.validateGardenName(name);
@@ -316,6 +307,7 @@ public class GardenFormController {
       model.addAttribute("location", location);
       model.addAttribute("size", size.replace(',', '.'));
       model.addAttribute(gardenService.getGarden(parseLong(gardenId)).get());
+      model.addAttribute("requestURI", requestService.getRequestURI(request));
       returnedTemplate = "editGardensFormTemplate";
     }
     return returnedTemplate;
@@ -336,18 +328,14 @@ public class GardenFormController {
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
     List<Garden> gardens = new ArrayList<>();
     if (gardenerOptional.isPresent()) {
+      gardener = gardenerOptional.get();
       gardens = gardenService.getGardensByGardenerId(gardener.getId());
     }
 
     model.addAttribute("gardens", gardens);
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
-      String requestUri = request.getRequestURI();
-      String queryString = request.getQueryString();
-      if (queryString != null) {
-        requestUri = requestUri + "?" + queryString;
-      }
-      model.addAttribute("requestURI", requestUri);
+      model.addAttribute("requestURI", requestService.getRequestURI(request));
       model.addAttribute("garden", garden.get());
       return "editGardensFormTemplate";
     } else {

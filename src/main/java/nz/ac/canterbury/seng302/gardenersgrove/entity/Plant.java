@@ -82,18 +82,6 @@ public class Plant {
     }
 
     /**
-     * Constructs a plant with name, description, and garden specified.
-     * @param name The name of the plant.
-     * @param description The description of the plant.
-     * @param garden The garden where the plant is located.
-     */
-    public Plant(Garden garden, String name, String description) {
-        this.name = name;
-        this.description = description;
-        this.garden = garden;
-    }
-
-    /**
      * Constructs a plant with name, date planted, and garden specified.
      * @param name The name of the plant.
      * @param garden The garden where the plant is located.
@@ -129,20 +117,6 @@ public class Plant {
     public Plant(String name, String datePlanted, Garden garden, String count) {
         this.name = name;
         this.count = count;
-        this.datePlanted = datePlanted;
-        this.garden = garden;
-    }
-
-    /**
-     * Constructs a plant with name, count, description, and garden specified.
-     * @param name The name of the plant.
-     * @param description The description of the plant.
-     * @param datePlanted The date when the plant was planted.
-     * @param garden The garden where the plant is located.
-     */
-    public Plant(String name, Garden garden, String description, String datePlanted) {
-        this.name = name;
-        this.description = description;
         this.datePlanted = datePlanted;
         this.garden = garden;
     }

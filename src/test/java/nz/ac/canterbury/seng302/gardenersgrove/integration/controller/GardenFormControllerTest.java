@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -48,6 +49,9 @@ public class GardenFormControllerTest {
 
     @MockBean
     private TagService tagService;
+
+    @MockBean
+    private RequestService requestService;
 
     @Test
     @WithMockUser
