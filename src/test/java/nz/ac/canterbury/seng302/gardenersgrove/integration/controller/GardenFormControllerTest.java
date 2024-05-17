@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
@@ -52,6 +53,7 @@ public class GardenFormControllerTest {
 
     @MockBean
     private RequestService requestService;
+
 
     @Test
     @WithMockUser
@@ -420,5 +422,29 @@ public class GardenFormControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens"));
 
+    }
+
+    @Test
+    @WithMockUser
+    public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated()
+            throws Exception {
+        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+        Tag tag = new Tag("My tag", garden);
+
+        when(tagService.addTag(tag)).thenReturn(tag);
+
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("gardens/addTag")
+                                .param("tag-input", "My tag")
+                                .param("gardenId", "1")
+                                .with(csrf())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+        verify(tagService, times(1)).getGarden(1L);
+        verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertEquals("Rose Garden", garden.getName());
+        Assertions.assertEquals("Riccarton", garden.getLocation());
+        Assertions.assertEquals("100", garden.getSize());
     }
 }
