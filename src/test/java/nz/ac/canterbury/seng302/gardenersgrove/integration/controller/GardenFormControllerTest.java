@@ -4,12 +4,14 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -421,15 +423,24 @@ public class GardenFormControllerTest {
     @Test
     @WithMockUser
     public void GetTemperatureOfCity_CityExists_LocationReturned() throws Exception {
-
-        when(weatherService.getCurrentWeather("Christchurch")).thenReturn("Christchurch");
+        Weather currentWeather = Mockito.mock(Weather.class);
+        when(weatherService.getCurrentWeather("Christchurch")).thenReturn(currentWeather);
+        when(currentWeather.getTemperature()).thenReturn(12.0f);
+        when(currentWeather.getHumidity()).thenReturn(50.0f);
+        when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
+        when(currentWeather.getWeatherImage()).thenReturn("image");
+        when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
 
         GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, weatherService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/weather").param("location", "Christchurch")))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("temperature", 12));
+                .andExpect(model().attribute("temperature", 12.0f))
+                .andExpect(model().attribute("humidity", 50.0f))
+                .andExpect(model().attribute("weatherDescription", "Sunny"))
+                .andExpect(model().attribute("weatherImage", "image"))
+                .andExpect(model().attribute("currentLocation", "Christchurch"));
     }
 
     @Test
@@ -440,6 +451,12 @@ public class GardenFormControllerTest {
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/weather").param("location", "FAKECITY123")))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeDoesNotExist("temperature"));
+                .andExpect(model().attributeDoesNotExist("temperature"))
+                .andExpect(model().attributeDoesNotExist("temperature"))
+                .andExpect(model().attributeDoesNotExist("humidity"))
+                .andExpect(model().attributeDoesNotExist("weatherDescription"))
+                .andExpect(model().attributeDoesNotExist("weatherImage"))
+                .andExpect(model().attributeDoesNotExist("currentLocation"));
+
     }
 }

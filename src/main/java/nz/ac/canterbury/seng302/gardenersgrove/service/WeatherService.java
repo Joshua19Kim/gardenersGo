@@ -33,7 +33,7 @@ public class WeatherService {
     }
 
     @Cacheable(value = "currentWeather", key="#location")
-    public String getCurrentWeather(String location) throws IOException, URISyntaxException {
+    public Weather getCurrentWeather(String location) throws IOException, URISyntaxException {
         String uri = CURRENT_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no";
         URL url = new URI(uri).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -43,7 +43,7 @@ public class WeatherService {
         Weather weather =
                 objectMapper.readValue(url, Weather.class);
         logger.info("WEATHER FROM JACKSON: " + weather.getCurrentLocation());
-        return weather.getCurrentLocation();
+        return weather;
 
     }
 

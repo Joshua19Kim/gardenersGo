@@ -4,6 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -334,9 +335,13 @@ public class GardenFormController {
    */
   @GetMapping("gardens/weather")
   public String editGarden(@RequestParam(name = "location") String location, Model model) throws IOException, URISyntaxException {
-    String currentWeather = weatherService.getCurrentWeather(location);
+    Weather currentWeather = weatherService.getCurrentWeather(location);
     if (currentWeather != null) {
-      model.addAttribute("temperature", 12);
+      model.addAttribute("temperature", currentWeather.getTemperature());
+      model.addAttribute("humidity", currentWeather.getHumidity());
+      model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
+      model.addAttribute("weatherImage", currentWeather.getWeatherImage());
+      model.addAttribute("currentLocation", currentWeather.getCurrentLocation());
     }
     return "weatherTemplate";
   }
