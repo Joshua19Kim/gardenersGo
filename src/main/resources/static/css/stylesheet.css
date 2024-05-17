@@ -202,6 +202,25 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     cursor: pointer;
 }
 
+#tag-container {
+    display: flex;
+    width: auto;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+
+#tag {
+    width: fit-content;
+    background-color: #45a049;
+    border-radius: 5px;
+    display: flex;
+    margin-left: 5px;
+    padding: 5px;
+    color: #ffffff;
+}
+
+
 #garden-details {
     background-color: #fff;
     border-radius: 8px;
