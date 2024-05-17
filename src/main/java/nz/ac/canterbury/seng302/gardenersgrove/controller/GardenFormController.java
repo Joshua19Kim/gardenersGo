@@ -10,6 +10,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.TagValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -352,9 +353,18 @@ public class GardenFormController {
 
     logger.info("POST /addTag");
     model.addAttribute("tag-input", tag);
-    Tag newTag = new Tag(tag, gardenService.getGarden(id).get());
-    tagService.addTag(newTag);
+    TagValidation tagValidation = new TagValidation(tagService);
 
+    Optional<String> validTagError = tagValidation.validateTag(tag);
+    Optional<String> tagInUse = tagValidation.checkTagInUse(tag);
+    model.addAttribute("tagError", validTagError.orElse(""));
+    if (validTagError.isPresent()) {
+
+    }
+    if (tagInUse.isPresent()) {
+      Tag newTag = new Tag(tag, gardenService.getGarden(id).get());
+      tagService.addTag(newTag);
+    }
     return "redirect:/gardens/details?gardenId=" + id;
 
   }

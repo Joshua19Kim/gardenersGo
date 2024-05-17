@@ -48,4 +48,6 @@ public class TagService {
     public Optional<Tag> getTag(Long id) { return tagRepository.findById(id); }
 
     public List<String> getTags(Long id) { return tagRepository.getTagsByGardenId(id); }
+
+    public Optional<Tag> findTagByName(String name) {return tagRepository.findByName(name);}
 }
