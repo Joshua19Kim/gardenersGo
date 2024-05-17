@@ -24,7 +24,6 @@ import java.net.URI;
 public class WeatherService {
     Logger logger = LoggerFactory.getLogger(WeatherService.class);
     private static String api_key;
-    private static final String CURRENT_WEATHER_URL = "https://api.weatherapi.com/v1/current.json";
     private static final String FORECAST_WEATHER_URL = "https://api.weatherapi.com/v1/forecast.json";
 
     @Autowired
@@ -35,7 +34,7 @@ public class WeatherService {
     @Cacheable(value = "currentWeather", key="#location")
     public Weather getCurrentWeather(String location) throws IOException, URISyntaxException {
         location = location.replace(" ", "-");
-        String uri = CURRENT_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no";
+        String uri = FORECAST_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no";
         URL url = new URI(uri).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
