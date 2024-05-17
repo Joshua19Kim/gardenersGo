@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -160,6 +162,12 @@ public class GardenFormControllerTest {
         Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(gardenService.addGarden(garden)).thenReturn(garden);
+        // Can be extrapolated
+        List<Authority> userRoles = new ArrayList<>();
+        testGardener.setUserRoles(userRoles);
+        testGardener.setId(1L);
+        gardenerFormService.addGardener(testGardener);
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
         mockMvc
                 .perform(
                         (MockMvcRequestBuilders.post("/gardens/details?gardenId=1")
@@ -170,6 +178,32 @@ public class GardenFormControllerTest {
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
         Assertions.assertTrue(garden.getIsGardenPublic());
+    }
+
+    @Test
+    @WithMockUser
+    public void GardenPublicCheckboxUnticked_GardenPublicityUpdated()
+            throws Exception {
+        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+        garden.setIsGardenPublic(true);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        // Can be extrapolated
+        List<Authority> userRoles = new ArrayList<>();
+        testGardener.setUserRoles(userRoles);
+        testGardener.setId(1L);
+        gardenerFormService.addGardener(testGardener);
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/details?gardenId=1")
+                                .param("isGardenPublic", "false")
+                                .with(csrf())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardenDetailsTemplate"));
+        verify(gardenService, times(1)).getGarden(1L);
+        verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertFalse(garden.getIsGardenPublic());
     }
 
     @Test

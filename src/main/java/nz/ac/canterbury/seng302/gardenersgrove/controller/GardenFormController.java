@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -262,12 +263,15 @@ public class GardenFormController {
 
     model.addAttribute("isGardenPublic", isGardenPublic);
 
-    List<Garden> gardens = gardenService.getGardenResults();
-    model.addAttribute("gardens", gardens);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String currentUserEmail = authentication.getName();
+    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
 
-    if (gardenId == null) {
+    if (gardenId == null || gardenerOptional.isEmpty()) {
       return "redirect:/gardens";
     }
+    List<Garden> gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+    model.addAttribute("gardens", gardens);
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
 
@@ -302,9 +306,6 @@ public class GardenFormController {
     }
     return "redirect:/gardens";
   }
-
-
-
 
   /**
    * Updates the details of a garden in the database based on the details provided in the form
