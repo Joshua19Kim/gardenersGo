@@ -358,10 +358,10 @@ public class GardenFormController {
     Optional<String> validTagError = tagValidation.validateTag(tag);
     Optional<String> tagInUse = tagValidation.checkTagInUse(tag);
     model.addAttribute("tagError", validTagError.orElse(""));
-    if (validTagError.isPresent()) {
-
-    }
-    if (tagInUse.isPresent()) {
+//    if (validTagError.isPresent()) {
+//
+//    }
+    if (tagInUse.isEmpty()) {
       Tag newTag = new Tag(tag, gardenService.getGarden(id).get());
       tagService.addTag(newTag);
     }

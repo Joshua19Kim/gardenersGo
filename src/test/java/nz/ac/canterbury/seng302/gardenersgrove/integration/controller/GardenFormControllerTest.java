@@ -422,7 +422,7 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated()
             throws Exception {
-        Garden garden = new Garden(" when(taMy Garden", "Ilam", "32", testGardener);
+        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
         Tag tag = new Tag("My tag", garden);
 
         when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
