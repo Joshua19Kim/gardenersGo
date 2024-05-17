@@ -427,41 +427,48 @@ public class GardenFormControllerTest {
 
     @Test
     @WithMockUser
-    public void GetTemperatureOfCity_CityExists_LocationReturned() throws Exception {
+    public void GetGardenDetails_LocationExists_GardenDetailsProvidedWithWeather() throws Exception {
+
+        String location = "Christchurch";
+
         Weather currentWeather = Mockito.mock(Weather.class);
-        when(weatherService.getCurrentWeather("Christchurch")).thenReturn(currentWeather);
+        when(weatherService.getCurrentWeather(location)).thenReturn(currentWeather);
         when(currentWeather.getTemperature()).thenReturn(12.0f);
         when(currentWeather.getHumidity()).thenReturn(50.0f);
         when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
         when(currentWeather.getWeatherImage()).thenReturn("image");
         when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
-        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
-        MOCK_MVC
-                .perform((MockMvcRequestBuilders.get("/gardens/weather").param("location", "Christchurch")))
+        Garden garden = new Garden("My Garden", location, testGardener);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+
+        mockMvc.perform((MockMvcRequestBuilders.get("/gardens/details")
+                        .param("gardenId", "1")))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("temperature", 12.0f))
                 .andExpect(model().attribute("humidity", 50.0f))
                 .andExpect(model().attribute("weatherDescription", "Sunny"))
                 .andExpect(model().attribute("weatherImage", "image"))
-                .andExpect(model().attribute("currentLocation", "Christchurch"));
+                .andExpect(model().attribute("garden", garden));
     }
 
     @Test
     @WithMockUser
-    public void GetTemperatureOfCity_CityDoesntExist_TemperatureNotReturned() throws Exception {
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
-        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
-        MOCK_MVC
-                .perform((MockMvcRequestBuilders.get("/gardens/weather").param("location", "FAKECITY123")))
+    public void GetGardenDetails_LocationDoesNotExist_GardenDetailsProvidedWithoutWeather() throws Exception {
+        String location = "123";
+
+        when(weatherService.getCurrentWeather(location)).thenReturn(null);
+
+        Garden garden = new Garden("My Garden", location, testGardener);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+
+        mockMvc.perform((MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeDoesNotExist("temperature"))
                 .andExpect(model().attributeDoesNotExist("temperature"))
                 .andExpect(model().attributeDoesNotExist("humidity"))
                 .andExpect(model().attributeDoesNotExist("weatherDescription"))
                 .andExpect(model().attributeDoesNotExist("weatherImage"))
-                .andExpect(model().attributeDoesNotExist("currentLocation"));
+                .andExpect(model().attribute("garden", garden));
 
     }
 }

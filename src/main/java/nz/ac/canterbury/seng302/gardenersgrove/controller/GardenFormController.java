@@ -350,20 +350,4 @@ public class GardenFormController {
     }
   }
 
-  /**
-   * Gets the temperature of christchurch and logs it
-   * @return the temperature as a string of a given city
-   */
-  @GetMapping("gardens/weather")
-  public String editGarden(@RequestParam(name = "location") String location, Model model) throws IOException, URISyntaxException {
-    Weather currentWeather = weatherService.getCurrentWeather(location);
-    if (currentWeather != null) {
-      model.addAttribute("temperature", currentWeather.getTemperature());
-      model.addAttribute("humidity", currentWeather.getHumidity());
-      model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
-      model.addAttribute("weatherImage", currentWeather.getWeatherImage());
-      model.addAttribute("currentLocation", currentWeather.getCurrentLocation());
-    }
-    return "weatherTemplate";
-  }
 }
