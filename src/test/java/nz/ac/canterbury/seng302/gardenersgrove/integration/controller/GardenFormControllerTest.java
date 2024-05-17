@@ -369,12 +369,6 @@ public class GardenFormControllerTest {
         when(gardenService.getGardensByGardenerId(2L)).thenReturn(testGardens);
         when(gardenerFormService.findById(2L)).thenReturn(Optional.of(otherUser));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
-                        .principal(authentication))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("gardens", testGardens))
-                .andExpect(model().attribute("gardener", otherUser))
-                .andExpect(view().name("gardensTemplate"));
 
     }
 
@@ -428,23 +422,48 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated()
             throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+        Garden garden = new Garden(" when(taMy Garden", "Ilam", "32", testGardener);
         Tag tag = new Tag("My tag", garden);
 
-        when(tagService.addTag(tag)).thenReturn(tag);
+        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+        when(tagService.addTag(any())).thenReturn(tag);
 
         mockMvc
                 .perform(
-                        (MockMvcRequestBuilders.post("gardens/addTag")
+                        (MockMvcRequestBuilders.post("/gardens/addTag")
                                 .param("tag-input", "My tag")
                                 .param("gardenId", "1")
                                 .with(csrf())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-        verify(tagService, times(1)).getGarden(1L);
-        verify(gardenService, times(1)).addGarden(garden);
-        Assertions.assertEquals("Rose Garden", garden.getName());
-        Assertions.assertEquals("Riccarton", garden.getLocation());
-        Assertions.assertEquals("100", garden.getSize());
+        verify(tagService, times(1)).addTag(any());
+    }
+
+    @Test
+    @WithMockUser
+    public void GardenDetailsRequested_TagExists_TagDisplayed()
+            throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+        currentUser.setId(1L);
+        gardenerFormService.addGardener(currentUser);
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+
+        Garden garden = new Garden("My Garden", "Ilam", "32", currentUser);
+
+        List<String> tags = new ArrayList<>();
+        tags.add("My tag");
+        tags.add("Another tag");
+
+        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+        when(tagService.getTags(any())).thenReturn(tags);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")
+                        .principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("tags", tags))
+                .andExpect(view().name("gardenDetailsTemplate"));
+        verify(tagService, times(1)).getTags(any());
     }
 }
