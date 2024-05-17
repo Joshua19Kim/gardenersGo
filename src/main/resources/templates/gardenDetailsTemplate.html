@@ -63,18 +63,23 @@
         </div>
     </div>
     <div class="weather-display-container">
-        <div class="weather-display-column">
+        <div class="weather-display-row">
             <h3 th:text="${garden.location}"></h3>
             <p id="currentDateDisplay"></p>
-            <img th:src="${weatherImage}" alt="No image available"/>
-        </div>
-        <div class="weather-display-column-2">
-            <div>
-                <h2 th:text="${temperature} + '&deg;C'" class="temperature"></h2>
-                <p th:text="${weatherDescription}"></p>
+            <div class="temperature-container">
+                <div class="weather-display-row">
+                    <div class="temperature-container">
+                        <h2 th:text="${temperature}" class="temperature"></h2>
+                        <span class="superscript">&deg;C</span>
+                    </div>
+                    <p th:text="${weatherDescription}"></p>
+                    <p th:text="${humidity} + '%' + ' Humidity'"></p>
+                </div>
+                <img th:src="${weatherImage}" alt="No image available"/>
             </div>
-            <p th:text="${humidity} + '%' + ' Humidity'"></p>
         </div>
+            <div>
+            </div>
     </div>
 </div>
 <script>

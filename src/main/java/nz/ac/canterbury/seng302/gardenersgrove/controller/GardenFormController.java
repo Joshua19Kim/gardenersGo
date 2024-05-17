@@ -237,7 +237,7 @@ public class GardenFormController {
         if (currentWeather != null && !currentWeather.isEmpty()) {
           model.addAttribute("temperature", currentWeather.get("current").get("temp_c"));
           LinkedTreeMap<String, Object> condition = (LinkedTreeMap<String, Object>) currentWeather.get("current").get("condition");
-          model.addAttribute("weatherImage", condition.get("icon"));
+          model.addAttribute("weatherImage", ((String) condition.get("icon")).replace("64x64", "128x128"));
           model.addAttribute("weatherDescription", condition.get("text"));
           model.addAttribute("humidity", currentWeather.get("current").get("humidity"));
         }
