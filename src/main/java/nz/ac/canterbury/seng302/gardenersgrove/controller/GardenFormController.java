@@ -11,6 +11,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WordFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,6 @@ public class GardenFormController {
     this.relationshipService = relationshipService;
     this.requestService = requestService;
     this.tagService = tagService;
-
   }
 
   /**
@@ -351,9 +351,17 @@ public class GardenFormController {
           Model model) {
 
     logger.info("POST /addTag");
-    model.addAttribute("tag-input", tag);
-    Tag newTag = new Tag(tag, gardenService.getGarden(id).get());
-    tagService.addTag(newTag);
+
+    if (!WordFilter.doesContainBadWords(tag)) {
+      model.addAttribute("tag-input", tag);
+      Tag newTag = new Tag(tag, gardenService.getGarden(id).get());
+      tagService.addTag(newTag);
+    } else {
+      model.addAttribute("tags", tagService.getTags(id));
+      model.addAttribute("garden", gardenService.getGarden(id).get());
+      model.addAttribute("tagError", "Submitted tag fails moderation requirements");
+      return "gardenDetailsTemplate";
+    }
 
     return "redirect:/gardens/details?gardenId=" + id;
 

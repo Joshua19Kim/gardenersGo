@@ -14,7 +14,7 @@
         <a class="add-tag-button" onclick=displayAddTagsModal()>Add Tags</a>
     </h1>
 
-    <div aria-hidden="true" class="modal" id="add-tag-modal">
+    <div aria-hidden="true" class="modal" id="add-tag-modal" th:style="${tagError != null} ? 'display: block;' : ''">
         <div class="add-tags">
             <div class="header">
                 <button class="close" onclick="displayAddTagsModal()">&times;</button>
@@ -29,7 +29,9 @@
                     <button id="search-button" type="submit">Submit</button>
                 </form>
             </div>
-
+            <div>
+                <span th:if="${tagError}" th:text="${tagError}" class="smallErrorMessage"></span>
+            </div>
         </div>
     </div>
 
