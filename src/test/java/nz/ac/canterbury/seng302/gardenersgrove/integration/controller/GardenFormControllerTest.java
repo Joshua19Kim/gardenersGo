@@ -1,14 +1,18 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,12 +21,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static java.util.Map.entry;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -48,6 +52,9 @@ public class GardenFormControllerTest {
 
     @MockBean
     private RequestService requestService;
+
+    @MockBean
+    private WeatherService weatherService;
 
     @Test
     @WithMockUser
@@ -415,6 +422,53 @@ public class GardenFormControllerTest {
                         .principal(authentication))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens"));
+
+    }
+
+    @Test
+    @WithMockUser
+    public void GetGardenDetails_LocationExists_GardenDetailsProvidedWithWeather() throws Exception {
+
+        String location = "Christchurch";
+
+        Weather currentWeather = Mockito.mock(Weather.class);
+        when(weatherService.getCurrentWeather(location)).thenReturn(currentWeather);
+        when(currentWeather.getTemperature()).thenReturn(12.0f);
+        when(currentWeather.getHumidity()).thenReturn(50.0f);
+        when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
+        when(currentWeather.getWeatherImage()).thenReturn("image");
+        when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+
+        Garden garden = new Garden("My Garden", location, testGardener);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+
+        mockMvc.perform((MockMvcRequestBuilders.get("/gardens/details")
+                        .param("gardenId", "1")))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("temperature", 12.0f))
+                .andExpect(model().attribute("humidity", 50.0f))
+                .andExpect(model().attribute("weatherDescription", "Sunny"))
+                .andExpect(model().attribute("weatherImage", "image"))
+                .andExpect(model().attribute("garden", garden));
+    }
+
+    @Test
+    @WithMockUser
+    public void GetGardenDetails_LocationDoesNotExist_GardenDetailsProvidedWithoutWeather() throws Exception {
+        String location = "123";
+
+        when(weatherService.getCurrentWeather(location)).thenReturn(null);
+
+        Garden garden = new Garden("My Garden", location, testGardener);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+
+        mockMvc.perform((MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeDoesNotExist("temperature"))
+                .andExpect(model().attributeDoesNotExist("humidity"))
+                .andExpect(model().attributeDoesNotExist("weatherDescription"))
+                .andExpect(model().attributeDoesNotExist("weatherImage"))
+                .andExpect(model().attribute("garden", garden));
 
     }
 }

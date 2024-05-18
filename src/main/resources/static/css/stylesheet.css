@@ -395,6 +395,60 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     white-space: normal;
 }
 
+.garden-details-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.weather-display-container {
+    width: 310px;
+    height: 200px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 50px;
+    background-color: #c6e2f4;
+    padding: 25px 26px 5px;
+    margin-left: 20px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.weather-display-container:hover {
+    transform: scale(1.03)
+}
+
+.weather-display-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.temperature-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.weather-display-column-2 {
+    margin-top: 37px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+.temperature {
+    font-size: xxx-large;
+}
+
+.superscript {
+    vertical-align: super;
+    font-size: smaller;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
