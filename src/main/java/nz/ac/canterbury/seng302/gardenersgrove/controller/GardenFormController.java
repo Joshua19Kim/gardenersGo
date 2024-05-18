@@ -216,8 +216,8 @@ public class GardenFormController {
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
     List<Garden> gardens = new ArrayList<>();
     if (gardenerOptional.isPresent()) {
-      gardener = gardenerOptional.get();
-      gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+        gardener = gardenerOptional.get();
+        gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
     }
 
     model.addAttribute("gardens", gardens);
@@ -234,12 +234,18 @@ public class GardenFormController {
         model.addAttribute("errorId", errorId);
       }
       if(userId == null || gardener.getId() == parseLong(userId, 10)) {
-        Weather currentWeather = weatherService.getCurrentWeather(garden.get().getLocation());
+        Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
         if (currentWeather != null) {
+          model.addAttribute("date", currentWeather.getDate());
           model.addAttribute("temperature", currentWeather.getTemperature());
           model.addAttribute("weatherImage", currentWeather.getWeatherImage());
           model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
           model.addAttribute("humidity", currentWeather.getHumidity());
+          model.addAttribute("forecastDates", currentWeather.getForecastDates());
+          model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
+          model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
+          model.addAttribute("forecastWeatherDescription", currentWeather.getForecastDescriptions());
+          model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
         }
         return "gardenDetailsTemplate";
       } else {
@@ -350,5 +356,4 @@ public class GardenFormController {
       return "redirect:/gardens";
     }
   }
-
 }

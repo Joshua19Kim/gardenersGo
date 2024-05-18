@@ -11,10 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -24,7 +21,6 @@ import java.net.URI;
 public class WeatherService {
     Logger logger = LoggerFactory.getLogger(WeatherService.class);
     private static String api_key;
-    private static final String CURRENT_WEATHER_URL = "https://api.weatherapi.com/v1/current.json";
     private static final String FORECAST_WEATHER_URL = "https://api.weatherapi.com/v1/forecast.json";
     private final ObjectMapper objectMapper;
 
@@ -44,9 +40,9 @@ public class WeatherService {
      * @throws URISyntaxException
      */
     @Cacheable(value = "currentWeather", key="#location")
-    public Weather getCurrentWeather(String location) throws IOException, URISyntaxException {
+    public Weather getWeather(String location) throws IOException, URISyntaxException {
         location = location.replace(" ", "-");
-        String uri = CURRENT_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no";
+        String uri = FORECAST_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no" + "&days=3";
         URL url = new URI(uri).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
