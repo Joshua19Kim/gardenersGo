@@ -34,6 +34,15 @@ public class WeatherService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Connects to WeatherAPI and downloads the data for the current weather from a JSON into a Weather object
+     * by making use of the jackson object mapper. If there is no weather data for the location it will return null.
+     *
+     * @param location the location to get the current weather of
+     * @return a object representing the details of the current weather
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     @Cacheable(value = "currentWeather", key="#location")
     public Weather getCurrentWeather(String location) throws IOException, URISyntaxException {
         location = location.replace(" ", "-");
@@ -54,6 +63,9 @@ public class WeatherService {
 
     }
 
+    /**
+     * Used to clear the cache every hour to ensure that the weather data is not stale
+     */
     @CacheEvict(value = "currentWeather", allEntries = true)
     @Scheduled(fixedRateString = "${caching.spring.currentWeatherTTL}")
     public void emptyCurrentWeatherCache() {
