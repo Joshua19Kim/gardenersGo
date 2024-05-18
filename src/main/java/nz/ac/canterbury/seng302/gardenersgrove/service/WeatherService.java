@@ -37,10 +37,15 @@ public class WeatherService {
         connection.setRequestMethod("GET");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        Weather weather =
-                objectMapper.readValue(url, Weather.class);
-        logger.info("WEATHER FROM JACKSON: " + weather.getCurrentLocation());
-        return weather;
+        try {
+            Weather weather =
+                    objectMapper.readValue(url, Weather.class);
+            logger.info("WEATHER FROM JACKSON: " + weather.getCurrentLocation());
+            return weather;
+        } catch (IOException ex) {
+            // this occurs when no weather is found for that location.
+            return null;
+        }
 
     }
 
