@@ -26,10 +26,12 @@ public class WeatherService {
     private static String api_key;
     private static final String CURRENT_WEATHER_URL = "https://api.weatherapi.com/v1/current.json";
     private static final String FORECAST_WEATHER_URL = "https://api.weatherapi.com/v1/forecast.json";
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public WeatherService(@Value("${weather.password}") String api_key) {
+    public WeatherService(@Value("${weather.password}") String api_key, ObjectMapper objectMapper) {
         WeatherService.api_key = api_key;
+        this.objectMapper = objectMapper;
     }
 
     @Cacheable(value = "currentWeather", key="#location")
@@ -39,7 +41,6 @@ public class WeatherService {
         URL url = new URI(uri).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
-        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             Weather weather =
