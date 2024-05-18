@@ -369,7 +369,6 @@ public class GardenFormController {
       model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
       model.addAttribute("weatherImage", currentWeather.getWeatherImage());
       model.addAttribute("currentLocation", currentWeather.getCurrentLocation());
-      logger.info(currentWeather.getForecast().get("forecastday").get(0).toString());
     }
     return "weatherTemplate";
   }
