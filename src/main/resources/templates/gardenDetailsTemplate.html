@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="en-uk">
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <title>Garden Details</title>
@@ -70,7 +71,8 @@
             </table>
         </div>
     </div>
-    <div id="weather-information">
+    <div id="location-error" th:if="${date == null}">Location not found, please update your location to see the weather</div>
+    <div id="weather-information" th:if="${date}">
         <div class="weather-display-container">
             <div class="weather-display-row">
                 <h3 th:text="${garden.location}"></h3>

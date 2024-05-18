@@ -401,6 +401,20 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     justify-content: space-evenly;
 }
 
+#location-error {
+    border: 1px solid red;
+    border-radius: 5px;
+    background: rgba(255, 0, 0, 0.3);
+    height: 10vh;
+    position: absolute;
+    right: 5%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    padding: 1%;
+    top: 150px;
+}
+
 .future-weather {
     min-height: 25vh !important;
 }
