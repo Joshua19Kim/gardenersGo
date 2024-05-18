@@ -27,13 +27,6 @@ public class Relationships {
     @Column(nullable = false)
     private String status;
 
-
-
-    @Column()
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "gardener_id")
-    private List<Authority> userRoles;
-
     /**
      * JPA required no-args constructor
      */
@@ -50,27 +43,6 @@ public class Relationships {
         this.friendId = friendId;
         this.status = status;
     }
-
-    public void grantAuthority(String authority) {
-         if ( userRoles == null )
-             userRoles = new ArrayList<>();
-         userRoles.add(new Authority(authority));
-         }
-    public void grantAuthorities(List<String> roles) {
-        if ( userRoles == null )
-            userRoles = new ArrayList<>();
-        for (String s: roles) {
-            userRoles.add(new Authority(s));
-        }
-    }
-
-    public List<GrantedAuthority> getAuthorities(){
-         List<GrantedAuthority> authorities = new ArrayList<>();
-         this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
-         return authorities;
-    }
-
-
 
     public Long getId() {
         return id;

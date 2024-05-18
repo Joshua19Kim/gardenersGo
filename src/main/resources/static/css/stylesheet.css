@@ -904,6 +904,7 @@ form.search-bar::after {
 
 #received-requests {
     display: none;
+    flex-direction: column;
     justify-content: space-between;
 }
 
