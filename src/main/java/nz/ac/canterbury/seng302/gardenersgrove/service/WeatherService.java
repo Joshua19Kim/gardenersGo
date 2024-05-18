@@ -22,12 +22,23 @@ public class WeatherService {
     Logger logger = LoggerFactory.getLogger(WeatherService.class);
     private static String api_key;
     private static final String FORECAST_WEATHER_URL = "https://api.weatherapi.com/v1/forecast.json";
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public WeatherService(@Value("${weather.password}") String api_key) {
+    public WeatherService(@Value("${weather.password}") String api_key, ObjectMapper objectMapper) {
         WeatherService.api_key = api_key;
+        this.objectMapper = objectMapper;
     }
 
+    /**
+     * Connects to WeatherAPI and downloads the data for the current weather from a JSON into a Weather object
+     * by making use of the jackson object mapper. If there is no weather data for the location it will return null.
+     *
+     * @param location the location to get the current weather of
+     * @return a object representing the details of the current weather
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     @Cacheable(value = "currentWeather", key="#location")
     public Weather getWeather(String location) throws IOException, URISyntaxException {
         location = location.replace(" ", "-");
@@ -35,7 +46,6 @@ public class WeatherService {
         URL url = new URI(uri).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
-        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             Weather weather =
@@ -49,6 +59,9 @@ public class WeatherService {
 
     }
 
+    /**
+     * Used to clear the cache every hour to ensure that the weather data is not stale
+     */
     @CacheEvict(value = "currentWeather", allEntries = true)
     @Scheduled(fixedRateString = "${caching.spring.currentWeatherTTL}")
     public void emptyCurrentWeatherCache() {

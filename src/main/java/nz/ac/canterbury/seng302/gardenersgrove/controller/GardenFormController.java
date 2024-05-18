@@ -216,8 +216,8 @@ public class GardenFormController {
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
     List<Garden> gardens = new ArrayList<>();
     if (gardenerOptional.isPresent()) {
-      gardener =gardenerOptional.get();
-      gardens = gardenService.getGardensByGardenerId(gardener.getId());
+        gardener = gardenerOptional.get();
+        gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
     }
 
     model.addAttribute("gardens", gardens);
