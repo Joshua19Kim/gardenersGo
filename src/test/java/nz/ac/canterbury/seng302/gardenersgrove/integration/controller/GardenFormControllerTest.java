@@ -12,7 +12,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,7 +25,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.util.*;
 
-import static java.util.Map.entry;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -429,9 +427,9 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void GetTemperatureOfCity_CityExists_LocationReturned() throws Exception {
         Weather currentWeather = Mockito.mock(Weather.class);
-        when(weatherService.getCurrentWeather("Christchurch")).thenReturn(currentWeather);
+        when(weatherService.getWeather("Christchurch")).thenReturn(currentWeather);
         when(currentWeather.getTemperature()).thenReturn(12.0f);
-        when(currentWeather.getHumidity()).thenReturn(50.0f);
+        when(currentWeather.getHumidity()).thenReturn(50);
         when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
         when(currentWeather.getWeatherImage()).thenReturn("image");
         when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
