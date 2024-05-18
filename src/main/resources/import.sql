@@ -31,7 +31,7 @@ INSERT INTO authority (gardener_id, role) VALUES (13, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (14, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (15, 'ROLE_USER');
 
-INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Garden', 'Home', '32');
+INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Garden', 'Christchurch', '32');
 INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Vegetable Garden', 'Kitchen Garden', '35');
 INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Fruit Garden', 'Backyard', '0');
 INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Herb Garden', 'Windowsill', '10');

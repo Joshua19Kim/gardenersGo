@@ -1,13 +1,16 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +19,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.net.URISyntaxException;
+
 import java.util.List;
 import java.util.Objects;
 import static java.lang.Long.parseLong;
@@ -36,6 +43,7 @@ public class GardenFormController {
   private final RelationshipService relationshipService;
   private final RequestService requestService;
   private Gardener gardener;
+  private final WeatherService weatherService;
 
   /**
    * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
@@ -43,11 +51,12 @@ public class GardenFormController {
    * @param gardenerFormService - object that is used to interact with the database
    */
   @Autowired
-  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService, RequestService requestService) {
+  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService, RequestService requestService, WeatherService weatherService) {
     this.gardenService = gardenService;
     this.gardenerFormService = gardenerFormService;
     this.relationshipService = relationshipService;
     this.requestService = requestService;
+    this.weatherService = weatherService;
   }
 
   /**
@@ -201,14 +210,14 @@ public class GardenFormController {
                               @RequestParam(name = "uploadError", required = false) String uploadError,
                               @RequestParam(name = "errorId", required = false) String errorId,
                               @RequestParam(name = "userId", required = false) String userId,
-                              Model model, HttpServletRequest request) {
+                              Model model, HttpServletRequest request) throws IOException, URISyntaxException {
     logger.info("GET /gardens/details");
 
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
     List<Garden> gardens = new ArrayList<>();
     if (gardenerOptional.isPresent()) {
-      gardener =gardenerOptional.get();
-      gardens = gardenService.getGardensByGardenerId(gardener.getId());
+        gardener = gardenerOptional.get();
+        gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
     }
 
     model.addAttribute("gardens", gardens);
@@ -225,6 +234,19 @@ public class GardenFormController {
         model.addAttribute("errorId", errorId);
       }
       if(userId == null || gardener.getId() == parseLong(userId, 10)) {
+        Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
+        if (currentWeather != null) {
+          model.addAttribute("date", currentWeather.getDate());
+          model.addAttribute("temperature", currentWeather.getTemperature());
+          model.addAttribute("weatherImage", currentWeather.getWeatherImage());
+          model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
+          model.addAttribute("humidity", currentWeather.getHumidity());
+          model.addAttribute("forecastDates", currentWeather.getForecastDates());
+          model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
+          model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
+          model.addAttribute("forecastWeatherDescription", currentWeather.getForecastDescriptions());
+          model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
+        }
         return "gardenDetailsTemplate";
       } else {
         Optional<Gardener> friend = gardenerFormService.findById(parseLong(userId, 10));
