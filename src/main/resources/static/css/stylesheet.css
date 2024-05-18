@@ -405,14 +405,14 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     border: 1px solid red;
     border-radius: 5px;
     background: rgba(255, 0, 0, 0.3);
-    height: 10vh;
+    height: fit-content;
     position: absolute;
-    right: 5%;
+    margin-right: 2%;
     justify-content: center;
     display: flex;
     align-items: center;
     padding: 1%;
-    top: 150px;
+    margin-top: 15px;
 }
 
 .future-weather {
