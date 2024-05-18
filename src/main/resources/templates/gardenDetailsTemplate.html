@@ -8,6 +8,7 @@
 <body>
 
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
+<div id="location-error" th:if="${date == null}">Location not found, please update your location to see the weather</div>
 <div class="garden-details-container">
     <div class="container" style="margin: 0; width: 1200px">
         <h1 class="garden-details-links">Garden Details
@@ -71,7 +72,6 @@
             </table>
         </div>
     </div>
-    <div id="location-error" th:if="${date == null}">Location not found, please update your location to see the weather</div>
     <div id="weather-information" th:if="${date}">
         <div class="weather-display-container">
             <div class="weather-display-row">
