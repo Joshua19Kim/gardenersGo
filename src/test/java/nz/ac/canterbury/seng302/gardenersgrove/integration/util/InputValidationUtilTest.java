@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
+package nz.ac.canterbury.seng302.gardenersgrove.integration.util;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;

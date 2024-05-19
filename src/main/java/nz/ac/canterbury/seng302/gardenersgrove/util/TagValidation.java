@@ -12,11 +12,11 @@ public class TagValidation {
     }
 
     public Optional<String> validateTag(String tagName) {
-        String tagRegex = "[\\p{L}]+((?:[-' ]?\\p{L}+)?)*";
+        String tagRegex = "^(?=.*[a-zA-Z0-9])[a-zA-Z0-9 _\\-'\"]+$";
         if (tagName.length() >25) {
             return Optional.of("A tag cannot exceed 25 characters");
         } else {
-            return tagName.matches(tagRegex) ? Optional.empty() : Optional.of("The tag name must only contain alphanumeric characters, spaces, -, _, ', or " + '"');
+            return tagName.matches(tagRegex) ? Optional.empty() : Optional.of("The tag name must only contain alphanumeric characters, spaces, -, _, ', or \"");
         }
     }
 

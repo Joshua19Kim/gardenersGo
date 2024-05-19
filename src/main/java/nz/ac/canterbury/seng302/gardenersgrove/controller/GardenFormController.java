@@ -380,6 +380,13 @@ public class GardenFormController {
     }
   }
 
+  /**
+   * Adds an existing tag to the garden or creates a new tag to add
+   * @param tag the tag to be added
+   * @param id the garden id
+   * @param redirectAttributes to store the error message when redirecting
+   * @return redirects back to the garden details or add tag modal based on the tag validation
+   */
   @PostMapping("gardens/addTag")
   public String addTag(
           @RequestParam(name = "tag-input") String tag,
@@ -387,6 +394,7 @@ public class GardenFormController {
           RedirectAttributes redirectAttributes) {
 
     logger.info("POST /addTag");
+    tag = tag.strip();
     TagValidation tagValidation = new TagValidation(tagService);
 
     Optional<String> validTagError = tagValidation.validateTag(tag);
