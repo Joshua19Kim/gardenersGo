@@ -30,7 +30,7 @@ public class LocationControllerTest {
     }
     @Test
     @WithMockUser
-    void onLocationAutocompletePage_userEntersPartOfAddress_dropDownListShowsAddresses() throws Exception {
+    void onLocationAutocompletePage_userEntersPartOfAddress_pageWorkingCorrectly() throws Exception {
         String testPartialAddress = "20 Kirkwood";
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/testLocationAuto")
