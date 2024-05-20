@@ -14,8 +14,8 @@ import java.time.Instant;
  */
 @Service
 public class RateLimiterService {
-    private final int CAPACITY = 3;
-    private final int REFILLRATE = 1;
+    private final int CAPACITY = 5;
+    private final int REFILLRATE = 3;
     private int tokens;
     private Instant lastRefillTime;
 
