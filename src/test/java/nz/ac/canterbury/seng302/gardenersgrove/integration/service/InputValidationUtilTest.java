@@ -1,12 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
+import com.sanctionco.jmail.Email;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
-import nz.ac.canterbury.seng302.gardenersgrove.service.LocationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +25,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InputValidationUtilTest {
 
     private final GardenerFormService gardenerFormService;
-    private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
+    private final Logger logger = LoggerFactory.getLogger(InputValidationUtilTest.class);
+    @MockBean
+    private EmailUserService emailUserService;
+    @MockBean
+    private WeatherService weatherService;
+
 
     @MockBean
     private ForgotPasswordFormController forgotPasswordFormController;
 
-    @MockBean
-    private EmailUserService emailUserService;
-
-    @MockBean
-    private LocationService locationService;
 
 
     @Autowired
