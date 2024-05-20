@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.TestLocationController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,29 +16,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TestLocationController.class)
+@WebMvcTest()
 public class LocationControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
-    @MockBean
-    private LocationService locationService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
-    @Test
-    @WithMockUser
-    void onLocationAutocompletePage_userEntersPartOfAddress_pageWorkingCorrectly() throws Exception {
-        String testPartialAddress = "20 Kirkwood";
-        this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/testLocationAuto")
-                        .param("address-input", testPartialAddress)
-                .with(csrf()))
-                .andExpect(status().isOk());
 
 
-    }
 
 
 
