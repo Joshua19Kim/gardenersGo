@@ -11,6 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 
 /**
  * This controller defines endpoints as functions with specific HTTP mappings. This controller is used
@@ -36,7 +39,7 @@ public class LoginController {
      * If not authenticated, renders the login page.
      */
     @GetMapping("/login")
-    public String login(Authentication authentication, HttpServletResponse response, HttpServletRequest request) {
+    public String login(Authentication authentication, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException {
         logger.info("GET /");
         logger.info("Authentication: " + authentication);
         logger.info("DB USERNAME: " + System.getenv("DB_USERNAME"));

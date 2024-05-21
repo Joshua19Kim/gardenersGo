@@ -46,10 +46,44 @@ INSERT INTO authority (gardener_id, role) VALUES (1, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (3, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (4, 'ROLE_USER');
-INSERT INTO authority (gardener_id, role) VALUES (1, 'ROLE_USER');
-INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');
-INSERT INTO authority (gardener_id, role) VALUES (3, 'ROLE_USER');
-INSERT INTO authority (gardener_id, role) VALUES (4, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (5, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (6, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (7, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (8, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (9, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (10, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (11, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (12, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (13, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (14, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (15, 'ROLE_USER');
+
+INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Garden', 'Christchurch', '32', false);
+INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Vegetable Garden', 'Kitchen Garden', '35', false);
+INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Fruit Garden', 'Backyard', '0', false);
+INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Herb Garden', 'Windowsill', '10', false);
+
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('My Plant', 1, '2', 'Rose', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('My Plant 2', 1, '29', 'Daisy', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Tomato', 1, '10', 'Red and juicy', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Lavender', 1, '15', 'Fragrant purple flowers', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Basil', 1, '8', 'Aromatic herb used in cooking', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Sunflower', 1, '20', 'Bright and cheerful', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Lily', 1, '12', 'Elegant and fragrant', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Mint', 1, '6', 'Refreshing herb for drinks and salads', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Rosemary', 1, '9', 'Aromatic herb for seasoning', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Daisy', 1, '25', 'White and yellow flower', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Cactus', 1, '5', 'Low-maintenance succulent', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Fern', 1, '18', 'Shade-loving foliage plant', '/images/placeholder.jpg');
+
+INSERT INTO plant (name, garden_id, count, date_planted, image) VALUES ('My Plant', 2, '0', '12/03/2024', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, image) VALUES ('My Plant 2', 2, '29', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Tomato', 2, '10', 'Red and juicy', '/images/placeholder.jpg');
+
+INSERT INTO plant (name, garden_id, count, description, date_planted, image) VALUES ('Daisy', 3, '25', 'White and yellow flower', '23/10/2022', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, date_planted, image) VALUES ('Cactus', 3, '0', 'Low-maintenance succulent', '11/11/2001', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Fern', 3, '18', 'Shade-loving foliage plant', '/images/placeholder.jpg');
+INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Rosemary', 3, '9', 'Aromatic herb for seasoning', '/images/placeholder.jpg');
 
 INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Tomato Patch', 'Home', '32', false);
 INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Strawberry Garden', 'Kitchen Garden', '35', false);
@@ -59,8 +93,18 @@ INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (3,
 ALTER TABLE relationships ADD CONSTRAINT unique_gardener_friend UNIQUE (gardener_id, friend_id);
 
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 2, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 10, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 11, 'accepted');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (4, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (6, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (7, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (8, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (9, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 12, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 13, 'pending');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 3, 'declined');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 14, 'declined');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 15, 'declined');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 5, 'pending');
 -- email: a@gmail.com
 -- password: Password1!
