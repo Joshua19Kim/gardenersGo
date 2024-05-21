@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
+import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.Test;
