@@ -517,7 +517,7 @@ public class GardenFormControllerTest {
         Garden garden = new Garden("My Garden", "Ilam", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService, tagService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
@@ -541,7 +541,7 @@ public class GardenFormControllerTest {
         Garden garden = new Garden("My Garden", "FAKELOCATION!123", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService, tagService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")

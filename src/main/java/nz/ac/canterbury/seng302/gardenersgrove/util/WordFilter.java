@@ -152,7 +152,7 @@ public class WordFilter {
 
         ArrayList<String> badWordsList = new ArrayList<>(badWords);
         for (String s : badWordsList) {
-            logger.info("{} detected as a banned word", s);
+            logger.info("'{}' detected as a banned word", s);
         }
         return badWordsList;
     }

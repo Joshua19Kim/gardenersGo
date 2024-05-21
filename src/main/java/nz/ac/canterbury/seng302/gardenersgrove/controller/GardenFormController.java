@@ -4,6 +4,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -44,7 +46,6 @@ public class GardenFormController {
   private final RelationshipService relationshipService;
   private final RequestService requestService;
   private final TagService tagService;
-
   private Gardener gardener;
   private final WeatherService weatherService;
 
@@ -233,7 +234,6 @@ public class GardenFormController {
 
       model.addAttribute("garden", garden.get());
       model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
-      //logger.info(tagService.getTags(parseLong(gardenId)).toString());
 
       if(uploadError != null) {
         model.addAttribute("uploadError", uploadError);
@@ -372,10 +372,30 @@ public class GardenFormController {
 
     logger.info("POST /addTag");
 
+      Weather currentWeather = null;
+      try {
+          currentWeather = weatherService.getWeather(gardenService.getGarden(id).get().getLocation());
+      } catch (IOException | URISyntaxException e) {
+          logger.error(e.toString());
+      }
+      if (currentWeather != null) {
+        model.addAttribute("date", currentWeather.getDate());
+        model.addAttribute("temperature", currentWeather.getTemperature());
+        model.addAttribute("weatherImage", currentWeather.getWeatherImage());
+        model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
+        model.addAttribute("humidity", currentWeather.getHumidity());
+        model.addAttribute("forecastDates", currentWeather.getForecastDates());
+        model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
+        model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
+        model.addAttribute("forecastWeatherDescription", currentWeather.getForecastDescriptions());
+        model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
+    }
+
     if (!WordFilter.doesContainBadWords(tag)) {
       model.addAttribute("tag-input", tag);
       Tag newTag = new Tag(tag, gardenService.getGarden(id).get());
       tagService.addTag(newTag);
+      logger.info("Tag '{}' passes moderation checks", tag);
     } else {
       model.addAttribute("tags", tagService.getTags(id));
       model.addAttribute("garden", gardenService.getGarden(id).get());

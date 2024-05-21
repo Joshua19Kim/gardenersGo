@@ -34,7 +34,7 @@
                     </form>
                 </div>
                 <div>
-                    <span th:if="${tagError}" th:text="${tagError}" class="smallErrorMessage"></span>
+                    <span id="tagError" th:if="${tagError}" th:text="${tagError}" class="smallErrorMessage"></span>
                 </div>
             </div>
         </div>
@@ -54,7 +54,6 @@
                 </div>
             </div>
         </div>
-        <h4>Plants:</h4>
         <div class="plant-list-container" th:if="${not #lists.isEmpty(garden.plants)}">
             <table class="plant-table">
                 <thead>
@@ -146,6 +145,7 @@
 <script>
     function displayAddTagsModal() {
         const addTagsModal = document.getElementById("add-tag-modal");
+        const tagError = document.getElementById("tagError");
         switch (addTagsModal.style.display) {
             case "":
                 document.getElementById("add-tag-modal").style.display = "block";
@@ -153,6 +153,11 @@
             case "block":
                 document.getElementById("add-tag-modal").style.display = "";
                 break;
+        }
+
+        // Hide the tag error when the modal is displayed
+        if (tagError) {
+            tagError.style.display = "none";
         }
     }
 
