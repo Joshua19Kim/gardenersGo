@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -28,5 +29,10 @@ public interface TagRepository extends CrudRepository<Tag, Long> {
   @Query(value = "SELECT tag_name FROM Tag WHERE garden = ?1 ", nativeQuery = true)
   List<String> getTagsByGardenId(long gardenId);
 
-  Optional<Tag> findByName(String name);
+  /**
+   * @param name find a tag with a tag name matching name
+   * @param garden find tag with a garden matching garden
+   * @return a tag or empty if no matching tag
+   */
+  Optional<Tag> findByNameAndGarden(String name, Garden garden);
 }

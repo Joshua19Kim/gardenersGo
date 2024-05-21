@@ -382,6 +382,7 @@ public class GardenFormController {
 
   /**
    * Adds an existing tag to the garden or creates a new tag to add
+   *
    * @param tag the tag to be added
    * @param id the garden id
    * @param redirectAttributes to store the error message when redirecting
@@ -389,16 +390,21 @@ public class GardenFormController {
    */
   @PostMapping("gardens/addTag")
   public String addTag(
-          @RequestParam(name = "tag-input") String tag,
-          @RequestParam(name = "gardenId") long id,
-          RedirectAttributes redirectAttributes) {
+      @RequestParam(name = "tag-input") String tag,
+      @RequestParam(name = "gardenId") long id,
+      RedirectAttributes redirectAttributes) {
 
     logger.info("POST /addTag");
     tag = tag.strip();
     TagValidation tagValidation = new TagValidation(tagService);
+    Optional<Garden> gardenOptional = gardenService.getGarden(id);
+    if (gardenOptional.isEmpty()) {
+      return "redirect:/gardens";
+    }
+    Garden garden = gardenOptional.get();
 
     Optional<String> validTagError = tagValidation.validateTag(tag);
-    Optional<String> tagInUse = tagValidation.checkTagInUse(tag);
+    Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
 
     if (validTagError.isPresent()) {
       redirectAttributes.addFlashAttribute("tagValid", validTagError.get());
@@ -406,7 +412,7 @@ public class GardenFormController {
     }
 
     if (tagInUse.isEmpty()) {
-      Tag newTag = new Tag(tag, gardenService.getGarden(id).get());
+      Tag newTag = new Tag(tag, garden);
       tagService.addTag(newTag);
     }
 

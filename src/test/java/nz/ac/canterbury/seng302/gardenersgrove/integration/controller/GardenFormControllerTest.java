@@ -496,6 +496,8 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
             MockMvcRequestBuilders.post("/gardens/addTag")
@@ -511,28 +513,29 @@ public class GardenFormControllerTest {
                     "tagValid",
                     "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
   }
+
   @Test
   @WithMockUser
   public void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.post("/gardens/addTag")
-                            .param("tag-input", "ThisTagNameIsWayTooLongAndInvalid")
-                            .param("gardenId", "1")
-                            .with(csrf()))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
-            .andExpect(flash().attributeExists("tagValid"))
-            .andExpect(
-                    flash()
-                            .attribute(
-                                    "tagValid",
-                                    "A tag cannot exceed 25 characters"));
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "ThisTagNameIsWayTooLongAndInvalid")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
+        .andExpect(flash().attributeExists("tagValid"))
+        .andExpect(flash().attribute("tagValid", "A tag cannot exceed 25 characters"));
   }
 
   @Test
   @WithMockUser
   public void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
             MockMvcRequestBuilders.post("/gardens/addTag")
@@ -547,5 +550,37 @@ public class GardenFormControllerTest {
                 .attribute(
                     "tagValid",
                     "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
+  }
+
+  @Test
+  @WithMockUser
+  public void addTag_SameTagNameInDifferentGardens() throws Exception {
+    Garden garden1 = new Garden("Garden 1", "Location 1", "Address 1", testGardener);
+    garden1.setId(1L);
+    Garden garden2 = new Garden("Garden 2", "Location 2", "Address 2", testGardener);
+    garden2.setId(2L);
+
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden1));
+    when(gardenService.getGarden(2L)).thenReturn(Optional.of(garden2));
+    when(tagService.findTagByNameAndGarden(Mockito.eq("SameTag"), Mockito.any(Garden.class)))
+        .thenReturn(Optional.empty());
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "SameTag")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "SameTag")
+                .param("gardenId", "2")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=2"));
   }
 }
