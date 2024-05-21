@@ -8,30 +8,35 @@
 <body>
 
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
-<div id="location-error" th:if="${date == null}">Location not found, please update your location to see the weather</div>
+<div id="location-error" th:if="${date == null}">Location not found, please update your location to see the weather
+</div>
 <div class="garden-details-container">
     <div class="container" style="margin: 0; width: 1200px">
         <h1 class="garden-details-links">Garden Details
             <a class="edit-garden-button" th:href="@{../gardens/edit(gardenId=${garden.id})}">Edit Garden</a>
             <a class="add-plant-button" th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}">Add New
                 Plant</a>
-            <a class="add-tag-button" onclick=displayAddTagsModal()>Add Tags</a>
+            <a class="add-tag-button" onclick=displayAddTagsModal(true)>Add Tags</a>
         </h1>
 
-        <div aria-hidden="true" class="modal" id="add-tag-modal" th:style="${tagError != null} ? 'display: block;' : ''">
+        <div aria-hidden="true" class="modal" id="add-tag-modal"
+             th:style="${tagValid != null} ? 'display: block;' : ''">
             <div class="add-tags">
                 <div class="header">
-                    <button class="close" onclick="displayAddTagsModal()">&times;</button>
+                    <button class="close" onclick="displayAddTagsModal(false)">&times;</button>
                     <div class="search-table-header">
                         <h3>Add Tags</h3>
                     </div>
                 </div>
                 <div class="input-search-bar">
                     <form class="search-bar" method="post" th:action="@{addTag}">
-                        <input th:name="tag-input" id="tag-input" type="text" placeholder="Add tag...">
+                        <input th:name="tag-input" id="tag-input" type="text" placeholder="Add tag..." maxlength="25"
+                               th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
                         <input th:name="gardenId" th:value="${garden.id}" type="hidden">
                         <button id="search-button" type="submit">Submit</button>
                     </form>
+                    <br/>
+                    <p class="smallErrorMessage" th:text="${tagValid}"></p>
                 </div>
                 <div>
                     <span id="tagError" th:if="${tagError}" th:text="${tagError}" class="smallErrorMessage"></span>
@@ -142,28 +147,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        function handleImageClick(plantId) {
-            document.getElementById('fileInput_' + plantId).click();
-        }
-
-        function handleImageChange(plantId) {
-            document.getElementById('uploadPlantForm_' + plantId).submit();
-        }
-
-        function displayAddTagsModal() {
-            const addTagsModal = document.getElementById("add-tag-modal");
-            switch (addTagsModal.style.display) {
-                case "":
-                    document.getElementById("add-tag-modal").style.display = "block";
-                    break;
-                case "block":
-                    document.getElementById("add-tag-modal").style.display = "";
-                    break;
-            }
-        }
-    </script>
 </div>
 <script>
     function handleImageClick(plantId) {
@@ -184,35 +167,35 @@
     document.getElementById("currentDateDisplay").innerHTML = currentDate.toLocaleString("en-Nz", dateOptions);
 
     //referenced ChatGPT for this part.
-        document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const showModal = urlParams.get('showModal');
         if (showModal === 'true') {
-            document.getElementById("add-tag-modal").style.display = "block";
-    }
+            displayAddTagsModal(true);
+        }
     });
 
-        function displayAddTagsModal(show) {
+    function displayAddTagsModal(show) {
         const addTagsModal = document.getElementById("add-tag-modal");
         if (show) {
             addTagsModal.style.display = "block";
             updateQueryStringParameter('showModal', 'true');
-    } else {
+        } else {
             addTagsModal.style.display = "none";
             updateQueryStringParameter('showModal', 'false');
-    }
+        }
     }
 
-        // referenced ChatGPT for this part.
-        function updateQueryStringParameter(key, value) {
-            const url = new URL(window.location);
-            if (value === 'false') {
-                url.searchParams.delete(key);
-            } else {
-                url.searchParams.set(key, value);
-            }
-            window.history.replaceState({}, '', url);
+    // referenced ChatGPT for this part.
+    function updateQueryStringParameter(key, value) {
+        const url = new URL(window.location);
+        if (value === 'false') {
+            url.searchParams.delete(key);
+        } else {
+            url.searchParams.set(key, value);
         }
+        window.history.replaceState({}, '', url);
+    }
 
 </script>
 

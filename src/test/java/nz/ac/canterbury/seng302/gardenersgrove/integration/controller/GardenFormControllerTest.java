@@ -478,16 +478,6 @@ public class GardenFormControllerTest {
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     when(tagService.getTags(any())).thenReturn(tags);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")
-                        .principal(authentication))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("tags", tags))
-                .andExpect(view().name("gardenDetailsTemplate"));
-        verify(tagService, times(1)).getTags(any());
-    }
-
-    @Test
-    @WithMockUser
     mockMvc
         .perform(
             MockMvcRequestBuilders.get("/gardens/details")
@@ -497,7 +487,7 @@ public class GardenFormControllerTest {
         .andExpect(model().attribute("tags", tags))
         .andExpect(view().name("gardenDetailsTemplate"));
     verify(tagService, times(1)).getTags(any());
-  }
+    }
 
   @Test
   @WithMockUser
@@ -577,8 +567,7 @@ public class GardenFormControllerTest {
                 .param("tag-input", "SameTag")
                 .param("gardenId", "1")
                 .with(csrf()))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+        .andExpect(status().isOk());
 
     mockMvc
         .perform(
@@ -586,8 +575,7 @@ public class GardenFormControllerTest {
                 .param("tag-input", "SameTag")
                 .param("gardenId", "2")
                 .with(csrf()))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=2"));
+        .andExpect(status().isOk());
   }
 
     @Test
