@@ -67,6 +67,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 .dropdown {
     position: relative;
     display: inline-block;
+    z-index: 999;  /* Always show on top of everything */
 }
 
 
@@ -393,6 +394,71 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     max-width: inherit;
     word-wrap: break-word;
     white-space: normal;
+}
+
+.garden-details-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+#location-error {
+    border: 1px solid red;
+    border-radius: 5px;
+    background: rgba(255, 0, 0, 0.3);
+    height: fit-content;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    padding: 1%;
+    margin-top: 15px;
+}
+
+.future-weather {
+    min-height: 25vh !important;
+}
+
+.future-weather .temperature {
+    font-size: 3vw !important;
+}
+.weather-display-container {
+    min-height: 35vh;
+    width: 100%;
+    margin: 5vh 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 50px;
+    background-color: #c6e2f4;
+    padding: 25px 26px 5px;
+
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.weather-display-container:hover {
+    transform: scale(1.03)
+}
+
+.weather-display-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.temperature-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.weather-display-column-2 {
+    margin-top: 37px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+.temperature {
+    font-size: 4vw;
 }
 
 .container {
@@ -838,6 +904,7 @@ form.search-bar::after {
 
 #received-requests {
     display: none;
+    flex-direction: column;
     justify-content: space-between;
 }
 
@@ -872,6 +939,61 @@ form.search-bar::after {
     z-index: 1000;
 }
 
+.autocomplete-container {
+    position: relative;
+}
+#address-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 12px;
+}
+.autocomplete-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    width: calc(100% - 2px);
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+.autocomplete-results.visible {
+    display: block;
+}
+
+.LocationIQ-attribution {
+    color: blue;
+    font-weight: bold;
+}
+
+#form.create-garden {
+    width: 850px;
+}
+
+
+.create-garden-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.create-garden-row > div {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.create-garden-row > div:last-child {
+    margin-right: 0;
+}
+
+.create-garden-button {
+    width: 25% !important;
+}
+
+.create-garden-cancel {
+    width: 25% !important;
+}
 
 .autocomplete-container {
     position: relative;
