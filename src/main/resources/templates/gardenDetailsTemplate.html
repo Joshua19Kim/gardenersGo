@@ -45,6 +45,15 @@
             <p>
                 <strong>Size:</strong> <span th:if="${garden.size != null}" th:text="${garden.size + ' m^2'}"></span>
             </p>
+            <p>
+            <div id="tag-container">
+                <strong>Tags:</strong>
+                <div th:if="${tags != null}" th:each="tag : ${tags}">
+                    <div id="tag">
+                        <span th:text="${tag}"></span>
+                    </div>
+                </div>
+            </div>
         </div>
         <h4>Plants:</h4>
         <div class="plant-list-container" th:if="${not #lists.isEmpty(garden.plants)}">
