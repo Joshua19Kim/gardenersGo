@@ -364,6 +364,13 @@ public class GardenFormController {
     }
   }
 
+  /**
+   *
+   * @param tag is the tag a user submits for their garden
+   * @param id is the id of the garden the tag applies to
+   * @param model
+   * @return the garden details page
+   */
   @PostMapping("gardens/addTag")
   public String addTag(
           @RequestParam(name = "tag-input") String tag,
