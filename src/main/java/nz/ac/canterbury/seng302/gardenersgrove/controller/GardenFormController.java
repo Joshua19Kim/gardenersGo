@@ -431,7 +431,6 @@ public class GardenFormController {
 
     if (validTagError.isPresent()) {
       redirectAttributes.addFlashAttribute("tagValid", validTagError.get());
-      logger.info(validTagError.get());
       return "redirect:/gardens/details?gardenId=" + id + "&showModal=true";
     }
     if (tagInUse.isEmpty()) {
