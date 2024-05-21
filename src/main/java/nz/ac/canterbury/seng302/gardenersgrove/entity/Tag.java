@@ -2,6 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Defines the attributes of a tag that can be added to a garden
+ */
 @Entity
 public class Tag {
     @Id
