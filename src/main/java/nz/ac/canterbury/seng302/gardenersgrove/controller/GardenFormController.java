@@ -162,15 +162,29 @@ public class GardenFormController {
 
     Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
     gardenerOptional.ifPresent(value -> gardener = value);
+    String newLocation;
+    if (location == null) {
+      newLocation = "";
+    }else {
+      newLocation = location;
+    }
 
+    if (city == null) {
+      //raise error
+    }
+
+    if(country == null) {
+      //raise error
+
+    }
     if (!Objects.equals(name, validatedName)) {
       model.addAttribute("nameError", validatedName);
       isValid = false;
     }
-    if (!Objects.equals(location, validatedLocation)) {
-      model.addAttribute("locationError", validatedLocation);
-      isValid = false;
-    }
+//    if (!Objects.equals(location, validatedLocation)) {
+//      model.addAttribute("locationError", validatedLocation);
+//      isValid = false;
+//    }
     if (!Objects.equals(size.replace(',', '.'), validatedSize)) {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
@@ -181,7 +195,8 @@ public class GardenFormController {
       if (Objects.equals(size.trim(), "")) {
         garden = gardenService.addGarden(new Garden(name, location, gardener));
       } else {
-        garden = gardenService.addGarden(new Garden(name, location, new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(), gardener));
+        garden = gardenService.addGarden((new Garden(name,newLocation, suburb, city, country, postcode,new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(), gardener)));
+//        garden = gardenService.addGarden(new Garden(name, location, new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(), gardener));
       }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
     } else {

@@ -16,20 +16,20 @@ public class Garden {
   @Column(length=64, nullable = false)
   private String name;
 
-  /** The location of the garden. */
-  @Column(length=128 ,nullable = false)
+  /** The location(Street number and name) of the garden. */
+  @Column(length=64 ,nullable = false)
   private String location;
 
   /** The suburb of the garden. */
-  @Column(length=50)
+  @Column(length=64)
   private String suburb;
 
   /** The city of the garden. */
-  @Column(length=60 ,nullable = false)
+  @Column(length=96 ,nullable = false)
   private String city;
 
   /** The country of the garden. */
-  @Column(length=60 ,nullable = false)
+  @Column(length=64 ,nullable = false)
   private String country;
 
   /** The postcode of the garden. */
@@ -83,6 +83,18 @@ public class Garden {
     plants = new ArrayList<>();
   }
 
+  /**
+   * Constructs a garden with the given name, location, size and gardener.
+   *
+   * @param name The name of the garden (required).
+   * @param location The street number and street name of the garden.
+   * @param suburb The suburb of the garden.
+   * @param city The city of the garden (required).
+   * @param country The country of the garden (required).
+   * @param postcode The postcode of the garden.
+   * @param size The size of the garden.
+   * @param gardener The gardener id for the garden.
+   */
   public Garden(String name, String location, String suburb, String city, String country, String postcode, String size, Gardener gardener) {
     this.name = name;
     this.location = location;
