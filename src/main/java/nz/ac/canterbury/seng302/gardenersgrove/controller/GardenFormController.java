@@ -1,9 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.TagValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WordFilter;
@@ -26,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -46,6 +48,7 @@ public class GardenFormController {
   private final RelationshipService relationshipService;
   private final RequestService requestService;
   private final TagService tagService;
+
   private Gardener gardener;
   private final WeatherService weatherService;
 
@@ -82,9 +85,14 @@ public class GardenFormController {
    * @return the gardens template which defines the user interface for the my gardens page
    */
   @GetMapping("/gardens")
-  public String getGardenHome(@RequestParam(name="user", required = false) String user, Model model, HttpServletRequest request, HttpServletResponse response) {
+  public String getGardenHome(
+      @RequestParam(name = "user", required = false) String user,
+      Model model,
+      HttpServletRequest request,
+      HttpServletResponse response) {
     logger.info("GET /gardens/main");
-    // Prevent caching of the page so that we always reload it when we reach it (mainly for when you use the browser back button)
+    // Prevent caching of the page so that we always reload it when we reach it (mainly for when you
+    // use the browser back button)
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
     response.setHeader("Pragma", "no-cache"); // HTTP 1.0
     response.setHeader("Expires", "0"); // Proxies
@@ -93,12 +101,15 @@ public class GardenFormController {
     gardenerOptional.ifPresent(value -> gardener = value);
 
     List<Garden> gardens;
-    if(user == null) {
+    if (user == null) {
       gardens = gardenService.getGardensByGardenerId(gardener.getId());
       model.addAttribute("gardener", gardener);
     } else {
       Optional<Gardener> friend = gardenerFormService.findById(parseLong(user, 10));
-      if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+      if (friend.isPresent()
+          && relationshipService
+              .getCurrentUserRelationships(gardener.getId())
+              .contains(friend.get())) {
         gardens = gardenService.getGardensByGardenerId(parseLong(user, 10));
         model.addAttribute("gardener", friend.get());
         List<Garden> userGardens;
@@ -178,7 +189,7 @@ public class GardenFormController {
     }
 
     if (isValid) {
-        Garden garden;
+      Garden garden;
       if (Objects.equals(size.trim(), "")) {
         garden = gardenService.addGarden(new Garden(name, location, gardener));
       } else {
@@ -188,14 +199,12 @@ public class GardenFormController {
     } else {
       List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
       model.addAttribute("gardens", gardens);
-      model.addAttribute("requestURI",redirect);
+      model.addAttribute("requestURI", redirect);
       model.addAttribute("name", name);
       model.addAttribute("location", location);
       model.addAttribute("size", size);
       return "gardensFormTemplate";
     }
-
-
   }
 
   /**
@@ -211,18 +220,22 @@ public class GardenFormController {
    * @return The garden details page if the garden exists, else remains on the gardens page
    */
   @GetMapping("gardens/details")
-  public String gardenDetails(@RequestParam(name = "gardenId") String gardenId,
-                              @RequestParam(name = "uploadError", required = false) String uploadError,
-                              @RequestParam(name = "errorId", required = false) String errorId,
-                              @RequestParam(name = "userId", required = false) String userId,
-                              Model model, HttpServletRequest request) throws IOException, URISyntaxException {
+  public String gardenDetails(
+      @RequestParam(name = "gardenId") String gardenId,
+      @RequestParam(name = "uploadError", required = false) String uploadError,
+      @RequestParam(name = "errorId", required = false) String errorId,
+      @RequestParam(name = "userId", required = false) String userId,
+      @RequestParam(name = "showModal", required = false) String showModal,
+      @RequestParam(name = "tagValid", required = false) String tagValid,
+      Model model,
+      HttpServletRequest request) throws IOException, URISyntaxException {
     logger.info("GET /gardens/details");
 
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
     List<Garden> gardens = new ArrayList<>();
     if (gardenerOptional.isPresent()) {
-        gardener = gardenerOptional.get();
-        gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+      gardener = gardenerOptional.get();
+      gardens = gardenService.getGardensByGardenerId(gardener.getId());
     }
 
     model.addAttribute("gardens", gardens);
@@ -234,29 +247,37 @@ public class GardenFormController {
 
       model.addAttribute("garden", garden.get());
       model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
-
-      if(uploadError != null) {
+      if (uploadError != null) {
         model.addAttribute("uploadError", uploadError);
         model.addAttribute("errorId", errorId);
       }
-      if(userId == null || gardener.getId() == parseLong(userId, 10)) {
-        Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
-        if (currentWeather != null) {
-          model.addAttribute("date", currentWeather.getDate());
-          model.addAttribute("temperature", currentWeather.getTemperature());
-          model.addAttribute("weatherImage", currentWeather.getWeatherImage());
-          model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
-          model.addAttribute("humidity", currentWeather.getHumidity());
-          model.addAttribute("forecastDates", currentWeather.getForecastDates());
-          model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
-          model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
-          model.addAttribute("forecastWeatherDescription", currentWeather.getForecastDescriptions());
-          model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
-        }
-        return "gardenDetailsTemplate";
+      if (tagValid != null) {
+        model.addAttribute("tagValid", tagValid);
+      }
+      if (showModal != null && showModal.equals("true")) {
+        model.addAttribute("showModal", true);
+      }
+      if (userId == null || gardener.getId() == parseLong(userId, 10)) {
+          Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
+          if (currentWeather != null) {
+              model.addAttribute("date", currentWeather.getDate());
+              model.addAttribute("temperature", currentWeather.getTemperature());
+              model.addAttribute("weatherImage", currentWeather.getWeatherImage());
+              model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
+              model.addAttribute("humidity", currentWeather.getHumidity());
+              model.addAttribute("forecastDates", currentWeather.getForecastDates());
+              model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
+              model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
+              model.addAttribute("forecastWeatherDescription", currentWeather.getForecastDescriptions());
+              model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
+          }
+          return "gardenDetailsTemplate";
       } else {
         Optional<Gardener> friend = gardenerFormService.findById(parseLong(userId, 10));
-        if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+        if (friend.isPresent()
+            && relationshipService
+                .getCurrentUserRelationships(gardener.getId())
+                .contains(friend.get())) {
           model.addAttribute("gardener", friend.get());
           model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
           return "unauthorizedGardenDetailsTemplate";
@@ -286,7 +307,8 @@ public class GardenFormController {
       @RequestParam(name = "location") String location,
       @RequestParam(name = "size") String size,
       @RequestParam(name = "gardenId") String gardenId,
-      Model model, HttpServletRequest request) {
+      Model model,
+      HttpServletRequest request) {
     logger.info("POST gardens/edit");
 
     String validatedName = ValidityChecker.validateGardenName(name);
@@ -343,7 +365,8 @@ public class GardenFormController {
    * @return the edit garden form template
    */
   @GetMapping("gardens/edit")
-  public String editGarden(@RequestParam(name = "gardenId") String gardenId, Model model, HttpServletRequest request) {
+  public String editGarden(
+      @RequestParam(name = "gardenId") String gardenId, Model model, HttpServletRequest request) {
     logger.info("GET gardens/edit");
 
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
@@ -364,13 +387,42 @@ public class GardenFormController {
     }
   }
 
+  /**
+   * Adds an existing tag to the garden or creates a new tag to add
+   *
+   * @param tag the tag to be added
+   * @param id the garden id
+   * @param redirectAttributes to store the error message when redirecting
+   * @return redirects back to the garden details or add tag modal based on the tag validation
+   */
   @PostMapping("gardens/addTag")
   public String addTag(
-          @RequestParam(name = "tag-input") String tag,
-          @RequestParam(name = "gardenId") long id,
-          Model model) {
+      @RequestParam(name = "tag-input") String tag,
+      @RequestParam(name = "gardenId") long id,
+      RedirectAttributes redirectAttributes,
+      Model model) {
 
     logger.info("POST /addTag");
+    tag = tag.strip();
+    TagValidation tagValidation = new TagValidation(tagService);
+    Optional<Garden> gardenOptional = gardenService.getGarden(id);
+    if (gardenOptional.isEmpty()) {
+      return "redirect:/gardens";
+    }
+    Garden garden = gardenOptional.get();
+
+    Optional<String> validTagError = tagValidation.validateTag(tag);
+    Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
+
+    if (validTagError.isPresent()) {
+      redirectAttributes.addFlashAttribute("tagValid", validTagError.get());
+      return "redirect:/gardens/details?gardenId=" + id + "&showModal=true";
+    }
+
+    if (tagInUse.isEmpty()) {
+      Tag newTag = new Tag(tag, garden);
+      tagService.addTag(newTag);
+    }
 
       Weather currentWeather = null;
       try {

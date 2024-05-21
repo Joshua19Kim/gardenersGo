@@ -54,6 +54,7 @@
                 </div>
             </div>
         </div>
+        <h4>Plants:</h4>
         <div class="plant-list-container" th:if="${not #lists.isEmpty(garden.plants)}">
             <table class="plant-table">
                 <thead>
@@ -141,26 +142,30 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function handleImageClick(plantId) {
+            document.getElementById('fileInput_' + plantId).click();
+        }
+
+        function handleImageChange(plantId) {
+            document.getElementById('uploadPlantForm_' + plantId).submit();
+        }
+
+        function displayAddTagsModal() {
+            const addTagsModal = document.getElementById("add-tag-modal");
+            switch (addTagsModal.style.display) {
+                case "":
+                    document.getElementById("add-tag-modal").style.display = "block";
+                    break;
+                case "block":
+                    document.getElementById("add-tag-modal").style.display = "";
+                    break;
+            }
+        }
+    </script>
 </div>
 <script>
-    function displayAddTagsModal() {
-        const addTagsModal = document.getElementById("add-tag-modal");
-        const tagError = document.getElementById("tagError");
-        switch (addTagsModal.style.display) {
-            case "":
-                document.getElementById("add-tag-modal").style.display = "block";
-                break;
-            case "block":
-                document.getElementById("add-tag-modal").style.display = "";
-                break;
-        }
-
-        // Hide the tag error when the modal is displayed
-        if (tagError) {
-            tagError.style.display = "none";
-        }
-    }
-
     function handleImageClick(plantId) {
         document.getElementById('fileInput_' + plantId).click();
     }
@@ -177,6 +182,37 @@
         year: 'numeric'
     };
     document.getElementById("currentDateDisplay").innerHTML = currentDate.toLocaleString("en-Nz", dateOptions);
+
+    //referenced ChatGPT for this part.
+        document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const showModal = urlParams.get('showModal');
+        if (showModal === 'true') {
+            document.getElementById("add-tag-modal").style.display = "block";
+    }
+    });
+
+        function displayAddTagsModal(show) {
+        const addTagsModal = document.getElementById("add-tag-modal");
+        if (show) {
+            addTagsModal.style.display = "block";
+            updateQueryStringParameter('showModal', 'true');
+    } else {
+            addTagsModal.style.display = "none";
+            updateQueryStringParameter('showModal', 'false');
+    }
+    }
+
+        // referenced ChatGPT for this part.
+        function updateQueryStringParameter(key, value) {
+            const url = new URL(window.location);
+            if (value === 'false') {
+                url.searchParams.delete(key);
+            } else {
+                url.searchParams.set(key, value);
+            }
+            window.history.replaceState({}, '', url);
+        }
 
 </script>
 

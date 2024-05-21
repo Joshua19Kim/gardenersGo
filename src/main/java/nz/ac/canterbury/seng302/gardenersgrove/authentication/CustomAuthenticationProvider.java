@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.authentication;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.SignupCodeFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
+import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;

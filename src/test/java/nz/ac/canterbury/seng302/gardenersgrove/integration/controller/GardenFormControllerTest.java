@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -34,27 +33,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = GardenFormController.class)
 public class GardenFormControllerTest {
-    Gardener testGardener = new Gardener("Test", "Gardener",
-            LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
-            "Password1!");
+  Gardener testGardener =
+      new Gardener(
+          "Test", "Gardener", LocalDate.of(2024, 4, 1), "testgardener@gmail.com", "Password1!");
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-    @MockBean
-    private GardenService gardenService;
+  @MockBean private GardenService gardenService;
 
-    @MockBean
-    private GardenerFormService gardenerFormService;
+  @MockBean private GardenerFormService gardenerFormService;
 
-    @MockBean
-    private RelationshipService relationshipService;
+  @MockBean private RelationshipService relationshipService;
 
-    @MockBean
-    private TagService tagService;
+  @MockBean private TagService tagService;
 
-    @MockBean
-    private RequestService requestService;
+  @MockBean private RequestService requestService;
 
     @MockBean
     private WeatherService weatherService;
@@ -79,11 +72,11 @@ public class GardenFormControllerTest {
         verify(gardenService, times(1)).getGardensByGardenerId(any());
     }
 
-    @Test
-    @WithMockUser
-    public void GardenDetailsRequested_ExistentIdGiven_GardenDetailsProvided() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+  @Test
+  @WithMockUser
+  public void GardenDetailsRequested_ExistentIdGiven_GardenDetailsProvided() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", testGardener);
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         mockMvc
                 .perform((MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")))
@@ -92,42 +85,42 @@ public class GardenFormControllerTest {
                 .andExpect(model().attributeExists("garden"))
                 .andExpect(model().attribute("garden", garden));
 
-        verify(gardenService, times(1)).getGarden(1L);
-    }
+    verify(gardenService, times(1)).getGarden(1L);
+  }
 
-    @Test
-    @WithMockUser
-    public void GardenDetailsRequested_NonExistentIdGiven_StayOnMyGardens() throws Exception {
-        when(gardenService.getGarden(anyLong())).thenReturn(Optional.empty());
+  @Test
+  @WithMockUser
+  public void GardenDetailsRequested_NonExistentIdGiven_StayOnMyGardens() throws Exception {
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.empty());
 
-        mockMvc
-                .perform((MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens"));
+    mockMvc
+        .perform((MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens"));
 
-        verify(gardenService, times(1)).getGarden(anyLong());
-    }
+    verify(gardenService, times(1)).getGarden(anyLong());
+  }
 
-    @Test
-    @WithMockUser
-    public void EditGardenDetailsRequested_ExistentIdGiven_GoToEditGardenForm() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+  @Test
+  @WithMockUser
+  public void EditGardenDetailsRequested_ExistentIdGiven_GoToEditGardenForm() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", testGardener);
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
-        mockMvc
-                .perform((MockMvcRequestBuilders.get("/gardens/edit").param("gardenId", "1")))
-                .andExpect(status().isOk())
-                .andExpect(view().name("editGardensFormTemplate"))
-                .andExpect(model().attributeExists("garden"))
-                .andExpect(model().attribute("garden", garden));
+    mockMvc
+        .perform((MockMvcRequestBuilders.get("/gardens/edit").param("gardenId", "1")))
+        .andExpect(status().isOk())
+        .andExpect(view().name("editGardensFormTemplate"))
+        .andExpect(model().attributeExists("garden"))
+        .andExpect(model().attribute("garden", garden));
 
-        verify(gardenService, times(1)).getGarden(1L);
-    }
+    verify(gardenService, times(1)).getGarden(1L);
+  }
 
-    @Test
-    @WithMockUser
-    public void EditGardenDetailsRequested_NonExistentIdGiven_GoBackToMyGardens() throws Exception {
-        when(gardenService.getGarden(anyLong())).thenReturn(Optional.empty());
+  @Test
+  @WithMockUser
+  public void EditGardenDetailsRequested_NonExistentIdGiven_GoBackToMyGardens() throws Exception {
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.empty());
 
         mockMvc
                 .perform((MockMvcRequestBuilders.get("/gardens/edit").param("gardenId", "1")))
@@ -402,46 +395,47 @@ public class GardenFormControllerTest {
 
     }
 
-    @Test
-    @WithMockUser
-    public void ViewFriendsGardensRequested_FriendDoesNotExist_RedirectedToOwnGardens() throws Exception {
-        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
-        currentUser.setId(1L);
-        gardenerFormService.addGardener(currentUser);
+  @Test
+  @WithMockUser
+  public void ViewFriendsGardensRequested_FriendDoesNotExist_RedirectedToOwnGardens()
+      throws Exception {
+    Gardener currentUser =
+        new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+    currentUser.setId(1L);
+    gardenerFormService.addGardener(currentUser);
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+    Authentication authentication = Mockito.mock(Authentication.class);
+    Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
 
-        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
-        when(gardenerFormService.findById(2L)).thenReturn(Optional.empty());
+    when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+    when(gardenerFormService.findById(2L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
-                        .principal(authentication))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens"));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get("/gardens").param("user", "2").principal(authentication))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens"));
+  }
 
-    }
+  @Test
+  @WithMockUser
+  public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    Tag tag = new Tag("My tag", garden);
 
-    @Test
-    @WithMockUser
-    public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated()
-            throws Exception {
-        Garden garden = new Garden(" when(taMy Garden", "Ilam", "32", testGardener);
-        Tag tag = new Tag("My tag", garden);
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+    when(tagService.addTag(any())).thenReturn(tag);
 
-        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
-        when(tagService.addTag(any())).thenReturn(tag);
-
-        mockMvc
-                .perform(
-                        (MockMvcRequestBuilders.post("/gardens/addTag")
-                                .param("tag-input", "My tag")
-                                .param("gardenId", "1")
-                                .with(csrf())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-        verify(tagService, times(1)).addTag(any());
-    }
+    mockMvc
+        .perform(
+            (MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "My tag")
+                .param("gardenId", "1")
+                .with(csrf())))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+    verify(tagService, times(1)).addTag(any());
+  }
 
     @Test
     @WithMockUser
@@ -464,25 +458,25 @@ public class GardenFormControllerTest {
         verify(tagService, times(0)).addTag(any());
     }
 
-    @Test
-    @WithMockUser
-    public void GardenDetailsRequested_TagExists_TagDisplayed()
-            throws Exception {
-        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
-        currentUser.setId(1L);
-        gardenerFormService.addGardener(currentUser);
+  @Test
+  @WithMockUser
+  public void GardenDetailsRequested_TagExists_TagDisplayed() throws Exception {
+    Gardener currentUser =
+        new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+    currentUser.setId(1L);
+    gardenerFormService.addGardener(currentUser);
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+    Authentication authentication = Mockito.mock(Authentication.class);
+    Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
 
-        Garden garden = new Garden("My Garden", "Ilam", "32", currentUser);
+    Garden garden = new Garden("My Garden", "Ilam", "32", currentUser);
 
-        List<String> tags = new ArrayList<>();
-        tags.add("My tag");
-        tags.add("Another tag");
+    List<String> tags = new ArrayList<>();
+    tags.add("My tag");
+    tags.add("Another tag");
 
-        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
-        when(tagService.getTags(any())).thenReturn(tags);
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+    when(tagService.getTags(any())).thenReturn(tags);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")
                         .principal(authentication))
@@ -491,6 +485,110 @@ public class GardenFormControllerTest {
                 .andExpect(view().name("gardenDetailsTemplate"));
         verify(tagService, times(1)).getTags(any());
     }
+
+    @Test
+    @WithMockUser
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get("/gardens/details")
+                .param("gardenId", "1")
+                .principal(authentication))
+        .andExpect(status().isOk())
+        .andExpect(model().attribute("tags", tags))
+        .andExpect(view().name("gardenDetailsTemplate"));
+    verify(tagService, times(1)).getTags(any());
+  }
+
+  @Test
+  @WithMockUser
+  public void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "Invalid@Tag")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
+        .andExpect(flash().attributeExists("tagValid"))
+        .andExpect(
+            flash()
+                .attribute(
+                    "tagValid",
+                    "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
+  }
+
+  @Test
+  @WithMockUser
+  public void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "ThisTagNameIsWayTooLongAndInvalid")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
+        .andExpect(flash().attributeExists("tagValid"))
+        .andExpect(flash().attribute("tagValid", "A tag cannot exceed 25 characters"));
+  }
+
+  @Test
+  @WithMockUser
+  public void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
+        .andExpect(flash().attributeExists("tagValid"))
+        .andExpect(
+            flash()
+                .attribute(
+                    "tagValid",
+                    "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
+  }
+
+  @Test
+  @WithMockUser
+  public void addTag_SameTagNameInDifferentGardens() throws Exception {
+    Garden garden1 = new Garden("Garden 1", "Location 1", "Address 1", testGardener);
+    garden1.setId(1L);
+    Garden garden2 = new Garden("Garden 2", "Location 2", "Address 2", testGardener);
+    garden2.setId(2L);
+
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden1));
+    when(gardenService.getGarden(2L)).thenReturn(Optional.of(garden2));
+    when(tagService.findTagByNameAndGarden(Mockito.eq("SameTag"), Mockito.any(Garden.class)))
+        .thenReturn(Optional.empty());
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "SameTag")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "SameTag")
+                .param("gardenId", "2")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=2"));
+  }
 
     @Test
     @WithMockUser
@@ -559,6 +657,5 @@ public class GardenFormControllerTest {
                 .andExpect(model().attributeDoesNotExist("forecastWeatherDescription"))
                 .andExpect(model().attributeDoesNotExist("forcastHumidities"))
                 .andExpect(model().attribute("garden", garden));
-
     }
 }
