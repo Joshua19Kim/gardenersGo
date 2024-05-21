@@ -29,50 +29,43 @@
         </div>
         <br/>
       </div>
+      <div class="autocomplete-container">
+        <label for="location"> Address: </label>
+        <label class="LocationIQ-attribution" style="margin-left: 500px">Search by LocationIQ.com</label>
+        <input type="text" id="location" maxlength="128" placeholder="Start typing your address..."
+               th:name="location" th:value="*{location}" data-cy="location" autofocus
+               th:classappend="${locationError} ? 'error' : ''"
+        >
+        <div class="autocomplete-results" id="autocomplete-results"></div>
+      </div>
 
-      <form method="get" th:action="@{testLocationAuto}" id="locationForm">
-
-        <div class="autocomplete-container">
-          <label for="address-input"> Address: </label>
-          <input type="text" id="address-input" placeholder="Start typing your address...">
-          <div class="autocomplete-results" id="autocomplete-results"></div>
+      <div class="autocomplete-container">
+        <div class="create-garden-row">
+          <div>
+            <label for="suburb">Suburb:</label>
+            <input type="text" id="suburb" th:name="suburb" th:value="*{suburb}">
+          </div>
+          <div>
+            <label for="city">City:</label>
+            <input type="text" id="city" th:name="city" th:value="*{city}">
+          </div>
+          <br/>
         </div>
 
-        <div class="autocomplete-container">
-          <div class="create-garden-row">
-            <div>
-              <label for="suburb">Suburb:</label>
-              <input type="text" id="suburb">
-            </div>
-            <div>
-              <label for="city">City:</label>
-              <input type="text" id="city">
-            </div>
-            <br/>
+        <div class="create-garden-row">
+          <div>
+            <label for="country">Country:</label>
+            <input type="text" id="country" th:name="country" th:value="*{country}">
           </div>
-
-          <div class="create-garden-row">
-            <div>
-              <label for="country">Country:</label>
-              <input type="text" id="country">
-            </div>
-            <div>
-              <label for="postcode">Postcode:</label>
-              <input type="text" id="postcode">
-            </div>
-            <br/>
+          <div>
+            <label for="postcode">Postcode:</label>
+            <input type="text" id="postcode" th:name="postcode" th:value="*{postcode}">
           </div>
-
-          <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
+          <br/>
         </div>
-        <script th:src="@{/javascript/locationAutocomplete.js}"></script>
-      </form>
+      </div>
 
-<!--      <label for="location"> Garden Location: </label>-->
-<!--      <input type="text" class="form-control" id="location" maxlength="128" placeholder="Jack Erskine?"-->
-<!--             th:name="location" th:value="*{location}" data-cy="location" autofocus-->
-<!--             th:classappend="${locationError} ? 'error' : ''">-->
-<!--      <span th:if="${locationError}" th:text="${locationError}" class="smallErrorMessage"></span>-->
+      <script th:src="@{/javascript/locationAutocomplete.js}"></script>
 
       <button type="submit" class="create-garden-button">Create!</button>
     </form>

@@ -145,6 +145,10 @@ public class GardenFormController {
   public String submitForm(
       @RequestParam(name = "name") String name,
       @RequestParam(name = "location") String location,
+      @RequestParam(name = "suburb") String suburb,
+      @RequestParam(name = "city") String city,
+      @RequestParam(name = "country") String country,
+      @RequestParam(name = "postcode") String postcode,
       @RequestParam(name = "size") String size,
       @RequestParam(name = "redirect") String redirect,
       Model model,

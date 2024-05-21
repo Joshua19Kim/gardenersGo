@@ -31,14 +31,13 @@ public class InputValidationUtilTest {
     private EmailUserService emailUserService;
     @MockBean
     private WeatherService weatherService;
+    @MockBean
+    private LocationService locationService;
 
 
     @MockBean
     private ForgotPasswordFormController forgotPasswordFormController;
 
-
-    @MockBean
-    private LocationService locationService;
 
 
     @Autowired

@@ -20,6 +20,23 @@ public class Garden {
   @Column(length=128 ,nullable = false)
   private String location;
 
+  /** The suburb of the garden. */
+  @Column(length=50)
+  private String suburb;
+
+  /** The city of the garden. */
+  @Column(length=60 ,nullable = false)
+  private String city;
+
+  /** The country of the garden. */
+  @Column(length=60 ,nullable = false)
+  private String country;
+
+  /** The postcode of the garden. */
+  @Column(length=10)
+  private String postcode;
+
+
   /** The size of the garden in square units. */
   @Column(length=12)
   private String size;
@@ -65,6 +82,19 @@ public class Garden {
     this.gardener = gardener;
     plants = new ArrayList<>();
   }
+
+  public Garden(String name, String location, String suburb, String city, String country, String postcode, String size, Gardener gardener) {
+    this.name = name;
+    this.location = location;
+    this.suburb = suburb;
+    this.city = city;
+    this.country = country;
+    this.postcode = postcode;
+    this.size = size;
+    this.gardener = gardener;
+    plants = new ArrayList<>();
+  }
+
 
   /**
    * Retrieves the unique identifier of the garden.
