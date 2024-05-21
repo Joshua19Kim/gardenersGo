@@ -19,12 +19,19 @@ INSERT INTO authority (gardener_id, role) VALUES (1, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (3, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (4, 'ROLE_USER');
-INSERT INTO authority (gardener_id, role) VALUES (1, 'ROLE_USER');
-INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');
-INSERT INTO authority (gardener_id, role) VALUES (3, 'ROLE_USER');
-INSERT INTO authority (gardener_id, role) VALUES (4, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (5, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (6, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (7, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (8, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (9, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (10, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (11, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (12, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (13, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (14, 'ROLE_USER');
+INSERT INTO authority (gardener_id, role) VALUES (15, 'ROLE_USER');
 
-INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Garden', 'Home', '32');
+INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Garden', 'Christchurch', '32');
 INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Vegetable Garden', 'Kitchen Garden', '35');
 INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Fruit Garden', 'Backyard', '0');
 INSERT INTO garden (gardener_id, name, location, size) VALUES (1, 'Herb Garden', 'Windowsill', '10');
@@ -59,8 +66,18 @@ INSERT INTO garden (gardener_id, name, location, size) VALUES (3, 'Long Garden',
 ALTER TABLE relationships ADD CONSTRAINT unique_gardener_friend UNIQUE (gardener_id, friend_id);
 
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 2, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 10, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 11, 'accepted');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (4, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (6, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (7, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (8, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (9, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 12, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 13, 'pending');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 3, 'declined');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 14, 'declined');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 15, 'declined');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 5, 'pending');
 -- email: a@gmail.com
 -- password: Password1!

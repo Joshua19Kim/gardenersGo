@@ -59,6 +59,9 @@ public class PlantFormControllerTest {
     @MockBean
     private TagService tagService;
 
+    @MockBean
+    private WeatherService weatherService;
+
     @Test
     @WithMockUser
     public void GardenDetailsRequested_ExistentIdGiven_PlantDetailsProvided() throws Exception {

@@ -9,31 +9,68 @@
 
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div>
-  <div id="form">
+  <div id="form" class="create-garden">
     <h1> Create New Garden </h1>
     <form id="gardenForm" th:action="@{form(redirect=${requestURI})}" method="post">
-      <label for="name"> Name: </label>
-      <input type="text" class="form-control" id="name" maxlength="64" placeholder="Name"
-             th:name="name" th:value="*{name}" data-cy="name" autofocus
-             th:classappend="${nameError} ? 'error' : ''">
-      <span th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage"></span>
-      <br/>
-      <label for="location"> Garden Location: </label>
-      <input type="text" class="form-control" id="location" maxlength="128" placeholder="Jack Erskine?"
-             th:name="location" th:value="*{location}" data-cy="location" autofocus
-             th:classappend="${locationError} ? 'error' : ''">
-      <span th:if="${locationError}" th:text="${locationError}" class="smallErrorMessage"></span>
-      <br/>
-      <label for="size"> Size (m<sup>2</sup>): </label>
-      <input type="text" class="form-control" id="size" maxlength="12" placeholder=""
-             th:name="size" th:value="*{size}" data-cy="size" autofocus
-             th:classappend="${sizeError} ? 'error' : ''">
-      <span th:if="${sizeError}" th:text="${sizeError}" class="smallErrorMessage"></span>
-      <br/>
-      <button type="submit">Create!</button>
+      <div class="create-garden-row">
+        <div>
+          <label for="name"> Name: </label>
+          <input type="text" class="form-control" id="name" maxlength="64" placeholder="Name"
+                 th:name="name" th:value="*{name}" data-cy="name" autofocus
+                 th:classappend="${nameError} ? 'error' : ''">
+          <span th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage"></span>
+        </div>
+        <div>
+          <label for="size"> Size (m<sup>2</sup>): </label>
+          <input type="text" class="form-control" id="size" maxlength="12" placeholder=""
+                 th:name="size" th:value="*{size}" data-cy="size" autofocus
+                 th:classappend="${sizeError} ? 'error' : ''">
+          <span th:if="${sizeError}" th:text="${sizeError}" class="smallErrorMessage"></span>
+        </div>
+        <br/>
+      </div>
+      <div class="autocomplete-container">
+        <label for="location"> Address: </label>
+        <label class="LocationIQ-attribution" style="margin-left: 500px">Search by LocationIQ.com</label>
+        <input type="text" id="location" maxlength="128" placeholder="Start typing your address..."
+               th:name="location" th:value="*{location}" data-cy="location" autofocus
+               th:classappend="${locationError} ? 'error' : ''"
+        >
+        <div class="autocomplete-results" id="autocomplete-results"></div>
+      </div>
+
+      <div class="autocomplete-container">
+        <div class="create-garden-row">
+          <div>
+            <label for="suburb">Suburb:</label>
+            <input type="text" id="suburb">
+          </div>
+          <div>
+            <label for="city">City:</label>
+            <input type="text" id="city">
+          </div>
+          <br/>
+        </div>
+
+        <div class="create-garden-row">
+          <div>
+            <label for="country">Country:</label>
+            <input type="text" id="country">
+          </div>
+          <div>
+            <label for="postcode">Postcode:</label>
+            <input type="text" id="postcode">
+          </div>
+          <br/>
+        </div>
+
+      </div>
+      <script th:src="@{/javascript/locationAutocomplete.js}"></script>
+
+      <button type="submit" class="create-garden-button">Create!</button>
     </form>
     <a th:href="@{${requestURI}}">
-      <button>Cancel</button>
+      <button class="create-garden-cancel">Cancel</button>
     </a>
   </div>
   <script>
