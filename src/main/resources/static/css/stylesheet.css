@@ -67,7 +67,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 .dropdown {
     position: relative;
     display: inline-block;
-    z-index: 999;  /* Always show on top of everything */
+    z-index: 99;  /* Always show on top of everything */
 }
 
 

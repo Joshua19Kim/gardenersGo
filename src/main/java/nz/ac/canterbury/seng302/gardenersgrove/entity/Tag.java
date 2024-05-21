@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 
 /**
- * Defines the attributes of a tag that can be added to a garden
+ * A tag is a descriptive string a user can apply to their garden
  */
 @Entity
 public class Tag {
