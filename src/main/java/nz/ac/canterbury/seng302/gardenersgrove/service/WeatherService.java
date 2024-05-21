@@ -28,6 +28,7 @@ public class WeatherService {
     public WeatherService(@Value("${weather.password}") String api_key, ObjectMapper objectMapper) {
         WeatherService.api_key = api_key;
         this.objectMapper = objectMapper;
+
     }
 
     /**
@@ -36,8 +37,8 @@ public class WeatherService {
      *
      * @param location the location to get the current weather of
      * @return a object representing the details of the current weather
-     * @throws IOException
-     * @throws URISyntaxException
+     * @throws IOException if there is an issue with the connection
+     * @throws URISyntaxException if there is an issue with the URI
      */
     @Cacheable(value = "currentWeather", key="#location")
     public Weather getWeather(String location) throws IOException, URISyntaxException {
