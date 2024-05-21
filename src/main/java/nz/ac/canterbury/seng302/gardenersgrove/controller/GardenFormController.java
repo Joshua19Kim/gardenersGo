@@ -228,7 +228,7 @@ public class GardenFormController {
       @RequestParam(name = "showModal", required = false) String showModal,
       @RequestParam(name = "tagValid", required = false) String tagValid,
       Model model,
-      HttpServletRequest request) {
+      HttpServletRequest request) throws IOException, URISyntaxException {
     logger.info("GET /gardens/details");
 
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();

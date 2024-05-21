@@ -139,95 +139,10 @@
     function handleImageClick(plantId) {
         document.getElementById('fileInput_' + plantId).click();
     }
-    <div aria-hidden="true" class="modal" id="add-tag-modal">
-        <div class="add-tags">
-            <div class="header">
-                <button class="close" onclick="displayAddTagsModal()">&times;</button>
-                <div class="search-table-header">
-                    <h3>Add Tags</h3>
-                </div>
-            </div>
-            <div class="input-search-bar">
-                <form class="search-bar" method="post" th:action="@{addTag}">
-                    <input th:name="tag-input" id="tag-input" type="text" placeholder="Add tag..." maxlength="25"
-                           th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
-                    <input th:name="gardenId" th:value="${garden.id}" type="hidden">
-                    <button id="search-button" type="submit">Submit</button>
-                </form>
-                <br/>
-                <p class="smallErrorMessage" th:text="${tagValid}"></p>
-            </div>
-        </div>
-    </div>
 
-
-    <div class="garden-details">
-        <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
-        <p><strong>Location:</strong> <span th:text="${garden.location}"></span></p>
-        <p>
-            <strong>Size:</strong> <span th:if="${garden.size != null}" th:text="${garden.size + ' m^2'}"></span>
-        </p>
-        <p>
-        <div id="tag-container">
-            <strong>Tags:</strong>
-            <div th:if="${tags != null}" th:each="tag : ${tags}">
-                <div id="tag">
-                    <span th:text="${tag}"></span>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <h4>Plants:</h4>
-    <div th:if="${not #lists.isEmpty(garden.plants)}" class="plant-list-container">
-        <table class="plant-table">
-            <thead>
-            <tr>
-                <th>NAME</th>
-                <th>IMAGE</th>
-                <th>COUNT</th>
-                <th>DESCRIPTION</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="plant: ${garden.plants}">
-                <td th:text="${plant.name}"></td>
-                <td>
-                    <div class="plant-image-container" id="image">
-                        <form class="plant-image-container" th:id="'uploadPlantForm_' + ${plant.id}"
-                              th:action="@{../gardens/details/plants/image}" method="post"
-                              enctype="multipart/form-data">
-                            <input type="hidden" th:name="plantId" th:value="${plant.id}"/>
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                            <img th:src="@{${plant.image}}" alt="Plant" th:id="'currentImage_' + ${plant.id}">
-                            <button type="button" class="image-button"
-                                    th:onclick="'handleImageClick(\'' + ${plant.id} + '\');'">+
-                            </button>
-                            <input type="file" th:id="'fileInput_' + ${plant.id}" name="file" style="display: none;"
-                                   accept="image/*" th:onchange="'handleImageChange(\'' + ${plant.id} + '\');'">
-                        </form>
-                    </div>
-                    <span th:if="${uploadError} and ${plant.id} == ${errorId}" th:text="${uploadError}"
-                          class="errorMessage"></span>
-                </td>
-                <td th:if="${plant.count !=0}" th:text="${plant.count}"></td>
-                <td th:if="${plant.count == 0}"></td>
-                <td th:text="${plant.description}"></td>
-                <td>
-                    <form th:action="@{../gardens/details/plants/edit}" method="get">
-                        <input type="hidden" th:name="plantId" th:value="${plant.id}"/>
-                        <button type="submit" class="button">Edit</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <script>
-        function handleImageClick(plantId) {
-            document.getElementById('fileInput_' + plantId).click();
-        }
+    function handleImageClick(plantId) {
+        document.getElementById('fileInput_' + plantId).click();
+    }
 
     function handleImageChange(plantId) {
         document.getElementById('uploadPlantForm_' + plantId).submit();
@@ -264,13 +179,14 @@
 
         // referenced ChatGPT for this part.
         function updateQueryStringParameter(key, value) {
-        const url = new URL(window.location);
-        if (value === 'false') {
-            url.searchParams.delete(key);
-    } else {
-        url.searchParams.set(key, value);
-    }
-        window.history.replaceState({}, '', url);
+            const url = new URL(window.location);
+            if (value === 'false') {
+                url.searchParams.delete(key);
+            } else {
+                url.searchParams.set(key, value);
+            }
+            window.history.replaceState({}, '', url);
+        }
 
 </script>
 
