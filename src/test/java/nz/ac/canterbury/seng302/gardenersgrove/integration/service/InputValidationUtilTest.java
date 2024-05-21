@@ -30,6 +30,8 @@ public class InputValidationUtilTest {
     private EmailUserService emailUserService;
     @MockBean
     private WeatherService weatherService;
+    @MockBean
+    private LocationService locationService;
 
 
     @MockBean
