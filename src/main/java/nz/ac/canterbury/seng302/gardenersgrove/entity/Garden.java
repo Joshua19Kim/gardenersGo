@@ -54,36 +54,6 @@ public class Garden {
   protected Garden() {}
 
   /**
-   * Constructs a garden with the given name, location and gardener.
-   *
-   * @param name The name of the garden.
-   * @param location The location of the garden.
-   * @param gardener The gardener id for the garden.
-   */
-  public Garden(String name, String location, Gardener gardener) {
-    this.name = name;
-    this.location = location;
-    this.gardener = gardener;
-    plants = new ArrayList<>();
-  }
-
-  /**
-   * Constructs a garden with the given name, location, size and gardener.
-   *
-   * @param name The name of the garden.
-   * @param location The location of the garden.
-   * @param size The size of the garden.
-   * @param gardener The gardener id for the garden.
-   */
-  public Garden(String name, String location, String size, Gardener gardener) {
-    this.name = name;
-    this.location = location;
-    this.size = size;
-    this.gardener = gardener;
-    plants = new ArrayList<>();
-  }
-
-  /**
    * Constructs a garden with the given name, location, size and gardener.
    *
    * @param name The name of the garden (required).
@@ -103,6 +73,28 @@ public class Garden {
     this.country = country;
     this.postcode = postcode;
     this.size = size;
+    this.gardener = gardener;
+    plants = new ArrayList<>();
+  }
+
+  /**
+   * Constructs a garden with the given name, location, size and gardener.
+   *
+   * @param name The name of the garden (required).
+   * @param location The street number and street name of the garden.
+   * @param suburb The suburb of the garden.
+   * @param city The city of the garden (required).
+   * @param country The country of the garden (required).
+   * @param postcode The postcode of the garden.
+   * @param gardener The gardener id for the garden.
+   */
+  public Garden(String name, String location, String suburb, String city, String country, String postcode, Gardener gardener) {
+    this.name = name;
+    this.location = location;
+    this.suburb = suburb;
+    this.city = city;
+    this.country = country;
+    this.postcode = postcode;
     this.gardener = gardener;
     plants = new ArrayList<>();
   }
