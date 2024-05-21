@@ -51,6 +51,8 @@ deploy-staging:
     - echo "export DB_USERNAME=${DB_USERNAME}" > /home/gitlab-runner/staging/.env 
     - echo "export DB_PASSWORD=${DB_PASSWORD}" >> /home/gitlab-runner/staging/.env
     - echo "export SJMP=${SJMP}" >> /home/gitlab-runner/staging/.env
+    - echo "export WEATHER=${WEATHER}" >> /home/gitlab-runner/staging/.env
+    - echo "export LOCATIONIQ=${LOCATIONIQ}" >> /home/gitlab-runner/staging/.env
     - sudo systemctl restart staging
   artifacts:
     paths:
