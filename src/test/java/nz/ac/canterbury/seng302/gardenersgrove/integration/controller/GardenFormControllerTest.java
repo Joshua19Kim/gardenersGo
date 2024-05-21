@@ -441,6 +441,27 @@ public class GardenFormControllerTest {
 
     @Test
     @WithMockUser
+    public void NewTagSubmitted_OffensiveTagName_TagNotAdded()
+            throws Exception {
+        Garden garden = new Garden(" when(taMy Garden", "Ilam", "32", testGardener);
+        Tag tag = new Tag("Fuck", garden);
+
+        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+        when(tagService.addTag(any())).thenReturn(tag);
+
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/addTag")
+                                .param("tag-input", "Fuck")
+                                .param("gardenId", "1")
+                                .with(csrf())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardenDetailsTemplate"));
+        verify(tagService, times(0)).addTag(any());
+    }
+
+    @Test
+    @WithMockUser
     public void GardenDetailsRequested_TagExists_TagDisplayed()
             throws Exception {
         Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");

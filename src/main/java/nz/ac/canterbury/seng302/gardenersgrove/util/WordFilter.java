@@ -4,11 +4,14 @@ package nz.ac.canterbury.seng302.gardenersgrove.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -28,13 +31,27 @@ public class WordFilter {
     }
 
     /**
-     * Loads the list of words from the .csv file into a HashMap. If a banned word has words that are to be ignored in
-     * combination with it, these are loaded into the HashMap also.
-     * Wordlist was sourced from: <a href="https://github.com/coffee-and-fun/google-profanity-words">...</a>
+     * Processes each .csv file in the wordlists directory.
      */
     private static void loadConfigs() {
+        Path dir = Paths.get("src/main/resources/static/wordlists/");
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.csv")) {
+            for (Path entry : stream) {
+                processFile(entry);
+            }
+        } catch (IOException e) {
+            logger.error("IO error while loading config files", e);
+        }
+    }
+
+    /**
+     * Loads the list of words from the .csv file into a HashMap. If a banned word has words that are to be ignored in
+     * combination with it, these are loaded into the HashMap also.
+     * Wordlist was sourced from: <a href="https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words">...</a>
+     */
+    private static void processFile(Path filePath) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/static/wordlists/words.csv"));
+            BufferedReader reader = new BufferedReader(new FileReader(filePath.toFile()));
             String line = "";
             int counter = 0;
 
@@ -63,9 +80,9 @@ public class WordFilter {
                     logger.error(e.getMessage());
                 }
             }
-            logger.info("Loaded {} words to be filtered", counter);
+            logger.info("Loaded {} words from file {}", counter, filePath.getFileName());
         } catch (IOException e) {
-            logger.error("IO error while loading config file");
+            logger.error("IO error while processing file {}", filePath.getFileName(), e);
         }
     }
 
