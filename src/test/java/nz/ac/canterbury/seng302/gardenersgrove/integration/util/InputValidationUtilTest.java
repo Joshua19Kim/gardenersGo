@@ -1,11 +1,11 @@
-package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
+package nz.ac.canterbury.seng302.gardenersgrove.integration.util;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
 import com.sanctionco.jmail.Email;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
+import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

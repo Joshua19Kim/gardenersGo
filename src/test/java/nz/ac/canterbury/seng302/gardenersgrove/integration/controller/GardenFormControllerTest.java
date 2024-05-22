@@ -1,13 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.junit.jupiter.api.Assertions;
@@ -32,464 +33,659 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = GardenFormController.class)
 public class GardenFormControllerTest {
-    Gardener testGardener = new Gardener("Test", "Gardener",
-            LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
-            "Password1!");
+  Gardener testGardener =
+      new Gardener(
+          "Test", "Gardener", LocalDate.of(2024, 4, 1), "testgardener@gmail.com", "Password1!");
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-    @MockBean
-    private GardenService gardenService;
+  @MockBean private GardenService gardenService;
 
-    @MockBean
-    private GardenerFormService gardenerFormService;
+  @MockBean private GardenerFormService gardenerFormService;
 
-    @MockBean
-    private RelationshipService relationshipService;
+  @MockBean private RelationshipService relationshipService;
 
-    @MockBean
-    private RequestService requestService;
+  @MockBean private TagService tagService;
 
-    @MockBean
-    private WeatherService weatherService;
+  @MockBean private RequestService requestService;
 
-    @Test
-    @WithMockUser
-    public void MyGardensRequested_DefaultValues_GardenDetailsProvided() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
-        List<Garden> gardens = new ArrayList<>();
-        gardens.add(garden);
-        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
-        when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
+  @MockBean private WeatherService weatherService;
 
-        mockMvc
-                .perform((MockMvcRequestBuilders.get("/gardens")))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardensTemplate"))
-                .andExpect(model().attributeExists("gardens"))
-                .andExpect(model().attribute("gardens", gardens));
+  @Test
+  @WithMockUser
+  public void MyGardensRequested_DefaultValues_GardenDetailsProvided() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", testGardener);
+    List<Garden> gardens = new ArrayList<>();
+    gardens.add(garden);
+    when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
+    when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
 
-        verify(gardenerFormService, times(1)).findByEmail(any());
-        verify(gardenService, times(1)).getGardensByGardenerId(any());
-    }
+    mockMvc
+        .perform((MockMvcRequestBuilders.get("/gardens")))
+        .andExpect(status().isOk())
+        .andExpect(view().name("gardensTemplate"))
+        .andExpect(model().attributeExists("gardens"))
+        .andExpect(model().attribute("gardens", gardens));
 
-    @Test
-    @WithMockUser
-    public void GardenDetailsRequested_ExistentIdGiven_GardenDetailsProvided() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+    verify(gardenerFormService, times(1)).findByEmail(any());
+    verify(gardenService, times(1)).getGardensByGardenerId(any());
+  }
 
-        mockMvc
-                .perform((MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardenDetailsTemplate"))
-                .andExpect(model().attributeExists("garden"))
-                .andExpect(model().attribute("garden", garden));
+  @Test
+  @WithMockUser
+  public void GardenDetailsRequested_ExistentIdGiven_GardenDetailsProvided() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", testGardener);
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
-        verify(gardenService, times(1)).getGarden(1L);
-    }
+    mockMvc
+        .perform((MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")))
+        .andExpect(status().isOk())
+        .andExpect(view().name("gardenDetailsTemplate"))
+        .andExpect(model().attributeExists("garden"))
+        .andExpect(model().attribute("garden", garden));
 
-    @Test
-    @WithMockUser
-    public void GardenDetailsRequested_NonExistentIdGiven_StayOnMyGardens() throws Exception {
-        when(gardenService.getGarden(anyLong())).thenReturn(Optional.empty());
+    verify(gardenService, times(1)).getGarden(1L);
+  }
 
-        mockMvc
-                .perform((MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens"));
+  @Test
+  @WithMockUser
+  public void GardenDetailsRequested_NonExistentIdGiven_StayOnMyGardens() throws Exception {
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.empty());
 
-        verify(gardenService, times(1)).getGarden(anyLong());
-    }
+    mockMvc
+        .perform((MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens"));
 
-    @Test
-    @WithMockUser
-    public void EditGardenDetailsRequested_ExistentIdGiven_GoToEditGardenForm() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+    verify(gardenService, times(1)).getGarden(anyLong());
+  }
 
-        mockMvc
-                .perform((MockMvcRequestBuilders.get("/gardens/edit").param("gardenId", "1")))
-                .andExpect(status().isOk())
-                .andExpect(view().name("editGardensFormTemplate"))
-                .andExpect(model().attributeExists("garden"))
-                .andExpect(model().attribute("garden", garden));
+  @Test
+  @WithMockUser
+  public void EditGardenDetailsRequested_ExistentIdGiven_GoToEditGardenForm() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", testGardener);
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
-        verify(gardenService, times(1)).getGarden(1L);
-    }
+    mockMvc
+        .perform((MockMvcRequestBuilders.get("/gardens/edit").param("gardenId", "1")))
+        .andExpect(status().isOk())
+        .andExpect(view().name("editGardensFormTemplate"))
+        .andExpect(model().attributeExists("garden"))
+        .andExpect(model().attribute("garden", garden));
 
-    @Test
-    @WithMockUser
-    public void EditGardenDetailsRequested_NonExistentIdGiven_GoBackToMyGardens() throws Exception {
-        when(gardenService.getGarden(anyLong())).thenReturn(Optional.empty());
+    verify(gardenService, times(1)).getGarden(1L);
+  }
 
-        mockMvc
-                .perform((MockMvcRequestBuilders.get("/gardens/edit").param("gardenId", "1")))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens"));
+  @Test
+  @WithMockUser
+  public void EditGardenDetailsRequested_NonExistentIdGiven_GoBackToMyGardens() throws Exception {
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.empty());
 
-        verify(gardenService, times(1)).getGarden(anyLong());
-    }
+    mockMvc
+        .perform((MockMvcRequestBuilders.get("/gardens/edit").param("gardenId", "1")))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens"));
 
-    @Test
-    @WithMockUser
-    public void EditedGardenDetailsSubmitted_ValidValuesWithSize_GardenDetailsUpdated()
-            throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-        when(gardenService.addGarden(garden)).thenReturn(garden);
-        mockMvc
-                .perform(
-                        (MockMvcRequestBuilders.post("/gardens/edit")
-                                .param("gardenId", "1")
-                                .param("name", "Rose Garden")
-                                .param("location", "Riccarton")
-                                .param("size", "100"))
-                                .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-        verify(gardenService, times(1)).getGarden(1L);
-        verify(gardenService, times(1)).addGarden(garden);
-        Assertions.assertEquals("Rose Garden", garden.getName());
-        Assertions.assertEquals("Riccarton", garden.getLocation());
-        Assertions.assertEquals("100", garden.getSize());
-    }
+    verify(gardenService, times(1)).getGarden(anyLong());
+  }
 
-    @Test
-    @WithMockUser
-    public void EditedGardenDetailsSubmitted_ValidValuesWithNoSize_GardenDetailsUpdated()
-            throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-        when(gardenService.addGarden(garden)).thenReturn(garden);
-        mockMvc
-                .perform(
-                        (MockMvcRequestBuilders.post("/gardens/edit")
-                                .param("gardenId", "1")
-                                .param("name", "Rose Garden")
-                                .param("location", "Riccarton")
-                                .param("size", ""))
-                                .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-        verify(gardenService, times(1)).getGarden(1L);
-        verify(gardenService, times(1)).addGarden(garden);
-        Assertions.assertEquals("Rose Garden", garden.getName());
-        Assertions.assertEquals("Riccarton", garden.getLocation());
-        Assertions.assertEquals(null, garden.getSize());
-    }
+  @Test
+  @WithMockUser
+  public void EditedGardenDetailsSubmitted_ValidValuesWithSize_GardenDetailsUpdated()
+      throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+    when(gardenService.addGarden(garden)).thenReturn(garden);
+    mockMvc
+        .perform(
+            (MockMvcRequestBuilders.post("/gardens/edit")
+                    .param("gardenId", "1")
+                    .param("name", "Rose Garden")
+                    .param("location", "Riccarton")
+                    .param("size", "100"))
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+    verify(gardenService, times(1)).getGarden(1L);
+    verify(gardenService, times(1)).addGarden(garden);
+    Assertions.assertEquals("Rose Garden", garden.getName());
+    Assertions.assertEquals("Riccarton", garden.getLocation());
+    Assertions.assertEquals("100", garden.getSize());
+  }
 
-    @Test
-    @WithMockUser
-    public void GardenFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
-        List<Garden> gardens = new ArrayList<>();
-        gardens.add(new Garden("My Garden", "Ilam", "32", testGardener));
-        when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
-        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/form")
-                        .param("redirect", ""))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("requestURI", "gardens"))
-                .andExpect(model().attribute("requestURI", ""))
-                .andExpect(model().attribute("gardens", gardens))
-                .andExpect(view().name("gardensFormTemplate"));
-    }
+  @Test
+  @WithMockUser
+  public void EditedGardenDetailsSubmitted_ValidValuesWithNoSize_GardenDetailsUpdated()
+      throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+    when(gardenService.addGarden(garden)).thenReturn(garden);
+    mockMvc
+        .perform(
+            (MockMvcRequestBuilders.post("/gardens/edit")
+                    .param("gardenId", "1")
+                    .param("name", "Rose Garden")
+                    .param("location", "Riccarton")
+                    .param("size", ""))
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+    verify(gardenService, times(1)).getGarden(1L);
+    verify(gardenService, times(1)).addGarden(garden);
+    Assertions.assertEquals("Rose Garden", garden.getName());
+    Assertions.assertEquals("Riccarton", garden.getLocation());
+    Assertions.assertEquals(null, garden.getSize());
+  }
 
-    @Test
-    @WithMockUser
-    public void CreateGardenFormSubmitted_ValidInputs_GardenAddedAndViewUpdated() throws Exception {
-        String name = "My Garden";
-        String location = "Ilam";
-        String size = "1.0";
-        Garden garden = new Garden(name, location, size, testGardener);
-        garden.setId(1L);
-        when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
-                        .param("name", name)
-                        .param("location", location)
-                        .param("size", size)
-                        .param("redirect", "")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+  @Test
+  @WithMockUser
+  public void GardenFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
+    List<Garden> gardens = new ArrayList<>();
+    gardens.add(new Garden("My Garden", "Ilam", "32", testGardener));
+    when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
+    when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/gardens/form").param("redirect", ""))
+        .andExpect(status().isOk())
+        .andExpect(model().attributeExists("requestURI", "gardens"))
+        .andExpect(model().attribute("requestURI", ""))
+        .andExpect(model().attribute("gardens", gardens))
+        .andExpect(view().name("gardensFormTemplate"));
+  }
 
-        verify(gardenService, times(1)).addGarden(any(Garden.class));
-    }
+  @Test
+  @WithMockUser
+  public void CreateGardenFormSubmitted_ValidInputs_GardenAddedAndViewUpdated() throws Exception {
+    String name = "My Garden";
+    String location = "Ilam";
+    String size = "1.0";
+    Garden garden = new Garden(name, location, size, testGardener);
+    garden.setId(1L);
+    when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/form")
+                .param("name", name)
+                .param("location", location)
+                .param("size", size)
+                .param("redirect", "")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
 
-    @Test
-    @WithMockUser
-    public void GardenFormSubmitted_EmptyName_ErrorMessageAddedAndViewUpdated() throws Exception {
-        String name = "";
-        String location = "Ilam";
-        String size = "1.0";
-        String redirectURI = "";
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
-                        .param("name", name)
-                        .param("location", location)
-                        .param("size", size)
-                        .param("redirect", redirectURI)
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardensFormTemplate"))
-                .andExpect(model().attributeExists("nameError", "name", "location", "size", "requestURI"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("location", location))
-                .andExpect(model().attribute("size", size))
-                .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("nameError", "Garden name cannot be empty"));
+    verify(gardenService, times(1)).addGarden(any(Garden.class));
+  }
 
+  @Test
+  @WithMockUser
+  public void GardenFormSubmitted_EmptyName_ErrorMessageAddedAndViewUpdated() throws Exception {
+    String name = "";
+    String location = "Ilam";
+    String size = "1.0";
+    String redirectURI = "";
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/form")
+                .param("name", name)
+                .param("location", location)
+                .param("size", size)
+                .param("redirect", redirectURI)
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(view().name("gardensFormTemplate"))
+        .andExpect(model().attributeExists("nameError", "name", "location", "size", "requestURI"))
+        .andExpect(model().attribute("name", name))
+        .andExpect(model().attribute("location", location))
+        .andExpect(model().attribute("size", size))
+        .andExpect(model().attribute("requestURI", redirectURI))
+        .andExpect(model().attribute("nameError", "Garden name cannot be empty"));
 
-        verify(gardenService, never()).addGarden(any(Garden.class));
-    }
+    verify(gardenService, never()).addGarden(any(Garden.class));
+  }
 
-    @Test
-    @WithMockUser
-    public void GardenFormSubmitted_InvalidName_ErrorMessageAddedAndViewUpdated() throws Exception {
-        String name = "*!&";
-        String location = "Ilam";
-        String size = "1.0";
-        String redirectURI = "/gardens";
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
-                        .param("name", name)
-                        .param("location", location)
-                        .param("size", size)
-                        .param("redirect", redirectURI)
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardensFormTemplate"))
-                .andExpect(model().attributeExists("nameError", "name", "location", "size", "requestURI"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("location", location))
-                .andExpect(model().attribute("size", size))
-                .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("nameError", "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes"));
+  @Test
+  @WithMockUser
+  public void GardenFormSubmitted_InvalidName_ErrorMessageAddedAndViewUpdated() throws Exception {
+    String name = "*!&";
+    String location = "Ilam";
+    String size = "1.0";
+    String redirectURI = "/gardens";
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/form")
+                .param("name", name)
+                .param("location", location)
+                .param("size", size)
+                .param("redirect", redirectURI)
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(view().name("gardensFormTemplate"))
+        .andExpect(model().attributeExists("nameError", "name", "location", "size", "requestURI"))
+        .andExpect(model().attribute("name", name))
+        .andExpect(model().attribute("location", location))
+        .andExpect(model().attribute("size", size))
+        .andExpect(model().attribute("requestURI", redirectURI))
+        .andExpect(
+            model()
+                .attribute(
+                    "nameError",
+                    "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes"));
 
-        verify(gardenService, never()).addGarden(any(Garden.class));
-    }
+    verify(gardenService, never()).addGarden(any(Garden.class));
+  }
 
-    @Test
-    @WithMockUser
-    public void GardenFormSubmitted_EmptyLocation_ErrorMessageAddedAndViewUpdated() throws Exception {
-        String name = "My Garden";
-        String location = "";
-        String size = "1.0";
-        String redirectURI = "";
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
-                        .param("name", name)
-                        .param("location", location)
-                        .param("size", size)
-                        .param("redirect", redirectURI)
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardensFormTemplate"))
-                .andExpect(model().attributeExists("locationError", "name", "location", "size", "requestURI"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("location", location))
-                .andExpect(model().attribute("size", size))
-                .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("locationError", "Location cannot be empty"));
+  @Test
+  @WithMockUser
+  public void GardenFormSubmitted_EmptyLocation_ErrorMessageAddedAndViewUpdated() throws Exception {
+    String name = "My Garden";
+    String location = "";
+    String size = "1.0";
+    String redirectURI = "";
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/form")
+                .param("name", name)
+                .param("location", location)
+                .param("size", size)
+                .param("redirect", redirectURI)
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(view().name("gardensFormTemplate"))
+        .andExpect(
+            model().attributeExists("locationError", "name", "location", "size", "requestURI"))
+        .andExpect(model().attribute("name", name))
+        .andExpect(model().attribute("location", location))
+        .andExpect(model().attribute("size", size))
+        .andExpect(model().attribute("requestURI", redirectURI))
+        .andExpect(model().attribute("locationError", "Location cannot be empty"));
 
-        verify(gardenService, never()).addGarden(any(Garden.class));
-    }
+    verify(gardenService, never()).addGarden(any(Garden.class));
+  }
 
-    @Test
-    @WithMockUser
-    public void GardenFormSubmitted_InvalidLocation_ErrorMessageAddedAndViewUpdated() throws Exception {
-        String name = "My Garden";
-        String location = "*!&";
-        String size = "1.0";
-        String redirectURI = "";
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
-                        .param("name", name)
-                        .param("location", location)
-                        .param("size", size)
-                        .param("redirect", redirectURI)
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardensFormTemplate"))
-                .andExpect(model().attributeExists("locationError", "name", "location", "size", "requestURI"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("location", location))
-                .andExpect(model().attribute("size", size))
-                .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("locationError", "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes"));
+  @Test
+  @WithMockUser
+  public void GardenFormSubmitted_InvalidLocation_ErrorMessageAddedAndViewUpdated()
+      throws Exception {
+    String name = "My Garden";
+    String location = "*!&";
+    String size = "1.0";
+    String redirectURI = "";
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/form")
+                .param("name", name)
+                .param("location", location)
+                .param("size", size)
+                .param("redirect", redirectURI)
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(view().name("gardensFormTemplate"))
+        .andExpect(
+            model().attributeExists("locationError", "name", "location", "size", "requestURI"))
+        .andExpect(model().attribute("name", name))
+        .andExpect(model().attribute("location", location))
+        .andExpect(model().attribute("size", size))
+        .andExpect(model().attribute("requestURI", redirectURI))
+        .andExpect(
+            model()
+                .attribute(
+                    "locationError",
+                    "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes"));
 
-        verify(gardenService, never()).addGarden(any(Garden.class));
-    }
+    verify(gardenService, never()).addGarden(any(Garden.class));
+  }
 
-    @Test
-    @WithMockUser
-    public void GardenFormSubmitted_InvalidSize_ErrorMessageAddedAndViewUpdated() throws Exception {
-        String name = "My Garden";
-        String location = "Ilam";
-        String size = "-1.0";
-        String redirectURI = "";
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
-                        .param("name", name)
-                        .param("location", location)
-                        .param("size", size)
-                        .param("redirect", redirectURI)
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardensFormTemplate"))
-                .andExpect(model().attributeExists("sizeError", "name", "location", "size", "requestURI"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("location", location))
-                .andExpect(model().attribute("size", size))
-                .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("sizeError", "Garden size must be a positive number"));
+  @Test
+  @WithMockUser
+  public void GardenFormSubmitted_InvalidSize_ErrorMessageAddedAndViewUpdated() throws Exception {
+    String name = "My Garden";
+    String location = "Ilam";
+    String size = "-1.0";
+    String redirectURI = "";
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/form")
+                .param("name", name)
+                .param("location", location)
+                .param("size", size)
+                .param("redirect", redirectURI)
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(view().name("gardensFormTemplate"))
+        .andExpect(model().attributeExists("sizeError", "name", "location", "size", "requestURI"))
+        .andExpect(model().attribute("name", name))
+        .andExpect(model().attribute("location", location))
+        .andExpect(model().attribute("size", size))
+        .andExpect(model().attribute("requestURI", redirectURI))
+        .andExpect(model().attribute("sizeError", "Garden size must be a positive number"));
 
-        verify(gardenService, never()).addGarden(any(Garden.class));
-    }
+    verify(gardenService, never()).addGarden(any(Garden.class));
+  }
 
-    @Test
-    @WithMockUser
-    public void ViewFriendsGardensRequested_UserIsFriend_FriendsGardensViewed() throws Exception {
-        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
-        Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
-        currentUser.setId(1L);
-        otherUser.setId(2L);
-        gardenerFormService.addGardener(currentUser);
-        gardenerFormService.addGardener(otherUser);
+  @Test
+  @WithMockUser
+  public void ViewFriendsGardensRequested_UserIsFriend_FriendsGardensViewed() throws Exception {
+    Gardener currentUser =
+        new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+    Gardener otherUser =
+        new Gardener(
+            "Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
+    currentUser.setId(1L);
+    otherUser.setId(2L);
+    gardenerFormService.addGardener(currentUser);
+    gardenerFormService.addGardener(otherUser);
 
-        List<Garden> testGardens = new ArrayList<>();
-        Garden testGarden = new Garden("My Garden", "Ilam", otherUser);
-        testGardens.add(testGarden);
+    List<Garden> testGardens = new ArrayList<>();
+    Garden testGarden = new Garden("My Garden", "Ilam", otherUser);
+    testGardens.add(testGarden);
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+    Authentication authentication = Mockito.mock(Authentication.class);
+    Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
 
-        List<Gardener> relationships = new ArrayList<>();
-        relationships.add(otherUser);
+    List<Gardener> relationships = new ArrayList<>();
+    relationships.add(otherUser);
 
-        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
-        when(relationshipService.getCurrentUserRelationships(currentUser.getId())).thenReturn(relationships);
-        when(gardenService.getGardensByGardenerId(2L)).thenReturn(testGardens);
-        when(gardenerFormService.findById(2L)).thenReturn(Optional.of(otherUser));
+    when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+    when(relationshipService.getCurrentUserRelationships(currentUser.getId()))
+        .thenReturn(relationships);
+    when(gardenService.getGardensByGardenerId(2L)).thenReturn(testGardens);
+    when(gardenerFormService.findById(2L)).thenReturn(Optional.of(otherUser));
+  }
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
-                        .principal(authentication))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("gardens", testGardens))
-                .andExpect(model().attribute("gardener", otherUser))
-                .andExpect(view().name("gardensTemplate"));
+  @Test
+  @WithMockUser
+  public void ViewFriendsGardensRequested_UserIsNotFriend_RedirectedToOwnGardens()
+      throws Exception {
+    Gardener currentUser =
+        new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+    Gardener otherUser =
+        new Gardener(
+            "Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
+    currentUser.setId(1L);
+    otherUser.setId(2L);
+    gardenerFormService.addGardener(currentUser);
+    gardenerFormService.addGardener(otherUser);
 
-    }
+    List<Gardener> relationships = new ArrayList<>();
 
-    @Test
-    @WithMockUser
-    public void ViewFriendsGardensRequested_UserIsNotFriend_RedirectedToOwnGardens() throws Exception {
-        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
-        Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
-        currentUser.setId(1L);
-        otherUser.setId(2L);
-        gardenerFormService.addGardener(currentUser);
-        gardenerFormService.addGardener(otherUser);
+    Authentication authentication = Mockito.mock(Authentication.class);
+    Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
 
-        List<Gardener> relationships = new ArrayList<>();
+    when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+    when(relationshipService.getCurrentUserRelationships(currentUser.getId()))
+        .thenReturn(relationships);
+    when(gardenerFormService.findById(2L)).thenReturn(Optional.of(otherUser));
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get("/gardens").param("user", "2").principal(authentication))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens"));
+  }
 
-        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
-        when(relationshipService.getCurrentUserRelationships(currentUser.getId())).thenReturn(relationships);
-        when(gardenerFormService.findById(2L)).thenReturn(Optional.of(otherUser));
+  @Test
+  @WithMockUser
+  public void ViewFriendsGardensRequested_FriendDoesNotExist_RedirectedToOwnGardens()
+      throws Exception {
+    Gardener currentUser =
+        new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+    currentUser.setId(1L);
+    gardenerFormService.addGardener(currentUser);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
-                        .principal(authentication))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens"));
+    Authentication authentication = Mockito.mock(Authentication.class);
+    Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
 
-    }
+    when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+    when(gardenerFormService.findById(2L)).thenReturn(Optional.empty());
 
-    @Test
-    @WithMockUser
-    public void ViewFriendsGardensRequested_FriendDoesNotExist_RedirectedToOwnGardens() throws Exception {
-        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
-        currentUser.setId(1L);
-        gardenerFormService.addGardener(currentUser);
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get("/gardens").param("user", "2").principal(authentication))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens"));
+  }
 
-        Authentication authentication = Mockito.mock(Authentication.class);
-        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+  @Test
+  @WithMockUser
+  public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    Tag tag = new Tag("My tag", garden);
 
-        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
-        when(gardenerFormService.findById(2L)).thenReturn(Optional.empty());
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+    when(tagService.addTag(any())).thenReturn(tag);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
-                        .principal(authentication))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens"));
+    mockMvc
+        .perform(
+            (MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "My tag")
+                .param("gardenId", "1")
+                .with(csrf())))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+    verify(tagService, times(1)).addTag(any());
+  }
 
-    }
+  @Test
+  @WithMockUser
+  public void NewTagSubmitted_OffensiveTagName_TagNotAdded() throws Exception {
+    Garden garden = new Garden(" when(taMy Garden", "Ilam", "32", testGardener);
+    Tag tag = new Tag("Fuck", garden);
 
-    @Test
-    @WithMockUser
-    public void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
-        String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-        Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
-        String[] forecastImages = new String[] {"image1", "image2", "image3"};
-        String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
-        Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+    when(tagService.addTag(any())).thenReturn(tag);
 
-        Weather currentWeather = Mockito.mock(Weather.class);
-        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
-        when(currentWeather.getTemperature()).thenReturn(12.0f);
-        when(currentWeather.getHumidity()).thenReturn(50);
-        when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
-        when(currentWeather.getWeatherImage()).thenReturn("image");
-        when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
-        when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-        when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
-        when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
-        when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
-        when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+    mockMvc
+        .perform(
+            (MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "Fuck")
+                .param("gardenId", "1")
+                .with(csrf())))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"));
+    verify(tagService, times(0)).addTag(any());
+  }
 
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+  @Test
+  @WithMockUser
+  public void GardenDetailsRequested_TagExists_TagDisplayed() throws Exception {
+    Gardener currentUser =
+        new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+    currentUser.setId(1L);
+    gardenerFormService.addGardener(currentUser);
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
-        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
-        MOCK_MVC
-                .perform((MockMvcRequestBuilders.get("/gardens/details")
-                        .param("gardenId", "1")))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("temperature", 12.0f))
-                .andExpect(model().attribute("humidity", 50))
-                .andExpect(model().attribute("weatherDescription", "Sunny"))
-                .andExpect(model().attribute("weatherImage", "image"))
-                .andExpect(model().attribute("forecastDates",List.of(forecastDates)))
-                .andExpect(model().attribute("forecastTemperature",List.of(forecastTemperatures)))
-                .andExpect(model().attribute("forecastWeatherImage",List.of(forecastImages)))
-                .andExpect(model().attribute("forecastWeatherDescription",List.of(forecastDescriptions)))
-                .andExpect(model().attribute("forcastHumidities",List.of(forecastHumidities)))
-                .andExpect(model().attribute("garden", garden));
-    }
+    Authentication authentication = Mockito.mock(Authentication.class);
+    Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
 
-    @Test
-    @WithMockUser
-    public void GetTemperatureOfCity_CityDoesntExist_WeatherInformationNotReturned() throws Exception {
-        Garden garden = new Garden("My Garden", "FAKELOCATION!123", testGardener);
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+    Garden garden = new Garden("My Garden", "Ilam", "32", currentUser);
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
-        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
-        MOCK_MVC
-                .perform((MockMvcRequestBuilders.get("/gardens/details")
-                        .param("gardenId", "1")))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeDoesNotExist("date"))
-                .andExpect(model().attributeDoesNotExist("temperature"))
-                .andExpect(model().attributeDoesNotExist("humidity"))
-                .andExpect(model().attributeDoesNotExist("weatherDescription"))
-                .andExpect(model().attributeDoesNotExist("weatherImage"))
-                .andExpect(model().attributeDoesNotExist("currentLocation"))
-                .andExpect(model().attributeDoesNotExist("forecastDates"))
-                .andExpect(model().attributeDoesNotExist("forecastTemperature"))
-                .andExpect(model().attributeDoesNotExist("forecastWeatherImage"))
-                .andExpect(model().attributeDoesNotExist("forecastWeatherDescription"))
-                .andExpect(model().attributeDoesNotExist("forcastHumidities"))
-                .andExpect(model().attribute("garden", garden));
+    List<String> tags = new ArrayList<>();
+    tags.add("My tag");
+    tags.add("Another tag");
 
-    }
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+    when(tagService.getTags(any())).thenReturn(tags);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get("/gardens/details")
+                .param("gardenId", "1")
+                .principal(authentication))
+        .andExpect(status().isOk())
+        .andExpect(model().attribute("tags", tags))
+        .andExpect(view().name("gardenDetailsTemplate"));
+    verify(tagService, times(1)).getTags(any());
+  }
+
+  @Test
+  @WithMockUser
+  public void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "Invalid@Tag")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
+        .andExpect(flash().attributeExists("tagValid"))
+        .andExpect(
+            flash()
+                .attribute(
+                    "tagValid",
+                    "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
+  }
+
+  @Test
+  @WithMockUser
+  public void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "ThisTagNameIsWayTooLongAndInvalid")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
+        .andExpect(flash().attributeExists("tagValid"))
+        .andExpect(flash().attribute("tagValid", "A tag cannot exceed 25 characters"));
+  }
+
+  @Test
+  @WithMockUser
+  public void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
+        .andExpect(flash().attributeExists("tagValid"))
+        .andExpect(
+            flash()
+                .attribute(
+                    "tagValid",
+                    "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
+  }
+
+  @Test
+  @WithMockUser
+  public void addTag_SameTagNameInDifferentGardens() throws Exception {
+    Garden garden1 = new Garden("Garden 1", "Location 1", "Address 1", testGardener);
+    garden1.setId(1L);
+    Garden garden2 = new Garden("Garden 2", "Location 2", "Address 2", testGardener);
+    garden2.setId(2L);
+
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden1));
+    when(gardenService.getGarden(2L)).thenReturn(Optional.of(garden2));
+    when(tagService.findTagByNameAndGarden(Mockito.eq("SameTag"), Mockito.any(Garden.class)))
+        .thenReturn(Optional.empty());
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "Tag")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "Tag")
+                .param("gardenId", "2")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=2"));
+  }
+
+  @Test
+  @WithMockUser
+  public void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
+    String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+    Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+    String[] forecastImages = new String[] {"image1", "image2", "image3"};
+    String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
+    Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+    Weather currentWeather = Mockito.mock(Weather.class);
+    when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+    when(currentWeather.getTemperature()).thenReturn(12.0f);
+    when(currentWeather.getHumidity()).thenReturn(50);
+    when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
+    when(currentWeather.getWeatherImage()).thenReturn("image");
+    when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+    when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+    when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+    when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+    when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+    when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+    Garden garden = new Garden("My Garden", "Ilam", testGardener);
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+
+    GardenFormController gardenFormController =
+        new GardenFormController(
+            gardenService,
+            gardenerFormService,
+            relationshipService,
+            requestService,
+            weatherService,
+            tagService);
+    MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+    MOCK_MVC
+        .perform((MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")))
+        .andExpect(status().isOk())
+        .andExpect(model().attribute("temperature", 12.0f))
+        .andExpect(model().attribute("humidity", 50))
+        .andExpect(model().attribute("weatherDescription", "Sunny"))
+        .andExpect(model().attribute("weatherImage", "image"))
+        .andExpect(model().attribute("forecastDates", List.of(forecastDates)))
+        .andExpect(model().attribute("forecastTemperature", List.of(forecastTemperatures)))
+        .andExpect(model().attribute("forecastWeatherImage", List.of(forecastImages)))
+        .andExpect(model().attribute("forecastWeatherDescription", List.of(forecastDescriptions)))
+        .andExpect(model().attribute("forcastHumidities", List.of(forecastHumidities)))
+        .andExpect(model().attribute("garden", garden));
+  }
+
+  @Test
+  @WithMockUser
+  public void GetTemperatureOfCity_CityDoesntExist_WeatherInformationNotReturned()
+      throws Exception {
+    Garden garden = new Garden("My Garden", "FAKELOCATION!123", testGardener);
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+
+    GardenFormController gardenFormController =
+        new GardenFormController(
+            gardenService,
+            gardenerFormService,
+            relationshipService,
+            requestService,
+            weatherService,
+            tagService);
+    MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+    MOCK_MVC
+        .perform((MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")))
+        .andExpect(status().isOk())
+        .andExpect(model().attributeDoesNotExist("date"))
+        .andExpect(model().attributeDoesNotExist("temperature"))
+        .andExpect(model().attributeDoesNotExist("humidity"))
+        .andExpect(model().attributeDoesNotExist("weatherDescription"))
+        .andExpect(model().attributeDoesNotExist("weatherImage"))
+        .andExpect(model().attributeDoesNotExist("currentLocation"))
+        .andExpect(model().attributeDoesNotExist("forecastDates"))
+        .andExpect(model().attributeDoesNotExist("forecastTemperature"))
+        .andExpect(model().attributeDoesNotExist("forecastWeatherImage"))
+        .andExpect(model().attributeDoesNotExist("forecastWeatherDescription"))
+        .andExpect(model().attributeDoesNotExist("forcastHumidities"))
+        .andExpect(model().attribute("garden", garden));
+  }
 }
