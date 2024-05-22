@@ -5,9 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /** Service class for managing Plant entities */
 @Service
@@ -53,5 +51,23 @@ public class TagService {
 
   public Optional<Tag> findTagByNameAndGarden(String name, Garden garden) {
     return tagRepository.findByNameAndGarden(name, garden);
+  }
+
+  /**
+   * Gets a list of all unique tags in the system that do not exist in the specified garden
+   *
+   * @param id the id of the garden
+   * @return a list of all unique tags in the system that do not exist in the specified garden
+   */
+  public Set<String> getUniqueTagNames(Long id) {
+    Set<String> uniqueTagNames = new HashSet<>();
+    List<Tag> tags = getAllTags();
+    List<String> tagNamesInGarden = getTags(id);
+    for(Tag tag : tags) {
+      if(!tagNamesInGarden.contains(tag.getName())) {
+        uniqueTagNames.add(tag.getName());
+      }
+    }
+    return uniqueTagNames;
   }
 }

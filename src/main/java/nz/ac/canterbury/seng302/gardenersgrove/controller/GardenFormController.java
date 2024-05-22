@@ -259,7 +259,7 @@ public class GardenFormController {
 
       model.addAttribute("garden", garden.get());
       model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
-      model.addAttribute("allTags", new HashSet<>((tagService.getAllTags())));
+      model.addAttribute("allTags", tagService.getUniqueTagNames(parseLong(gardenId)));
       if (uploadError != null) {
         model.addAttribute("uploadError", uploadError);
         model.addAttribute("errorId", errorId);
