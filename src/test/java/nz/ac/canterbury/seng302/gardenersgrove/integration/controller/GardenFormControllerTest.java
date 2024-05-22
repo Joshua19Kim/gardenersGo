@@ -203,7 +203,159 @@ public class GardenFormControllerTest {
         verify(gardenService, times(1)).addGarden(garden);
         Assertions.assertEquals("Rose Garden", garden.getName());
         Assertions.assertEquals("5 test address", garden.getLocation());
+        Assertions.assertEquals("Ilam", garden.getSuburb());
+        Assertions.assertEquals("Christchurch", garden.getCity());
+        Assertions.assertEquals("New Zealand", garden.getCountry());
+        Assertions.assertEquals("8888", garden.getPostcode());
         Assertions.assertEquals(null, garden.getSize());
+    }
+
+    @Test
+    @WithMockUser
+    public void EditedGardenDetailsSubmitted_ValidValuesWithNoSuburb_GardenDetailsUpdated()
+            throws Exception {
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "999", testGardener);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/edit")
+                                .param("gardenId", "1")
+                                .param("name", "Rose Garden")
+                                .param("location", "5 test address")
+                                .param("suburb", "")
+                                .param("city", "Christchurch")
+                                .param("country", "New Zealand")
+                                .param("postcode", "8888")
+                                .param("size", ""))
+                                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+        verify(gardenService, times(1)).getGarden(1L);
+        verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertEquals("Rose Garden", garden.getName());
+        Assertions.assertEquals("5 test address", garden.getLocation());
+        Assertions.assertEquals("", garden.getSuburb());
+        Assertions.assertEquals("Christchurch", garden.getCity());
+        Assertions.assertEquals("New Zealand", garden.getCountry());
+        Assertions.assertEquals("8888", garden.getPostcode());
+        Assertions.assertEquals(null, garden.getSize());
+    }
+
+    @Test
+    @WithMockUser
+    public void EditedGardenDetailsSubmitted_ValidValuesWithNoPostcode_GardenDetailsUpdated()
+            throws Exception {
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "999", testGardener);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/edit")
+                                .param("gardenId", "1")
+                                .param("name", "Rose Garden")
+                                .param("location", "5 test address")
+                                .param("suburb", "Ilam")
+                                .param("city", "Christchurch")
+                                .param("country", "New Zealand")
+                                .param("postcode", "")
+                                .param("size", ""))
+                                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+        verify(gardenService, times(1)).getGarden(1L);
+        verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertEquals("Rose Garden", garden.getName());
+        Assertions.assertEquals("5 test address", garden.getLocation());
+        Assertions.assertEquals("Ilam", garden.getSuburb());
+        Assertions.assertEquals("Christchurch", garden.getCity());
+        Assertions.assertEquals("New Zealand", garden.getCountry());
+        Assertions.assertEquals("", garden.getPostcode());
+        Assertions.assertEquals(null, garden.getSize());
+    }
+
+    @Test
+    @WithMockUser
+    public void EditedGardenDetailsSubmitted_ValidValuesWithNoLocation_GardenDetailsUpdated()
+            throws Exception {
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "999", testGardener);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/edit")
+                                .param("gardenId", "1")
+                                .param("name", "Rose Garden")
+                                .param("location", "")
+                                .param("suburb", "Ilam")
+                                .param("city", "Christchurch")
+                                .param("country", "New Zealand")
+                                .param("postcode", "8888")
+                                .param("size", ""))
+                                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+        verify(gardenService, times(1)).getGarden(1L);
+        verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertEquals("Rose Garden", garden.getName());
+        Assertions.assertEquals("", garden.getLocation());
+        Assertions.assertEquals("Ilam", garden.getSuburb());
+        Assertions.assertEquals("Christchurch", garden.getCity());
+        Assertions.assertEquals("New Zealand", garden.getCountry());
+        Assertions.assertEquals("8888", garden.getPostcode());
+        Assertions.assertEquals(null, garden.getSize());
+    }
+
+    @Test
+    @WithMockUser
+    public void EditedGardenDetailsSubmitted_EmptyCity_ErrorMessageAddedAndViewUpdated() throws Exception {
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "999", testGardener);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        when(gardenService.getGardensByGardenerId(any())).thenReturn(List.of(garden));
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/edit")
+                                .param("gardenId", "1")
+                                .param("name", "Rose Garden")
+                                .param("location", "88 test address")
+                                .param("suburb", "Ilam")
+                                .param("city", "")
+                                .param("country", "New Zealand")
+                                .param("postcode", "8888")
+                                .param("size", "9"))
+                                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("editGardensFormTemplate"))
+                .andExpect(model().attributeExists("cityError", "name", "location", "suburb", "country", "postcode", "size"))
+                .andExpect(model().attribute("cityError", "City is required."));
+        verify(gardenService, never()).addGarden(any(Garden.class));
+    }
+
+    @Test
+    @WithMockUser
+    public void EditedGardenDetailsSubmitted_EmptyCountry_ErrorMessageAddedAndViewUpdated() throws Exception {
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "999", testGardener);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        when(gardenService.getGardensByGardenerId(any())).thenReturn(List.of(garden));
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/edit")
+                                .param("gardenId", "1")
+                                .param("name", "Rose Garden")
+                                .param("location", "88 test address")
+                                .param("suburb", "Ilam")
+                                .param("city", "Chch")
+                                .param("country", "")
+                                .param("postcode", "8888")
+                                .param("size", "9"))
+                                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("editGardensFormTemplate"))
+                .andExpect(model().attributeExists("countryError", "name", "location", "suburb", "city", "postcode", "size"))
+                .andExpect(model().attribute("countryError", "Country is required."));
+        verify(gardenService, never()).addGarden(any(Garden.class));
     }
 
     @Test
@@ -234,6 +386,35 @@ public class GardenFormControllerTest {
         String size = "1.0";
 
         Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener);
+        garden.setId(1L);
+        when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+                        .param("name", name)
+                        .param("location", location)
+                        .param("suburb", suburb)
+                        .param("city", city)
+                        .param("country", country)
+                        .param("postcode", postcode)
+                        .param("size", size)
+                        .param("redirect", "")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+
+        verify(gardenService, times(1)).addGarden(any(Garden.class));
+    }
+    @Test
+    @WithMockUser
+    public void CreateGardenFormSubmitted_ValidInputsEmptyLocationSuburbPostcode_GardenAddedAndViewUpdated() throws Exception {
+        String name = "Test garden";
+        String location = "";
+        String suburb = "";
+        String city = "Christchurch";
+        String country = "New Zealand";
+        String postcode = "";
+        String size = "1.0";
+
+        Garden garden = new Garden("Test garden", "", "", "Christchurch", "New Zealand", "", "1.0", testGardener);
         garden.setId(1L);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
@@ -323,11 +504,11 @@ public class GardenFormControllerTest {
 
     @Test
     @WithMockUser
-    public void GardenFormSubmitted_EmptyLocation_ErrorMessageAddedAndViewUpdated() throws Exception {
+    public void GardenFormSubmitted_EmptyCity_ErrorMessageAddedAndViewUpdated() throws Exception {
         String name = "My Garden";
-        String location = "";
+        String location = "Ilam";
         String suburb = "Ilam";
-        String city = "Christchurch";
+        String city = "";
         String country = "New Zealand";
         String postcode = "9999";
         String size = "1.0";
@@ -345,27 +526,32 @@ public class GardenFormControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("gardensFormTemplate"))
-                .andExpect(model().attributeExists("locationError", "name", "location", "size", "requestURI"))
+                .andExpect(model().attributeExists("cityError", "name", "location", "suburb", "country", "postcode", "size", "requestURI"))
                 .andExpect(model().attribute("name", name))
                 .andExpect(model().attribute("location", location))
+                .andExpect(model().attribute("suburb", suburb))
+                .andExpect(model().attribute("city", city))
+                .andExpect(model().attribute("country", country))
+                .andExpect(model().attribute("postcode", postcode))
                 .andExpect(model().attribute("size", size))
                 .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("locationError", "Location cannot be empty"));
+                .andExpect(model().attribute("cityError", "City is required."));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
 
     @Test
     @WithMockUser
-    public void GardenFormSubmitted_InvalidLocation_ErrorMessageAddedAndViewUpdated() throws Exception {
+    public void GardenFormSubmitted_EmptyCountry_ErrorMessageAddedAndViewUpdated() throws Exception {
         String name = "My Garden";
-        String location = "*!&";
+        String location = "Ilam";
         String suburb = "Ilam";
         String city = "Christchurch";
-        String country = "New Zealand";
+        String country = "";
         String postcode = "9999";
         String size = "1.0";
         String redirectURI = "";
+        when(gardenerFormService.findByEmail("testEmail@gmail.com")).thenReturn(Optional.of(testGardener));
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", name)
                         .param("location", location)
@@ -378,12 +564,16 @@ public class GardenFormControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("gardensFormTemplate"))
-                .andExpect(model().attributeExists("locationError", "name", "location", "size", "requestURI"))
+                .andExpect(model().attributeExists("countryError", "name", "location", "suburb", "city", "postcode", "size", "requestURI"))
                 .andExpect(model().attribute("name", name))
                 .andExpect(model().attribute("location", location))
+                .andExpect(model().attribute("suburb", suburb))
+                .andExpect(model().attribute("city", city))
+                .andExpect(model().attribute("country", country))
+                .andExpect(model().attribute("postcode", postcode))
                 .andExpect(model().attribute("size", size))
                 .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("locationError", "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes"));
+                .andExpect(model().attribute("countryError", "Country is required."));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
     }

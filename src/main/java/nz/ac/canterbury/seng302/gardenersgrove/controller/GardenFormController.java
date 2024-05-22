@@ -188,13 +188,10 @@ public class GardenFormController {
 
     //The validation check needs to be
     // updated for each of address(location, suburb(just length if not null), city(should not be null and check the length),
-    // country(should not be null and check the length), postcode(just lenght check if not null).
+    // country(should not be null and check the length), postcode(just length check if not null).
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    if (!Objects.equals(location, validatedLocation)) {
-      model.addAttribute("locationError", validatedLocation);
-      isValid = false;
-    }
+
     if (Objects.equals(city, "")) {
       model.addAttribute("cityError", "City is required.");
       isValid = false;
@@ -204,15 +201,19 @@ public class GardenFormController {
       isValid = false;
     }
 
-    //These two are example code to show the name of error attribute.
-    if (Objects.equals(city, "")) {
-      model.addAttribute("suburbError", "Invalid City Name.");
-      isValid = false;
-    }
-    if(Objects.equals(postcode, "")) {
-      model.addAttribute("postcodeError", "Invalid Postcode");
-      isValid = false;
-    }
+    //These are example code to show the name of error attribute. Need to fix this for location validation :)
+//    if (!Objects.equals(location, validatedLocation)) {
+//      model.addAttribute("locationError", validatedLocation);
+//      isValid = false;
+//    }
+//    if (Objects.equals(city, "")) {
+//      model.addAttribute("suburbError", "Invalid City Name.");
+//      isValid = false;
+//    }
+//    if(Objects.equals(postcode, "")) {
+//      model.addAttribute("postcodeError", "Invalid Postcode");
+//      isValid = false;
+//    }
 
     ////////////////////////////////////////////upto here////////////////////////////////////////////////////////////
 
@@ -341,6 +342,13 @@ public class GardenFormController {
     String validatedLocation = ValidityChecker.validateGardenLocation(location);
     String validatedSize = ValidityChecker.validateGardenSize(size);
 
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+    List<Garden> gardens = new ArrayList<>();
+    if (gardenerOptional.isPresent()) {
+      gardener = gardenerOptional.get();
+      gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+    }
+
     boolean isValid = true;
     String returnedTemplate = "redirect:/gardens/details?gardenId=" + gardenId;
 
@@ -359,10 +367,7 @@ public class GardenFormController {
     // country(should not be null and check the length), postcode(just lenght check if not null).
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    if (!Objects.equals(location, validatedLocation)) {
-      model.addAttribute("locationError", validatedLocation);
-      isValid = false;
-    }
+
     if (Objects.equals(city, "")) {
       model.addAttribute("cityError", "City is required.");
       isValid = false;
@@ -372,15 +377,19 @@ public class GardenFormController {
       isValid = false;
     }
 
-    //These two are example code to show the name of error attribute.
-    if (Objects.equals(city, "")) {
-      model.addAttribute("suburbError", "Invalid City Name.");
-      isValid = false;
-    }
-    if(Objects.equals(postcode, "")) {
-      model.addAttribute("postcodeError", "Invalid Postcode");
-      isValid = false;
-    }
+    //These are example code to show the name of error attribute.  Need to fix this for location validation :)
+//    if (!Objects.equals(location, validatedLocation)) {
+//      model.addAttribute("locationError", validatedLocation);
+//      isValid = false;
+//    }
+//    if (Objects.equals(suburb, "")) {
+//      model.addAttribute("suburbError", "Invalid City Name.");
+//      isValid = false;
+//    }
+//    if(Objects.equals(postcode, "")) {
+//      model.addAttribute("postcodeError", "Invalid Postcode");
+//      isValid = false;
+//    }
     ////////////////////////////////////////////upto here////////////////////////////////////////////////////////////
 
 
@@ -401,7 +410,6 @@ public class GardenFormController {
         gardenService.addGarden(existingGarden);
       }
     } else {
-      List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
       model.addAttribute("gardens", gardens);
       model.addAttribute("name", name);
       model.addAttribute("location", location);
