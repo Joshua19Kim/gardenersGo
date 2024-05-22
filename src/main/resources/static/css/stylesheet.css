@@ -221,6 +221,56 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     color: #ffffff;
 }
 
+#add-tag {
+    width: 22px;
+    height: 22px;
+    background-color: #45a049;
+    border-radius: 50%;
+    display: flex;
+    margin-left: 5px;
+    padding: 5px;
+    color: #ffffff;
+    font-weight: bolder;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#add-tag:hover {
+    cursor: pointer;
+    background-color: #8af58a;
+}
+
+#tag-input {
+    display: none;
+    width: 200px;
+    padding: 5px;
+    margin-left: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #e6ffe6;
+}
+
+#tag-error-container {
+    height: auto;
+}
+
+#tag-error-message {
+    color: red;
+    text-align: center;
+    animation: fadeOut 2s forwards;
+    animation-delay: 3s;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
 
 #garden-details {
     background-color: #fff;

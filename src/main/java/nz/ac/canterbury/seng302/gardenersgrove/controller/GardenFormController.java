@@ -431,7 +431,7 @@ public class GardenFormController {
 
     if (validTagError.isPresent()) {
       redirectAttributes.addFlashAttribute("tagValid", validTagError.get());
-      return "redirect:/gardens/details?gardenId=" + id + "&showModal=true";
+      return "redirect:/gardens/details?gardenId=" + id;
     }
     if (tagInUse.isEmpty()) {
       if (!WordFilter.doesContainBadWords(tag)) {
@@ -440,7 +440,7 @@ public class GardenFormController {
         logger.info("Tag '{}' passes moderation checks", tag);
       } else {
         redirectAttributes.addFlashAttribute("tagValid", "Submitted tag fails moderation requirements");
-        return "redirect:/gardens/details?gardenId=" + id + "&showModal=true";
+        return "redirect:/gardens/details?gardenId=" + id;
       }
     }
 
