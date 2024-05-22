@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
@@ -11,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,18 @@ public class GardenFormControllerTest {
 
     @MockBean
     private WeatherService weatherService;
+
+    @BeforeEach
+    void setUp() {
+        Mockito.reset(gardenerFormService);
+        List<Authority> userRoles = new ArrayList<>();
+        testGardener.setUserRoles(userRoles);
+        testGardener.setId(1L);
+        gardenerFormService.addGardener(testGardener);
+        when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(testGardener));
+
+    }
+
 
     @Test
     @WithMockUser
@@ -136,7 +150,7 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void EditedGardenDetailsSubmitted_ValidValuesWithSize_GardenDetailsUpdated()
             throws Exception {
-        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "100", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(gardenService.addGarden(garden)).thenReturn(garden);
         mockMvc
@@ -144,23 +158,31 @@ public class GardenFormControllerTest {
                         (MockMvcRequestBuilders.post("/gardens/edit")
                                 .param("gardenId", "1")
                                 .param("name", "Rose Garden")
-                                .param("location", "Riccarton")
-                                .param("size", "100"))
+                                .param("location", "5 test address")
+                                .param("suburb", "Ilam")
+                                .param("city", "Christchurch")
+                                .param("country", "New Zealand")
+                                .param("postcode", "8888")
+                                .param("size", "12"))
                                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
         Assertions.assertEquals("Rose Garden", garden.getName());
-        Assertions.assertEquals("Riccarton", garden.getLocation());
-        Assertions.assertEquals("100", garden.getSize());
+        Assertions.assertEquals("5 test address", garden.getLocation());
+        Assertions.assertEquals("Ilam", garden.getSuburb());
+        Assertions.assertEquals("Christchurch", garden.getCity());
+        Assertions.assertEquals("New Zealand", garden.getCountry());
+        Assertions.assertEquals("8888", garden.getPostcode());
+        Assertions.assertEquals("12", garden.getSize());
     }
 
     @Test
     @WithMockUser
     public void EditedGardenDetailsSubmitted_ValidValuesWithNoSize_GardenDetailsUpdated()
             throws Exception {
-        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(gardenService.addGarden(garden)).thenReturn(garden);
         mockMvc
@@ -168,7 +190,11 @@ public class GardenFormControllerTest {
                         (MockMvcRequestBuilders.post("/gardens/edit")
                                 .param("gardenId", "1")
                                 .param("name", "Rose Garden")
-                                .param("location", "Riccarton")
+                                .param("location", "5 test address")
+                                .param("suburb", "Ilam")
+                                .param("city", "Christchurch")
+                                .param("country", "New Zealand")
+                                .param("postcode", "8888")
                                 .param("size", ""))
                                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
@@ -176,7 +202,7 @@ public class GardenFormControllerTest {
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
         Assertions.assertEquals("Rose Garden", garden.getName());
-        Assertions.assertEquals("Riccarton", garden.getLocation());
+        Assertions.assertEquals("5 test address", garden.getLocation());
         Assertions.assertEquals(null, garden.getSize());
     }
 
@@ -199,15 +225,24 @@ public class GardenFormControllerTest {
     @Test
     @WithMockUser
     public void CreateGardenFormSubmitted_ValidInputs_GardenAddedAndViewUpdated() throws Exception {
-        String name = "My Garden";
-        String location = "Ilam";
+        String name = "Test garden";
+        String location = "99 test address";
+        String suburb = "Ilam";
+        String city = "Christchurch";
+        String country = "New Zealand";
+        String postcode = "9999";
         String size = "1.0";
-        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
+
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener);
         garden.setId(1L);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", name)
                         .param("location", location)
+                        .param("suburb", suburb)
+                        .param("city", city)
+                        .param("country", country)
+                        .param("postcode", postcode)
                         .param("size", size)
                         .param("redirect", "")
                         .with(csrf()))
@@ -221,12 +256,22 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void GardenFormSubmitted_EmptyName_ErrorMessageAddedAndViewUpdated() throws Exception {
         String name = "";
-        String location = "Ilam";
+        String location = "99 test address";
+        String suburb = "Ilam";
+        String city = "Christchurch";
+        String country = "New Zealand";
+        String postcode = "9999";
         String size = "1.0";
         String redirectURI = "";
+
+
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", name)
                         .param("location", location)
+                        .param("suburb", suburb)
+                        .param("city", city)
+                        .param("country", country)
+                        .param("postcode", postcode)
                         .param("size", size)
                         .param("redirect", redirectURI)
                         .with(csrf()))
@@ -248,11 +293,19 @@ public class GardenFormControllerTest {
     public void GardenFormSubmitted_InvalidName_ErrorMessageAddedAndViewUpdated() throws Exception {
         String name = "*!&";
         String location = "Ilam";
+        String suburb = "Ilam";
+        String city = "Christchurch";
+        String country = "New Zealand";
+        String postcode = "9999";
         String size = "1.0";
         String redirectURI = "/gardens";
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", name)
                         .param("location", location)
+                        .param("suburb", suburb)
+                        .param("city", city)
+                        .param("country", country)
+                        .param("postcode", postcode)
                         .param("size", size)
                         .param("redirect", redirectURI)
                         .with(csrf()))
@@ -273,11 +326,20 @@ public class GardenFormControllerTest {
     public void GardenFormSubmitted_EmptyLocation_ErrorMessageAddedAndViewUpdated() throws Exception {
         String name = "My Garden";
         String location = "";
+        String suburb = "Ilam";
+        String city = "Christchurch";
+        String country = "New Zealand";
+        String postcode = "9999";
         String size = "1.0";
         String redirectURI = "";
+        when(gardenerFormService.findByEmail("testEmail@gmail.com")).thenReturn(Optional.of(testGardener));
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", name)
                         .param("location", location)
+                        .param("suburb", suburb)
+                        .param("city", city)
+                        .param("country", country)
+                        .param("postcode", postcode)
                         .param("size", size)
                         .param("redirect", redirectURI)
                         .with(csrf()))
@@ -298,11 +360,19 @@ public class GardenFormControllerTest {
     public void GardenFormSubmitted_InvalidLocation_ErrorMessageAddedAndViewUpdated() throws Exception {
         String name = "My Garden";
         String location = "*!&";
+        String suburb = "Ilam";
+        String city = "Christchurch";
+        String country = "New Zealand";
+        String postcode = "9999";
         String size = "1.0";
         String redirectURI = "";
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", name)
                         .param("location", location)
+                        .param("suburb", suburb)
+                        .param("city", city)
+                        .param("country", country)
+                        .param("postcode", postcode)
                         .param("size", size)
                         .param("redirect", redirectURI)
                         .with(csrf()))
@@ -322,12 +392,20 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void GardenFormSubmitted_InvalidSize_ErrorMessageAddedAndViewUpdated() throws Exception {
         String name = "My Garden";
-        String location = "Ilam";
+        String location = "20 kirkwood";
+        String suburb = "Ilam";
+        String city = "Christchurch";
+        String country = "New Zealand";
+        String postcode = "9999";
         String size = "-1.0";
         String redirectURI = "";
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", name)
                         .param("location", location)
+                        .param("suburb", suburb)
+                        .param("city", city)
+                        .param("country", country)
+                        .param("postcode", postcode)
                         .param("size", size)
                         .param("redirect", redirectURI)
                         .with(csrf()))
