@@ -1,14 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.junit.jupiter.api.Assertions;
@@ -89,9 +90,8 @@ public class GardenFormControllerTest {
                 .andExpect(model().attributeExists("garden"))
                 .andExpect(model().attribute("garden", garden));
 
-        verify(gardenService, times(1)).getGarden(1L);
-        Assertions.assertFalse(garden.getIsGardenPublic());
-    }
+    verify(gardenService, times(1)).getGarden(1L);
+  }
 
     @Test
     @WithMockUser
@@ -135,6 +135,29 @@ public class GardenFormControllerTest {
         verify(gardenService, times(1)).getGarden(anyLong());
     }
 
+  @Test
+  @WithMockUser
+  public void EditedGardenDetailsSubmitted_ValidValuesWithSize_GardenDetailsUpdated()
+      throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+    when(gardenService.addGarden(garden)).thenReturn(garden);
+    mockMvc
+        .perform(
+            (MockMvcRequestBuilders.post("/gardens/edit")
+                    .param("gardenId", "1")
+                    .param("name", "Rose Garden")
+                    .param("location", "Riccarton")
+                    .param("size", "100"))
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+    verify(gardenService, times(1)).getGarden(1L);
+    verify(gardenService, times(1)).addGarden(garden);
+    Assertions.assertEquals("Rose Garden", garden.getName());
+    Assertions.assertEquals("Riccarton", garden.getLocation());
+    Assertions.assertEquals("100", garden.getSize());
+  }
     @Test
     @WithMockUser
     public void EditedGardenDetailsSubmitted_ValidValuesWithSize_GardenDetailsUpdated()
@@ -160,6 +183,29 @@ public class GardenFormControllerTest {
         Assertions.assertEquals("100", garden.getSize());
     }
 
+  @Test
+  @WithMockUser
+  public void EditedGardenDetailsSubmitted_ValidValuesWithNoSize_GardenDetailsUpdated()
+      throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+    when(gardenService.addGarden(garden)).thenReturn(garden);
+    mockMvc
+        .perform(
+            (MockMvcRequestBuilders.post("/gardens/edit")
+                    .param("gardenId", "1")
+                    .param("name", "Rose Garden")
+                    .param("location", "Riccarton")
+                    .param("size", ""))
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+    verify(gardenService, times(1)).getGarden(1L);
+    verify(gardenService, times(1)).addGarden(garden);
+    Assertions.assertEquals("Rose Garden", garden.getName());
+    Assertions.assertEquals("Riccarton", garden.getLocation());
+    Assertions.assertEquals(null, garden.getSize());
+  }
     @Test
     @WithMockUser
     public void GardenPublicCheckboxTicked_GardenPublicityUpdated()
