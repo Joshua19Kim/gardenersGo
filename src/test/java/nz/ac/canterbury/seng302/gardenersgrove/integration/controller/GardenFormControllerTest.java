@@ -57,7 +57,7 @@ public class GardenFormControllerTest {
     @Test
     @WithMockUser
     public void MyGardensRequested_DefaultValues_GardenDetailsProvided() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         List<Garden> gardens = new ArrayList<>();
         gardens.add(garden);
         when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
@@ -77,7 +77,7 @@ public class GardenFormControllerTest {
     @Test
     @WithMockUser
     public void GardenDetailsRequested_ExistentIdGiven_GardenDetailsProvided() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         mockMvc
@@ -106,7 +106,7 @@ public class GardenFormControllerTest {
     @Test
     @WithMockUser
     public void EditGardenDetailsRequested_ExistentIdGiven_GoToEditGardenForm() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         mockMvc
@@ -136,7 +136,7 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void EditedGardenDetailsSubmitted_ValidValuesWithSize_GardenDetailsUpdated()
             throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(gardenService.addGarden(garden)).thenReturn(garden);
         mockMvc
@@ -160,7 +160,7 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void EditedGardenDetailsSubmitted_ValidValuesWithNoSize_GardenDetailsUpdated()
             throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(gardenService.addGarden(garden)).thenReturn(garden);
         mockMvc
@@ -184,7 +184,7 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void GardenFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
         List<Garden> gardens = new ArrayList<>();
-        gardens.add(new Garden("My Garden", "Ilam", "32", testGardener));
+        gardens.add(new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener));
         when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
         when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/form")
@@ -202,7 +202,7 @@ public class GardenFormControllerTest {
         String name = "My Garden";
         String location = "Ilam";
         String size = "1.0";
-        Garden garden = new Garden(name, location, size, testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         garden.setId(1L);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
@@ -354,7 +354,7 @@ public class GardenFormControllerTest {
         gardenerFormService.addGardener(otherUser);
 
         List<Garden> testGardens = new ArrayList<>();
-        Garden testGarden = new Garden("My Garden", "Ilam", otherUser);
+        Garden testGarden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", otherUser);
         testGardens.add(testGarden);
 
         Authentication authentication = Mockito.mock(Authentication.class);
@@ -445,7 +445,7 @@ public class GardenFormControllerTest {
         when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
 
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
@@ -469,7 +469,8 @@ public class GardenFormControllerTest {
     @Test
     @WithMockUser
     public void GetTemperatureOfCity_CityDoesntExist_WeatherInformationNotReturned() throws Exception {
-        Garden garden = new Garden("My Garden", "FAKELOCATION!123", testGardener);
+        Garden garden = new Garden("Test garden", "FAKELOCATION!123", null, "Christchurch", "New Zealand", null, "9999", testGardener)
+                ;
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);

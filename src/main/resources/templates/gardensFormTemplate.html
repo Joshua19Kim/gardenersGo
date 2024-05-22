@@ -36,7 +36,7 @@
           <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
         </div>
         <div style="display: flex;">
-          <div class="autocomplete-container" style="flex: 90%; margin-top: -20px;">
+          <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
             <label for="location"> Address: </label>
             <input type="text" id="location" maxlength="128" placeholder="Start typing your address..."
                    th:name="location" th:value="*{location}" data-cy="location" autofocus
@@ -44,12 +44,6 @@
             >
             <span th:if="${locationError}" th:text="${locationError}" class="smallErrorMessage"></span>
             <div class="autocomplete-results" id="autocomplete-results"></div>
-          </div>
-          <div class="create-garden-row" style="flex: 5%;">
-            <label>
-              <input type="checkbox" id="search-nz-only" checked style="transform: scale(0.6);">
-              Only NZ
-            </label>
           </div>
         </div>
 

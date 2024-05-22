@@ -40,10 +40,10 @@ public class LocationController {
      * @throws InterruptedException If the thread is interrupted while waiting for the request.
      */
     @GetMapping("/sendRequest")
-    public String getData(@RequestParam String query, @RequestParam boolean isNzOnly) throws IOException, InterruptedException {
+    public String getData(@RequestParam String query) throws IOException, InterruptedException {
         if (rateLimiterService.tryConsume()) {
             logger.info("GET /Send Request");
-            response = locationService.sendRequest(query, isNzOnly);
+            response = locationService.sendRequest(query);
             return response.body();
         } else {
             if (response== null) {

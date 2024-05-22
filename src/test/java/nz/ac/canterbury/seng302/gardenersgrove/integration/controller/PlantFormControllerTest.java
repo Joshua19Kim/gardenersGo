@@ -62,7 +62,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void GardenDetailsRequested_ExistentIdGiven_PlantDetailsProvided() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         Plant plant = new Plant("My Plant", garden);
         garden.getPlants().add(plant);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -77,7 +77,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         mockMvc
@@ -94,7 +94,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_ValidNameOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
@@ -123,7 +123,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_ValidNameAndCountOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
@@ -151,7 +151,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_ValidNameAndDescriptionOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
@@ -179,7 +179,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_ValidNameAndDateOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
@@ -207,7 +207,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_ValidNameCountAndDescriptionOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
@@ -236,7 +236,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_ValidNameCountAndDateOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
@@ -265,7 +265,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_ValidNameDescriptionAndDateOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
@@ -294,7 +294,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_AllValidInputs_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
@@ -331,7 +331,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_EmptyName_ErrorMessageAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "";
@@ -367,7 +367,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_InvalidName_ErrorMessageAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "~!@#$%^&*()_+";
@@ -403,7 +403,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_CountNotANumber_ErrorMessageAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
@@ -439,7 +439,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_NegativeCount_ErrorMessageAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         String name = "My Plant";
@@ -475,7 +475,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void PlantFormSubmitted_DescriptionOverLimit_ErrorMessageAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         List<Garden> gardens = new ArrayList<>();
         gardens.add(garden);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -540,7 +540,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void EditPlantFormRequested_ExistentPlantId_GoToEditPlantForm() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         Plant plant = new Plant("My Plant", "2", "Rose", "12/06/2004", garden);
         String plantId = "2";
         List<Garden> gardens = new ArrayList<>();
@@ -563,7 +563,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void EditPlantFormSubmitted_AllInvalid_AllErrorMessagesAdded() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         String name = "My Pl@nt";
         String plantId = "1";
         String count = "two";
@@ -622,7 +622,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void EditPlantFormSubmitted_AllValidChanges_PlantUpdatedAndBackToGardenDetails() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         String name = "My Plant 2";
         String plantId = "1";
         String count = "3";
@@ -661,7 +661,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void ImageUploaded_ValidImage_PlantImageUpdated() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         String plantId = "1";
         Plant plant = new Plant("My Plant", "2", "Rose", "10/10/2023", garden);
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
@@ -684,7 +684,7 @@ public class PlantFormControllerTest {
     @Test
     @WithMockUser
     public void ImageUploaded_InvalidImage_ErrorMessageShown() throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", testGardener);
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         String plantId = "1";
         Plant plant = new Plant("My Plant", "2", "Rose", "10/10/2023", garden);
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
