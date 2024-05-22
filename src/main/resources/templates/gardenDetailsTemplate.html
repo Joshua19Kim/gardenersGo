@@ -153,10 +153,22 @@
 </div>
 <script>
 
-    function handleTagClick() {
-        console.log("event triggered")
-        document.getElementById("tagForm").submit();
-    }
+    // got from stack overflow: https://stackoverflow.com/questions/30022728/perform-action-when-clicking-html5-datalist-option
+    const tagInput = document.getElementById('tag-input');
+    const tagForm = document.getElementById("tagForm")
+    let keypress = false;
+    tagInput.addEventListener("keydown", (e) => {
+        if(e.key) {
+            keypress = true;
+        }
+    });
+    tagForm.addEventListener('input', (e) => {
+        if (keypress === false) {
+            tagForm.submit();
+        }
+        keypress = false;
+    });
+
 
 
     function handleImageClick(plantId) {
