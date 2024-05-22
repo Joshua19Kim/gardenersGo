@@ -14,6 +14,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.TagValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WordFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,23 +47,30 @@ public class GardenFormController {
   private final RelationshipService relationshipService;
   private final RequestService requestService;
   private final TagService tagService;
-
   private Gardener gardener;
   private final WeatherService weatherService;
 
   /**
-   * Constructor used to create a new instance of the gardenformcontroller. Autowires a gardenservice object
+   * Constructor used to create a new instance of the gardenformcontroller. Autowires a
+   * gardenservice object
+   *
    * @param gardenService the garden service used to interact with the database
    * @param gardenerFormService - object that is used to interact with the database
    */
   @Autowired
-  public GardenFormController(GardenService gardenService, GardenerFormService gardenerFormService, RelationshipService relationshipService, RequestService requestService,TagService tagService, WeatherService weatherService) {
+  public GardenFormController(
+      GardenService gardenService,
+      GardenerFormService gardenerFormService,
+      RelationshipService relationshipService,
+      RequestService requestService,
+      WeatherService weatherService,
+      TagService tagService) {
     this.gardenService = gardenService;
     this.gardenerFormService = gardenerFormService;
     this.relationshipService = relationshipService;
     this.requestService = requestService;
-    this.tagService = tagService;
     this.weatherService = weatherService;
+    this.tagService = tagService;
   }
 
   /**
@@ -193,7 +201,13 @@ public class GardenFormController {
       if (Objects.equals(size.trim(), "")) {
         garden = gardenService.addGarden(new Garden(name, location, gardener));
       } else {
-        garden = gardenService.addGarden(new Garden(name, location, new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(), gardener));
+        garden =
+            gardenService.addGarden(
+                new Garden(
+                    name,
+                    location,
+                    new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(),
+                    gardener));
       }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
     } else {
@@ -228,7 +242,8 @@ public class GardenFormController {
       @RequestParam(name = "showModal", required = false) String showModal,
       @RequestParam(name = "tagValid", required = false) String tagValid,
       Model model,
-      HttpServletRequest request) throws IOException, URISyntaxException {
+      HttpServletRequest request)
+      throws IOException, URISyntaxException {
     logger.info("GET /gardens/details");
 
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
@@ -247,7 +262,6 @@ public class GardenFormController {
 
       model.addAttribute("garden", garden.get());
       model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
-
       if (uploadError != null) {
         model.addAttribute("uploadError", uploadError);
         model.addAttribute("errorId", errorId);
@@ -259,20 +273,21 @@ public class GardenFormController {
         model.addAttribute("showModal", true);
       }
       if (userId == null || gardener.getId() == parseLong(userId, 10)) {
-          Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
-          if (currentWeather != null) {
-              model.addAttribute("date", currentWeather.getDate());
-              model.addAttribute("temperature", currentWeather.getTemperature());
-              model.addAttribute("weatherImage", currentWeather.getWeatherImage());
-              model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
-              model.addAttribute("humidity", currentWeather.getHumidity());
-              model.addAttribute("forecastDates", currentWeather.getForecastDates());
-              model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
-              model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
-              model.addAttribute("forecastWeatherDescription", currentWeather.getForecastDescriptions());
-              model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
-          }
-          return "gardenDetailsTemplate";
+        Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
+        if (currentWeather != null) {
+          model.addAttribute("date", currentWeather.getDate());
+          model.addAttribute("temperature", currentWeather.getTemperature());
+          model.addAttribute("weatherImage", currentWeather.getWeatherImage());
+          model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
+          model.addAttribute("humidity", currentWeather.getHumidity());
+          model.addAttribute("forecastDates", currentWeather.getForecastDates());
+          model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
+          model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
+          model.addAttribute(
+              "forecastWeatherDescription", currentWeather.getForecastDescriptions());
+          model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
+        }
+        return "gardenDetailsTemplate";
       } else {
         Optional<Gardener> friend = gardenerFormService.findById(parseLong(userId, 10));
         if (friend.isPresent()
@@ -418,10 +433,15 @@ public class GardenFormController {
       redirectAttributes.addFlashAttribute("tagValid", validTagError.get());
       return "redirect:/gardens/details?gardenId=" + id + "&showModal=true";
     }
-
     if (tagInUse.isEmpty()) {
-      Tag newTag = new Tag(tag, garden);
-      tagService.addTag(newTag);
+      if (!WordFilter.doesContainBadWords(tag)) {
+        Tag newTag = new Tag(tag, gardenService.getGarden(id).get());
+        tagService.addTag(newTag);
+        logger.info("Tag '{}' passes moderation checks", tag);
+      } else {
+        redirectAttributes.addFlashAttribute("tagValid", "Submitted tag fails moderation requirements");
+        return "redirect:/gardens/details?gardenId=" + id + "&showModal=true";
+      }
     }
 
     return "redirect:/gardens/details?gardenId=" + id;
