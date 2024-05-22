@@ -36,11 +36,18 @@ public class LocationService {
      * @throws IOException IOException If an I/O error occurs during the HTTP request.
      * @throws InterruptedException InterruptedException If the thread is interrupted while waiting for the request to complete.
      */
-    public HttpResponse<String> sendRequest(String query) throws IOException, InterruptedException {
+    public HttpResponse<String> sendRequest(String query, Boolean isNzOnly) throws IOException, InterruptedException {
         logger.info("SEND Request");
         // According to LocationIq website, the space needs to be filled with "%20"
         String urlQuery = query.replace(" ", "%20");
-        String url = "https://us1.locationiq.com/v1/autocomplete?q=" + urlQuery + "&key=" + this.api_key;
+        String url;
+        if (isNzOnly) {
+            logger.info("onlyNz");
+            url = "https://us1.locationiq.com/v1/autocomplete?q=" + urlQuery + "&countrycodes=nz&key=" + this.api_key;
+        } else {
+            logger.info("everywhere");
+            url = "https://us1.locationiq.com/v1/autocomplete?q=" + urlQuery + "&key=" + this.api_key;
+        }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("accept", "application/json")

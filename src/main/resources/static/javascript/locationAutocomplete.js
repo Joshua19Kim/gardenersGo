@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const countryInput = document.getElementById('country');
     const postcodeInput = document.getElementById('postcode');
     const autocompleteResults = document.getElementById('autocomplete-results');
+    const searchNzOnlyCheckbox = document.getElementById('search-nz-only');
     const xmlRequest = new XMLHttpRequest();
 
     addressInput.addEventListener('input', function() {
@@ -27,8 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function fetchAutocomplete(query) {
         return new Promise((resolve, reject) => {
-            // if want to specify the country, use 'https://us1.locationiq.com/v1/autocomplete?q=27%20marquess&countrycodes=nz'
-            xmlRequest.open('GET', '/sendRequest?query=' + encodeURIComponent(query));
+            const isNzOnly = searchNzOnlyCheckbox.checked;
+            xmlRequest.open('GET', '/sendRequest?query=' + encodeURIComponent(query)+ '&isNzOnly=' + isNzOnly);
             xmlRequest.onload = function() {
                 if (xmlRequest.status === 200) {
                     const responseData = JSON.parse(xmlRequest.responseText);

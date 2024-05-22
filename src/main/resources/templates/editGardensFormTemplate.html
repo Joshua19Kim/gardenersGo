@@ -9,33 +9,93 @@
 
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div>
-    <div id="form">
+    <div id="form" class="create-garden">
         <h1> Edit Garden </h1>
         <form id="editGardenForm" th:action="@{edit(gardenId=${garden.id})}" method="post">
-            <label for="name"> Name: </label>
-            <input type="text" class="form-control" id="name" th:value="${name != null ? name : garden.name}"
-                   th:name="name" maxlength="64" data-cy="name" autofocus
-                   th:classappend="${nameError} ? 'error' : ''">
-            <span th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage"></span>
-            <br/>
-            <label for="location"> Garden Location: </label>
-            <input type="text" class="form-control" id="location" th:value="${location != null ? location : garden.location}"
-                   th:name="location"  maxlength="128" data-cy="location" autofocus
-                   th:classappend="${locationError} ? 'error' : ''">
-            <span th:if="${locationError}" th:text="${locationError}" class="smallErrorMessage"></span>
-            <br/>
-            <label for="size"> Size (m<sup>2</sup>): </label>
-            <input type="text" class="form-control" id="size" th:name="size" maxlength="12"
-                   th:value="${size != null ? size : garden.size != 0.0 ? garden.size : ''}" data-cy="size" autofocus
-                   th:classappend="${sizeError} ? 'error' : ''">
-            <span th:if="${sizeError}" th:text="${sizeError}" class="smallErrorMessage"></span>
-            <br/>
+            <div class="create-garden-row">
+                <div>
+                    <label for="name"> Name: </label>
+                    <input type="text" class="form-control" id="name" maxlength="64" placeholder="Name"
+                           th:name="name" th:value="${name != null ? name : garden.name}" data-cy="name" autofocus
+                           th:classappend="${nameError} ? 'error' : ''">
+                    <span th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage"></span>
+                </div>
+                <div>
+                    <label for="size"> Size (m<sup>2</sup>): </label>
+                    <input type="text" class="form-control" id="size" maxlength="12" placeholder=""
+                           th:name="size" th:value="${size != null ? size : garden.size != 0.0 ? garden.size : ''}" data-cy="size" autofocus
+                           th:classappend="${sizeError} ? 'error' : ''">
+                    <span th:if="${sizeError}" th:text="${sizeError}" class="smallErrorMessage"></span>
+                </div>
+                <br/>
+            </div>
+
+
+            <div>
+                <div style="display: flex; margin-top: 40px; justify-content: flex-end;">
+                    <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
+                </div>
+                <div style="display: flex;">
+                    <div class="autocomplete-container" style="flex: 90%; margin-top: -20px;">
+                        <label for="location"> Address: </label>
+                        <input type="text" id="location" maxlength="128" placeholder="Start typing your address..."
+                               th:name="location" th:value="${location != null ? location : garden.location}" data-cy="location" autofocus
+                               th:classappend="${locationError} ? 'error' : ''"
+                        >
+                        <span th:if="${locationError}" th:text="${locationError}" class="smallErrorMessage"></span>
+                        <div class="autocomplete-results" id="autocomplete-results"></div>
+                    </div>
+                    <div class="create-garden-row" style="flex: 5%;">
+                        <label>
+                            <input type="checkbox" id="search-nz-only" style="transform: scale(0.6);">
+                            Only NZ
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="autocomplete-container">
+                <div class="create-garden-row">
+                    <div>
+                        <label for="suburb">Suburb:</label>
+                        <input type="text" id="suburb" th:name="suburb" th:value="${suburb != null ? suburb : garden.suburb}">
+                        <span th:if="${suburbError}" th:text="${suburbError}" class="smallErrorMessage"></span>
+
+                    </div>
+                    <div>
+                        <label for="city">City:</label>
+                        <input type="text" id="city" th:name="city" th:value="${city != null ? city : garden.city}">
+                        <span th:if="${cityError}" th:text="${cityError}" class="smallErrorMessage"></span>
+
+                    </div>
+                    <br/>
+                </div>
+
+                <div class="create-garden-row">
+                    <div>
+                        <label for="country">Country:</label>
+                        <input type="text" id="country" th:name="country" th:value="${country != null ? country : garden.country}">
+                        <span th:if="${countryError}" th:text="${countryError}" class="smallErrorMessage"></span>
+
+                    </div>
+                    <div>
+                        <label for="postcode">Postcode:</label>
+                        <input type="text" id="postcode" th:name="postcode" th:value="${postcode != null ? postcode : garden.postcode}">
+                        <span th:if="${postcodeError}" th:text="${postcodeError}" class="smallErrorMessage"></span>
+
+                    </div>
+                    <br/>
+                </div>
+            </div>
+
             <button type="submit">Submit</button>
         </form>
         <a th:href="@{../gardens/details(gardenId=${garden.id})}">
             <button>Cancel</button>
         </a>
     </div>
+    <script th:src="@{/javascript/locationAutocomplete.js}"></script>
     <script>
         document.getElementById("editGardenForm").addEventListener("keydown", function(event) {
             if (event.key === "Enter") {

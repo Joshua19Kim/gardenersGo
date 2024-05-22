@@ -29,25 +29,48 @@
         </div>
         <br/>
       </div>
-      <div class="autocomplete-container">
-        <label for="location"> Address: </label>
-        <label class="LocationIQ-attribution" style="margin-left: 500px">Search by LocationIQ.com</label>
-        <input type="text" id="location" maxlength="128" placeholder="Start typing your address..."
-               th:name="location" th:value="*{location}" data-cy="location" autofocus
-               th:classappend="${locationError} ? 'error' : ''"
-        >
-        <div class="autocomplete-results" id="autocomplete-results"></div>
+
+
+      <div>
+        <div style="display: flex; margin-top: 40px; justify-content: flex-end;">
+          <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
+        </div>
+        <div style="display: flex;">
+          <div class="autocomplete-container" style="flex: 90%; margin-top: -20px;">
+            <label for="location"> Address: </label>
+            <input type="text" id="location" maxlength="128" placeholder="Start typing your address..."
+                   th:name="location" th:value="*{location}" data-cy="location" autofocus
+                   th:classappend="${locationError} ? 'error' : ''"
+            >
+            <span th:if="${locationError}" th:text="${locationError}" class="smallErrorMessage"></span>
+            <div class="autocomplete-results" id="autocomplete-results"></div>
+          </div>
+          <div class="create-garden-row" style="flex: 5%;">
+            <label>
+              <input type="checkbox" id="search-nz-only" checked style="transform: scale(0.6);">
+              Only NZ
+            </label>
+          </div>
+        </div>
+
       </div>
+
+
+
 
       <div class="autocomplete-container">
         <div class="create-garden-row">
           <div>
             <label for="suburb">Suburb:</label>
             <input type="text" id="suburb" th:name="suburb" th:value="*{suburb}">
+            <span th:if="${suburbError}" th:text="${suburbError}" class="smallErrorMessage"></span>
+
           </div>
           <div>
             <label for="city">City:</label>
             <input type="text" id="city" th:name="city" th:value="*{city}">
+            <span th:if="${cityError}" th:text="${cityError}" class="smallErrorMessage"></span>
+
           </div>
           <br/>
         </div>
@@ -56,10 +79,14 @@
           <div>
             <label for="country">Country:</label>
             <input type="text" id="country" th:name="country" th:value="*{country}">
+            <span th:if="${countryError}" th:text="${countryError}" class="smallErrorMessage"></span>
+
           </div>
           <div>
             <label for="postcode">Postcode:</label>
             <input type="text" id="postcode" th:name="postcode" th:value="*{postcode}">
+            <span th:if="${postcodeError}" th:text="${postcodeError}" class="smallErrorMessage"></span>
+
           </div>
           <br/>
         </div>

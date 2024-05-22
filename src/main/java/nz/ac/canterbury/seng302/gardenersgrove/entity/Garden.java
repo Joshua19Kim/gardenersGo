@@ -53,6 +53,28 @@ public class Garden {
   /** Default constructor required by JPA. */
   protected Garden() {}
 
+
+  /**
+   * Constructs a garden with the given name, location, size and gardener.
+   *
+   * @param name The name of the garden (required).
+   * @param location The street number and street name of the garden.
+   * @param suburb The suburb of the garden.
+   * @param city The city of the garden (required).
+   * @param country The country of the garden (required).
+   * @param postcode The postcode of the garden.
+   * @param gardener The gardener id for the garden.
+   */
+  public Garden(String name, String location, String suburb, String city, String country, String postcode, Gardener gardener) {
+    this.name = name;
+    this.location = location;
+    this.suburb = suburb;
+    this.city = city;
+    this.country = country;
+    this.postcode = postcode;
+    this.gardener = gardener;
+    plants = new ArrayList<>();
+  }
   /**
    * Constructs a garden with the given name, location, size and gardener.
    *
@@ -76,29 +98,6 @@ public class Garden {
     this.gardener = gardener;
     plants = new ArrayList<>();
   }
-
-  /**
-   * Constructs a garden with the given name, location, size and gardener.
-   *
-   * @param name The name of the garden (required).
-   * @param location The street number and street name of the garden.
-   * @param suburb The suburb of the garden.
-   * @param city The city of the garden (required).
-   * @param country The country of the garden (required).
-   * @param postcode The postcode of the garden.
-   * @param gardener The gardener id for the garden.
-   */
-  public Garden(String name, String location, String suburb, String city, String country, String postcode, Gardener gardener) {
-    this.name = name;
-    this.location = location;
-    this.suburb = suburb;
-    this.city = city;
-    this.country = country;
-    this.postcode = postcode;
-    this.gardener = gardener;
-    plants = new ArrayList<>();
-  }
-
 
   /**
    * Retrieves the unique identifier of the garden.
@@ -125,6 +124,42 @@ public class Garden {
    */
   public String getLocation() {
     return location;
+  }
+
+  /**
+   * Retrieves the suburb of the garden.
+   *
+   * @return The suburb of the garden.
+   */
+  public String getSuburb() {
+    return suburb;
+  }
+
+  /**
+   * Retrieves the city of the garden.
+   *
+   * @return The city of the garden.
+   */
+  public String getCity() {
+    return city;
+  }
+
+  /**
+   * Retrieves the country of the garden.
+   *
+   * @return The country of the garden.
+   */
+  public String getCountry() {
+    return country;
+  }
+
+  /**
+   * Retrieves the postcode of the garden.
+   *
+   * @return The postcode of the garden.
+   */
+  public String getPostcode() {
+    return postcode;
   }
 
   /**
@@ -171,6 +206,30 @@ public class Garden {
    * @param location the location of the garden
    */
   public void setLocation(String location) {this.location = location;}
+
+  /**
+   * Sets the suburb of the garden
+   * @param suburb the location of the garden
+   */
+  public void setSuburb(String suburb) {this.suburb = suburb;}
+
+  /**
+   * Sets the city of the garden
+   * @param city the location of the garden
+   */
+  public void setCity(String city) {this.city = city;}
+
+  /**
+   * Sets the country of the garden
+   * @param country the location of the garden
+   */
+  public void setCountry(String country) {this.country = country;}
+
+  /**
+   * Sets the postcode of the garden
+   * @param postcode the location of the garden
+   */
+  public void setPostcode(String postcode) {this.postcode = postcode;}
 
   /**
    * Sets the owner of the garden.
