@@ -34,7 +34,7 @@
                                th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
                         <input th:name="gardenId" th:value="${garden.id}" type="hidden">
                         <datalist id="tagList">
-                            <option th:each="tag : ${allTags}" th:value="${tag.name}" th:text="${tag.name}" ></option>
+                            <option th:each="tag : ${allTags}" th:value="${tag.name}" th:text="${tag.name}"></option>
                         </datalist>
                         <button id="search-button" type="submit">Submit</button>
                     </form>
@@ -152,6 +152,13 @@
     </div>
 </div>
 <script>
+
+    function handleTagClick() {
+        console.log("event triggered")
+        document.getElementById("tagForm").submit();
+    }
+
+
     function handleImageClick(plantId) {
         document.getElementById('fileInput_' + plantId).click();
     }
