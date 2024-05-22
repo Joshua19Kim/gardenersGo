@@ -1026,4 +1026,25 @@ form.search-bar::after {
     width: 25% !important;
 }
 
+.notification {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background-color: #45a049;
+    color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /*display: none;*/
+    z-index: 1000;
+    display: inline-block;
+}
 
+.notification.success {
+    background-color: #4caf50;
+}
+
+.notification.error {
+    background-color: #f44336;
+}

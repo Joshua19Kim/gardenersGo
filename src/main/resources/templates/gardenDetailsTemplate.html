@@ -19,6 +19,7 @@
             <a class="add-tag-button" onclick=displayAddTagsModal(true)>Add Tags</a>
         </h1>
 
+
         <div aria-hidden="true" class="modal" id="add-tag-modal"
              th:style="${tagValid != null} ? 'display: block;' : ''">
             <div class="add-tags">
@@ -147,7 +148,12 @@
             </div>
         </div>
     </div>
+    <div id="notification" class="notification" th:if="${wateringTip}">
+        <p th:text="${wateringTip}"></p>
+        <button onclick="closeNotification()">x</button>
+    </div>
 </div>
+
 <script>
     function handleImageClick(plantId) {
         document.getElementById('fileInput_' + plantId).click();
@@ -195,6 +201,10 @@
             url.searchParams.set(key, value);
         }
         window.history.replaceState({}, '', url);
+    }
+
+    function closeNotification() {
+        document.getElementById('notification').style.display = 'none';
     }
 
 </script>

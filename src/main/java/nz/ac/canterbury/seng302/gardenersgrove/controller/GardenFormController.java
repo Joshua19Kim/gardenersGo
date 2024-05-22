@@ -30,13 +30,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.*;
 import java.net.URISyntaxException;
 
-import java.util.List;
-import java.util.Objects;
 import static java.lang.Long.parseLong;
-import java.util.Optional;
 
 /** Controller class responsible for handling garden-related HTTP requests. */
 @Controller
@@ -274,7 +271,8 @@ public class GardenFormController {
       }
       if (userId == null || gardener.getId() == parseLong(userId, 10)) {
         Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
-        if (currentWeather != null) {
+        List<Weather> prevWeathers = weatherService.getPrevWeather(garden.get().getLocation());
+        if (currentWeather != null && prevWeathers != null) {
           model.addAttribute("date", currentWeather.getDate());
           model.addAttribute("temperature", currentWeather.getTemperature());
           model.addAttribute("weatherImage", currentWeather.getWeatherImage());
@@ -286,6 +284,10 @@ public class GardenFormController {
           model.addAttribute(
               "forecastWeatherDescription", currentWeather.getForecastDescriptions());
           model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
+
+          String wateringTip = generateWateringTip(currentWeather, prevWeathers);
+          logger.info(wateringTip);
+          model.addAttribute("wateringTip", wateringTip);
         }
         return "gardenDetailsTemplate";
       } else {
@@ -305,6 +307,18 @@ public class GardenFormController {
     } else {
       return "redirect:/gardens";
     }
+  }
+
+  private String generateWateringTip(Weather currentWeather, List<Weather> prevWeather) {
+    String currDescription = (currentWeather.getForecastDescriptions().get(0)).toLowerCase();
+    String prev1Description = (prevWeather.get(0).getWeatherDescription()).toLowerCase();
+    String prev2Description = (prevWeather.get(1).getWeatherDescription()).toLowerCase();
+    if (currDescription.contains("rain")) {
+      return "Outdoor plants don’t need any water today";
+    } else if (prev1Description.contains("sunny") && prev2Description.contains("sunny")) {
+      return "There hasn’t been any rain recently, make sure to water your plants if they need it";
+    }
+    return null;
   }
 
   /**
