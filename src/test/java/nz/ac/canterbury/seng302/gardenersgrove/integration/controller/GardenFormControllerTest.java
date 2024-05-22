@@ -481,7 +481,7 @@ public class GardenFormControllerTest {
                 .param("gardenId", "1")
                 .with(csrf())))
         .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"));
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
     verify(tagService, times(0)).addTag(any());
   }
 
@@ -528,7 +528,7 @@ public class GardenFormControllerTest {
                 .param("gardenId", "1")
                 .with(csrf()))
         .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"))
         .andExpect(flash().attributeExists("tagValid"))
         .andExpect(
             flash()
@@ -549,7 +549,7 @@ public class GardenFormControllerTest {
                 .param("gardenId", "1")
                 .with(csrf()))
         .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"))
         .andExpect(flash().attributeExists("tagValid"))
         .andExpect(flash().attribute("tagValid", "A tag cannot exceed 25 characters"));
   }
@@ -566,7 +566,7 @@ public class GardenFormControllerTest {
                 .param("gardenId", "1")
                 .with(csrf()))
         .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"))
         .andExpect(flash().attributeExists("tagValid"))
         .andExpect(
             flash()
