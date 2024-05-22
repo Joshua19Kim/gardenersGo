@@ -160,6 +160,7 @@ public class GardenFormController {
    * @param name The name of the garden.
    * @param location The location of the garden.
    * @param size The size of the garden.
+   * @param description The garden description.
    * @param redirect the uri to redirect to if the cancel button is pressed
    * @param model The model for passing data to the view.
    * @param authentication Used to check whether the user is authenticated
@@ -170,6 +171,7 @@ public class GardenFormController {
       @RequestParam(name = "name") String name,
       @RequestParam(name = "location") String location,
       @RequestParam(name = "size") String size,
+      @RequestParam(name = "description") String description,
       @RequestParam(name = "redirect") String redirect,
       Model model,
       Authentication authentication) {
@@ -177,6 +179,7 @@ public class GardenFormController {
     String validatedName = ValidityChecker.validateGardenName(name);
     String validatedLocation = ValidityChecker.validateGardenLocation(location);
     String validatedSize = ValidityChecker.validateGardenSize(size);
+    String validatedDescription = ValidityChecker.validateGardenDescription(description);
     String currentUserEmail = authentication.getName();
     boolean isValid = true;
 
@@ -195,11 +198,15 @@ public class GardenFormController {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }
+    if (!Objects.equals(description, validatedDescription)) {
+      model.addAttribute("descriptionError", validatedDescription);
+      isValid = false;
+    }
 
     if (isValid) {
       Garden garden;
       if (Objects.equals(size.trim(), "")) {
-        garden = gardenService.addGarden(new Garden(name, location, gardener));
+        garden = gardenService.addGarden(new Garden(name, location, null, gardener, description));
       } else {
         garden =
             gardenService.addGarden(
@@ -207,7 +214,7 @@ public class GardenFormController {
                     name,
                     location,
                     new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(),
-                    gardener));
+                    gardener, description));
       }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
     } else {
@@ -217,6 +224,7 @@ public class GardenFormController {
       model.addAttribute("name", name);
       model.addAttribute("location", location);
       model.addAttribute("size", size);
+      model.addAttribute("description", description);
       return "gardensFormTemplate";
     }
   }
@@ -313,6 +321,7 @@ public class GardenFormController {
    * @param name The name of the garden
    * @param location the location of the garden
    * @param size the size of the garden
+   * @param description the garden description
    * @param gardenId the id of the garden to edit
    * @param model the model
    * @return the garden details template
@@ -322,6 +331,7 @@ public class GardenFormController {
       @RequestParam(name = "name") String name,
       @RequestParam(name = "location") String location,
       @RequestParam(name = "size") String size,
+      @RequestParam(name = "description") String description,
       @RequestParam(name = "gardenId") String gardenId,
       Model model,
       HttpServletRequest request) {
@@ -330,6 +340,7 @@ public class GardenFormController {
     String validatedName = ValidityChecker.validateGardenName(name);
     String validatedLocation = ValidityChecker.validateGardenLocation(location);
     String validatedSize = ValidityChecker.validateGardenSize(size);
+    String validatedDescription = ValidityChecker.validateGardenDescription(description);
 
     boolean isValid = true;
     String returnedTemplate = "redirect:/gardens/details?gardenId=" + gardenId;
@@ -346,11 +357,16 @@ public class GardenFormController {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }
+    if (!Objects.equals(description, validatedDescription)) {
+      model.addAttribute("descriptionError", validatedDescription);
+      isValid = false;
+    }
 
     if (isValid) {
       Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
       existingGarden.setName(name);
       existingGarden.setLocation(location);
+      existingGarden.setDescription(description);
 
       if (Objects.equals(size.trim(), "")) {
         existingGarden.setSize(null);
@@ -364,6 +380,7 @@ public class GardenFormController {
       model.addAttribute("gardens", gardens);
       model.addAttribute("name", name);
       model.addAttribute("location", location);
+      model.addAttribute("description", description);
       model.addAttribute("size", size.replace(',', '.'));
       model.addAttribute(gardenService.getGarden(parseLong(gardenId)).get());
       model.addAttribute("requestURI", requestService.getRequestURI(request));

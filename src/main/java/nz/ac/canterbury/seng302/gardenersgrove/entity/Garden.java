@@ -41,20 +41,6 @@ public class Garden {
   protected Garden() {}
 
   /**
-   * Constructs a garden with the given name, location and gardener.
-   *
-   * @param name The name of the garden.
-   * @param location The location of the garden.
-   * @param gardener The gardener id for the garden.
-   */
-  public Garden(String name, String location, Gardener gardener) {
-    this.name = name;
-    this.location = location;
-    this.gardener = gardener;
-    plants = new ArrayList<>();
-  }
-
-  /**
    * Constructs a garden with the given name, location, size and gardener.
    *
    * @param name The name of the garden.
@@ -62,11 +48,12 @@ public class Garden {
    * @param size The size of the garden.
    * @param gardener The gardener id for the garden.
    */
-  public Garden(String name, String location, String size, Gardener gardener) {
+  public Garden(String name, String location, String size, Gardener gardener, String description) {
     this.name = name;
     this.location = location;
     this.size = size;
     this.gardener = gardener;
+    this.description = description;
     plants = new ArrayList<>();
   }
 
@@ -125,33 +112,65 @@ public class Garden {
   }
 
   /**
+   * Retrieves the garden description.
+   *
+   * @return The garden description.
+   */
+  public String getDescription() {
+    return description;
+  }
+
+  /**
    * Sets the name of the garden
+   *
    * @param name the name of the garden
    */
-  public void setName(String name) {this.name = name;}
+  public void setName(String name) {
+    this.name = name;
+  }
 
   /**
    * Sets the size of the garden
+   *
    * @param size the size of the garden
    */
-  public void setSize(String size) {this.size = size; }
+  public void setSize(String size) {
+    this.size = size;
+  }
 
   /**
    * Sets the location of the garden
+   *
    * @param location the location of the garden
    */
-  public void setLocation(String location) {this.location = location;}
+  public void setLocation(String location) {
+    this.location = location;
+  }
 
   /**
    * Sets the owner of the garden.
    *
    * @param gardener The owner of the garden.
    */
-  public void setGardener(Gardener gardener) {this.gardener = gardener;}
+  public void setGardener(Gardener gardener) {
+    this.gardener = gardener;
+  }
 
   /**
    * Sets the id of the garden
+   *
    * @param id the garden id
    */
-  public void setId(Long id) {this.id = id;}
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  /**
+   * Sets the description of the garden
+   *
+   * @param description the description of the garden
+   */
+  public void setDescription(String description) {
+    this.description = description;
+  }
 }

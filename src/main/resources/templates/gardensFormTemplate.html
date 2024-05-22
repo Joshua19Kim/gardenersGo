@@ -27,6 +27,13 @@
                  th:classappend="${sizeError} ? 'error' : ''">
           <span th:if="${sizeError}" th:text="${sizeError}" class="smallErrorMessage"></span>
         </div>
+        <div>
+          <label for="description"> Description: </label>
+          <input type="text" class="form-control" id="description" maxlength="512" placeholder=""
+                 th:name="description" th:value="*{description}" data-cy="description" autofocus
+                 th:classappend="${descriptionError} ? 'error' : ''">
+          <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
+        </div>
         <br/>
       </div>
       <div class="autocomplete-container">

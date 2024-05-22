@@ -39,6 +39,27 @@ public class ValidityChecker {
     }
 
     /**
+     * Checks that the garden description complies with the required format
+     * @param description the garden description
+     * @return The description of the garden if it is valid, else returns an error message
+     */
+    public static String validateGardenDescription(String description) {
+        if (description.length() == 0) {
+            return description;
+        }
+//        https://stackoverflow.com/questions/14101775/regex-to-check-the-string-contains-least-one-alphabet-or-digit
+        String regex = "^(?=.*[A-Za-zÀ-ÖØ-öø-ž]).+";
+        if (!description.matches(regex)) {
+            return "Description must be 512 characters or less and contain some text";
+        }
+        if (description.length() > 512) {
+            return "Garden description must be less than 512 characters";
+        }
+
+        return description;
+    }
+
+    /**
      * Checks that the garden location complies with the required format
      * @param location the garden location
      * @return The location of the garden if it is valid, else returns an error message
