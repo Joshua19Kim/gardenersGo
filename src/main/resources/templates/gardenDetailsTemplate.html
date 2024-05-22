@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-uk">
 <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" >
     <title>Garden Details</title>
     <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
 </head>
@@ -124,7 +124,7 @@
                     </div>
                 </div>
             </div>
-            <img alt="No image available" th:src="${forecastWeatherImage.get(iter.index)}"/>
+            <img alt="No image available" th:src="'https:' + ${forecastWeatherImage.get(iter.index)}"/>
             <div>
             </div>
         </div>
