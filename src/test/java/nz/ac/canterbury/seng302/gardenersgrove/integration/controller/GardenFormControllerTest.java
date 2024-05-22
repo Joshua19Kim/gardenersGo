@@ -57,6 +57,9 @@ public class GardenFormControllerTest {
     @MockBean
     private WeatherService weatherService;
 
+    @MockBean
+    private TagService tagService;
+
     @Test
     @WithMockUser
     public void MyGardensRequested_DefaultValues_GardenDetailsProvided() throws Exception {
@@ -135,29 +138,6 @@ public class GardenFormControllerTest {
         verify(gardenService, times(1)).getGarden(anyLong());
     }
 
-  @Test
-  @WithMockUser
-  public void EditedGardenDetailsSubmitted_ValidValuesWithSize_GardenDetailsUpdated()
-      throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
-    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-    when(gardenService.addGarden(garden)).thenReturn(garden);
-    mockMvc
-        .perform(
-            (MockMvcRequestBuilders.post("/gardens/edit")
-                    .param("gardenId", "1")
-                    .param("name", "Rose Garden")
-                    .param("location", "Riccarton")
-                    .param("size", "100"))
-                .with(csrf()))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-    verify(gardenService, times(1)).getGarden(1L);
-    verify(gardenService, times(1)).addGarden(garden);
-    Assertions.assertEquals("Rose Garden", garden.getName());
-    Assertions.assertEquals("Riccarton", garden.getLocation());
-    Assertions.assertEquals("100", garden.getSize());
-  }
     @Test
     @WithMockUser
     public void EditedGardenDetailsSubmitted_ValidValuesWithSize_GardenDetailsUpdated()
@@ -183,29 +163,6 @@ public class GardenFormControllerTest {
         Assertions.assertEquals("100", garden.getSize());
     }
 
-  @Test
-  @WithMockUser
-  public void EditedGardenDetailsSubmitted_ValidValuesWithNoSize_GardenDetailsUpdated()
-      throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
-    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-    when(gardenService.addGarden(garden)).thenReturn(garden);
-    mockMvc
-        .perform(
-            (MockMvcRequestBuilders.post("/gardens/edit")
-                    .param("gardenId", "1")
-                    .param("name", "Rose Garden")
-                    .param("location", "Riccarton")
-                    .param("size", ""))
-                .with(csrf()))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-    verify(gardenService, times(1)).getGarden(1L);
-    verify(gardenService, times(1)).addGarden(garden);
-    Assertions.assertEquals("Rose Garden", garden.getName());
-    Assertions.assertEquals("Riccarton", garden.getLocation());
-    Assertions.assertEquals(null, garden.getSize());
-  }
     @Test
     @WithMockUser
     public void GardenPublicCheckboxTicked_GardenPublicityUpdated()
@@ -365,7 +322,8 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("location", location))
                 .andExpect(model().attribute("size", size))
                 .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("nameError", "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes"));
+                .andExpect(model().attribute("nameError",
+                        "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes"));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
@@ -415,7 +373,8 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("location", location))
                 .andExpect(model().attribute("size", size))
                 .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("locationError", "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes"));
+                .andExpect(model().attribute("locationError",
+                        "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes"));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
@@ -550,7 +509,8 @@ public class GardenFormControllerTest {
         Garden garden = new Garden("My Garden", "Ilam", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
+                relationshipService, requestService, weatherService, tagService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
@@ -574,7 +534,8 @@ public class GardenFormControllerTest {
         Garden garden = new Garden("My Garden", "FAKELOCATION!123", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
+                relationshipService, requestService, weatherService, tagService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
