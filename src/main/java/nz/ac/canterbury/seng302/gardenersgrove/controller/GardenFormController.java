@@ -30,13 +30,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.*;
 import java.net.URISyntaxException;
 
-import java.util.List;
-import java.util.Objects;
 import static java.lang.Long.parseLong;
-import java.util.Optional;
 
 /** Controller class responsible for handling garden-related HTTP requests. */
 @Controller
@@ -262,6 +259,7 @@ public class GardenFormController {
 
       model.addAttribute("garden", garden.get());
       model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
+      model.addAttribute("allTags", new HashSet<>((tagService.getAllTags())));
       if (uploadError != null) {
         model.addAttribute("uploadError", uploadError);
         model.addAttribute("errorId", errorId);
