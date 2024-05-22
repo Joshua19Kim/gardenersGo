@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -49,9 +50,17 @@ public class PlantFormControllerTest {
 
     @MockBean
     private ImageService imageService;
+    @MockBean
+    private RequestService requestService;
 
     @MockBean
     private RelationshipService relationshipService;
+
+    @MockBean
+    private TagService tagService;
+
+    @MockBean
+    private WeatherService weatherService;
 
     @Test
     @WithMockUser
@@ -540,6 +549,7 @@ public class PlantFormControllerTest {
         List<Garden> gardens = new ArrayList<>();
         when(gardenService.getGardenResults()).thenReturn(gardens);
         when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
+        when(requestService.getRequestURI(any(HttpServletRequest.class))).thenReturn("/gardens/details/plants/edit");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/details/plants/edit")
                         .param("plantId", plantId)
