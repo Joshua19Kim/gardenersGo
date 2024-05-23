@@ -22,7 +22,7 @@ public class LocationController {
     private final RateLimiterService rateLimiterService;
 
     /**
-     * Constructor of LcationController
+     * Constructor of LocationController
      *
      * @param locationService The service providing 'Sending request' function.
      * @param rateLimiterService The service providing the function that can limit the amount of requests.

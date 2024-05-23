@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.step_definitions;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
-import nz.ac.canterbury.seng302.gardenersgrove.service.InputValidationUtil;
+import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 
 import io.cucumber.java.en.Given;

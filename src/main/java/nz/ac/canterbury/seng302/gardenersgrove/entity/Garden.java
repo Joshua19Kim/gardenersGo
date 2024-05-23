@@ -50,6 +50,10 @@ public class Garden {
   @JoinColumn(name = "gardener_id")
   private Gardener gardener;
 
+  /** The publicity of the garden */
+  @Column
+  private boolean publicGarden;
+
   /** Default constructor required by JPA. */
   protected Garden() {}
 
@@ -74,6 +78,7 @@ public class Garden {
     this.postcode = postcode;
     this.gardener = gardener;
     plants = new ArrayList<>();
+    this.publicGarden = false; // Defaults to private
   }
   /**
    * Constructs a garden with the given name, location, size and gardener.
@@ -97,6 +102,7 @@ public class Garden {
     this.size = size;
     this.gardener = gardener;
     plants = new ArrayList<>();
+    this.publicGarden = false; // Defaults to private
   }
 
   /**
@@ -190,6 +196,15 @@ public class Garden {
   }
 
   /**
+   * Retrieves the publicity status of the garden
+   *
+   * @return publicity of the garden
+   */
+  public boolean getIsGardenPublic() {
+    return publicGarden;
+  }
+
+  /**
    * Sets the name of the garden
    * @param name the name of the garden
    */
@@ -243,4 +258,13 @@ public class Garden {
    * @param id the garden id
    */
   public void setId(Long id) {this.id = id;}
+
+  /**
+   * Sets the publicity status of the garden
+   *
+   * @param isGardenPublic publicity of the garden
+   */
+  public void setIsGardenPublic(boolean isGardenPublic) {
+    this.publicGarden = isGardenPublic;
+  }
 }

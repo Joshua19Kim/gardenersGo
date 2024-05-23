@@ -57,6 +57,9 @@ public class PlantFormControllerTest {
     private RelationshipService relationshipService;
 
     @MockBean
+    private TagService tagService;
+
+    @MockBean
     private WeatherService weatherService;
 
     @Test

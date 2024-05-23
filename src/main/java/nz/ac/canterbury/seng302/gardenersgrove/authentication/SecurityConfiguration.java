@@ -4,14 +4,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 /**
  * Custom Security Configuration
@@ -28,7 +26,6 @@ public class SecurityConfiguration {
     private final CustomAuthenticationProvider authProvider;
 
     /**
-     *
      * @param authProvider Our Custom Authentication Provider {@link CustomAuthenticationProvider} to be injected in
      */
     public SecurityConfiguration(CustomAuthenticationProvider authProvider) {
@@ -56,10 +53,9 @@ public class SecurityConfiguration {
      * @throws Exception if the SecurityFilterChain can not be built
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // Allow h2 console through security. Note: Spring 6 broke the nicer way to do this (i.e. how the authorisation is handled below)
         // See https://github.com/spring-projects/spring-security/issues/12546
-        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector).servletPath("/path");
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher("/h2/**"),
@@ -72,22 +68,26 @@ public class SecurityConfiguration {
                                 AntPathRequestMatcher.antMatcher("/resetPassword"),
                                 AntPathRequestMatcher.antMatcher("/signup"))
                         .permitAll())
-                .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("default-src 'self'; img-src 'self' data: https://cdn.weatherapi.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'")
+                        )
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
                 .authorizeHttpRequests(request -> request
-                                // Allow "/", "/register", "/forgotPassword", "/resetPassword", "/signup" and "/login" to anyone (permitAll)
-                                .requestMatchers("/").permitAll()
-                                .requestMatchers("/login").permitAll()
-                                .requestMatchers("/register").permitAll()
-                                .requestMatchers("/forgotPassword").permitAll()
-                                .requestMatchers("/resetPassword").permitAll()
-                                .requestMatchers("/signup").permitAll()
+                        // Allow "/", "/register", "/forgotPassword", "/resetPassword", "/signup" and "/login" to anyone (permitAll)
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/forgotPassword").permitAll()
+                        .requestMatchers("/resetPassword").permitAll()
+                        .requestMatchers("/signup").permitAll()
 
-                                // Only allow admins to reach the "/admin" page
-                                .requestMatchers("/admin").hasRole("ADMIN")
-                                // Any other request requires authentication
-                                .anyRequest()
-                                .authenticated()
+                        // Only allow admins to reach the "/admin" page
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        // Any other request requires authentication
+                        .anyRequest()
+                        .authenticated()
                 )
                 // Define logging in, a POST "/login" endpoint now exists under the hood, after login redirect to user page
                 .formLogin(formLogin -> formLogin.loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/user"))

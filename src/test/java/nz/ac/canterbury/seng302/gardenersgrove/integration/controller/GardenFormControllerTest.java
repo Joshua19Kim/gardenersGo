@@ -1,14 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.junit.jupiter.api.Assertions;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -55,6 +57,9 @@ public class GardenFormControllerTest {
 
     @MockBean
     private WeatherService weatherService;
+
+    @MockBean
+    private TagService tagService;
 
     @BeforeEach
     void setUp() {
@@ -101,8 +106,8 @@ public class GardenFormControllerTest {
                 .andExpect(model().attributeExists("garden"))
                 .andExpect(model().attribute("garden", garden));
 
-        verify(gardenService, times(1)).getGarden(1L);
-    }
+    verify(gardenService, times(1)).getGarden(1L);
+  }
 
     @Test
     @WithMockUser
@@ -169,6 +174,7 @@ public class GardenFormControllerTest {
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertFalse(garden.getIsGardenPublic());
         Assertions.assertEquals("Rose Garden", garden.getName());
         Assertions.assertEquals("5 test address", garden.getLocation());
         Assertions.assertEquals("Ilam", garden.getSuburb());
@@ -176,6 +182,57 @@ public class GardenFormControllerTest {
         Assertions.assertEquals("New Zealand", garden.getCountry());
         Assertions.assertEquals("8888", garden.getPostcode());
         Assertions.assertEquals("12", garden.getSize());
+    }
+
+    @Test
+    @WithMockUser
+    public void GardenPublicCheckboxTicked_GardenPublicityUpdated()
+            throws Exception {
+        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        // Can be extrapolated
+        List<Authority> userRoles = new ArrayList<>();
+        testGardener.setUserRoles(userRoles);
+        testGardener.setId(1L);
+        gardenerFormService.addGardener(testGardener);
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/details?gardenId=1")
+                                .param("isGardenPublic", "true")
+                                .with(csrf())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardenDetailsTemplate"));
+        verify(gardenService, times(1)).getGarden(1L);
+        verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertTrue(garden.getIsGardenPublic());
+    }
+
+    @Test
+    @WithMockUser
+    public void GardenPublicCheckboxUnticked_GardenPublicityUpdated()
+            throws Exception {
+        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+        garden.setIsGardenPublic(true);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        // Can be extrapolated
+        List<Authority> userRoles = new ArrayList<>();
+        testGardener.setUserRoles(userRoles);
+        testGardener.setId(1L);
+        gardenerFormService.addGardener(testGardener);
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/details?gardenId=1")
+                                .param("isGardenPublic", "false")
+                                .with(csrf())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardenDetailsTemplate"));
+        verify(gardenService, times(1)).getGarden(1L);
+        verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertFalse(garden.getIsGardenPublic());
     }
 
     @Test
@@ -297,13 +354,16 @@ public class GardenFormControllerTest {
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
+        Assertions.assertFalse(garden.getIsGardenPublic());
         Assertions.assertEquals("Rose Garden", garden.getName());
+        Assertions.assertEquals("Riccarton", garden.getLocation());
+        Assertions.assertNull(garden.getSize());
         Assertions.assertEquals("", garden.getLocation());
         Assertions.assertEquals("Ilam", garden.getSuburb());
         Assertions.assertEquals("Christchurch", garden.getCity());
         Assertions.assertEquals("New Zealand", garden.getCountry());
         Assertions.assertEquals("8888", garden.getPostcode());
-        Assertions.assertEquals(null, garden.getSize());
+        Assertions.assertNull(garden.getSize());
     }
 
     @Test
@@ -497,7 +557,8 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("location", location))
                 .andExpect(model().attribute("size", size))
                 .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("nameError", "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes"));
+                .andExpect(model().attribute("nameError",
+                        "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes"));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
@@ -573,6 +634,8 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("postcode", postcode))
                 .andExpect(model().attribute("size", size))
                 .andExpect(model().attribute("requestURI", redirectURI))
+                .andExpect(model().attribute("locationError",
+                        "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes"));
                 .andExpect(model().attribute("countryError", "Country is required."));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
@@ -716,7 +779,8 @@ public class GardenFormControllerTest {
         Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
+                relationshipService, requestService, weatherService, tagService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
@@ -741,7 +805,8 @@ public class GardenFormControllerTest {
                 ;
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService, requestService, weatherService);
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
+                relationshipService, requestService, weatherService, tagService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
