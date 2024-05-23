@@ -79,5 +79,15 @@ INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 3, 'declin
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 14, 'declined');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 15, 'declined');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 5, 'pending');
+
+INSERT INTO tag (garden , tag_name) VALUES (1, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (1, 'spices');
+INSERT INTO tag (garden , tag_name) VALUES (2, 'fruit');
+INSERT INTO tag (garden , tag_name) VALUES (2, 'vegetables');
+INSERT INTO tag (garden , tag_name) VALUES (3, 'berries');
+INSERT INTO tag (garden , tag_name) VALUES (3, 'outdoor');
+INSERT INTO tag (garden , tag_name) VALUES (4, 'indoor');
+INSERT INTO tag (garden , tag_name) VALUES (5, 'flowers');
+
 -- email: a@gmail.com
 -- password: Password1!
