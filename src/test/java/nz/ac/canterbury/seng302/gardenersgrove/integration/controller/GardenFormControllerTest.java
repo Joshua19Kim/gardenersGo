@@ -188,7 +188,7 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void GardenPublicCheckboxTicked_GardenPublicityUpdated()
             throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "100", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(gardenService.addGarden(garden)).thenReturn(garden);
         // Can be extrapolated
@@ -213,7 +213,7 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void GardenPublicCheckboxUnticked_GardenPublicityUpdated()
             throws Exception {
-        Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "100", testGardener);
         garden.setIsGardenPublic(true);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(gardenService.addGarden(garden)).thenReturn(garden);
@@ -356,7 +356,7 @@ public class GardenFormControllerTest {
         verify(gardenService, times(1)).addGarden(garden);
         Assertions.assertFalse(garden.getIsGardenPublic());
         Assertions.assertEquals("Rose Garden", garden.getName());
-        Assertions.assertEquals("Riccarton", garden.getLocation());
+        Assertions.assertEquals("", garden.getLocation());
         Assertions.assertNull(garden.getSize());
         Assertions.assertEquals("", garden.getLocation());
         Assertions.assertEquals("Ilam", garden.getSuburb());
@@ -634,8 +634,6 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("postcode", postcode))
                 .andExpect(model().attribute("size", size))
                 .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("locationError",
-                        "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes"));
                 .andExpect(model().attribute("countryError", "Country is required."));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
