@@ -311,8 +311,8 @@ public class GardenFormController {
 
   private String generateWateringTip(Weather currentWeather, List<Weather> prevWeather) {
     String currDescription = (currentWeather.getForecastDescriptions().get(0)).toLowerCase();
-    String prev1Description = (prevWeather.get(0).getWeatherDescription()).toLowerCase();
-    String prev2Description = (prevWeather.get(1).getWeatherDescription()).toLowerCase();
+    String prev1Description = (prevWeather.get(0).getForecastDescriptions().get(0)).toLowerCase();
+    String prev2Description = (prevWeather.get(1).getForecastDescriptions().get(0)).toLowerCase();
     if (currDescription.contains("rain")) {
       return "Outdoor plants don’t need any water today";
     } else if (prev1Description.contains("sunny") && prev2Description.contains("sunny")) {

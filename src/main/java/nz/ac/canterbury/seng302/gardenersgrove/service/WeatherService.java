@@ -50,6 +50,7 @@ public class WeatherService {
     public Weather getWeather(String location) throws IOException, URISyntaxException {
         location = location.replace(" ", "-");
         String uri = FORECAST_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no" + "&days=3";
+        logger.info("URI for current day: " + uri);
         URL url = new URI(uri).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -65,9 +66,13 @@ public class WeatherService {
         }
 
     }
-    // currently trying to get the last wo days by altering the first date in the uri, notworking
-    // Cannot deserialize value of type `[Lnz.ac.canterbury.seng302.gardenersgrove.entity.Weather;` from Object value (token `JsonToken.START_OBJECT`
-    public List<Weather> getPrevWeather(String location) throws IOException, URISyntaxException {
+
+  // currently trying to get the last two days by altering the first date in the uri, notworking
+//   Cannot deserialize value of type `[Lnz.ac.canterbury.seng302.gardenersgrove.entity.Weather;`
+//   from Object value (token `JsonToken.START_OBJECT`
+  // String uriTwoDaysAgo = HISTORY_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no" +
+  //                    "&dt=" + twoDaysAgo;
+  public List<Weather> getPrevWeather(String location) throws IOException, URISyntaxException {
         logger.info("Trying to get previous weather");
 
         LocalDate twoDaysAgo = LocalDate.now().minusDays(2);
