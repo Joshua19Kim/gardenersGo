@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -209,13 +208,6 @@ public class GardenFormController {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }
-    //////////////////////////////////////////////////from here////////////////////////////////////////////////////////////
-
-    //The validation check needs to be
-    // updated for each of address(location, suburb(just length if not null), city(should not be null and check the length),
-    // country(should not be null and check the length), postcode(just length check if not null).
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (Objects.equals(city, "")) {
       model.addAttribute("cityError", "City is required.");
@@ -225,22 +217,6 @@ public class GardenFormController {
       model.addAttribute("countryError", "Country is required.");
       isValid = false;
     }
-
-    //These are example code to show the name of error attribute. Need to fix this for location validation :)
-//    if (!Objects.equals(location, validatedLocation)) {
-//      model.addAttribute("locationError", validatedLocation);
-//      isValid = false;
-//    }
-//    if (Objects.equals(city, "")) {
-//      model.addAttribute("suburbError", "Invalid City Name.");
-//      isValid = false;
-//    }
-//    if(Objects.equals(postcode, "")) {
-//      model.addAttribute("postcodeError", "Invalid Postcode");
-//      isValid = false;
-//    }
-
-    ////////////////////////////////////////////upto here////////////////////////////////////////////////////////////
 
 
     if (isValid) {
@@ -469,13 +445,6 @@ public class GardenFormController {
       isValid = false;
     }
 
-    //////////////////////////////////////////////////from here////////////////////////////////////////////////////////////
-    //The validation check needs to be
-    // updated for each of address(location, suburb(just length if not null), city(should not be null and check the length),
-    // country(should not be null and check the length), postcode(just lenght check if not null).
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     if (Objects.equals(city, "")) {
       model.addAttribute("cityError", "City is required.");
       isValid = false;
@@ -484,22 +453,6 @@ public class GardenFormController {
       model.addAttribute("countryError", "Country is required.");
       isValid = false;
     }
-
-    //These are example code to show the name of error attribute.  Need to fix this for location validation :)
-//    if (!Objects.equals(location, validatedLocation)) {
-//      model.addAttribute("locationError", validatedLocation);
-//      isValid = false;
-//    }
-//    if (Objects.equals(suburb, "")) {
-//      model.addAttribute("suburbError", "Invalid City Name.");
-//      isValid = false;
-//    }
-//    if(Objects.equals(postcode, "")) {
-//      model.addAttribute("postcodeError", "Invalid Postcode");
-//      isValid = false;
-//    }
-    ////////////////////////////////////////////upto here////////////////////////////////////////////////////////////
-
 
     if (isValid) {
       Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
