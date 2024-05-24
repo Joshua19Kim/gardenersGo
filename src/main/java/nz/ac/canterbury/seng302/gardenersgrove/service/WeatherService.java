@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.PrevWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +72,7 @@ public class WeatherService {
   //   from Object value (token `JsonToken.START_OBJECT`
   // String uriTwoDaysAgo = HISTORY_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no" +
   //                    "&dt=" + twoDaysAgo;
-  public Weather getPrevWeather(String location) throws IOException, URISyntaxException {
+  public PrevWeather getPrevWeather(String location) throws IOException, URISyntaxException {
     logger.info("Trying to get previous weather");
 
     LocalDate twoDaysAgo = LocalDate.now().minusDays(2);
@@ -92,19 +93,26 @@ public class WeatherService {
             + oneDayAgo;
     logger.info("URI for two days ago: " + uri);
 
-    URL url = new URI(uri).toURL();
-    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    connection.setRequestMethod("GET");
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
     try {
-      Weather weather = objectMapper.readValue(url, Weather.class);
-      logger.info("WEATHER FROM JACKSON: " + weather.getCurrentLocation());
-      return weather;
-    } catch (IOException ex) {
-      // This occurs when no weather is found for that location.
-      return null;
+        URL url = new URI(uri).toURL();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            PrevWeather weather = objectMapper.readValue(url, PrevWeather.class);
+            logger.info("WEATHER FROM JACKSON: " + weather.getLocation());
+            return weather;
+        } catch (IOException ex) {
+            logger.debug("fail");
+            // This occurs when no weather is found for that location.
+            return null;
+        }
+    } catch (Exception e) {
+        logger.info(e.getMessage());
     }
+
+    return null;
   }
 
   /** Used to clear the cache every hour to ensure that the weather data is not stale */

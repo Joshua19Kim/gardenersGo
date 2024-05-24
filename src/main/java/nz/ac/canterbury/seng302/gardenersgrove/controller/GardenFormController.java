@@ -2,11 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
@@ -271,7 +268,7 @@ public class GardenFormController {
       }
       if (userId == null || gardener.getId() == parseLong(userId, 10)) {
         Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
-        Weather prevWeathers = weatherService.getPrevWeather(garden.get().getLocation());
+        PrevWeather prevWeathers = weatherService.getPrevWeather(garden.get().getLocation());
         if (currentWeather != null && prevWeathers != null) {
           model.addAttribute("date", currentWeather.getDate());
           model.addAttribute("temperature", currentWeather.getTemperature());
@@ -309,7 +306,7 @@ public class GardenFormController {
     }
   }
 
-  private String generateWateringTip(Weather currentWeather, Weather prevWeather) {
+  private String generateWateringTip(Weather currentWeather, PrevWeather prevWeather) {
     String currDescription = (currentWeather.getForecastDescriptions().get(0)).toLowerCase();
     String prev1Description = (prevWeather.getForecastDescriptions().get(0)).toLowerCase();
     String prev2Description = (prevWeather.getForecastDescriptions().get(1)).toLowerCase();

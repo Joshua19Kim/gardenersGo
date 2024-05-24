@@ -14,13 +14,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class Weather {
+public class PrevWeather {
     Logger logger = LoggerFactory.getLogger(Weather.class);
     @JsonProperty("location")
     private JsonNode location;
 
-    @JsonProperty(value = "current")
-    private JsonNode current;
     @JsonProperty("forecast")
     private JsonNode forecast;
     private List<Float> forecastTemperatures = new ArrayList<Float>();
@@ -28,14 +26,9 @@ public class Weather {
     private List<String> forecastDescriptions = new ArrayList<>();
     private List<Integer> forecastHumidities = new ArrayList<>();
     private List<String> forecastDates = new ArrayList<>();
-    private String currentLocation;
-    private String currentWeatherImage;
-    private String currentWeatherDescription;
-    private Float currentTemperature;
-    private Integer currentHumidity;
-    private String date;
 
-    public Weather() {
+
+    public PrevWeather() {
 
     }
 
@@ -45,21 +38,12 @@ public class Weather {
 
     public void setLocation(JsonNode location) {
         this.location = location;
-        this.currentLocation = location.get("name").asText();
     }
 
-    public void setCurrent(JsonNode current) {
-        this.current = current;
-        this.currentWeatherImage = current.get("condition").get("icon").asText().replace("64x64", "128x128");
-        this.currentWeatherDescription = current.get("condition").get("text").asText();
-        this.currentTemperature = current.get("temp_c").floatValue();
-        this.currentHumidity = current.get("humidity").intValue();
-    }
 
     public void setForecast(JsonNode forecast) {
         this.forecast = forecast;
-        this.date = LocalDate.parse(forecast.get("forecastday").get(0).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             this.forecastDates.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
             this.forecastTemperatures.add(forecast.get("forecastday").get(i).get("day").get("avgtemp_c").floatValue());
             this.forecastImages.add(forecast.get("forecastday").get(i).get("day").get("condition").get("icon").asText().replace("64x64", "128x128"));
@@ -68,25 +52,6 @@ public class Weather {
         }
     }
 
-    public String getCurrentLocation() {
-        return currentLocation;
-    }
-
-    public String getWeatherImage() {
-        return currentWeatherImage;
-    }
-
-    public String getWeatherDescription() {
-        return currentWeatherDescription;
-    }
-
-    public Float getTemperature() {
-        return currentTemperature;
-    }
-
-    public Integer getHumidity() {
-        return currentHumidity;
-    }
 
     public List<Float> getForecastTemperatures() {
         return forecastTemperatures;
@@ -108,9 +73,6 @@ public class Weather {
         return forecast;
     }
 
-    public String getDate() {
-        return date;
-    }
 
     public List<String> getForecastDates() {
         return forecastDates;
