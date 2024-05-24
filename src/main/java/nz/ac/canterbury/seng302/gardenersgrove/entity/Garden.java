@@ -267,4 +267,19 @@ public class Garden {
   public void setIsGardenPublic(boolean isGardenPublic) {
     this.publicGarden = isGardenPublic;
   }
+
+
+  /**
+   * Gets the address, city, and location of the garden
+   * if the address is null it just gets the city and country
+   *
+   * @return the full location
+   */
+  public String getFullLocation() {
+    if(location == null || location == "") {
+      return city + ", " + country;
+    } else {
+      return location + ", " + city + ", " + country;
+    }
+  }
 }
