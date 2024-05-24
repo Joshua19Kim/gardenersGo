@@ -37,6 +37,7 @@
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
                     <input type="hidden" name="gardenId" th:value="${garden.id}">
                 </form>
+                <a id="submit-tag" onclick="submitTag()">+</a>
             </div>
             <div id="tag-error-container">
                 <p id="tag-error-message" th:value="${tagValid}" th:text="${tagValid}"></p>
@@ -151,6 +152,7 @@
     function transformToInput() {
         document.getElementById('add-tag').style.display = 'none';
         document.getElementById('tag-input').style.display = 'block';
+        document.getElementById('submit-tag').style.display = 'block';
         document.getElementById('tag-input').focus();
     }
 
@@ -166,6 +168,18 @@
             } else {
                 console.log('No tag input to submit');
             }
+        }
+    }
+
+    function submitTag() {
+        const tagInput = document.getElementById('tag-input').value.trim();
+        if (tagInput) {
+            console.log('Submitting tag:', tagInput);
+            // Set the hidden form inputs
+            document.getElementById('hidden-tag-input').value = tagInput;
+            document.getElementById('hidden-tag-form').submit();
+        } else {
+            console.log('No tag input to submit');
         }
     }
 
