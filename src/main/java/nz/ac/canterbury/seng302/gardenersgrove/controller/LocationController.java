@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import org.slf4j.Logger;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -39,7 +40,7 @@ public class LocationController {
      * @throws InterruptedException If the thread is interrupted while waiting for the request.
      */
     @GetMapping("/sendRequest")
-    public String getData(String query) throws IOException, InterruptedException {
+    public String getData(@RequestParam String query) throws IOException, InterruptedException {
         if (rateLimiterService.tryConsume()) {
             logger.info("GET /Send Request");
             response = locationService.sendRequest(query);
