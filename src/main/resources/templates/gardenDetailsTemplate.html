@@ -137,7 +137,7 @@
     <div id="weather-information" th:if="${date}">
         <div class="weather-display-container">
             <div class="weather-display-row">
-                <h3 th:text="${garden.location}"></h3>
+                <h3 th:text="${garden.city + ', ' + garden.country}"></h3>
                 <p th:text="${date}"></p>
                 <div class="temperature-container">
                     <div class="weather-display-row">
@@ -148,7 +148,7 @@
                         <p th:text="${weatherDescription}"></p>
                         <p th:text="${humidity} + '%' + ' Humidity'"></p>
                     </div>
-                    <img alt="No image available" th:src="${weatherImage}"/>
+                    <img alt="No image available" th:src="'https:' + ${weatherImage}"/>
                 </div>
             </div>
             <div>

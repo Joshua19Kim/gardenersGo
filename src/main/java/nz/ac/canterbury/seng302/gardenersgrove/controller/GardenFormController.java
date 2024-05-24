@@ -322,7 +322,7 @@ public class GardenFormController {
         model.addAttribute("showModal", true);
       }
       if (userId == null || gardener.getId() == parseLong(userId, 10)) {
-        Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
+        Weather currentWeather = weatherService.getWeather(garden.get().getCity() + ", " + garden.get().getCountry());
         if (currentWeather != null) {
           model.addAttribute("date", currentWeather.getDate());
           model.addAttribute("temperature", currentWeather.getTemperature());
