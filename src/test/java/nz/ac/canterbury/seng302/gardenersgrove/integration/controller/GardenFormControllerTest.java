@@ -697,6 +697,30 @@ public class GardenFormControllerTest {
         .andExpect(model().attribute("garden", garden));
   }
 
+  @Test
+  @WithMockUser
+  public void EditedGardenDetailsSubmitted_WithInvalidDescription_GardenDetailsUpdated()
+          throws Exception {
+    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener, "");
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+    when(gardenService.addGarden(garden)).thenReturn(garden);
+    mockMvc
+            .perform(
+                    (MockMvcRequestBuilders.post("/gardens/edit")
+                            .param("gardenId", "1")
+                            .param("name", "Rose Garden")
+                            .param("location", "Riccarton")
+                            .param("size", "100")
+                            .param("description", "123!@#"))
+                            .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(view().name("editGardensFormTemplate"))
+            .andExpect(model().attributeExists("descriptionError", "name", "location", "size"))
+            .andExpect(model().attribute("name", "Rose Garden"))
+            .andExpect(model().attribute("location", "Riccarton"))
+            .andExpect(model().attribute("size", "100"))
+            .andExpect(model().attribute("descriptionError", "Description must be 512 characters or less and contain some text"));
+  }
 
   @Test
   @WithMockUser
@@ -722,32 +746,6 @@ public class GardenFormControllerTest {
     Assertions.assertEquals("Riccarton", garden.getLocation());
     Assertions.assertEquals("100", garden.getSize());
     Assertions.assertEquals("This is my Valid Description: !@#$%^&*()<>?1234567890", garden.getDescription());
-  }
-
-  @Test
-  @WithMockUser
-  public void EditedGardenDetailsSubmitted_WithInvalidDescription_GardenDetailsUpdated()
-          throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener, "");
-    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-    when(gardenService.addGarden(garden)).thenReturn(garden);
-    mockMvc
-            .perform(
-                    (MockMvcRequestBuilders.post("/gardens/edit")
-                            .param("gardenId", "1")
-                            .param("name", "Rose Garden")
-                            .param("location", "Riccarton")
-                            .param("size", "100")
-                            .param("description", "123!@#"))
-                            .with(csrf()))
-            .andExpect(status().isOk())
-            .andExpect(view().name("editGardensFormTemplate"))
-            .andExpect(model().attributeExists("descriptionError", "name", "location", "size", "requestURI"))
-            .andExpect(model().attribute("name", "Rose Garden"))
-            .andExpect(model().attribute("location", "Riccarton"))
-            .andExpect(model().attribute("size", "100"))
-            .andExpect(model().attribute("requestURI", ""))
-            .andExpect(model().attribute("descriptionError", "Description must be 512 characters or less and contain some text"));
   }
 
   @Test

@@ -376,8 +376,6 @@ public class GardenFormController {
         gardenService.addGarden(existingGarden);
       }
     } else {
-      List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-      model.addAttribute("gardens", gardens);
       model.addAttribute("name", name);
       model.addAttribute("location", location);
       model.addAttribute("description", description);
