@@ -226,6 +226,11 @@ public class GardenFormController {
       isValid = false;
     }
 
+    if(location.length() > 50) {
+      model.addAttribute("locationError", "Please enter an address less than 50 characters");
+      isValid = false;
+    }
+
     //These are example code to show the name of error attribute. Need to fix this for location validation :)
 //    if (!Objects.equals(location, validatedLocation)) {
 //      model.addAttribute("locationError", validatedLocation);

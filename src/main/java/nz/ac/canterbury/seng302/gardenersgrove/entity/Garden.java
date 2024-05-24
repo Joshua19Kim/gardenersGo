@@ -17,19 +17,19 @@ public class Garden {
   private String name;
 
   /** The location(Street number and name) of the garden. */
-  @Column(length=64 ,nullable = false)
+  @Column(length=50)
   private String location;
 
   /** The suburb of the garden. */
-  @Column(length=64)
+  @Column(length=90)
   private String suburb;
 
   /** The city of the garden. */
-  @Column(length=96 ,nullable = false)
+  @Column(length=180 ,nullable = false)
   private String city;
 
   /** The country of the garden. */
-  @Column(length=64 ,nullable = false)
+  @Column(length=60 ,nullable = false)
   private String country;
 
   /** The postcode of the garden. */
