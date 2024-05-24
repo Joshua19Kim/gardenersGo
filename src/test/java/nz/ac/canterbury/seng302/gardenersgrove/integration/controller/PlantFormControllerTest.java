@@ -484,7 +484,7 @@ public class PlantFormControllerTest {
         List<Garden> gardens = new ArrayList<>();
         gardens.add(garden);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener, ""));
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
         when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
 
         String name = "My Plant";

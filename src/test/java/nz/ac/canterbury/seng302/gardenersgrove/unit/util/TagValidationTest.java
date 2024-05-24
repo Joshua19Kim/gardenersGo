@@ -24,7 +24,7 @@ public class TagValidationTest {
   private final Garden mockGarden =
       new Garden(
           "Garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "8025",
-              ew Gardener("Bob", "Joe", null, "a@gmail.com", "Password1!"), "");
+              new Gardener("Bob", "Joe", null, "a@gmail.com", "Password1!"), "");
   private final Tag mockTag = new Tag("Valid", mockGarden);
 
   @BeforeEach

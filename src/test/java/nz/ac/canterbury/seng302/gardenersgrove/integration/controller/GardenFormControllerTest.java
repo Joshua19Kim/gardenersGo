@@ -67,8 +67,8 @@ public class GardenFormControllerTest {
         List<Authority> userRoles = new ArrayList<>();
         testGardener.setUserRoles(userRoles);
         testGardener.setId(1L);
-        gardenerFormService.addGardener(testGardener, "");
-        when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(testGardener, ""));
+        gardenerFormService.addGardener(testGardener);
+        when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(testGardener));
 
     }
 
@@ -79,7 +79,7 @@ public class GardenFormControllerTest {
         Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         List<Garden> gardens = new ArrayList<>();
         gardens.add(garden);
-        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener, ""));
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
         when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
 
         mockMvc
@@ -196,8 +196,8 @@ public class GardenFormControllerTest {
         List<Authority> userRoles = new ArrayList<>();
         testGardener.setUserRoles(userRoles);
         testGardener.setId(1L);
-        gardenerFormService.addGardener(testGardener, "");
-        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener, ""));
+        gardenerFormService.addGardener(testGardener);
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
         mockMvc
                 .perform(
                         (MockMvcRequestBuilders.post("/gardens/details?gardenId=1")
@@ -222,8 +222,8 @@ public class GardenFormControllerTest {
         List<Authority> userRoles = new ArrayList<>();
         testGardener.setUserRoles(userRoles);
         testGardener.setId(1L);
-        gardenerFormService.addGardener(testGardener, "");
-        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener, ""));
+        gardenerFormService.addGardener(testGardener);
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
         mockMvc
                 .perform(
                         (MockMvcRequestBuilders.post("/gardens/details?gardenId=1")
@@ -286,7 +286,8 @@ public class GardenFormControllerTest {
                                 .param("city", "Christchurch")
                                 .param("country", "New Zealand")
                                 .param("postcode", "8888")
-                                .param("size", ""))
+                                .param("size", "")
+                                .param("description", ""))
                                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
@@ -319,6 +320,7 @@ public class GardenFormControllerTest {
                                 .param("country", "New Zealand")
                                 .param("postcode", "")
                                 .param("size", ""))
+                                .param("description", "")
                                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
@@ -350,6 +352,7 @@ public class GardenFormControllerTest {
                                 .param("city", "Christchurch")
                                 .param("country", "New Zealand")
                                 .param("postcode", "8888")
+                                .param("description", "")
                                 .param("size", ""))
                                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
@@ -385,6 +388,7 @@ public class GardenFormControllerTest {
                                 .param("city", "")
                                 .param("country", "New Zealand")
                                 .param("postcode", "8888")
+                                .param("description", "")
                                 .param("size", "9"))
                                 .with(csrf()))
                 .andExpect(status().isOk())
@@ -411,7 +415,8 @@ public class GardenFormControllerTest {
                                 .param("city", "Chch")
                                 .param("country", "")
                                 .param("postcode", "8888")
-                                .param("size", "9"))
+                                .param("size", "9")
+                                .param("description", ""))
                                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editGardensFormTemplate"))
@@ -426,7 +431,7 @@ public class GardenFormControllerTest {
         List<Garden> gardens = new ArrayList<>();
         gardens.add(new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, ""));
         when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
-        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener, ""));
+        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/form")
                         .param("redirect", ""))
                 .andExpect(status().isOk())
@@ -489,6 +494,7 @@ public class GardenFormControllerTest {
                         .param("postcode", postcode)
                         .param("size", size)
                         .param("redirect", "")
+                        .param("description", "")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
@@ -579,7 +585,7 @@ public class GardenFormControllerTest {
         String postcode = "9999";
         String size = "1.0";
         String redirectURI = "";
-        when(gardenerFormService.findByEmail("testEmail@gmail.com")).thenReturn(Optional.of(testGardener, ""));
+        when(gardenerFormService.findByEmail("testEmail@gmail.com")).thenReturn(Optional.of(testGardener));
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", name)
                         .param("location", location)
@@ -618,7 +624,7 @@ public class GardenFormControllerTest {
         String postcode = "9999";
         String size = "1.0";
         String redirectURI = "";
-        when(gardenerFormService.findByEmail("testEmail@gmail.com")).thenReturn(Optional.of(testGardener, ""));
+        when(gardenerFormService.findByEmail("testEmail@gmail.com")).thenReturn(Optional.of(testGardener));
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", name)
                         .param("location", location)
@@ -763,7 +769,8 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated() throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener, "");
+    Garden garden = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
+            "postcode 1", "", testGardener, "");
     Tag tag = new Tag("My tag", garden);
 
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
@@ -783,7 +790,8 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void NewTagSubmitted_OffensiveTagName_TagNotAdded() throws Exception {
-    Garden garden = new Garden(" when(taMy Garden", "Ilam", "32", testGardener, "");
+    Garden garden = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
+            "postcode 1", "", testGardener, "");
     Tag tag = new Tag("Fuck", garden);
 
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
@@ -811,7 +819,8 @@ public class GardenFormControllerTest {
     Authentication authentication = Mockito.mock(Authentication.class);
     Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
 
-    Garden garden = new Garden("My Garden", "Ilam", "32", currentUser, "");
+    Garden garden = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
+            "postcode 1", "", testGardener, "");
 
     List<String> tags = new ArrayList<>();
     tags.add("My tag");
@@ -834,7 +843,8 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener, "");
+    Garden garden = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
+            "postcode 1", "", testGardener, "");
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -855,7 +865,8 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener, "");
+    Garden garden = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
+            "postcode 1", "", testGardener, "");
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -872,7 +883,8 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener, "");
+    Garden garden = new Garden("My Garden", "Location 1", "Sub 1", "city 1", "country 1",
+              "postcode 1", "", testGardener, "");
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -893,9 +905,11 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void addTag_SameTagNameInDifferentGardens() throws Exception {
-    Garden garden1 = new Garden("Garden 1", "Location 1", "Address 1", testGardener, "");
+    Garden garden1 = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
+            "postcode 1", "", testGardener, "");
     garden1.setId(1L);
-    Garden garden2 = new Garden("Garden 2", "Location 2", "Address 2", testGardener, "");
+    Garden garden2 = new Garden("Garden 2", "Location 2", "Sub 2", "city 2", "country 2",
+            "postcode 2", "", testGardener, "");
     garden2.setId(2L);
 
     when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden1));

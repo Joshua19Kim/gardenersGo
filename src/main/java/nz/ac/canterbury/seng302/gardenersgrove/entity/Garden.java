@@ -73,7 +73,7 @@ public class Garden {
    * @param postcode The postcode of the garden.
    * @param gardener The gardener id for the garden.
    */
-  public Garden(String name, String location, String suburb, String city, String country, String postcode, Gardener gardener) {
+  public Garden(String name, String location, String suburb, String city, String country, String postcode, Gardener gardener, String description) {
     this.name = name;
     this.location = location;
     this.suburb = suburb;
@@ -81,6 +81,7 @@ public class Garden {
     this.country = country;
     this.postcode = postcode;
     this.gardener = gardener;
+    this.description = description;
     plants = new ArrayList<>();
     this.publicGarden = false; // Defaults to private
   }
