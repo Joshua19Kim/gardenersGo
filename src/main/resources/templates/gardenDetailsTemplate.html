@@ -20,7 +20,7 @@
 
         <div class="garden-details">
             <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
-            <p><strong>Location:</strong> <span th:text="${garden.location}"></span></p>
+            <p><strong>Location:</strong> <span th:text="${garden.location +', ' + garden.city +', '+ garden.country}"></span></p>
             <p>
                 <strong>Size:</strong> <span th:if="${garden.size != null}" th:text="${garden.size + ' m^2'}"></span>
             </p>
@@ -43,6 +43,34 @@
                 <p id="tag-error-message" th:value="${tagValid}" th:text="${tagValid}"></p>
             </div>
         </div>
+
+        <div class="right-details-container">
+            <h1 class="garden-details-links">
+                <a th:href="@{../gardens/edit(gardenId=${garden.id})}" class="edit-garden-button">Edit Garden</a>
+                <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="add-plant-button">Add New Plant</a>
+            </h1>
+            <div class="public-checkbox-container">
+                <form method="post" th:action="@{../gardens/details(gardenId=${garden.id})}" id="garden-details-form">
+                    <label for="isGardenPublic" id="public-checkbox-label">Make my garden public</label>
+                    <input class="form-control" data-cy="isGardenPublic" id="isGardenPublic" name="isGardenPublic"
+                           th:id="isGardenPublic" th:name="isGardenPublic" type="checkbox"
+                           onchange="document.getElementById('garden-details-form').submit()" />
+
+                    <script th:inline="javascript">
+                        // Credit: https://stackoverflow.com/questions/31771821/thymeleaf-how-to-add-conditional-block-in-javascript
+                        let isGardenPublic = [[${garden.isGardenPublic}]];
+                        if (isGardenPublic) {
+                            document.getElementById("isGardenPublic").checked = true;
+                        } else {
+                            document.getElementById("isGardenPublic").checked = false;
+                        }
+                    </script>
+
+                </form>
+            </div>
+        </div>
+
+        <h4>Plants:</h4>
         <div class="plant-list-container" th:if="${not #lists.isEmpty(garden.plants)}">
             <table class="plant-table">
                 <thead>
