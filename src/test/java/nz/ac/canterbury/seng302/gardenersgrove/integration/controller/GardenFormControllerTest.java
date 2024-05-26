@@ -755,7 +755,7 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated() throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    Garden garden = new Garden("My Garden", "Ilam", null, "Christchurch", "New Zealand", null, "32", testGardener);
     Tag tag = new Tag("My tag", garden);
 
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
@@ -775,7 +775,7 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void NewTagSubmitted_OffensiveTagName_TagNotAdded() throws Exception {
-    Garden garden = new Garden(" when(taMy Garden", "Ilam", "32", testGardener);
+    Garden garden = new Garden(" when(taMy Garden", "Ilam", null, "Christchurch", "New Zealand", null, "32", testGardener);
     Tag tag = new Tag("Fuck", garden);
 
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
@@ -803,7 +803,7 @@ public class GardenFormControllerTest {
     Authentication authentication = Mockito.mock(Authentication.class);
     Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
 
-    Garden garden = new Garden("My Garden", "Ilam", "32", currentUser);
+    Garden garden = new Garden("My Garden", "Ilam",  null, "Christchurch", "New Zealand", null, "32", currentUser);
 
     List<String> tags = new ArrayList<>();
     tags.add("My tag");
@@ -826,7 +826,7 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    Garden garden = new Garden("My Garden", "Ilam",  null, "Christchurch", "New Zealand", null, "32", testGardener);
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -847,7 +847,7 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    Garden garden = new Garden("My Garden", "Ilam", null, "Christchurch", "New Zealand", null, "32", testGardener);
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -864,7 +864,7 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
-    Garden garden = new Garden("My Garden", "Ilam", "32", testGardener);
+    Garden garden = new Garden("My Garden", "Ilam", null, "Christchurch", "New Zealand", null, "32", testGardener);
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -885,9 +885,9 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void addTag_SameTagNameInDifferentGardens() throws Exception {
-    Garden garden1 = new Garden("Garden 1", "Location 1", "Address 1", testGardener);
+    Garden garden1 = new Garden("Garden 1", "Location 1", "Address 1",  null, "Christchurch", "New Zealand", null, testGardener);
     garden1.setId(1L);
-    Garden garden2 = new Garden("Garden 2", "Location 2", "Address 2", testGardener);
+    Garden garden2 = new Garden("Garden 2", "Location 2", "Address 2",  null, "Christchurch", "New Zealand", null, testGardener);
     garden2.setId(2L);
 
     when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden1));
