@@ -2,9 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
-import org.h2.command.Token;
-import org.springframework.beans.factory.annotation.Autowired;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -45,9 +43,7 @@ public class TokenService {
 
     public void createLostPasswordTokenForGardener(Gardener gardener, String token) {
         Optional<LostPasswordToken> checkToken = lostPasswordTokenRepository.findByGardener(gardener);
-        if (checkToken.isPresent()) { // Deletes value if present
-            lostPasswordTokenRepository.delete(checkToken.get());
-        }
+        checkToken.ifPresent(t -> lostPasswordTokenRepository.delete(t));
         LostPasswordToken generatedToken = new LostPasswordToken(token, gardener);
         lostPasswordTokenRepository.save(generatedToken);
     }
