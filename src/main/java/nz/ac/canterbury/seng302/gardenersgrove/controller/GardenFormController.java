@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.util.TagValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WordFilter;
+import nz.ac.canterbury.seng302.gardenersgrove.util.NotificationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -305,10 +306,9 @@ public class GardenFormController {
           model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
           model.addAttribute(
               "forecastWeatherDescription", currentWeather.getForecastDescriptions());
-          model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
+          model.addAttribute("forecastHumidities", currentWeather.getForecastHumidities());
 
-          String wateringTip = generateWateringTip(currentWeather, prevWeathers);
-          logger.info(wateringTip);
+          String wateringTip = NotificationUtil.generateWateringTip(currentWeather, prevWeathers);
           model.addAttribute("wateringTip", wateringTip);
         }
         return "gardenDetailsTemplate";
@@ -392,18 +392,6 @@ public class GardenFormController {
       }
     }
     return "redirect:/gardens";
-  }
-
-  private String generateWateringTip(Weather currentWeather, PrevWeather prevWeather) {
-    String currDescription = (currentWeather.getForecastDescriptions().get(0)).toLowerCase();
-    String prev1Description = (prevWeather.getForecastDescriptions().get(0)).toLowerCase();
-    String prev2Description = (prevWeather.getForecastDescriptions().get(1)).toLowerCase();
-    if (currDescription.contains("rain")) {
-      return "Outdoor plants don’t need any water today";
-    } else if (prev1Description.contains("sunny") && prev2Description.contains("sunny")) {
-      return "There hasn’t been any rain recently, make sure to water your plants if they need it";
-    }
-    return null;
   }
 
   /**

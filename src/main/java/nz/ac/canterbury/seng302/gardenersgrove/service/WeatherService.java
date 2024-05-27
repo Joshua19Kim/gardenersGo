@@ -52,7 +52,6 @@ public class WeatherService {
     location = location.replace(" ", "-");
     String uri =
         FORECAST_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no" + "&days=3";
-    logger.info("URI for current day: " + uri);
     URL url = new URI(uri).toURL();
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
@@ -67,13 +66,7 @@ public class WeatherService {
     }
   }
 
-  // currently trying to get the last two days by altering the first date in the uri, notworking
-  //   Cannot deserialize value of type `[Lnz.ac.canterbury.seng302.gardenersgrove.entity.Weather;`
-  //   from Object value (token `JsonToken.START_OBJECT`
-  // String uriTwoDaysAgo = HISTORY_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no" +
-  //                    "&dt=" + twoDaysAgo;
   public PrevWeather getPrevWeather(String location) throws IOException, URISyntaxException {
-    logger.info("Trying to get previous weather");
 
     LocalDate twoDaysAgo = LocalDate.now().minusDays(2);
     LocalDate oneDayAgo = LocalDate.now().minusDays(1);
@@ -91,28 +84,20 @@ public class WeatherService {
             + twoDaysAgo
             + "&end_dt="
             + oneDayAgo;
-    logger.info("URI for two days ago: " + uri);
+
+    URL url = new URI(uri).toURL();
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod("GET");
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     try {
-        URL url = new URI(uri).toURL();
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      PrevWeather weather = objectMapper.readValue(url, PrevWeather.class);
 
-        try {
-            PrevWeather weather = objectMapper.readValue(url, PrevWeather.class);
-            logger.info("WEATHER FROM JACKSON: " + weather.getLocation());
-            return weather;
-        } catch (IOException ex) {
-            logger.debug("fail");
-            // This occurs when no weather is found for that location.
-            return null;
-        }
-    } catch (Exception e) {
-        logger.info(e.getMessage());
+      return weather;
+    } catch (IOException ex) {
+      // This occurs when no weather is found for that location.
+      return null;
     }
-
-    return null;
   }
 
   /** Used to clear the cache every hour to ensure that the weather data is not stale */
