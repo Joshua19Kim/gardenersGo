@@ -152,5 +152,79 @@ public class ValidityChecker {
         return description;
     }
 
+    public static String validateGardenSuburb(String suburb) {
+        String regex = "^[0-9]+$";
+        if(suburb.matches(regex)) {
+            return "Please enter a suburb without only numerical characters";
+        }
+        regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        if (suburb != null && !suburb.trim().isEmpty() && !suburb.matches(regex)) {
+            return "Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
+        }
+        if(suburb.length() > 90) {
+            return "Please enter a suburb less than 90 characters";
+        }
+        return suburb;
+    }
+
+    public static String validateGardenCity(String city) {
+        String regex = "^[0-9]+$";
+        if(city == null || city.trim().isEmpty()) {
+            return "City is required";
+        }
+        if(city.matches(regex)) {
+            return "Please enter a city without only numerical characters";
+        }
+        regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        if (!city.matches(regex)) {
+            return "City must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
+        }
+        if(city.length() > 180) {
+            return "Please enter a city less than 180 characters";
+        }
+        return city;
+    }
+    public static String validateGardenCountry(String country) {
+        String regex = "^[0-9]+$";
+        if(country == null || country.trim().isEmpty()) {
+            return "Country is required";
+        }
+        if(country.matches(regex)) {
+            return "Please enter a country without only numerical characters";
+        }
+        regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        if (!country.matches(regex)) {
+            return "Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
+        }
+        if(country.length() > 60) {
+            return "Please enter a country less than 60 characters";
+        }
+        return country;
+    }
+    public static String validateGardenAddress(String address) {
+        String regex = "^[0-9]+$";
+        if(address.matches(regex)) {
+            return "Please enter a street number and name without only numerical characters";
+        }
+        regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        if (address != null && !address.trim().isEmpty() && !address.matches(regex)) {
+            return "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
+        }
+        if(address.length() > 60) {
+            return "Please enter a street number and name less than 60 characters";
+        }
+        return address;
+    }
+    public static String validateGardenPostcode(String postcode) {
+        String regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        if (postcode != null && !postcode.trim().isEmpty() && !postcode.matches(regex)) {
+            return "Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
+        }
+        if(postcode.length() > 10) {
+            return "Please enter a postcode less than 10 characters";
+        }
+        return postcode;
+    }
+
 
 }

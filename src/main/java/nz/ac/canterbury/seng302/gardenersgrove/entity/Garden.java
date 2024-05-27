@@ -17,7 +17,7 @@ public class Garden {
   private String name;
 
   /** The location(Street number and name) of the garden. */
-  @Column(length=50)
+  @Column(length=60)
   private String location;
 
   /** The suburb of the garden. */
@@ -276,7 +276,7 @@ public class Garden {
    * @return the full location
    */
   public String getFullLocation() {
-    if(location == null || location == "") {
+    if(location == null || location.isEmpty()) {
       return city + ", " + country;
     } else {
       return location + ", " + city + ", " + country;

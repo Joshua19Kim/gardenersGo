@@ -52,13 +52,15 @@
                 <div class="create-garden-row">
                     <div>
                         <label for="suburb">Suburb:</label>
-                        <input type="text" id="suburb" th:name="suburb" th:value="${suburb != null ? suburb : garden.suburb}">
+                        <input type="text" id="suburb" th:name="suburb" th:value="${suburb != null ? suburb : garden.suburb}"
+                               th:classappend="${suburbError} ? 'error' : ''">
                         <span th:if="${suburbError}" th:text="${suburbError}" class="smallErrorMessage"></span>
 
                     </div>
                     <div>
                         <label for="city">City:</label>
-                        <input type="text" id="city" th:name="city" th:value="${city != null ? city : garden.city}">
+                        <input type="text" id="city" th:name="city" th:value="${city != null ? city : garden.city}"
+                               th:classappend="${cityError} ? 'error' : ''">
                         <span th:if="${cityError}" th:text="${cityError}" class="smallErrorMessage"></span>
 
                     </div>
@@ -68,13 +70,15 @@
                 <div class="create-garden-row">
                     <div>
                         <label for="country">Country:</label>
-                        <input type="text" id="country" th:name="country" th:value="${country != null ? country : garden.country}">
+                        <input type="text" id="country" th:name="country" th:value="${country != null ? country : garden.country}"
+                               th:classappend="${countryError} ? 'error' : ''">
                         <span th:if="${countryError}" th:text="${countryError}" class="smallErrorMessage"></span>
 
                     </div>
                     <div>
                         <label for="postcode">Postcode:</label>
-                        <input type="text" id="postcode" th:name="postcode" th:value="${postcode != null ? postcode : garden.postcode}">
+                        <input type="text" id="postcode" th:name="postcode" th:value="${postcode != null ? postcode : garden.postcode}"
+                               th:classappend="${postcodeError} ? 'error' : ''">
                         <span th:if="${postcodeError}" th:text="${postcodeError}" class="smallErrorMessage"></span>
 
                     </div>

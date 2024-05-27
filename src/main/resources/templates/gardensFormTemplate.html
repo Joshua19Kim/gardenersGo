@@ -56,13 +56,15 @@
         <div class="create-garden-row">
           <div>
             <label for="suburb">Suburb:</label>
-            <input type="text" id="suburb" th:name="suburb" th:value="*{suburb}">
+            <input type="text" id="suburb" th:name="suburb" th:value="*{suburb}"
+                   th:classappend="${suburbError} ? 'error' : ''">
             <span th:if="${suburbError}" th:text="${suburbError}" class="smallErrorMessage"></span>
 
           </div>
           <div>
             <label for="city">City:</label>
-            <input type="text" id="city" th:name="city" th:value="*{city}">
+            <input type="text" id="city" th:name="city" th:value="*{city}"
+                   th:classappend="${cityError} ? 'error' : ''">
             <span th:if="${cityError}" th:text="${cityError}" class="smallErrorMessage"></span>
 
           </div>
@@ -72,13 +74,15 @@
         <div class="create-garden-row">
           <div>
             <label for="country">Country:</label>
-            <input type="text" id="country" th:name="country" th:value="*{country}">
+            <input type="text" id="country" th:name="country" th:value="*{country}"
+                   th:classappend="${countryError} ? 'error' : ''">
             <span th:if="${countryError}" th:text="${countryError}" class="smallErrorMessage"></span>
 
           </div>
           <div>
             <label for="postcode">Postcode:</label>
-            <input type="text" id="postcode" th:name="postcode" th:value="*{postcode}">
+            <input type="text" id="postcode" th:name="postcode" th:value="*{postcode}"
+                   th:classappend="${postcodeError} ? 'error' : ''">
             <span th:if="${postcodeError}" th:text="${postcodeError}" class="smallErrorMessage"></span>
 
           </div>
@@ -90,7 +94,7 @@
 
       <button type="submit" class="create-garden-button">Create!</button>
     </form>
-    <a th:href="@{${requestURI}}">
+    <a th:href="@{${requestURI}}" style="{display : flex; width: 750px}">
       <button class="create-garden-cancel">Cancel</button>
     </a>
   </div>

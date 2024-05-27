@@ -184,7 +184,11 @@ public class GardenFormController {
       Authentication authentication) {
     logger.info("POST /form");
     String validatedName = ValidityChecker.validateGardenName(name);
-    String validatedLocation = ValidityChecker.validateGardenLocation(location);
+    String validatedAddress = ValidityChecker.validateGardenAddress(location);
+    String validatedSuburb = ValidityChecker.validateGardenSuburb(suburb);
+    String validatedCity = ValidityChecker.validateGardenCity(city);
+    String validatedCountry = ValidityChecker.validateGardenCountry(country);
+    String validatedPostcode = ValidityChecker.validateGardenPostcode(postcode);
     String validatedSize = ValidityChecker.validateGardenSize(size);
     String currentUserEmail = authentication.getName();
     boolean isValid = true;
@@ -209,51 +213,35 @@ public class GardenFormController {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }
-    //////////////////////////////////////////////////from here////////////////////////////////////////////////////////////
-
-    //The validation check needs to be
-    // updated for each of address(location, suburb(just length if not null), city(should not be null and check the length),
-    // country(should not be null and check the length), postcode(just length check if not null).
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    if (Objects.equals(city, "")) {
-      model.addAttribute("cityError", "City is required.");
+    if(!Objects.equals(location, validatedAddress)) {
+      model.addAttribute("locationError", validatedAddress);
       isValid = false;
     }
-    if(Objects.equals(country, "")) {
-      model.addAttribute("countryError", "Country is required.");
+    if(!Objects.equals(suburb, validatedSuburb)) {
+      model.addAttribute("suburbError", validatedSuburb);
+      isValid = false;
+    }
+    if(!Objects.equals(city, validatedCity)) {
+      model.addAttribute("cityError", validatedCity);
+      isValid = false;
+    }
+    if(!Objects.equals(country, validatedCountry)) {
+      model.addAttribute("countryError", validatedCountry);
+      isValid = false;
+    }
+    if(!Objects.equals(postcode, validatedPostcode)) {
+      model.addAttribute("postcodeError", validatedPostcode);
       isValid = false;
     }
 
-    if(location.length() > 50) {
-      model.addAttribute("locationError", "Please enter an address less than 50 characters");
-      isValid = false;
-    }
-
-    //These are example code to show the name of error attribute. Need to fix this for location validation :)
-//    if (!Objects.equals(location, validatedLocation)) {
-//      model.addAttribute("locationError", validatedLocation);
-//      isValid = false;
-//    }
-//    if (Objects.equals(city, "")) {
-//      model.addAttribute("suburbError", "Invalid City Name.");
-//      isValid = false;
-//    }
-//    if(Objects.equals(postcode, "")) {
-//      model.addAttribute("postcodeError", "Invalid Postcode");
-//      isValid = false;
-//    }
-
-    ////////////////////////////////////////////upto here////////////////////////////////////////////////////////////
 
 
     if (isValid) {
         Garden garden;
         if (Objects.equals(size.trim(), "")) {
-          garden = gardenService.addGarden(new Garden(name ,newLocation, newSuburb, city, country, newPostcode, gardener));
+          garden = gardenService.addGarden(new Garden(name ,newLocation.trim(), newSuburb.trim(), city, country, newPostcode.trim(), gardener));
         } else {
-          garden = gardenService.addGarden((new Garden(name, newLocation, newSuburb, city, country, newPostcode, new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(), gardener)));
+          garden = gardenService.addGarden((new Garden(name, newLocation.trim(), newSuburb.trim(), city, country, newPostcode.trim(), new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(), gardener)));
         }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
 
@@ -452,7 +440,11 @@ public class GardenFormController {
       HttpServletRequest request) {
     logger.info("POST gardens/edit");
     String validatedName = ValidityChecker.validateGardenName(name);
-    String validatedLocation = ValidityChecker.validateGardenLocation(location);
+    String validatedAddress = ValidityChecker.validateGardenAddress(location);
+    String validatedSuburb = ValidityChecker.validateGardenSuburb(suburb);
+    String validatedCity = ValidityChecker.validateGardenCity(city);
+    String validatedCountry = ValidityChecker.validateGardenCountry(country);
+    String validatedPostcode = ValidityChecker.validateGardenPostcode(postcode);
     String validatedSize = ValidityChecker.validateGardenSize(size);
 
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
@@ -473,47 +465,36 @@ public class GardenFormController {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }
-
-    //////////////////////////////////////////////////from here////////////////////////////////////////////////////////////
-    //The validation check needs to be
-    // updated for each of address(location, suburb(just length if not null), city(should not be null and check the length),
-    // country(should not be null and check the length), postcode(just lenght check if not null).
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    if (Objects.equals(city, "")) {
-      model.addAttribute("cityError", "City is required.");
+    if(!Objects.equals(location, validatedAddress)) {
+      model.addAttribute("locationError", validatedAddress);
       isValid = false;
     }
-    if(Objects.equals(country, "")) {
-      model.addAttribute("countryError", "Country is required.");
+    if(!Objects.equals(suburb, validatedSuburb)) {
+      model.addAttribute("suburbError", validatedSuburb);
       isValid = false;
     }
-
-    //These are example code to show the name of error attribute.  Need to fix this for location validation :)
-//    if (!Objects.equals(location, validatedLocation)) {
-//      model.addAttribute("locationError", validatedLocation);
-//      isValid = false;
-//    }
-//    if (Objects.equals(suburb, "")) {
-//      model.addAttribute("suburbError", "Invalid City Name.");
-//      isValid = false;
-//    }
-//    if(Objects.equals(postcode, "")) {
-//      model.addAttribute("postcodeError", "Invalid Postcode");
-//      isValid = false;
-//    }
-    ////////////////////////////////////////////upto here////////////////////////////////////////////////////////////
+    if(!Objects.equals(city, validatedCity)) {
+      model.addAttribute("cityError", validatedCity);
+      isValid = false;
+    }
+    if(!Objects.equals(country, validatedCountry)) {
+      model.addAttribute("countryError", validatedCountry);
+      isValid = false;
+    }
+    if(!Objects.equals(postcode, validatedPostcode)) {
+      model.addAttribute("postcodeError", validatedPostcode);
+      isValid = false;
+    }
 
 
     if (isValid) {
       Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
       existingGarden.setName(name);
-      existingGarden.setLocation(location);
-      existingGarden.setSuburb(suburb);
+      existingGarden.setLocation(location.trim());
+      existingGarden.setSuburb(suburb.trim());
       existingGarden.setCity(city);
       existingGarden.setCountry(country);
-      existingGarden.setPostcode(postcode);
+      existingGarden.setPostcode(postcode.trim());
 
       if (Objects.equals(size.trim(), "")) {
         existingGarden.setSize(null);
