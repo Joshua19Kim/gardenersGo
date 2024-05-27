@@ -792,7 +792,7 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("forecastTemperature",List.of(forecastTemperatures)))
                 .andExpect(model().attribute("forecastWeatherImage",List.of(forecastImages)))
                 .andExpect(model().attribute("forecastWeatherDescription",List.of(forecastDescriptions)))
-                .andExpect(model().attribute("forcastHumidities",List.of(forecastHumidities)))
+                .andExpect(model().attribute("forecastHumidities",List.of(forecastHumidities)))
                 .andExpect(model().attribute("garden", garden));
     }
 
@@ -820,7 +820,7 @@ public class GardenFormControllerTest {
                 .andExpect(model().attributeDoesNotExist("forecastTemperature"))
                 .andExpect(model().attributeDoesNotExist("forecastWeatherImage"))
                 .andExpect(model().attributeDoesNotExist("forecastWeatherDescription"))
-                .andExpect(model().attributeDoesNotExist("forcastHumidities"))
+                .andExpect(model().attributeDoesNotExist("forecastHumidities"))
                 .andExpect(model().attribute("garden", garden));
 
     }
