@@ -3,7 +3,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.spring.CucumberContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
 public class GardenLocationAPIFeature {
 
     @Given("I am on the create new garden form")
