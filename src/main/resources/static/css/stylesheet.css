@@ -228,7 +228,10 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     border-radius: 50%;
     display: flex;
     margin-left: 5px;
-    padding: 5px;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 6px;
     color: #ffffff;
     font-weight: bolder;
     justify-content: center;
@@ -236,7 +239,25 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     cursor: pointer;
 }
 
-#add-tag:hover {
+#submit-tag {
+    display: none;
+    width: 22px;
+    height: 22px;
+    background-color: #45a049;
+    border-radius: 50%;
+    margin-left: 5px;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 6px;
+    color: #ffffff;
+    font-weight: bolder;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#add-tag:hover, #submit-tag:hover {
     cursor: pointer;
     background-color: #8af58a;
 }
