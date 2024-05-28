@@ -758,6 +758,7 @@ body, h2, h3, h4, h5, h6, a {
     background-color: yellow;
     margin-top: 20px;
     display: flex;
+    align-items: center;
 }
 
 .search-bar input[type=text] {
@@ -1046,7 +1047,6 @@ form.search-bar::after {
 
 #received-requests {
     display: none;
-    flex-direction: column;
     justify-content: space-between;
 }
 
@@ -1179,6 +1179,61 @@ form.search-bar::after {
 .create-garden-row > div {
     flex: 1;
     margin-right: 10px;
+}
+.autocomplete-container {
+    position: relative;
+}
+#address-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 12px;
+}
+.autocomplete-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    width: calc(100% - 2px);
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+.autocomplete-results.visible {
+    display: block;
+}
+
+.LocationIQ-attribution {
+    color: blue;
+    font-weight: bold;
+}
+
+#form.create-garden {
+    width: 850px;
+}
+
+
+.create-garden-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.create-garden-row > div {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.create-garden-row > div:last-child {
+    margin-right: 0;
+}
+
+.create-garden-button {
+    width: 25% !important;
+}
+
+.create-garden-cancel {
+    width: 25% !important;
 }
 
 .create-garden-row > div:last-child {

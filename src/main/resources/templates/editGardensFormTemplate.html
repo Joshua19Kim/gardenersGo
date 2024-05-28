@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Edit Garden</title>
@@ -16,16 +15,23 @@
                 <div>
                     <label for="name"> Name: </label>
                     <input type="text" class="form-control" id="name" maxlength="64" placeholder="Name"
-                           th:name="name" th:value="${name != null ? name : garden.name}" data-cy="name" autofocus
+                           th:name="name" th:value="${garden.name}" data-cy="name" autofocus
                            th:classappend="${nameError} ? 'error' : ''">
                     <span th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage"></span>
                 </div>
                 <div>
                     <label for="size"> Size (m<sup>2</sup>): </label>
                     <input type="text" class="form-control" id="size" maxlength="12" placeholder=""
-                           th:name="size" th:value="${size != null ? size : garden.size != 0.0 ? garden.size : ''}" data-cy="size" autofocus
+                           th:name="size" th:value="${garden.size != 0.0 ? garden.size : ''}" data-cy="size" autofocus
                            th:classappend="${sizeError} ? 'error' : ''">
                     <span th:if="${sizeError}" th:text="${sizeError}" class="smallErrorMessage"></span>
+                </div>
+                <div>
+                    <label for="description"> Description:</label>
+                    <input type="text" class="form-control" id="size" maxlength="512" placeholder=""
+                           th:name="description" th:value="${garden.description}" data-cy="description" autofocus
+                           th:classappend="${descriptionError} ? 'error' : ''">
+                    <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
                 </div>
                 <br/>
             </div>

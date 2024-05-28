@@ -164,10 +164,10 @@ public class GardenFormController {
    * @param country The country of the garden.
    * @param postcode The postcode of the garden.
    * @param size The size of the garden.
+   * @param description The garden description.
    * @param redirect the uri to redirect to if the cancel button is pressed
    * @param model The model for passing data to the view.
-   * @param authentication Used to check whether the user is authenticated
-   * @return The name of the template for displaying the garden form.
+   * @return The name of thegetName template for displaying the garden form.
    */
   @PostMapping("gardens/form")
   public String submitForm(
@@ -178,16 +178,17 @@ public class GardenFormController {
       @RequestParam(name = "country") String country,
       @RequestParam(name = "postcode") String postcode,
       @RequestParam(name = "size") String size,
+      @RequestParam(name = "description") String description,
       @RequestParam(name = "redirect") String redirect,
-      Model model,
-      Authentication authentication) {
+      Model model) {
     logger.info("POST /form");
     String validatedName = ValidityChecker.validateGardenName(name);
     String validatedSize = ValidityChecker.validateGardenSize(size);
-    String currentUserEmail = authentication.getName();
+    String validatedDescription = ValidityChecker.validateGardenDescription(description);
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+
     boolean isValid = true;
 
-    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
     gardenerOptional.ifPresent(value -> gardener = value);
 
     String newLocation;
@@ -207,6 +208,10 @@ public class GardenFormController {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }
+    if (!Objects.equals(description, validatedDescription)) {
+      model.addAttribute("descriptionError", validatedDescription);
+      isValid = false;
+    }
 
     if (Objects.equals(city, "")) {
       model.addAttribute("cityError", "City is required.");
@@ -219,12 +224,18 @@ public class GardenFormController {
 
 
     if (isValid) {
-        Garden garden;
-        if (Objects.equals(size.trim(), "")) {
-          garden = gardenService.addGarden(new Garden(name ,newLocation, newSuburb, city, country, newPostcode, gardener));
-        } else {
-          garden = gardenService.addGarden((new Garden(name, newLocation, newSuburb, city, country, newPostcode, new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(), gardener)));
-        }
+      Garden garden;
+      if (Objects.equals(size.trim(), "")) {
+        garden = gardenService.addGarden(new Garden(name,  newLocation, newSuburb, city, country, newPostcode, gardener, description));
+      } else {
+        garden =
+            gardenService.addGarden(
+                new Garden(
+                    name,
+                        newLocation, newSuburb, city, country, newPostcode,
+                    new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(),
+                    gardener, description));
+      }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
 
     } else {
@@ -238,6 +249,7 @@ public class GardenFormController {
       model.addAttribute("country", country);
       model.addAttribute("postcode", newPostcode);
       model.addAttribute("size", size);
+      model.addAttribute("description", description);
       return "gardensFormTemplate";
     }
   }
@@ -400,6 +412,7 @@ public class GardenFormController {
    * @param country The country of the garden.
    * @param postcode The postcode of the garden.
    * @param size the size of the garden
+   * @param description the garden description
    * @param gardenId the id of the garden to edit
    * @param model the model
    * @return the garden details template
@@ -413,12 +426,14 @@ public class GardenFormController {
       @RequestParam(name = "country") String country,
       @RequestParam(name = "postcode") String postcode,
       @RequestParam(name = "size") String size,
+      @RequestParam(name = "description") String description,
       @RequestParam(name = "gardenId") String gardenId,
       Model model,
       HttpServletRequest request) {
     logger.info("POST gardens/edit");
     String validatedName = ValidityChecker.validateGardenName(name);
     String validatedSize = ValidityChecker.validateGardenSize(size);
+    String validatedDescription = ValidityChecker.validateGardenDescription(description);
 
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
     List<Garden> gardens = new ArrayList<>();
@@ -438,7 +453,6 @@ public class GardenFormController {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }
-
     if (Objects.equals(city, "")) {
       model.addAttribute("cityError", "City is required.");
       isValid = false;
@@ -447,6 +461,10 @@ public class GardenFormController {
       model.addAttribute("countryError", "Country is required.");
       isValid = false;
     }
+      if (!Objects.equals(description, validatedDescription)) {
+          model.addAttribute("descriptionError", validatedDescription);
+          isValid = false;
+      }
 
     if (isValid) {
       Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
@@ -456,6 +474,7 @@ public class GardenFormController {
       existingGarden.setCity(city);
       existingGarden.setCountry(country);
       existingGarden.setPostcode(postcode);
+      existingGarden.setDescription(description);
 
       if (Objects.equals(size.trim(), "")) {
         existingGarden.setSize(null);
@@ -468,6 +487,7 @@ public class GardenFormController {
       model.addAttribute("gardens", gardens);
       model.addAttribute("name", name);
       model.addAttribute("location", location);
+      model.addAttribute("description", description);
       model.addAttribute("suburb", suburb);
       model.addAttribute("city", city);
       model.addAttribute("country", country);
