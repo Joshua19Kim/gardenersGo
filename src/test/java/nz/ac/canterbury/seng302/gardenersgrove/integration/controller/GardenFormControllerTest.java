@@ -759,18 +759,36 @@ public class GardenFormControllerTest {
         when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
         when(gardenerFormService.findById(2L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
-                        .principal(authentication))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens"));
-
-    }
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get("/gardens").param("user", "2").principal(authentication))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens"));
+  }
 
   @Test
   @WithMockUser
   public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated() throws Exception {
-    Garden garden = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
-            "postcode 1", "", testGardener, "");
+      String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      String[] forecastImages = new String[] {"image1", "image2", "image3"};
+      String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
+      Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+      Weather currentWeather = Mockito.mock(Weather.class);
+      when(currentWeather.getTemperature()).thenReturn(12.0f);
+      when(currentWeather.getHumidity()).thenReturn(50);
+      when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
+      when(currentWeather.getWeatherImage()).thenReturn("image");
+      when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+      when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+      when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+      when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+      when(weatherService.getWeather(any())).thenReturn(currentWeather);
+
+      Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     Tag tag = new Tag("My tag", garden);
 
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
@@ -790,12 +808,30 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void NewTagSubmitted_OffensiveTagName_TagNotAdded() throws Exception {
-    Garden garden = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
-            "postcode 1", "", testGardener, "");
+      String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      String[] forecastImages = new String[] {"image1", "image2", "image3"};
+      String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
+      Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+      Weather currentWeather = Mockito.mock(Weather.class);
+      when(currentWeather.getTemperature()).thenReturn(12.0f);
+      when(currentWeather.getHumidity()).thenReturn(50);
+      when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
+      when(currentWeather.getWeatherImage()).thenReturn("image");
+      when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+      when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+      when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+      when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+      Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     Tag tag = new Tag("Fuck", garden);
 
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     when(tagService.addTag(any())).thenReturn(tag);
+    when(weatherService.getWeather(any())).thenReturn(currentWeather);
 
     mockMvc
         .perform(
@@ -803,8 +839,8 @@ public class GardenFormControllerTest {
                 .param("tag-input", "Fuck")
                 .param("gardenId", "1")
                 .with(csrf())))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"));
+            .andExpect(status().isOk())
+            .andExpect(view().name("gardenDetailsTemplate"));
     verify(tagService, times(0)).addTag(any());
   }
 
@@ -819,8 +855,7 @@ public class GardenFormControllerTest {
     Authentication authentication = Mockito.mock(Authentication.class);
     Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
 
-    Garden garden = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
-            "postcode 1", "", testGardener, "");
+    Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
 
     List<String> tags = new ArrayList<>();
     tags.add("My tag");
@@ -843,8 +878,26 @@ public class GardenFormControllerTest {
   @Test
   @WithMockUser
   public void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
-    Garden garden = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
-            "postcode 1", "", testGardener, "");
+      String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      String[] forecastImages = new String[] {"image1", "image2", "image3"};
+      String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
+      Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+      Weather currentWeather = Mockito.mock(Weather.class);
+      when(currentWeather.getTemperature()).thenReturn(12.0f);
+      when(currentWeather.getHumidity()).thenReturn(50);
+      when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
+      when(currentWeather.getWeatherImage()).thenReturn("image");
+      when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+      when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+      when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+      when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+      when(weatherService.getWeather(any())).thenReturn(currentWeather);
+
+      Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -852,21 +905,35 @@ public class GardenFormControllerTest {
                 .param("tag-input", "Invalid@Tag")
                 .param("gardenId", "1")
                 .with(csrf()))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
-        .andExpect(flash().attributeExists("tagValid"))
-        .andExpect(
-            flash()
-                .attribute(
-                    "tagValid",
-                    "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
+            .andExpect(status().isOk())
+            .andExpect(view().name("gardenDetailsTemplate"))
+        .andExpect(model().attributeExists("tagValid"))
+        .andExpect(model().attribute("tagValid", "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
   }
 
   @Test
   @WithMockUser
   public void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
-    Garden garden = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
-            "postcode 1", "", testGardener, "");
+      String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      String[] forecastImages = new String[] {"image1", "image2", "image3"};
+      String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
+      Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+      Weather currentWeather = Mockito.mock(Weather.class);
+      when(currentWeather.getTemperature()).thenReturn(12.0f);
+      when(currentWeather.getHumidity()).thenReturn(50);
+      when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
+      when(currentWeather.getWeatherImage()).thenReturn("image");
+      when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+      when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+      when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+      when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+      when(weatherService.getWeather(any())).thenReturn(currentWeather);
+
+      Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -874,17 +941,35 @@ public class GardenFormControllerTest {
                 .param("tag-input", "ThisTagNameIsWayTooLongAndInvalid")
                 .param("gardenId", "1")
                 .with(csrf()))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
-        .andExpect(flash().attributeExists("tagValid"))
-        .andExpect(flash().attribute("tagValid", "A tag cannot exceed 25 characters"));
+            .andExpect(status().isOk())
+              .andExpect(view().name("gardenDetailsTemplate"))
+              .andExpect(model().attributeExists("tagValid"))
+              .andExpect(model().attribute("tagValid", "A tag cannot exceed 25 characters"));
   }
 
   @Test
   @WithMockUser
   public void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
-    Garden garden = new Garden("My Garden", "Location 1", "Sub 1", "city 1", "country 1",
-              "postcode 1", "", testGardener, "");
+      String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      String[] forecastImages = new String[] {"image1", "image2", "image3"};
+      String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
+      Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+      Weather currentWeather = Mockito.mock(Weather.class);
+      when(currentWeather.getTemperature()).thenReturn(12.0f);
+      when(currentWeather.getHumidity()).thenReturn(50);
+      when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
+      when(currentWeather.getWeatherImage()).thenReturn("image");
+      when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+      when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+      when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+      when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+      when(weatherService.getWeather(any())).thenReturn(currentWeather);
+
+      Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -892,24 +977,37 @@ public class GardenFormControllerTest {
                 .param("tag-input", "")
                 .param("gardenId", "1")
                 .with(csrf()))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/gardens/details?gardenId=1&showModal=true"))
-        .andExpect(flash().attributeExists("tagValid"))
-        .andExpect(
-            flash()
-                .attribute(
-                    "tagValid",
-                    "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
+            .andExpect(status().isOk())
+            .andExpect(view().name("gardenDetailsTemplate"))
+            .andExpect(model().attributeExists("tagValid"))
+            .andExpect(model().attribute("tagValid", "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
   }
 
   @Test
   @WithMockUser
   public void addTag_SameTagNameInDifferentGardens() throws Exception {
-    Garden garden1 = new Garden("Garden 1", "Location 1", "Sub 1", "city 1", "country 1",
-            "postcode 1", "", testGardener, "");
+      String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      String[] forecastImages = new String[] {"image1", "image2", "image3"};
+      String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
+      Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+      Weather currentWeather = Mockito.mock(Weather.class);
+      when(currentWeather.getTemperature()).thenReturn(12.0f);
+      when(currentWeather.getHumidity()).thenReturn(50);
+      when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
+      when(currentWeather.getWeatherImage()).thenReturn("image");
+      when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+      when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+      when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+      when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+      when(weatherService.getWeather(any())).thenReturn(currentWeather);
+
+      Garden garden1 = new Garden("Test garden 1", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     garden1.setId(1L);
-    Garden garden2 = new Garden("Garden 2", "Location 2", "Sub 2", "city 2", "country 2",
-            "postcode 2", "", testGardener, "");
+      Garden garden2 = new Garden("Test garden 2", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     garden2.setId(2L);
 
     when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden1));
@@ -936,14 +1034,14 @@ public class GardenFormControllerTest {
         .andExpect(redirectedUrl("/gardens/details?gardenId=2"));
   }
 
-  @Test
-  @WithMockUser
-  public void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
-    String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-    Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
-    String[] forecastImages = new String[] {"image1", "image2", "image3"};
-    String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
-    Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+    @Test
+    @WithMockUser
+    public void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
+        String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+        Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        String[] forecastImages = new String[] {"image1", "image2", "image3"};
+        String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
+        Integer[] forecastHumidities = new Integer[] {1, 2, 3};
 
         Weather currentWeather = Mockito.mock(Weather.class);
         when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
