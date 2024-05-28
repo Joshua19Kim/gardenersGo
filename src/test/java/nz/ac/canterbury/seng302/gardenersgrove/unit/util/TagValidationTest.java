@@ -38,6 +38,7 @@ public class TagValidationTest {
         "ValidTag123: ",
         "ThisTagNameIsWayTooLongAndInvalid: A tag cannot exceed 25 characters",
         "Invalid@Tag: The tag name must only contain alphanumeric characters, spaces, -, _, ', or \"",
+        "-: The tag name must contain at least one alphanumeric character"
       },
       delimiter = ':')
   public void testValidateTag(String tagName, String expectedMessage) {
@@ -56,10 +57,10 @@ public class TagValidationTest {
         "ValidTag",
         "AnotherValidTag",
         "YetAnotherValidTag",
-        "-",
-        "_",
-        "'",
-        "\"",
+        "-a",
+        "_a",
+        "'a",
+        "\"a",
         "9",
         "a ",
         "ö",
