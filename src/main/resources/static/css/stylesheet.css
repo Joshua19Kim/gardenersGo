@@ -246,6 +246,13 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     display: inline-grid;
 }
 
+.left-details-container p {
+    margin-bottom: 10px;
+    max-width: inherit;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
 .right-details-container {
     display: inline-grid;
     position: absolute;
@@ -680,7 +687,6 @@ body, h2, h3, h4, h5, h6, a {
     background-color: yellow;
     margin-top: 20px;
     display: flex;
-    align-items: center;
 }
 
 .search-bar input[type=text] {

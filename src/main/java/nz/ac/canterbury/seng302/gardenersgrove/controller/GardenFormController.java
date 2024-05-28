@@ -380,7 +380,7 @@ public class GardenFormController {
         model.addAttribute("errorId", errorId);
       }
       if(userId == null || gardener.getId() == parseLong(userId, 10)) {
-        return "gardenDetailsTemplate";
+        return "redirect:/gardens/details?gardenId=" + gardenId;
       } else {
         Optional<Gardener> friend = gardenerFormService.findById(parseLong(userId, 10));
         if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
