@@ -167,8 +167,7 @@ public class GardenFormController {
    * @param description The garden description.
    * @param redirect the uri to redirect to if the cancel button is pressed
    * @param model The model for passing data to the view.
-   * @param authentication Used to check whether the user is authenticated
-   * @return The name of the template for displaying the garden form.
+   * @return The name of thegetName template for displaying the garden form.
    */
   @PostMapping("gardens/form")
   public String submitForm(
@@ -181,17 +180,16 @@ public class GardenFormController {
       @RequestParam(name = "size") String size,
       @RequestParam(name = "description") String description,
       @RequestParam(name = "redirect") String redirect,
-      Model model,
-      Authentication authentication) {
+      Model model) {
     logger.info("POST /form");
     String validatedName = ValidityChecker.validateGardenName(name);
     String validatedLocation = ValidityChecker.validateGardenLocation(location);
     String validatedSize = ValidityChecker.validateGardenSize(size);
     String validatedDescription = ValidityChecker.validateGardenDescription(description);
-    String currentUserEmail = authentication.getName();
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+
     boolean isValid = true;
 
-    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
     gardenerOptional.ifPresent(value -> gardener = value);
 
     String newLocation;
