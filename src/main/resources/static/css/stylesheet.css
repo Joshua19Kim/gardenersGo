@@ -228,7 +228,10 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     border-radius: 50%;
     display: flex;
     margin-left: 5px;
-    padding: 5px;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 6px;
     color: #ffffff;
     font-weight: bolder;
     justify-content: center;

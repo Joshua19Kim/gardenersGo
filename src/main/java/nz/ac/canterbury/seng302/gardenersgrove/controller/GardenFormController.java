@@ -522,14 +522,14 @@ public class GardenFormController {
    *
    * @param tag the tag to be added
    * @param id the garden id
-   * @param redirectAttributes to store the error message when redirecting
+   * @param model the model
    * @return redirects back to the garden details or add tag modal based on the tag validation
    */
   @PostMapping("gardens/addTag")
   public String addTag(
       @RequestParam(name = "tag-input") String tag,
       @RequestParam(name = "gardenId") long id,
-      RedirectAttributes redirectAttributes) {
+      Model model) {
 
     logger.info("POST /addTag");
     tag = tag.strip();
@@ -544,20 +544,25 @@ public class GardenFormController {
     Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
 
     if (validTagError.isPresent()) {
-      redirectAttributes.addFlashAttribute("tagValid", validTagError.get());
-      return "redirect:/gardens/details?gardenId=" + id;
+      model.addAttribute("tagValid", validTagError.get());
+      model.addAttribute("tag", tag);
+      model.addAttribute("garden", garden);
+      return "gardenDetailsTemplate";
     }
+
     if (tagInUse.isEmpty()) {
       if (!WordFilter.doesContainBadWords(tag)) {
         Tag newTag = new Tag(tag, gardenService.getGarden(id).get());
         tagService.addTag(newTag);
         logger.info("Tag '{}' passes moderation checks", tag);
       } else {
-        redirectAttributes.addFlashAttribute("tagValid", "Submitted tag fails moderation requirements");
-        return "redirect:/gardens/details?gardenId=" + id;
+        model.addAttribute("garden", garden);
+        model.addAttribute("tag", tag);
+        model.addAttribute("tagValid", "Submitted tag fails moderation requirements");
+        return "gardenDetailsTemplate";
       }
     }
-
+    model.addAttribute("garden", garden);
     return "redirect:/gardens/details?gardenId=" + id;
   }
 }

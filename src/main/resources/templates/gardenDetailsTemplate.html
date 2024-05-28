@@ -31,13 +31,13 @@
                         <span th:text="${tag}"></span>
                     </div>
                 </div>
-                <a id="add-tag" onclick="transformToInput()">+</a>
-                <input type="text" id="tag-input" placeholder="Add tag..." maxlength="25" onkeydown="submitTagOnEnter(event)">
+                <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'" onclick="transformToInput()">+</a>
+                <input type="text" id="tag-input" th:value="${tag != null ? tag : ''}" th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..." maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus>
                 <form id="hidden-tag-form" method="post" th:action="@{addTag}" style="display: none;">
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
                     <input type="hidden" name="gardenId" th:value="${garden.id}">
                 </form>
-                <a id="submit-tag" onclick="submitTag()">+</a>
+                <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'" onclick="submitTag()">+</a>
             </div>
             <div id="tag-error-container">
                 <p id="tag-error-message" th:value="${tagValid}" th:text="${tagValid}"></p>
@@ -209,16 +209,6 @@
         } else {
             console.log('No tag input to submit');
         }
-    }
-
-    function updateQueryStringParameter(key, value) {
-        const url = new URL(window.location);
-        if (value === 'false') {
-            url.searchParams.delete(key);
-        } else {
-            url.searchParams.set(key, value);
-        }
-        window.history.replaceState({}, '', url);
     }
 
 </script>
