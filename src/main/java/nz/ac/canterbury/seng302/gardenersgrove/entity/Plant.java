@@ -2,13 +2,11 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-import java.util.Date;
-
 /**
  * Represents a plant entity.
  */
 @Entity
+@Table(name = "plant")
 public class Plant {
     /**
      * Unique identifier for the plant.

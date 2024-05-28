@@ -6,6 +6,7 @@ import java.util.List;
 
 /** Represents a garden entity with its name, location, size, and list of plants. */
 @Entity
+@Table(name = "garden")
 public class Garden {
   /** The unique identifier for the garden. */
   @Id

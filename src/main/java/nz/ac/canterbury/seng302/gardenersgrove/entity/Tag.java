@@ -6,6 +6,7 @@ import jakarta.persistence.*;
  * A tag is a descriptive string a user can apply to their garden
  */
 @Entity
+@Table(name = "tag")
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
