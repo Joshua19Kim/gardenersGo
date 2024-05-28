@@ -1,11 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
@@ -774,8 +770,18 @@ public class GardenFormControllerTest {
         when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
 
+        PrevWeather prevWeather = Mockito.mock(PrevWeather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(prevWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(prevWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(prevWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(prevWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
         Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(weatherService.getWeather(any())).thenReturn(currentWeather);
+        when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
         GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
                 relationshipService, requestService, weatherService, tagService);

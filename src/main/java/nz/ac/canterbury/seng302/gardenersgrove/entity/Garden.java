@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,7 +58,7 @@ public class Garden {
   private boolean publicGarden;
 
   @Column
-  private Date lastNotified;
+  private LocalDate lastNotified;
 
   /** Default constructor required by JPA. */
   protected Garden() {}
@@ -276,6 +278,6 @@ public class Garden {
     this.publicGarden = isGardenPublic;
   }
 
-  public void setLastNotified(Date lastNotified){this.lastNotified = lastNotified;}
-  public Date getLastNotified(){return lastNotified;}
+  public void setLastNotified(LocalDate lastNotified){this.lastNotified = lastNotified;}
+  public LocalDate getLastNotified(){return lastNotified;}
 }

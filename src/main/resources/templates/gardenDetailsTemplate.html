@@ -173,8 +173,11 @@
         </div>
     </div>
     <div id="notification" class="notification" th:if="${wateringTip}">
-        <p th:text="${wateringTip}"></p>
-        <button onclick="closeNotification()">x</button>
+        <form id="lastNotifiedForm" method="post" th:action="@{../gardens/details/dismissNotification}"}>
+            <p th:text="${wateringTip}"></p>
+            <input th:name="gardenId" th:value="${garden.id}" type="hidden">
+            <button type="submit" onclick="closeNotification()">x</button>
+        </form>
     </div>
 </div>
 
@@ -229,6 +232,7 @@
 
     function closeNotification() {
         document.getElementById('notification').style.display = 'none';
+        // set lastNotified in this garden to the current date
     }
 
 </script>

@@ -4,6 +4,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,5 +54,11 @@ public class GardenService {
     public List<Garden> getGardensByGardenerId(Long gardenerId) {
         return gardenRepository.findByGardenerId(gardenerId);
     }
+    
+    public void updateLastNotifiedbyId(Long gardenId, LocalDate date) {
+        gardenRepository.updateLastNotifiedbyId(gardenId, date);
+
+    }
+
 }
 

@@ -96,6 +96,12 @@ public class GardenServiceTest {
             public void deleteAll() {
 
             }
+
+            @Override
+            public void updateLastNotifiedbyId(Long gardenId, LocalDate date){
+
+            }
+
         });
         gardenService.addGarden(new Garden("Botanical", "Homestead Lane", null, "Christchurch", "New Zealand", null, "100", testGardener)
         );

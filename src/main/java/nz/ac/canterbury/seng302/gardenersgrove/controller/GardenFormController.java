@@ -28,6 +28,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.net.URISyntaxException;
 
@@ -307,9 +309,19 @@ public class GardenFormController {
           model.addAttribute(
               "forecastWeatherDescription", currentWeather.getForecastDescriptions());
           model.addAttribute("forecastHumidities", currentWeather.getForecastHumidities());
+          LocalDate currentDate = LocalDate.now();
+          LocalDate lastNotifiedDate = garden.get().getLastNotified();
+          if (lastNotifiedDate != null && lastNotifiedDate.equals(currentDate)) {
+            model.addAttribute("wateringTip", null);
+          }  else {
+            if (lastNotifiedDate != null) {
+              gardenService.updateLastNotifiedbyId(parseLong(gardenId), null);
+            }
+            String wateringTip = NotificationUtil.generateWateringTip(currentWeather, prevWeathers);
+            model.addAttribute("wateringTip", wateringTip);
+          }
 
-          String wateringTip = NotificationUtil.generateWateringTip(currentWeather, prevWeathers);
-          model.addAttribute("wateringTip", wateringTip);
+
         }
         return "gardenDetailsTemplate";
       } else {
@@ -392,6 +404,23 @@ public class GardenFormController {
       }
     }
     return "redirect:/gardens";
+  }
+  @PostMapping("/gardens/details/dismissNotification")
+  public String submitNotificationForm(
+                           @RequestParam(name = "gardenId") String gardenId) {
+    logger.info("POST /gardens/details/dismissNotification");
+    if (gardenId == null) {
+      return "redirect:/gardens";
+    }
+
+    Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
+    if (garden.isPresent()) {
+      LocalDate date = LocalDate.now();
+      gardenService.updateLastNotifiedbyId(parseLong(gardenId), date);
+    }
+
+
+     return "redirect:/gardens/details?gardenId=" + gardenId;
   }
 
   /**

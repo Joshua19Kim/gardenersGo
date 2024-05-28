@@ -1,9 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,4 +39,9 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
      * @return A list of all gardens with the specified owner stored in the repository.
      */
     List<Garden> findByGardenerId(Long gardenerId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE GARDEN SET last_notified = ?2 WHERE id = ?1 ", nativeQuery = true)
+    void updateLastNotifiedbyId(Long gardenId, LocalDate date);
 }
