@@ -22,18 +22,18 @@ public interface RelationshipRepository extends CrudRepository<Relationships, Lo
      * @param id find all friends of gardener given gardener id
      * @return a list of all the accepted relationships of the user
      */
-    @Query(value = "SELECT gardener_id FROM Relationships WHERE friend_id = ?1 AND status='accepted' " +
+    @Query(value = "SELECT gardener_id FROM relationships WHERE friend_id = ?1 AND status='accepted' " +
             "UNION " +
-            "SELECT friend_id FROM Relationships WHERE gardener_id=?1 AND status='accepted'", nativeQuery = true)
+            "SELECT friend_id FROM relationships WHERE gardener_id=?1 AND status='accepted'", nativeQuery = true)
     List<Long> getGardenerFriends(Long id);
 
-    @Query(value = "Select friend_id FROM Relationships WHERE gardener_id = ?1 and status = 'pending'", nativeQuery = true)
+    @Query(value = "Select friend_id FROM relationships WHERE gardener_id = ?1 and status = 'pending'", nativeQuery = true)
     List<Long> getGardenerPending(long id);
 
-    @Query(value = "Select gardener_id FROM Relationships WHERE friend_id = ?1 and status = 'pending'", nativeQuery = true)
+    @Query(value = "Select gardener_id FROM relationships WHERE friend_id = ?1 and status = 'pending'", nativeQuery = true)
     List<Long> getGardenerIncoming(long id);
 
-    @Query(value = "Select friend_id FROM Relationships WHERE gardener_id = ?1 and status = 'declined'", nativeQuery = true)
+    @Query(value = "Select friend_id FROM relationships WHERE gardener_id = ?1 and status = 'declined'", nativeQuery = true)
     List<Long> getGardenerDeclinedRequests(long id);
 
     Optional<Relationships> findRelationshipsByGardenerIdAndFriendId(long gardenerId, long friendId);
