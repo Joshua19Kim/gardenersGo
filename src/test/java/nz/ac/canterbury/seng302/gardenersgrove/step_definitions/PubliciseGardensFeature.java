@@ -96,7 +96,6 @@ public class PubliciseGardensFeature {
         testPostcode = "9999";
         testSize = "100";
 
-
         authentication = Mockito.mock(Authentication.class);
         gardenService = Mockito.mock(GardenService.class);
         auth = new UsernamePasswordAuthenticationToken("testgardener@gmail.com", "Password1!");
@@ -124,30 +123,17 @@ public class PubliciseGardensFeature {
     }
 
     //AC2
-    @When("I add valid description of the garden, and I submit the create form")
-    public void i_add_valid_description_of_the_garden_and_i_submit_the_create_form() throws Exception {
+    @When("I add valid description of the garden")
+    public void i_add_valid_description_of_the_garden(){
         testGardenDescription = "testing description function!";
-        testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
-        testGarden.setId(testGardenId);
-        when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
-                        .param("name", testGardenName)
-                        .param("location", testStreetNumberName)
-                        .param("suburb", testSuburb)
-                        .param("city", testCity)
-                        .param("country", testCountry)
-                        .param("postcode", testPostcode)
-                        .param("size", testSize)
-                        .param("description", testGardenDescription)
-                        .param("redirect", "")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
     }
     //AC3
-    @When("I do not add any description, and I submit the create form")
-    public void i_do_not_add_any_description_and_i_submit_the_create_form() throws Exception {
+    @When("I do not add any description")
+    public void i_do_not_add_any_description() {
         testGardenDescription = "";
+    }
+    @When("I submit the create form")
+    public void i_submit_the_create_form() throws Exception {
         testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
         testGarden.setId(testGardenId);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
@@ -165,7 +151,6 @@ public class PubliciseGardensFeature {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
     }
-
     @Then("The new description is persisted.")
     public void the_new_description_is_persisted() {
         ArgumentCaptor<Garden> gardenCaptor = ArgumentCaptor.forClass(Garden.class);
@@ -173,6 +158,8 @@ public class PubliciseGardensFeature {
         List<Garden> addGarden = gardenCaptor.getAllValues();
         assertEquals(testGardenDescription, addGarden.getFirst().getDescription());
     }
+
+
 
     @Given("I am on the Edit Garden form for one of the existing garden")
     public void i_am_on_the_edit_garden_form_for_one_of_the_existing_garden() {
@@ -182,10 +169,18 @@ public class PubliciseGardensFeature {
         when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
     }
 
-    @When("I add valid description of the garden, and I submit the edit form")
-    public void i_add_valid_description_of_the_garden_and_i_submit_the_edit_form() throws Exception {
+    @When("I add valid description of the garden to update")
+    public void i_add_valid_description_of_the_garden_to_update() {
         testGardenDescription = "Original description!";
         editTestGardenDescription = "Updated description!!!!!!!!!!!!!!!!!!";
+    }
+    @When("I delete the current description and leave it empty to update")
+    public void i_delete_the_current_description_and_leave_it_empty_to_update() {
+        testGardenDescription = "Original description!";
+        editTestGardenDescription = "";
+    }
+    @When("I submit the edit form")
+    public void i_submit_the_edit_form() throws Exception {
         testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
         testGarden.setId(testGardenId);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(testGarden));
@@ -213,33 +208,9 @@ public class PubliciseGardensFeature {
         assertEquals(editTestGardenDescription, addGarden.getFirst().getDescription());
     }
 
-    @When("I do not add any description, and I submit the edit form")
-    public void i_do_not_add_any_description_and_i_submit_the_edit_form() throws Exception {
-        testGardenDescription = "Original description!";
-        editTestGardenDescription = "";
-        testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
-        testGarden.setId(testGardenId);
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(testGarden));
-        when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
-        when(gardenService.getGardensByGardenerId(any())).thenReturn(List.of(testGarden));
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/edit")
-                        .param("name", testGardenName)
-                        .param("location", testStreetNumberName)
-                        .param("suburb", testSuburb)
-                        .param("city", testCity)
-                        .param("country", testCountry)
-                        .param("postcode", testPostcode)
-                        .param("size", testSize)
-                        .param("description", editTestGardenDescription)
-                        .param("gardenId", String.valueOf(testGardenId))
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-    }
 
-
-    @When("I add invalid {string} of the garden, and I submit the create form")
-    public void i_add_invalid_of_the_garden_and_i_submit_the_create_form(String description) throws Exception {
+    @When("I submit the create form with invalid {string} of the garden")
+    public void i_submit_the_create_form_with_invalid_of_the_garden(String description) throws Exception {
         testGardenDescription = description;
         testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
         testGarden.setId(testGardenId);
@@ -258,8 +229,8 @@ public class PubliciseGardensFeature {
                 .andExpect(status().isOk())
                 .andReturn();
     }
-    @Then("The error message comes up.")
-    public void the_error_message_comes_up() {
+    @Then("The error message for invalid description comes up.")
+    public void the_error_message_for_invalid_description_comes_up() {
         MockHttpServletRequest request = result.getRequest();
         String descriptionError = (String) request.getAttribute("descriptionError");
         assertTrue(
@@ -267,8 +238,8 @@ public class PubliciseGardensFeature {
                         "Description must be 512 characters or less and contain some text".equals(descriptionError));
     }
 
-    @When("I add {string} with some bad words for the garden description, and I submit the create form")
-    public void i_add_with_some_bad_words_for_the_garden_description_and_i_submit_the_create_form(String description) throws Exception {
+    @When("I submit the create form with {string} including bad words for the garden description")
+    public void i_submit_the_create_form_with_including_bad_words_for_the_garden_description(String description) throws Exception {
         testGardenDescription = description;
         testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
         testGarden.setId(testGardenId);
