@@ -44,5 +44,9 @@ Scenario Outline: #AC7
   When I add <description> with some bad words for the garden description, and I submit the create form
   Then The error message for inappropriate words comes up.
   Examples:
-    | description                   |
-    | "The fucking greatest garden" |
+    | description                                                  |
+    | "The fucking greatest garden"                                |
+    | "Gilipollas dont know the meaning? but definitely bad words" |
+    | "this is bad word fotze as well" |
+    | "from danish, pikhår." |
+
