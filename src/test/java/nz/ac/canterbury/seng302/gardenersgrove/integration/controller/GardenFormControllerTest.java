@@ -1137,7 +1137,7 @@ public class GardenFormControllerTest {
         when(prevWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
 
-        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(weatherService.getWeather(any())).thenReturn(currentWeather);
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
@@ -1182,7 +1182,7 @@ public class GardenFormControllerTest {
         when(prevWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
 
-        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(weatherService.getWeather(any())).thenReturn(currentWeather);
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
@@ -1227,7 +1227,7 @@ public class GardenFormControllerTest {
         when(prevWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
 
-        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         LocalDate currentDate = LocalDate.now();
         garden.setLastNotified(currentDate);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -1274,7 +1274,7 @@ public class GardenFormControllerTest {
         when(prevWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
 
-        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         LocalDate currentDate = LocalDate.now();
         garden.setLastNotified(currentDate);
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
