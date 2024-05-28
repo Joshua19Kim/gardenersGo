@@ -529,7 +529,7 @@ public class GardenFormController {
   public String addTag(
       @RequestParam(name = "tag-input") String tag,
       @RequestParam(name = "gardenId") long id,
-      Model model) {
+      Model model) throws IOException, URISyntaxException {
 
     logger.info("POST /addTag");
     tag = tag.strip();
@@ -539,13 +539,26 @@ public class GardenFormController {
       return "redirect:/gardens";
     }
     Garden garden = gardenOptional.get();
-
     Optional<String> validTagError = tagValidation.validateTag(tag);
     Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
+
+    Weather currentWeather = weatherService.getWeather(garden.getLocation());
+    model.addAttribute("date", currentWeather.getDate());
+    model.addAttribute("temperature", currentWeather.getTemperature());
+    model.addAttribute("weatherImage", currentWeather.getWeatherImage());
+    model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
+    model.addAttribute("humidity", currentWeather.getHumidity());
+    model.addAttribute("forecastDates", currentWeather.getForecastDates());
+    model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
+    model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
+    model.addAttribute(
+            "forecastWeatherDescription", currentWeather.getForecastDescriptions());
+    model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
 
     if (validTagError.isPresent()) {
       model.addAttribute("tagValid", validTagError.get());
       model.addAttribute("tag", tag);
+      model.addAttribute("tags", tagService.getTags(garden.getId()));
       model.addAttribute("garden", garden);
       return "gardenDetailsTemplate";
     }
@@ -558,6 +571,7 @@ public class GardenFormController {
       } else {
         model.addAttribute("garden", garden);
         model.addAttribute("tag", tag);
+        model.addAttribute("tags", tagService.getTags(garden.getId()));
         model.addAttribute("tagValid", "Submitted tag fails moderation requirements");
         return "gardenDetailsTemplate";
       }
