@@ -499,10 +499,13 @@ public class GardenFormController {
       model.addAttribute("countryError", "Country is required.");
       isValid = false;
     }
-      if (!Objects.equals(description, validatedDescription)) {
+      if (!Objects.equals(description, validatedDescription) && !description.trim().isEmpty()) {
           model.addAttribute("descriptionError", validatedDescription);
           isValid = false;
       }
+    if(description.trim().isEmpty()) {
+      description = "";
+    }
 
     if (isValid) {
       Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
@@ -566,6 +569,14 @@ public class GardenFormController {
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
       model.addAttribute("requestURI", requestService.getRequestURI(request));
+      model.addAttribute("name", garden.get().getName());
+      model.addAttribute("description", garden.get().getDescription());
+      model.addAttribute("size", garden.get().getSize().replace(',', '.'));
+      model.addAttribute("location", garden.get().getLocation());
+      model.addAttribute("suburb", garden.get().getSuburb());
+      model.addAttribute("city", garden.get().getCity());
+      model.addAttribute("country", garden.get().getCountry());
+      model.addAttribute("postcode", garden.get().getPostcode());
       model.addAttribute("garden", garden.get());
       return "editGardensFormTemplate";
     } else {

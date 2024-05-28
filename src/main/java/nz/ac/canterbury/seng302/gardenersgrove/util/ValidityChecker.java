@@ -47,13 +47,19 @@ public class ValidityChecker {
         if (description.length() == 0) {
             return description;
         }
-//        https://stackoverflow.com/questions/14101775/regex-to-check-the-string-contains-least-one-alphabet-or-digit
-        String regex = "^(?=.*[A-Za-zÀ-ÖØ-öø-ž]).+";
+        String regex = "^(?=.*[\\p{L}]).+";
         if (!description.matches(regex)) {
             return "Description must be 512 characters or less and contain some text";
         }
         if (description.length() > 512) {
             return "Garden description must be less than 512 characters";
+        }
+        String[] descriptionWords = description.split("\\s+");
+
+        for (String word : descriptionWords) {
+            if (WordFilter.doesContainBadWords(word)) {
+                return "The description does not match the language standards of the app.";
+            }
         }
 
         return description;
