@@ -554,6 +554,7 @@ public class GardenFormController {
     model.addAttribute(
             "forecastWeatherDescription", currentWeather.getForecastDescriptions());
     model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
+    model.addAttribute("gardens", gardenService.getGardensByGardenerId(garden.getGardener().getId()));
 
     if (validTagError.isPresent()) {
       model.addAttribute("tagValid", validTagError.get());
