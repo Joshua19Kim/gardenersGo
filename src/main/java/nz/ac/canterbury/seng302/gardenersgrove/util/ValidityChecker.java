@@ -47,8 +47,7 @@ public class ValidityChecker {
         if (description.length() == 0) {
             return description;
         }
-//        https://stackoverflow.com/questions/14101775/regex-to-check-the-string-contains-least-one-alphabet-or-digit
-        String regex = "^(?=.*[A-Za-zÀ-ÖØ-öø-ž]).+";
+        String regex = "^(?=.*[\\p{L}]).+";
         if (!description.matches(regex)) {
             return "Description must be 512 characters or less and contain some text";
         }
