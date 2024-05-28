@@ -155,7 +155,7 @@ public class GardenFormControllerTest {
     @WithMockUser
     public void EditedGardenDetailsSubmitted_ValidValuesWithSize_GardenDetailsUpdated()
             throws Exception {
-        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "100", testGardener, "");
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "100", testGardener, "the greatest garden");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
         when(gardenService.addGarden(garden)).thenReturn(garden);
         mockMvc
@@ -169,7 +169,7 @@ public class GardenFormControllerTest {
                                 .param("country", "New Zealand")
                                 .param("postcode", "8888")
                                 .param("size", "12")
-                                .param("description", ""))
+                                .param("description", "the greatest garden"))
                                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
@@ -183,6 +183,7 @@ public class GardenFormControllerTest {
         Assertions.assertEquals("New Zealand", garden.getCountry());
         Assertions.assertEquals("8888", garden.getPostcode());
         Assertions.assertEquals("12", garden.getSize());
+        Assertions.assertEquals("the greatest garden", garden.getDescription());
     }
 
     @Test
@@ -427,6 +428,34 @@ public class GardenFormControllerTest {
 
     @Test
     @WithMockUser
+    public void EditedGardenDetailsSubmitted_WithBadWord_ErrorMessageAddedAndViewUpdated() throws Exception {
+        String badWordDescription = "this is fucking great garden";
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "999", testGardener, "");
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        when(gardenService.getGardensByGardenerId(any())).thenReturn(List.of(garden));
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/edit")
+                                .param("gardenId", "1")
+                                .param("name", "Rose Garden")
+                                .param("location", "88 test address")
+                                .param("suburb", "Ilam")
+                                .param("city", "")
+                                .param("country", "New Zealand")
+                                .param("postcode", "8888")
+                                .param("description", badWordDescription)
+                                .param("size", "9"))
+                                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("editGardensFormTemplate"))
+                .andExpect(model().attributeExists("descriptionError", "name", "location", "suburb", "country", "postcode", "size"))
+                .andExpect(model().attribute("descriptionError", "The description does not match the language standards of the app."));
+        verify(gardenService, never()).addGarden(any(Garden.class));
+
+    }
+    @Test
+    @WithMockUser
     public void GardenFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
         List<Garden> gardens = new ArrayList<>();
         gardens.add(new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, ""));
@@ -501,6 +530,41 @@ public class GardenFormControllerTest {
 
         verify(gardenService, times(1)).addGarden(any(Garden.class));
     }
+
+    @Test
+    @WithMockUser
+    public void CreateGardenFormSubmitted_ValidInputsWithBadWordDescription_ErrorMessageAddedViewUpdate() throws Exception {
+        String name = "Test garden";
+        String location = "";
+        String suburb = "";
+        String city = "Christchurch";
+        String country = "New Zealand";
+        String postcode = "";
+        String size = "1.0";
+        String badWordDescription = "This is fuckking greatest garden";
+
+        Garden garden = new Garden("Test garden", "", "", "Christchurch", "New Zealand", "", "1.0", testGardener, "The greatest garden.");
+        garden.setId(1L);
+        when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+                        .param("name", name)
+                        .param("location", location)
+                        .param("suburb", suburb)
+                        .param("city", city)
+                        .param("country", country)
+                        .param("postcode", postcode)
+                        .param("size", size)
+                        .param("redirect", "")
+                        .param("description", badWordDescription)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("descriptionError", "name", "location", "suburb", "country", "postcode", "size"))
+                .andExpect(model().attribute("descriptionError", "The description does not match the language standards of the app."));
+
+        verify(gardenService, never()).addGarden(any(Garden.class));
+    }
+
+
 
     @Test
     @WithMockUser

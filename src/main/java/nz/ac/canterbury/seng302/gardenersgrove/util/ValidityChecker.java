@@ -55,6 +55,13 @@ public class ValidityChecker {
         if (description.length() > 512) {
             return "Garden description must be less than 512 characters";
         }
+        String[] descriptionWords = description.split("\\s+");
+
+        for (String word : descriptionWords) {
+            if (WordFilter.doesContainBadWords(word)) {
+                return "The description does not match the language standards of the app.";
+            }
+        }
 
         return description;
     }
