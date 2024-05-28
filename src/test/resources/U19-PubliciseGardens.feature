@@ -39,4 +39,10 @@ Scenario Outline: #AC6
 #  598 letters
     | "aaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkakfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfasfgafdgadfhyfsafdbafdhbdafasakjhsdfljahsdflkjhasdflkjahsdflkjahslkfdjhalkdsjfhlkajvlkjdsabkuiibbboasjhdflkjahsdkjfdf" |
 
-
+Scenario Outline: #AC7
+  Given I on Create New Garden form
+  When I add <description> with some bad words for the garden description, and I submit the create form
+  Then The error message for inappropriate words comes up.
+  Examples:
+    | description                   |
+    | "The fucking greatest garden" |

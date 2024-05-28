@@ -264,11 +264,36 @@ public class PubliciseGardensFeature {
         String descriptionError = (String) request.getAttribute("descriptionError");
         assertTrue(
                 "Garden description must be less than 512 characters".equals(descriptionError) ||
-                        "Description must be 512 characters or less and contain some text".equals(descriptionError),
-                "Unexpected descriptionError: " + descriptionError
-        );    }
+                        "Description must be 512 characters or less and contain some text".equals(descriptionError));
+    }
 
+    @When("I add {string} with some bad words for the garden description, and I submit the create form")
+    public void i_add_with_some_bad_words_for_the_garden_description_and_i_submit_the_create_form(String description) throws Exception {
+        testGardenDescription = description;
+        testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
+        testGarden.setId(testGardenId);
+        when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
+        result = mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+                        .param("name", testGardenName)
+                        .param("location", testStreetNumberName)
+                        .param("suburb", testSuburb)
+                        .param("city", testCity)
+                        .param("country", testCountry)
+                        .param("postcode", testPostcode)
+                        .param("size", testSize)
+                        .param("description", testGardenDescription)
+                        .param("redirect", "")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
 
+    @Then("The error message for inappropriate words comes up.")
+    public void the_error_message_for_inappropriate_words_comes_up() {
+        MockHttpServletRequest request = result.getRequest();
+        String descriptionError = (String) request.getAttribute("descriptionError");
+        assertEquals("The description does not match the language standards of the app.", descriptionError);
+    }
 
 
 }
