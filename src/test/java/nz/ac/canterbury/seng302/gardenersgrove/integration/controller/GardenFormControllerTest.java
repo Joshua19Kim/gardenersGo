@@ -203,8 +203,8 @@ public class GardenFormControllerTest {
                         (MockMvcRequestBuilders.post("/gardens/details?gardenId=1")
                                 .param("isGardenPublic", "true")
                                 .with(csrf())))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardenDetailsTemplate"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
         Assertions.assertTrue(garden.getIsGardenPublic());
@@ -229,8 +229,8 @@ public class GardenFormControllerTest {
                         (MockMvcRequestBuilders.post("/gardens/details?gardenId=1")
                                 .param("isGardenPublic", "false")
                                 .with(csrf())))
-                .andExpect(status().isOk())
-                .andExpect(view().name("gardenDetailsTemplate"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
         Assertions.assertFalse(garden.getIsGardenPublic());
