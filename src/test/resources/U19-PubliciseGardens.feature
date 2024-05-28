@@ -26,10 +26,15 @@ Scenario: #AC5
   When I do not add any description, and I submit the edit form
   Then The updated description is persisted.
 
-#Scenario Outline: #AC6
-#  Given I on Create New Garden form
-#  When I add invalid <description> of the garden, and I submit the create form
-#  Then The error message comes up.
-#  Examples:
-#    | description     |
-#    | "#$^#$^"        |
+Scenario Outline: #AC6
+  Given I on Create New Garden form
+  When I add invalid <description> of the garden, and I submit the create form
+  Then The error message comes up.
+  Examples:
+    | description                               |
+#  Only special characters
+    | "#$^#$^"                                  |
+#  513 letters
+    | "aaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkakfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfasfgafdgadfhyfsafdbafdhbdafasdfs" |
+# 598 letters
+    | "aaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkakfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfasfgafdgadfhyfsafdbafdhbdafasakjhsdfljahsdflkjhasdflkjahsdflkjahslkfdjhalkdsjfhlkajvlkjdsabkuiibbboasjhdflkjahsdkjfdf" |

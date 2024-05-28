@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
@@ -36,10 +38,12 @@ import java.util.Optional;
 
 import static java.lang.Long.parseLong;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.util.AssertionErrors.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -76,6 +80,7 @@ public class PubliciseGardensFeature {
     private String editTestGardenDescription;
     private Garden testGarden;
     private  Authentication auth;
+    private MvcResult result;
 
     @Before
     public void setUp() {
@@ -239,7 +244,7 @@ public class PubliciseGardensFeature {
         testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
         testGarden.setId(testGardenId);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+        result = mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", testGardenName)
                         .param("location", testStreetNumberName)
                         .param("suburb", testSuburb)
@@ -250,17 +255,18 @@ public class PubliciseGardensFeature {
                         .param("description", testGardenDescription)
                         .param("redirect", "")
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn();
     }
-//    @Then("The error message comes up.")
-//    public void the_error_message_comes_up() {
-////        ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
-//        Model model = Mockito.mock(Model.class);
-//        verify(model, Mockito.times(1)).addAttribute("descriptionError", eq(anyString()));
-////        List<String> errorMessage = stringCaptor.getAllValues();
-////        assertEquals("Description must be 512 characters or less and contain some text", errorMessage);
-//
-//    }
+    @Then("The error message comes up.")
+    public void the_error_message_comes_up() {
+        MockHttpServletRequest request = result.getRequest();
+        String descriptionError = (String) request.getAttribute("descriptionError");
+        assertTrue(
+                "Garden description must be less than 512 characters".equals(descriptionError) ||
+                        "Description must be 512 characters or less and contain some text".equals(descriptionError),
+                "Unexpected descriptionError: " + descriptionError
+        );    }
 
 
 
