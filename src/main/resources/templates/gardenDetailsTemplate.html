@@ -30,7 +30,7 @@
                         <input th:name="tag-input" id="tag-input" type="text" placeholder="Add tag..." maxlength="25"
                                th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
                         <input th:name="gardenId" th:value="${garden.id}" type="hidden">
-                        <button id="search-button" type="submit">Submit</button>
+                        <button id="search-button" type="submit"><i class="fa fa-search">Submit</i></button>
                     </form>
                     <br/>
                     <p class="smallErrorMessage" th:text="${tagValid}"></p>
