@@ -18,7 +18,7 @@
                 Plant</a>
         </h1>
 
-        <div class="garden-details">
+        <div class="left-details-container">
             <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
             <p><strong>Location:</strong> <span th:text="${garden.location +', ' + garden.city +', '+ garden.country}"></span></p>
             <p>
@@ -221,8 +221,8 @@
         window.history.replaceState({}, '', url);
     }
 
-
 </script>
 
 </body>
 </html>
+
