@@ -7,6 +7,7 @@ import jakarta.persistence.*;
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
 @Entity
+@Table(name = "relationships")
 public class Relationships {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
