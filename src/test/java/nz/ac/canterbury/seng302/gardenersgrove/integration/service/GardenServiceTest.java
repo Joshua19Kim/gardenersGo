@@ -103,7 +103,8 @@ public class GardenServiceTest {
             }
 
         });
-        gardenService.addGarden(new Garden("Botanical", "Homestead Lane", null, "Christchurch", "New Zealand", null, "100", testGardener)
+        gardenService.addGarden(new Garden("Botanical",
+                "Homestead Lane", null, "Christchurch", "New Zealand", null, "100", testGardener, "")
         );
     }
 
@@ -113,7 +114,8 @@ public class GardenServiceTest {
     @Test
     public void GardenAdded_ValidInputs_GardenReturned() {
         GardenService gardenService = new GardenService(gardenRepository);
-        Garden garden = gardenService.addGarden(new Garden("Botanical", "Homestead Lane", null, "Christchurch", "New Zealand", null, "100", testGardener));
+        Garden garden = gardenService.addGarden(new Garden("Botanical",
+                "Homestead Lane", null, "Christchurch", "New Zealand", null, "100", testGardener, ""));
         Assertions.assertEquals(garden.getName(), "Botanical");
         Assertions.assertEquals(garden.getLocation(), "Homestead Lane");
         Assertions.assertEquals(garden.getSize(), "100");

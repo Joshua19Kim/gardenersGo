@@ -36,10 +36,10 @@ INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'Chch Garden','1 Molesworth Street', 'Pipitea', 'Wellington','New Zealand', '6011', '300', false);
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'Council Garden','53 Hereford Street', null, 'Christchurch','New Zealand', '8154', '15', false);
 
-INSERT INTO garden (gardener_id, name, location, city, country, size, PUBLIC_GARDEN) VALUES (1, 'Garden', 'Christchurch', 'Christchurch', 'New Zealand', '32', false);
-INSERT INTO garden (gardener_id, name, location, city, country, size, PUBLIC_GARDEN) VALUES (1, 'Vegetable Garden', 'Kitchen Garden', 'Christchurch', 'New Zealand', '35', false);
-INSERT INTO garden (gardener_id, name, location, city, country, size, PUBLIC_GARDEN) VALUES (1, 'Fruit Garden', 'Backyard', 'Christchurch', 'New Zealand', '0', false);
-INSERT INTO garden (gardener_id, name, location, city, country, size, PUBLIC_GARDEN) VALUES (1, 'Herb Garden', 'Windowsill', 'Christchurch', 'New Zealand', '10', false);
+-- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Garden', 'Christchurch', '32', false);
+-- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Vegetable Garden', 'Kitchen Garden', '35', false);
+-- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Fruit Garden', 'Backyard', '0', false);
+-- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Herb Garden', 'Windowsill', '10', false);
 
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('My Plant', 1, '2', 'Rose', '/images/placeholder.jpg');
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('My Plant 2', 1, '29', 'Daisy', '/images/placeholder.jpg');
@@ -62,11 +62,6 @@ INSERT INTO plant (name, garden_id, count, description, date_planted, image) VAL
 INSERT INTO plant (name, garden_id, count, description, date_planted, image) VALUES ('Cactus', 3, '0', 'Low-maintenance succulent', '11/11/2001', '/images/placeholder.jpg');
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Fern', 3, '18', 'Shade-loving foliage plant', '/images/placeholder.jpg');
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('Rosemary', 3, '9', 'Aromatic herb for seasoning', '/images/placeholder.jpg');
-
--- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Tomato Patch', 'Home', '32', false);
--- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Strawberry Garden', 'Kitchen Garden', '35', false);
--- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (2, 'Big Garden', 'Backyard', '0', false);
--- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (3, 'Long Garden', 'Windowsill', '10', false);
 
 ALTER TABLE relationships ADD CONSTRAINT unique_gardener_friend UNIQUE (gardener_id, friend_id);
 

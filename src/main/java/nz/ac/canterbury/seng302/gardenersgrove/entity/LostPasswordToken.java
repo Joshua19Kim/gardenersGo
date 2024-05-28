@@ -1,10 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,6 +11,7 @@ import java.util.Date;
  * Inspired by https://www.baeldung.com/spring-security-registration-i-forgot-my-password
  */
 @Entity
+@Table(name = "lost_password_token")
 public class LostPasswordToken {
     // 10 minute expiry
     private static final int EXPIRATION = 10;

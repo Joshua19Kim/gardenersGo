@@ -9,6 +9,7 @@ import java.util.List;
 
 /** Represents a garden entity with its name, location, size, and list of plants. */
 @Entity
+@Table(name = "garden")
 public class Garden {
   /** The unique identifier for the garden. */
   @Id
@@ -44,6 +45,10 @@ public class Garden {
   @Column(length=12)
   private String size;
 
+  /** The description of the garden. */
+  @Column(length=512)
+  private String description;
+
   /** The list of plants in the garden. */
   @OneToMany(mappedBy = "garden")
   private List<Plant> plants;
@@ -76,8 +81,7 @@ public class Garden {
    * @param postcode The postcode of the garden.
    * @param gardener The gardener id for the garden.
    */
-
-  public Garden(String name, String location, String suburb, String city, String country, String postcode, Gardener gardener) {
+  public Garden(String name, String location, String suburb, String city, String country, String postcode, Gardener gardener, String description) {
     this.name = name;
     this.location = location;
     this.suburb = suburb;
@@ -85,6 +89,7 @@ public class Garden {
     this.country = country;
     this.postcode = postcode;
     this.gardener = gardener;
+    this.description = description;
     plants = new ArrayList<>();
     this.publicGarden = false; // Defaults to private
     this.lastNotified = null; // Defaults to null
@@ -101,7 +106,7 @@ public class Garden {
    * @param size The size of the garden.
    * @param gardener The gardener id for the garden.
    */
-  public Garden(String name, String location, String suburb, String city, String country, String postcode, String size, Gardener gardener) {
+  public Garden(String name, String location, String suburb, String city, String country, String postcode, String size, Gardener gardener, String description) {
     this.name = name;
     this.location = location;
     this.suburb = suburb;
@@ -110,6 +115,7 @@ public class Garden {
     this.postcode = postcode;
     this.size = size;
     this.gardener = gardener;
+    this.description = description;
     plants = new ArrayList<>();
     this.publicGarden = false; // Defaults to private
     this.lastNotified = null; // Defaults to null
@@ -214,23 +220,41 @@ public class Garden {
     return publicGarden;
   }
 
+    /**
+     * Retrieves the garden description.
+     *
+     * @return The garden description.
+     */
+    public String getDescription() {
+        return description;
+    }
+
   /**
    * Sets the name of the garden
+   *
    * @param name the name of the garden
    */
-  public void setName(String name) {this.name = name;}
+  public void setName(String name) {
+    this.name = name;
+  }
 
   /**
    * Sets the size of the garden
+   *
    * @param size the size of the garden
    */
-  public void setSize(String size) {this.size = size; }
+  public void setSize(String size) {
+    this.size = size;
+  }
 
   /**
    * Sets the location of the garden
+   *
    * @param location the location of the garden
    */
-  public void setLocation(String location) {this.location = location;}
+  public void setLocation(String location) {
+    this.location = location;
+  }
 
   /**
    * Sets the suburb of the garden
@@ -261,13 +285,18 @@ public class Garden {
    *
    * @param gardener The owner of the garden.
    */
-  public void setGardener(Gardener gardener) {this.gardener = gardener;}
+  public void setGardener(Gardener gardener) {
+    this.gardener = gardener;
+  }
 
   /**
    * Sets the id of the garden
+   *
    * @param id the garden id
    */
-  public void setId(Long id) {this.id = id;}
+  public void setId(Long id) {
+      this.id = id;
+  }
 
   /**
    * Sets the publicity status of the garden
@@ -280,4 +309,13 @@ public class Garden {
 
   public void setLastNotified(LocalDate lastNotified){this.lastNotified = lastNotified;}
   public LocalDate getLastNotified(){return lastNotified;}
+
+    /**
+     * Sets the description of the garden
+     *
+     * @param description the description of the garden
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
