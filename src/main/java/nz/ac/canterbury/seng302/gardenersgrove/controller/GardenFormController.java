@@ -483,7 +483,13 @@ public class GardenFormController {
     }
 
     if (isValid) {
+      logger.info(validatedLocation);
       Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
+      logger.info(existingGarden.getLocation());
+      if (!existingGarden.getLocation().equals(validatedLocation)){
+        gardenService.updateLastNotifiedbyId(parseLong(gardenId), null);
+      }
+
       existingGarden.setName(name);
       existingGarden.setLocation(location);
       existingGarden.setSuburb(suburb);
