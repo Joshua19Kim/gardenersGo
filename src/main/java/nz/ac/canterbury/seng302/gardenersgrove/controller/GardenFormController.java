@@ -183,7 +183,6 @@ public class GardenFormController {
       Model model) {
     logger.info("POST /form");
     String validatedName = ValidityChecker.validateGardenName(name);
-    String validatedLocation = ValidityChecker.validateGardenLocation(location);
     String validatedSize = ValidityChecker.validateGardenSize(size);
     String validatedDescription = ValidityChecker.validateGardenDescription(description);
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
@@ -379,11 +378,7 @@ public class GardenFormController {
       existingGarden.setIsGardenPublic(isGardenPublic);
       gardenService.addGarden(existingGarden);
 
-      String requestUri = request.getRequestURI();
-      String queryString = request.getQueryString();
-      if (queryString != null) {
-        requestUri = requestUri + "?" + queryString;
-      }
+      String requestUri = requestService.getRequestURI(request);
       model.addAttribute("requestURI", requestUri);
 
       model.addAttribute("garden", garden.get());
@@ -437,7 +432,6 @@ public class GardenFormController {
       HttpServletRequest request) {
     logger.info("POST gardens/edit");
     String validatedName = ValidityChecker.validateGardenName(name);
-    String validatedLocation = ValidityChecker.validateGardenLocation(location);
     String validatedSize = ValidityChecker.validateGardenSize(size);
     String validatedDescription = ValidityChecker.validateGardenDescription(description);
 
