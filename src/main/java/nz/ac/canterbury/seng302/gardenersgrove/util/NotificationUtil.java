@@ -6,7 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.PrevWeather;
 public class NotificationUtil {
 
   public static String generateWateringTip(Weather currentWeather, PrevWeather prevWeather) {
-    String currDescription = (currentWeather.getForecastDescriptions().get(0)).toLowerCase();
+    String currDescription = (currentWeather.getWeatherDescription()).toLowerCase();
     String prev1Description = (prevWeather.getForecastDescriptions().get(0)).toLowerCase();
     String prev2Description = (prevWeather.getForecastDescriptions().get(1)).toLowerCase();
     if (currDescription.contains("rain")) {

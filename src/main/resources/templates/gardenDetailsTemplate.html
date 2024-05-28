@@ -173,12 +173,13 @@
         </div>
     </div>
     <div id="notification" class="notification" th:if="${wateringTip}">
-        <form id="lastNotifiedForm" method="post" th:action="@{../gardens/details/dismissNotification}"}>
-            <p th:text="${wateringTip}"></p>
+        <p th:text="${wateringTip}"></p>
+        <form id="lastNotifiedForm" method="post" th:action="@{../gardens/details/dismissNotification}">
             <input th:name="gardenId" th:value="${garden.id}" type="hidden">
-            <button type="submit" onclick="closeNotification()">x</button>
+            <button type="submit" onclick="closeNotification()" class="close-button">x</button>
         </form>
     </div>
+
 </div>
 
 <script>
