@@ -1109,11 +1109,11 @@ form.search-bar::after {
 }
 
 .create-garden-button {
-    width: 25% !important;
+    width: 100% !important;
 }
 
 .create-garden-cancel {
-    width: 25% !important;
+    width: 100% !important;
 }
 
 .autocomplete-container {
@@ -1207,22 +1207,8 @@ form.search-bar::after {
     margin-right: 0;
 }
 
-.create-garden-button {
-    width: 25% !important;
-}
-
-.create-garden-cancel {
-    width: 25% !important;
-}
 
 .create-garden-row > div:last-child {
     margin-right: 0;
 }
 
-.create-garden-button {
-    width: 25% !important;
-}
-
-.create-garden-cancel {
-    width: 25% !important;
-}
