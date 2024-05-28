@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.step_definitions;
+package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
