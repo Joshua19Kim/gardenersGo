@@ -40,7 +40,7 @@ public class NotificationUtilTest {
                     "Clear: "
             },
             delimiter = ':')
-    public void GetCurrentWeather_CurrentlyRaining_RainNotificationReturned(String description, String expectedMessage) throws Exception {
+    public void GetWeather_BasedOnDescription_NotificationReturned(String description, String expectedMessage) throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
         String[] forecastImages = new String[] {"image1", "image2", "image3"};
@@ -69,12 +69,6 @@ public class NotificationUtilTest {
         when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
 
         String result = NotificationUtil.generateWateringTip(currentWeather, prevWeather);
-        logger.info(currentWeather.getWeatherDescription());
-        logger.info(prevWeather.getForecastDescriptions().get(0));
-        logger.info(prevWeather.getForecastDescriptions().get(1));
-
-
-        logger.info(result);
         if (expectedMessage == null) {
             assertFalse(result.isEmpty());
         } else {

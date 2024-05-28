@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unit.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.PrevWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import org.junit.jupiter.api.Assertions;
@@ -49,4 +50,27 @@ public class WeatherServiceTest {
 
         Assertions.assertNull(actualWeather);
     }
+
+    @Test
+    public void getPreviousWeather_ValidLocation_WeatherReturned() throws IOException, URISyntaxException {
+        String location = "Auckland";
+        PrevWeather expectedWeather = new PrevWeather();
+        when(objectMapper.readValue(any(URL.class), eq(PrevWeather.class))).thenReturn(expectedWeather);
+        PrevWeather actualWeather = weatherService.getPrevWeather(location);
+
+        Assertions.assertEquals(expectedWeather, actualWeather);
+
+    }
+
+    @Test
+    public void getPreviousWeather_InvalidLocation_NullReturned() throws IOException, URISyntaxException {
+        String location = "12345";
+
+        when(objectMapper.readValue(any(URL.class), eq(PrevWeather.class))).thenThrow(IOException.class);
+
+        PrevWeather actualWeather = weatherService.getPrevWeather(location);
+
+        Assertions.assertNull(actualWeather);
+    }
+
 }
