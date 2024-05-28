@@ -27,17 +27,18 @@
                  th:classappend="${sizeError} ? 'error' : ''">
           <span th:if="${sizeError}" th:text="${sizeError}" class="smallErrorMessage"></span>
         </div>
-        <div>
-          <label for="description"> Description: </label>
-          <input type="text" class="form-control" id="description" maxlength="512" placeholder=""
-                 th:name="description" th:value="*{description}" data-cy="description" autofocus
-                 th:classappend="${descriptionError} ? 'error' : ''">
-          <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
-        </div>
-        <br/>
       </div>
 
-
+      <div>
+        <br/>
+        <label for="description"> Description: </label>
+        <br/>
+        <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
+        <textarea class="form-control" th:value="*{description}" id="description" name="description" maxlength="512" placeholder=""
+                  th:name="description" data-cy="description" autofocus
+                  th:classappend="${descriptionError} ? 'error' : ''">[[${description}]]</textarea>
+        <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
+      </div>
       <div>
         <div style="display: flex; margin-top: 40px; justify-content: flex-end;">
           <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
@@ -53,11 +54,8 @@
             <div class="autocomplete-results" id="autocomplete-results"></div>
           </div>
         </div>
-
+        <br/>
       </div>
-
-
-
 
       <div class="autocomplete-container">
         <div class="create-garden-row">
@@ -73,9 +71,9 @@
             <span th:if="${cityError}" th:text="${cityError}" class="smallErrorMessage"></span>
 
           </div>
-          <br/>
-        </div>
 
+        </div>
+        <br/>
         <div class="create-garden-row">
           <div>
             <label for="country">Country:</label>
@@ -87,10 +85,9 @@
             <label for="postcode">Postcode:</label>
             <input type="text" id="postcode" th:name="postcode" th:value="*{postcode}">
             <span th:if="${postcodeError}" th:text="${postcodeError}" class="smallErrorMessage"></span>
-
           </div>
-          <br/>
         </div>
+        <br/>
       </div>
 
       <script th:src="@{/javascript/locationAutocomplete.js}"></script>
@@ -112,6 +109,36 @@
         }
       }
     });
+
+  </script>
+  <script type="text/javascript">
+    const txHeight = 16;
+    const tx = document.getElementsByTagName("textarea");
+    for (let i = 0; i < tx.length; i++) {
+      if (tx[i].value === '') {
+        tx[i].setAttribute("style", "height:" + txHeight + "px;overflow-y:hidden;");
+      } else {
+        tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+      }
+      tx[i].addEventListener("input", OnInput, false);
+      document.addEventListener('DOMContentLoaded', function() {
+        updateCharacterCount();
+      });
+      document.addEventListener('input', function() {
+        updateCharacterCount();
+      });
+
+    }
+
+    function OnInput() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + "px";
+    }
+    function updateCharacterCount() {
+      var textarea = document.getElementById("description");
+      var characterCount = document.getElementById("characterCount");
+      characterCount.textContent = textarea.value.length;
+    }
   </script>
 
 </div>
