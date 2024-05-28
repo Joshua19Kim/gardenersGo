@@ -971,6 +971,53 @@ public class GardenFormControllerTest {
                 .andExpect(model().attributeDoesNotExist("wateringTip"));
         assertEquals(garden.getLastNotified(), currentDate);
     }
+    @Test
+    @WithMockUser
+    public void GivenOnGardenDetails_WhenNotificationClosed_LastNotifiedDateUpdated() throws Exception {
+        String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+        Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        String[] forecastImages = new String[] {"image1", "image2", "image3"};
+        String[] forecastDescriptions = new String[] {"Sunny", "Sunny", "Clear"};
+        Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+        Weather currentWeather = Mockito.mock(Weather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(currentWeather.getTemperature()).thenReturn(12.0f);
+        when(currentWeather.getHumidity()).thenReturn(50);
+        when(currentWeather.getWeatherDescription()).thenReturn("Clear");
+        when(currentWeather.getWeatherImage()).thenReturn("image");
+        when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+        when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+        PrevWeather prevWeather = Mockito.mock(PrevWeather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(prevWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(prevWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(prevWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(prevWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener);
+        LocalDate currentDate = LocalDate.now();
+        garden.setLastNotified(currentDate);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(weatherService.getWeather(any())).thenReturn(currentWeather);
+        when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
+
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
+                relationshipService, requestService, weatherService, tagService);
+        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        MOCK_MVC
+                .perform((MockMvcRequestBuilders.post("/gardens/details/dismissNotification")
+                        .param("gardenId", "1")))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(model().attributeDoesNotExist("wateringTip"));
+        assertEquals(garden.getLastNotified(), currentDate);
+    }
 
 }
 
