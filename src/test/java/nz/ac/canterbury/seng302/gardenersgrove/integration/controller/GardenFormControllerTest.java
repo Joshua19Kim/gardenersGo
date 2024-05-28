@@ -788,7 +788,7 @@ public class GardenFormControllerTest {
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
       when(weatherService.getWeather(any())).thenReturn(currentWeather);
 
-        Garden garden = new Garden("My Garden", "Ilam", null, "Christchurch", "New Zealand", null, "32", testGardener);
+      Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     Tag tag = new Tag("My tag", garden);
 
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
@@ -826,7 +826,7 @@ public class GardenFormControllerTest {
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
 
-    Garden garden = new Garden(" when(taMy Garden", "Ilam", null, "Christchurch", "New Zealand", null, "32", testGardener);
+      Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     Tag tag = new Tag("Fuck", garden);
 
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
@@ -855,7 +855,7 @@ public class GardenFormControllerTest {
     Authentication authentication = Mockito.mock(Authentication.class);
     Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
 
-    Garden garden = new Garden("My Garden", "Ilam",  null, "Christchurch", "New Zealand", null, "32", currentUser);
+    Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
 
     List<String> tags = new ArrayList<>();
     tags.add("My tag");
@@ -897,7 +897,7 @@ public class GardenFormControllerTest {
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
       when(weatherService.getWeather(any())).thenReturn(currentWeather);
 
-        Garden garden = new Garden("My Garden", "Ilam",  null, "Christchurch", "New Zealand", null, "32", testGardener);
+      Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -933,7 +933,7 @@ public class GardenFormControllerTest {
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
       when(weatherService.getWeather(any())).thenReturn(currentWeather);
 
-        Garden garden = new Garden("My Garden", "Ilam", null, "Christchurch", "New Zealand", null, "32", testGardener);
+      Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -969,7 +969,7 @@ public class GardenFormControllerTest {
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
       when(weatherService.getWeather(any())).thenReturn(currentWeather);
 
-    Garden garden = new Garden("My Garden", "Ilam", null, "Christchurch", "New Zealand", null, "32", testGardener);
+      Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
     mockMvc
         .perform(
@@ -1005,9 +1005,9 @@ public class GardenFormControllerTest {
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
       when(weatherService.getWeather(any())).thenReturn(currentWeather);
 
-        Garden garden1 = new Garden("Garden 1", "Location 1", "Address 1",  null, "Christchurch", "New Zealand", null, testGardener);
+      Garden garden1 = new Garden("Test garden 1", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     garden1.setId(1L);
-    Garden garden2 = new Garden("Garden 2", "Location 2", "Address 2",  null, "Christchurch", "New Zealand", null, testGardener);
+      Garden garden2 = new Garden("Test garden 2", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
     garden2.setId(2L);
 
     when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden1));
