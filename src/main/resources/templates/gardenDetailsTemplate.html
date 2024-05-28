@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-uk">
 <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" >
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <title>Garden Details</title>
     <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
 </head>
@@ -20,7 +20,8 @@
 
         <div class="left-details-container">
             <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
-            <p><strong>Location:</strong> <span th:text="${garden.location +', ' + garden.city +', '+ garden.country}"></span></p>
+            <p><strong>Location:</strong> <span
+                    th:text="${garden.location +', ' + garden.city +', '+ garden.country}"></span></p>
             <p>
                 <strong>Size:</strong> <span th:if="${garden.size != null}" th:text="${garden.size + ' m^2'}"></span>
             </p>
@@ -32,13 +33,17 @@
                         <span th:text="${tag}"></span>
                     </div>
                 </div>
-                <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'" onclick="transformToInput()">+</a>
-                <input type="text" id="tag-input" th:value="${tag != null ? tag : ''}" th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..." maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus>
+                <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
+                   onclick="transformToInput()">+</a>
+                <input type="text" id="tag-input" th:value="${tag != null ? tag : ''}"
+                       th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
+                       maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus>
                 <form id="hidden-tag-form" method="post" th:action="@{addTag}" style="display: none;">
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
                     <input type="hidden" name="gardenId" th:value="${garden.id}">
                 </form>
-                <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'" onclick="submitTag()">+</a>
+                <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
+                   onclick="submitTag()">+</a>
             </div>
             <div id="tag-error-container">
                 <p id="tag-error-message" th:value="${tagValid}" th:text="${tagValid}"></p>
@@ -48,14 +53,15 @@
         <div class="right-details-container">
             <h1 class="garden-details-links">
                 <a th:href="@{../gardens/edit(gardenId=${garden.id})}" class="edit-garden-button">Edit Garden</a>
-                <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="add-plant-button">Add New Plant</a>
+                <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="add-plant-button">Add New
+                    Plant</a>
             </h1>
             <div class="public-checkbox-container">
                 <form method="post" th:action="@{../gardens/details(gardenId=${garden.id})}" id="garden-details-form">
                     <label for="isGardenPublic" id="public-checkbox-label">Make my garden public</label>
                     <input class="form-control" data-cy="isGardenPublic" id="isGardenPublic" name="isGardenPublic"
                            th:id="isGardenPublic" th:name="isGardenPublic" type="checkbox"
-                           onchange="document.getElementById('garden-details-form').submit()" />
+                           onchange="document.getElementById('garden-details-form').submit()"/>
 
                     <script th:inline="javascript">
                         // Credit: https://stackoverflow.com/questions/31771821/thymeleaf-how-to-add-conditional-block-in-javascript
@@ -127,28 +133,36 @@
                 <div class="temperature-container">
                     <div class="weather-display-row">
                         <div class="temperature-container">
-                            <h2 class="temperature" th:text="${temperature}"></h2>
+                            <h3 class="temperature" th:text="${temperature}"></h3>
                             <span><sup style="font-weight: bold">&deg;C</sup></span>
                         </div>
+                        <br>
                         <p th:text="${weatherDescription}"></p>
                         <p th:text="${humidity} + '%' + ' Humidity'"></p>
                     </div>
-                    <img alt="No image available" th:src="${weatherImage}"/>
+                    <img alt="No image available" th:src="'https:' + ${weatherImage}" />
                 </div>
             </div>
             <div>
             </div>
         </div>
         <div style="text-align: center;"><h2>Next 3 days:</h2></div>
-        <div class="future-weather weather-display-container" th:each="forecastTemp, iter: ${forecastTemperature}">
+        <div class="future-weather weather-display-container" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
             <div class="weather-display-row">
                 <p th:text="${forecastDates.get(iter.index)}"></p>
                 <div class="temperature-container">
                     <div class="weather-display-row">
                         <div class="temperature-container">
-                            <h3 class="temperature" th:text="${forecastTemp}"></h3>
+                            <h5>Low</h5>
+                            <h4 class="temperature" th:text="${forecastMinTemp}"></h4>
                             <span><sup style="font-weight: bold">&deg;C</sup></span>
                         </div>
+                        <div class="temperature-container">
+                            <h5>High</h5>
+                            <h4 class="temperature" th:text="${forecastMaxTemperature.get(iter.index)}"></h4>
+                            <span><sup style="font-weight: bold">&deg;C</sup></span>
+                        </div>
+                        <br>
                         <p th:text="${forecastWeatherDescription.get(iter.index)}"></p>
                         <p th:text="${forecastHumidities.get(iter.index)} + '%' + ' Humidity'"></p>
                     </div>
@@ -223,7 +237,6 @@
 
     function closeNotification() {
         document.getElementById('notification').style.display = 'none';
-        // set lastNotified in this garden to the current date
     }
 
 </script>

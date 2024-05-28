@@ -40,6 +40,12 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
      */
     List<Garden> findByGardenerId(Long gardenerId);
 
+    /**
+     * Updates the last notified date of a garden by its id
+     *
+     * @param gardenId The identifier of the garden
+     * @param date     The date to set as the last notified date
+     */
     @Transactional
     @Modifying
     @Query(value = "UPDATE GARDEN SET last_notified = ?2 WHERE id = ?1 ", nativeQuery = true)

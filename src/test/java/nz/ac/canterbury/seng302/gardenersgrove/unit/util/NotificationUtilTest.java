@@ -43,6 +43,8 @@ public class NotificationUtilTest {
     public void GetWeather_BasedOnDescription_NotificationReturned(String description, String expectedMessage) throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
         String[] forecastImages = new String[] {"image1", "image2", "image3"};
         String[] forecastDescriptions = new String[] {"Sunny", "Sunny", "Clear"};
         Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -55,7 +57,8 @@ public class NotificationUtilTest {
         when(currentWeather.getWeatherImage()).thenReturn("image");
         when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
         when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-        when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
         when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
         when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));

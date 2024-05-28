@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
@@ -10,12 +9,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
+/**
+ * Entity class representing the previous weather conditions
+ * Is a separate entity from the Weather entity because of differing forecasts
+ */
 public class PrevWeather {
-    Logger logger = LoggerFactory.getLogger(Weather.class);
     @JsonProperty("location")
     private JsonNode location;
 
@@ -29,7 +29,7 @@ public class PrevWeather {
 
 
     public PrevWeather() {
-
+        // Default constructor
     }
 
     public JsonNode getLocation() {
@@ -41,6 +41,11 @@ public class PrevWeather {
     }
 
 
+    /**
+     * Sets the forecast information and processes the data to populate the forecast details.
+     *
+     * @param forecast The forecast information as a JsonNode.
+     */
     public void setForecast(JsonNode forecast) {
         this.forecast = forecast;
         for (int i = 0; i < 2; i++) {

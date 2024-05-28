@@ -565,7 +565,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     font-size: 3vw !important;
 }
 .weather-display-container {
-    min-height: 35vh;
+    min-height: 24vh;
     width: 100%;
     margin: 5vh 0;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);

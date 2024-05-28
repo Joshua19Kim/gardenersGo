@@ -22,14 +22,18 @@ public class GardenService {
      *
      * @param gardenRepository The repository used for accessing garden data.
      */
-    public GardenService(GardenRepository gardenRepository){this.gardenRepository = gardenRepository;}
+    public GardenService(GardenRepository gardenRepository) {
+        this.gardenRepository = gardenRepository;
+    }
 
     /**
      * Retrieves a list of all gardens stored in the repository.
      *
      * @return A list of all gardens stored in the repository.
      */
-    public List<Garden> getGardenResults() { return gardenRepository.findAll();}
+    public List<Garden> getGardenResults() {
+        return gardenRepository.findAll();
+    }
 
     /**
      * Adds a new garden to the repository.
@@ -37,24 +41,36 @@ public class GardenService {
      * @param garden The garden to be added.
      * @return The added garden.
      */
-    public Garden addGarden(Garden garden){return gardenRepository.save(garden);}
+    public Garden addGarden(Garden garden) {
+        return gardenRepository.save(garden);
+    }
 
     /**
      * Gets the garden from the database by its id
+     *
      * @param id the id of the garden
      * @return the garden associated with the id
      */
-    public Optional<Garden> getGarden(long id) {return gardenRepository.findById(id);}
+    public Optional<Garden> getGarden(long id) {
+        return gardenRepository.findById(id);
+    }
 
     /**
      * Retrieves a list of all gardens from the repository with the specified gardener ID.
+     *
      * @param gardenerId The identifier of the garden's owner.
      * @return A list of all gardens with the specified owner stored in the repository.
      */
     public List<Garden> getGardensByGardenerId(Long gardenerId) {
         return gardenRepository.findByGardenerId(gardenerId);
     }
-    
+
+    /**
+     * Updates the last notified date of a garden by its id
+     *
+     * @param gardenId The identifier of the garden
+     * @param date     The date to set as the last notified date
+     */
     public void updateLastNotifiedbyId(Long gardenId, LocalDate date) {
         gardenRepository.updateLastNotifiedbyId(gardenId, date);
 

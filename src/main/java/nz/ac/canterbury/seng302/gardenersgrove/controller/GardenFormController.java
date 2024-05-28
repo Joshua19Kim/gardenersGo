@@ -24,12 +24,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZoneId;
+
 import java.util.*;
 import java.net.URISyntaxException;
 
@@ -49,10 +48,14 @@ public class GardenFormController {
 
   /**
    * Constructor used to create a new instance of the gardenformcontroller. Autowires a
-   * gardenservice object
+   * various service objects
    *
    * @param gardenService the garden service used to interact with the database
-   * @param gardenerFormService - object that is used to interact with the database
+   * @param gardenerFormService the gardener form service used to interact with the database
+   * @param relationshipService the relationship service used to manage gardener relationships
+   * @param requestService the request service used to manage HTTP requests
+   * @param weatherService the weather service used to retrieve weather information
+   * @param tagService the tag service used to manage garden tags
    */
   @Autowired
   public GardenFormController(
@@ -88,6 +91,8 @@ public class GardenFormController {
    *
    * @param model the model for passing attributes to the view
    * @param request the request used to find the current uri
+   * @param request the request used to find the current URI
+   * @param response the response used to set headers
    * @return the gardens template which defines the user interface for the my gardens page
    */
   @GetMapping("/gardens")
@@ -164,7 +169,7 @@ public class GardenFormController {
    * @param description The garden description.
    * @param redirect the uri to redirect to if the cancel button is pressed
    * @param model The model for passing data to the view.
-   * @return The name of thegetName template for displaying the garden form.
+   * the name of the template for displaying the garden form
    */
   @PostMapping("gardens/form")
   public String submitForm(
@@ -269,7 +274,6 @@ public class GardenFormController {
       @RequestParam(name = "uploadError", required = false) String uploadError,
       @RequestParam(name = "errorId", required = false) String errorId,
       @RequestParam(name = "userId", required = false) String userId,
-      @RequestParam(name = "showModal", required = false) String showModal,
       @RequestParam(name = "tagValid", required = false) String tagValid,
       Model model,
       HttpServletRequest request)
@@ -302,9 +306,6 @@ public class GardenFormController {
       if (tagValid != null) {
         model.addAttribute("tagValid", tagValid);
       }
-      if (showModal != null && showModal.equals("true")) {
-        model.addAttribute("showModal", true);
-      }
       if (userId == null || gardener.getId() == parseLong(userId, 10)) {
         Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
         PrevWeather prevWeathers = weatherService.getPrevWeather(garden.get().getLocation());
@@ -315,7 +316,8 @@ public class GardenFormController {
           model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
           model.addAttribute("humidity", currentWeather.getHumidity());
           model.addAttribute("forecastDates", currentWeather.getForecastDates());
-          model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
+          model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
+          model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
           model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
           model.addAttribute(
               "forecastWeatherDescription", currentWeather.getForecastDescriptions());
@@ -353,7 +355,7 @@ public class GardenFormController {
   }
 
   /**
-   * Posts a form response with a new Gardener
+   * Posts a form response with a new Garden
    * @param isGardenPublic is public checkbox selected
    * @param gardenId id for Garden being viewed
    * @param model (map-like) representation of isGardenPublic boolean for use in thymeleaf,
@@ -412,6 +414,13 @@ public class GardenFormController {
     }
     return "redirect:/gardens";
   }
+
+  /**
+   * Dismisses a notification for a garden and sets the last notified date
+   *
+   * @param gardenId the ID of the garden related to the notification
+   * @return a redirect string to the garden details page
+   */
   @PostMapping("/gardens/details/dismissNotification")
   public String submitNotificationForm(
                            @RequestParam(name = "gardenId") String gardenId) {
@@ -432,6 +441,7 @@ public class GardenFormController {
 
   /**
    * Updates the details of a garden in the database based on the details provided in the form
+   * If the location is changed the notifications are reset
    *
    * @param name The name of the garden
    * @param location the location of the garden
@@ -496,7 +506,6 @@ public class GardenFormController {
 
     if (isValid) {
       Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
-      logger.info(existingGarden.getLocation());
       if (!existingGarden.getLocation().equals(location)){
         gardenService.updateLastNotifiedbyId(parseLong(gardenId), null);
       }
@@ -596,10 +605,10 @@ public class GardenFormController {
     model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
     model.addAttribute("humidity", currentWeather.getHumidity());
     model.addAttribute("forecastDates", currentWeather.getForecastDates());
-    model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
+    model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
+    model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
     model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
-    model.addAttribute(
-            "forecastWeatherDescription", currentWeather.getForecastDescriptions());
+    model.addAttribute("forecastWeatherDescription", currentWeather.getForecastDescriptions());
     model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
     model.addAttribute("gardens", gardenService.getGardensByGardenerId(garden.getGardener().getId()));
 

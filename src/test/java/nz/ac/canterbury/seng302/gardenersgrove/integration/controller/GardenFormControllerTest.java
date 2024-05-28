@@ -768,7 +768,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -780,7 +781,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -807,7 +809,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void NewTagSubmitted_OffensiveTagName_TagNotAdded() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -819,7 +822,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -877,7 +881,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -889,7 +894,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -913,7 +919,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -925,7 +932,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -949,7 +957,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -961,7 +970,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -985,7 +995,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void addTag_SameTagNameInDifferentGardens() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -997,7 +1008,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -1029,6 +1041,8 @@ public class GardenFormControllerTest {
     public void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
         String[] forecastImages = new String[] {"image1", "image2", "image3"};
         String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
         Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -1041,7 +1055,8 @@ public class GardenFormControllerTest {
         when(currentWeather.getWeatherImage()).thenReturn("image");
         when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
         when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-        when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
         when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
         when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -1071,7 +1086,8 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("weatherDescription", "Sunny"))
                 .andExpect(model().attribute("weatherImage", "image"))
                 .andExpect(model().attribute("forecastDates",List.of(forecastDates)))
-                .andExpect(model().attribute("forecastTemperature",List.of(forecastTemperatures)))
+                .andExpect(model().attribute("forecastMinTemperature",List.of(forecastMinTemperatures)))
+                .andExpect(model().attribute("forecastMaxTemperature",List.of(forecastMaxTemperatures)))
                 .andExpect(model().attribute("forecastWeatherImage",List.of(forecastImages)))
                 .andExpect(model().attribute("forecastWeatherDescription",List.of(forecastDescriptions)))
                 .andExpect(model().attribute("forecastHumidities",List.of(forecastHumidities)))
@@ -1112,6 +1128,8 @@ public class GardenFormControllerTest {
     public void GetWeather_WhenRaining_RainNotificationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
         String[] forecastImages = new String[] {"image1", "image2", "image3"};
         String[] forecastDescriptions = new String[] {"Sunny", "Sunny", "Clear"};
         Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -1124,7 +1142,8 @@ public class GardenFormControllerTest {
         when(currentWeather.getWeatherImage()).thenReturn("image");
         when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
         when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-        when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
         when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
         when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -1157,6 +1176,8 @@ public class GardenFormControllerTest {
     public void GetPrevWeather_WhenPrevSunny_DryNotificationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
         String[] forecastImages = new String[] {"image1", "image2", "image3"};
         String[] forecastDescriptions = new String[] {"Sunny", "Sunny", "Clear"};
         Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -1169,7 +1190,8 @@ public class GardenFormControllerTest {
         when(currentWeather.getWeatherImage()).thenReturn("image");
         when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
         when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-        when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
         when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
         when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -1202,6 +1224,8 @@ public class GardenFormControllerTest {
     public void GetDate_WhenNotificationClosed_NoNotificationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
         String[] forecastImages = new String[] {"image1", "image2", "image3"};
         String[] forecastDescriptions = new String[] {"Sunny", "Sunny", "Clear"};
         Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -1214,7 +1238,8 @@ public class GardenFormControllerTest {
         when(currentWeather.getWeatherImage()).thenReturn("image");
         when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
         when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-        when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
         when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
         when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -1249,6 +1274,8 @@ public class GardenFormControllerTest {
     public void GivenOnGardenDetails_WhenNotificationClosed_LastNotifiedDateUpdated() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
         String[] forecastImages = new String[] {"image1", "image2", "image3"};
         String[] forecastDescriptions = new String[] {"Sunny", "Sunny", "Clear"};
         Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -1261,7 +1288,8 @@ public class GardenFormControllerTest {
         when(currentWeather.getWeatherImage()).thenReturn("image");
         when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
         when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-        when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
         when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
         when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
