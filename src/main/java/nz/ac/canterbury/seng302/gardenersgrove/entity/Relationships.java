@@ -1,17 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Entity class reflecting an entry of firstName, optional lastName, date of birth, email, and password
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
 @Entity
+@Table(name = "relationships")
 public class Relationships {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
