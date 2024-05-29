@@ -41,7 +41,31 @@ In order to run the project correctly for this sprint, you MUST use IntelliJ IDE
 - Navigate to src\main\java\nz\ac\canterbury\seng302\gardenersgrove\GardenersGroveApplication.java and open the file
 - This should add a run configuration on the top navigation bar. Select the dropdown menu and press "edit configurations"
 - Under the run configuration, select "modify options" and click "environment variables"
-- Click on the three lines at the end of the new box that has appeared and add new environment variables with name SJMP, LOCATIONIQ, WEATHER and the values given in the teaching team communications chat on Mattermost
+- Click on the three lines at the end of the new box that has appeared and add new environment variables with name 
+DB_USERNAME, DB_PASSWORD, SJMP, LOCATIONIQ, WEATHER and the values given in the teaching team communications chat on Mattermost
+- Create an application-local.properties file in the src\main\resources folder
+- Copy and paste the following to the folder:
+```
+spring.application.name=gardeners-grove
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+
+spring.datasource.driverClassName=org.h2.Driver
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+
+spring.jpa.hibernate.ddl-auto=create
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2
+spring.sql.init.mode=embedded
+spring.servlet.multipart.max-file-size=-1
+spring.servlet.multipart.max-request-size=-1
+email.password=${SJMP}
+locationIq.password=${LOCATIONIQ}
+weather.password=${WEATHER}
+caching.spring.currentWeatherTTL=3600000
+```
+
 - You should now be able to run the application with the green button at the top of IntelliJ
 
 By default, the application will run on local port 8080 [http://localhost:8080](http://localhost:8080)
