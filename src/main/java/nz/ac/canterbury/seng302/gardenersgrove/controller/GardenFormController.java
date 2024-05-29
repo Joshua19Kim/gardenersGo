@@ -167,7 +167,6 @@ public class GardenFormController {
    * @param size The size of the garden.
    * @param redirect the uri to redirect to if the cancel button is pressed
    * @param model The model for passing data to the view.
-   * @param authentication Used to check whether the user is authenticated
    * @return The name of the template for displaying the garden form.
    */
   @PostMapping("gardens/form")
@@ -182,7 +181,6 @@ public class GardenFormController {
       @RequestParam(name = "redirect") String redirect,
       Model model) {
     logger.info("POST /form");
-    logger.info("sfsf");
     String validatedName = ValidityChecker.validateGardenName(name);
     String validatedAddress = ValidityChecker.validateGardenAddress(location);
     String validatedSuburb = ValidityChecker.validateGardenSuburb(suburb);
