@@ -88,7 +88,7 @@ public class InputValidationUtil {
         if (email.length() > 320) {
             return Optional.of("Email address must be 320 characters or less");
         } else {
-            return (email.matches(emailRegex) ? Optional.empty() : Optional.of("Email address must be in the form ‘jane@doe.nz"));
+            return (email.matches(emailRegex) ? Optional.empty() : Optional.of("Email address must be in the form 'jane@doe.nz'"));
         }
     }
 

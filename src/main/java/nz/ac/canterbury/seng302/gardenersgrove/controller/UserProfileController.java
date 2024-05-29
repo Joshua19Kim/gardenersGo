@@ -6,7 +6,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
-import org.apache.coyote.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -240,7 +239,7 @@ public class UserProfileController {
                 return "user";
             }
         }
-        return "login";
+        return "loginForm";
     }
 
     /**Check whether there is the authentication of current user to change the profile photo.
@@ -255,7 +254,7 @@ public class UserProfileController {
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             return "user";
         }
-        return "login";
+        return "loginForm";
     }
 
     /**
@@ -301,7 +300,7 @@ public class UserProfileController {
 
         model.addAttribute("requestURI", requestService.getRequestURI(request));
 
-        if (gardenerOptional.isEmpty()) {return "login";}
+        if (gardenerOptional.isEmpty()) {return "loginForm";}
 
         List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         model.addAttribute("gardens", gardens);
