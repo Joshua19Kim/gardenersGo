@@ -180,8 +180,7 @@ public class GardenFormController {
       @RequestParam(name = "postcode") String postcode,
       @RequestParam(name = "size") String size,
       @RequestParam(name = "redirect") String redirect,
-      Model model,
-      Authentication authentication) {
+      Model model) {
     logger.info("POST /form");
     String validatedName = ValidityChecker.validateGardenName(name);
     String validatedAddress = ValidityChecker.validateGardenAddress(location);
@@ -190,10 +189,9 @@ public class GardenFormController {
     String validatedCountry = ValidityChecker.validateGardenCountry(country);
     String validatedPostcode = ValidityChecker.validateGardenPostcode(postcode);
     String validatedSize = ValidityChecker.validateGardenSize(size);
-    String currentUserEmail = authentication.getName();
     boolean isValid = true;
 
-    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
     gardenerOptional.ifPresent(value -> gardener = value);
 
     String newLocation;

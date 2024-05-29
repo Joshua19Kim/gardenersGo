@@ -8,14 +8,17 @@ import io.cucumber.spring.CucumberContextConfiguration;
 import nz.ac.canterbury.seng302.gardenersgrove.GardenersGroveApplication;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -26,25 +29,40 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = GardenFormController.class)
+@SpringBootTest
 public class GardenLocationAPIFeature {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
+    private Authentication authentication;
+
+    @Mock
     private GardenService gardenService;
 
-    @MockBean
+    @Mock
     private GardenerFormService gardenerFormService;
+
+    @Mock
+    private RelationshipService relationshipService;
+
+    @Mock
+    private RequestService requestService;
+
+    @Mock
+    private WeatherService weatherService;
+
+    @Mock
+    private TagService tagService;
 
     private Gardener gardener;
 
@@ -58,16 +76,22 @@ public class GardenLocationAPIFeature {
 
     private ResultActions resultActions;
 
-    @BeforeEach
+    @Before("@U15_AC5")
     public void setUp() {
+        MockitoAnnotations.openMocks(this);
         gardener = new Gardener("Jeff", "Ryan",
                 LocalDate.of(2001, 10, 10), "test@gmail.com", "password");
-        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(gardener));
-        when(gardenService.getGardensByGardenerId(gardener.getId())).thenReturn(anyList());
+        when(gardenerFormService.findByEmail("")).thenReturn(Optional.of(gardener));
+        when(gardenService.getGardensByGardenerId(gardener.getId())).thenReturn(List.of());
+        when(authentication.getName()).thenReturn("");
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         gardenName = "My Garden";
         address = "";
         country = "";
         city = "";
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService,
+        requestService, weatherService, tagService);
+        mockMvc = MockMvcBuilders.standaloneSetup(gardenFormController).build();
     }
 
     @Given("I have provided the street number and name {string} and the country {string}")
@@ -93,7 +117,7 @@ public class GardenLocationAPIFeature {
 
     @Then("an error message tells me {string}")
     public void an_error_message_tells_me(String errorMessage) throws Exception {
-        if(city.isEmpty()) {
+        if(country.isEmpty()) {
             resultActions.andExpect(model().attribute("countryError", errorMessage));
         } else {
             resultActions.andExpect(model().attribute("cityError", errorMessage));
