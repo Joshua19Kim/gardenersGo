@@ -189,7 +189,7 @@ public class ValidityChecker {
             return "Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
         }
         regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
-        if (!suburb.matches(regex)) {
+        if (suburb != null && !suburb.trim().isEmpty() && !suburb.matches(regex)) {
             return "Suburb must must contain at least one alphanumeric character";
         }
         if(suburb.length() > 90) {
@@ -250,7 +250,7 @@ public class ValidityChecker {
             return "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
         }
         regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
-        if (!address.matches(regex)) {
+        if (address != null && !address.trim().isEmpty() && !address.matches(regex)) {
             return "Street number and name must must contain at least one alphanumeric character";
         }
         if(address.length() > 60) {
@@ -264,7 +264,7 @@ public class ValidityChecker {
             return "Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
         }
         regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
-        if (!postcode.matches(regex)) {
+        if (postcode != null && !postcode.trim().isEmpty() && !postcode.matches(regex)) {
             return "Postcode must must contain at least one alphanumeric character";
         }
         if(postcode.length() > 10) {
