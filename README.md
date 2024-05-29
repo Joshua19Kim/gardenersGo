@@ -2,10 +2,11 @@
 
 Gardener's Grove is an application designed to allow gardeners to record information about their garden(s) and plants 
 in their garden(s). This sprint's deliverable currently allows new users to register and log in to the application, 
-Create/edit gardens and add plants to them, and send friend requests to other users. Friends can view each other's 
+edit their profile, create/edit gardens and add plants to them, send friend requests to other users, 
+add tags to gardens, make gardens public, and view the weather for the garden location. Friends can view each other's 
 profile and garden details.
 
-The project currently uses ```gradle```, ```Spring Boot```, ```Thymeleaf```, ```LocationIQ``` and ```Simple Java Mail```.
+The project currently uses ```gradle```, ```Spring Boot```, ```Thymeleaf```, ```WeatherAPI```, ```LocationIQ``` and ```Simple Java Mail```.
 ```GitLab CI``` is configured to build and run the project but for sprint 2 we request that the project not be 
 evaluated on the online VM.
 
@@ -40,7 +41,7 @@ In order to run the project correctly for this sprint, you MUST use IntelliJ IDE
 - Navigate to src\main\java\nz\ac\canterbury\seng302\gardenersgrove\GardenersGroveApplication.java and open the file
 - This should add a run configuration on the top navigation bar. Select the dropdown menu and press "edit configurations"
 - Under the run configuration, select "modify options" and click "environment variables"
-- Click on the three lines at the end of the new box that has appeared and add a new environment variable with name SJMP, LOCATIONIQ and the values given in the teaching team communications chat on Mattermost
+- Click on the three lines at the end of the new box that has appeared and add new environment variables with name SJMP, LOCATIONIQ, WEATHER and the values given in the teaching team communications chat on Mattermost
 - You should now be able to run the application with the green button at the top of IntelliJ
 
 By default, the application will run on local port 8080 [http://localhost:8080](http://localhost:8080)

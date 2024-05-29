@@ -32,14 +32,10 @@ INSERT INTO authority (gardener_id, role) VALUES (14, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (15, 'ROLE_USER');
 
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'My First Garden','12 Marquess avenue', null, 'Christchurch','New Zealand', null, '32', false);
-INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'Uni Garden','20 Kirkwood avenue', null, 'Christchurch','New Zealand', null, '100', false);
-INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'Chch Garden','1 Molesworth Street', 'Pipitea', 'Wellington','New Zealand', '6011', '300', false);
+INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (2, 'Uni Garden','20 Kirkwood avenue', null, 'Christchurch','New Zealand', null, '100', false);
+INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (3, 'Chch Garden','1 Molesworth Street', 'Pipitea', 'Wellington','New Zealand', '6011', '300', false);
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'Council Garden','53 Hereford Street', null, 'Christchurch','New Zealand', '8154', '15', false);
 
--- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Garden', 'Christchurch', '32', false);
--- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Vegetable Garden', 'Kitchen Garden', '35', false);
--- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Fruit Garden', 'Backyard', '0', false);
--- INSERT INTO garden (gardener_id, name, location, size, PUBLIC_GARDEN) VALUES (1, 'Herb Garden', 'Windowsill', '10', false);
 
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('My Plant', 1, '2', 'Rose', '/images/placeholder.jpg');
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('My Plant 2', 1, '29', 'Daisy', '/images/placeholder.jpg');
@@ -70,15 +66,10 @@ INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 10, 'accep
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 11, 'accepted');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (4, 1, 'pending');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (6, 1, 'pending');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (7, 1, 'pending');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (8, 1, 'pending');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (9, 1, 'pending');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 12, 'pending');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 13, 'pending');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 3, 'declined');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 14, 'declined');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 15, 'declined');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 5, 'pending');
+
 
 INSERT INTO tag (garden , tag_name) VALUES (1, 'herbs');
 INSERT INTO tag (garden , tag_name) VALUES (1, 'spices');
