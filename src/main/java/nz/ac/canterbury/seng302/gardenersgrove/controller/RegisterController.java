@@ -3,16 +3,17 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -25,21 +26,19 @@ import java.util.Optional;
 @Controller
 public class RegisterController {
     private final GardenerFormService gardenerFormService;
-    private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
     private final WriteEmail writeEmail;
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
     /**
      * Constructor for the controller. Sets the gardener form service and authentication manager objects
+     *
      * @param gardenerFormService - object that is used to interact with the database
-     * @param authenticationManager - object that is used for authentication (checking, adding, removing authentication)
-     * @param writeEmail - service for writing emails
+     * @param writeEmail          - service for writing emails
      */
     @Autowired
-    public RegisterController(GardenerFormService gardenerFormService, AuthenticationManager authenticationManager, TokenService tokenService, WriteEmail writeEmail) {
+    public RegisterController(GardenerFormService gardenerFormService, TokenService tokenService, WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
-        this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
         this.writeEmail = writeEmail;
     }
