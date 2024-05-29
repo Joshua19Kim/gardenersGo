@@ -1,0 +1,2 @@
+-- DO NOT DELETE THIS FILE
+-- This file is used for @DataJpaTests and can be left empty

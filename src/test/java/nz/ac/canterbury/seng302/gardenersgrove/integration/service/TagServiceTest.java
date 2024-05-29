@@ -38,7 +38,7 @@ public class TagServiceTest {
                 "dunderMifflin@gmail.com", "password");
         gardens = new ArrayList<>();
         for(int i = 0; i < 3; i++) {
-            gardens.add(new Garden("My Garden " + i, "Auckland", gardener));
+            gardens.add(new Garden("My Garden " + i, "99 test address", null, "Christchurch", "New Zealand", null, "9999", gardener, ""));
         }
     }
 

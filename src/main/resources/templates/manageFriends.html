@@ -149,7 +149,7 @@
                             <form class="search-bar">
                                 <input id="search-input" type="text" placeholder="Search...">
                                 <input id="searchPool" name="searchPool" th:value="${searchPool}" type="hidden">
-                                <button id="search-button" type="button" onclick="filterSearch()"><i class="fa fa-search"></i></button>
+                                <button id="search-button" type="button" onclick="filterSearch()"><i class="fa fa-search">Submit</i></button>
                             </form>
                         </div>
                         <div id="search-results-container">
@@ -268,7 +268,7 @@
             document.getElementById("sent-btn").style.color = "black";
             // If there is a div, then hide/show it
             if (receivedDiv !== null) {
-                receivedDiv.style.display = "flex";
+                receivedDiv.style.display = "block";
             }
             if (sentDiv !== null) {
                 sentDiv.style.display = "none";

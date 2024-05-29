@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-uk">
 <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" >
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <title>Garden Details</title>
     <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
 </head>
@@ -16,43 +16,16 @@
             <a class="edit-garden-button" th:href="@{../gardens/edit(gardenId=${garden.id})}">Edit Garden</a>
             <a class="add-plant-button" th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}">Add New
                 Plant</a>
-            <a class="add-tag-button" onclick=displayAddTagsModal(true)>Add Tags</a>
         </h1>
 
-        <div aria-hidden="true" class="modal" id="add-tag-modal"
-             th:style="${tagValid != null} ? 'display: block;' : ''">
-            <div class="add-tags">
-                <div class="header">
-                    <button class="close" onclick="displayAddTagsModal(false)">&times;</button>
-                    <div class="search-table-header">
-                        <h3>Add Tags</h3>
-                    </div>
-                </div>
-                <div class="input-search-bar">
-                    <form id="tagForm" autocomplete="off" class="search-bar" method="post" th:action="@{addTag}">
-                        <input th:name="tag-input" id="tag-input" type="text" list="tagList" placeholder="Add tag..." maxlength="25"
-                               th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
-                        <input th:name="gardenId" th:value="${garden.id}" type="hidden">
-                        <datalist id="tagList">
-                            <option th:each="tag : ${allTags}" th:value="${tag}" th:text="${tag}"></option>
-                        </datalist>
-                        <button id="search-button" type="submit">Submit</button>
-                    </form>
-                    <br/>
-                    <p class="smallErrorMessage" th:text="${tagValid}"></p>
-                </div>
-                <div>
-                    <span id="tagError" th:if="${tagError}" th:text="${tagError}" class="smallErrorMessage"></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="garden-details">
+        <div class="left-details-container">
             <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
-            <p><strong>Location:</strong> <span th:text="${garden.location}"></span></p>
+            <p><strong>Location:</strong> <span
+                    th:text="${garden.location +', ' + garden.city +', '+ garden.country}"></span></p>
             <p>
                 <strong>Size:</strong> <span th:if="${garden.size != null}" th:text="${garden.size + ' m^2'}"></span>
             </p>
+            <p><strong>Description:</strong> <span th:text="${garden.description}"></span></p>
             <div id="tag-container">
                 <strong>Tags:</strong>
                 <div th:if="${tags != null}" th:each="tag : ${tags}">
@@ -60,8 +33,53 @@
                         <span th:text="${tag}"></span>
                     </div>
                 </div>
+                <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
+                   onclick="transformToInput()">+</a>
+                <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{addTag}">
+                    <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
+                           th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
+                           maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus>
+                    <input type="hidden" name="tag-input" id="hidden-tag-input">
+                    <input type="hidden" name="gardenId" th:value="${garden.id}">
+                    <datalist id="tagList">
+                        <option th:each="tag : ${allTags}" th:value="${tag}" th:text="${tag}"></option>
+                    </datalist>
+                </form>
+                <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
+                   onclick="submitTag()">+</a>
+            </div>
+            <div id="tag-error-container">
+                <p id="tag-error-message" th:value="${tagValid}" th:text="${tagValid}"></p>
             </div>
         </div>
+
+        <div class="right-details-container">
+            <h1 class="garden-details-links">
+                <a th:href="@{../gardens/edit(gardenId=${garden.id})}" class="edit-garden-button">Edit Garden</a>
+                <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="add-plant-button">Add New
+                    Plant</a>
+            </h1>
+            <div class="public-checkbox-container">
+                <form method="post" th:action="@{../gardens/details(gardenId=${garden.id})}" id="garden-details-form">
+                    <label for="isGardenPublic" id="public-checkbox-label">Make my garden public</label>
+                    <input class="form-control" data-cy="isGardenPublic" id="isGardenPublic" name="isGardenPublic"
+                           th:id="isGardenPublic" th:name="isGardenPublic" type="checkbox"
+                           onchange="document.getElementById('garden-details-form').submit()"/>
+
+                    <script th:inline="javascript">
+                        // Credit: https://stackoverflow.com/questions/31771821/thymeleaf-how-to-add-conditional-block-in-javascript
+                        let isGardenPublic = [[${garden.isGardenPublic}]];
+                        if (isGardenPublic) {
+                            document.getElementById("isGardenPublic").checked = true;
+                        } else {
+                            document.getElementById("isGardenPublic").checked = false;
+                        }
+                    </script>
+
+                </form>
+            </div>
+        </div>
+
         <h4>Plants:</h4>
         <div class="plant-list-container" th:if="${not #lists.isEmpty(garden.plants)}">
             <table class="plant-table">
@@ -118,30 +136,38 @@
                 <div class="temperature-container">
                     <div class="weather-display-row">
                         <div class="temperature-container">
-                            <h2 class="temperature" th:text="${temperature}"></h2>
+                            <h3 class="temperature" th:text="${temperature}"></h3>
                             <span><sup style="font-weight: bold">&deg;C</sup></span>
                         </div>
+                        <br>
                         <p th:text="${weatherDescription}"></p>
                         <p th:text="${humidity} + '%' + ' Humidity'"></p>
                     </div>
-                    <img alt="No image available" th:src="${weatherImage}"/>
+                    <img alt="No image available" th:src="'https:' + ${weatherImage}" />
                 </div>
             </div>
             <div>
             </div>
         </div>
         <div style="text-align: center;"><h2>Next 3 days:</h2></div>
-        <div class="future-weather weather-display-container" th:each="forecastTemp, iter: ${forecastTemperature}">
+        <div class="future-weather weather-display-container" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
             <div class="weather-display-row">
                 <p th:text="${forecastDates.get(iter.index)}"></p>
                 <div class="temperature-container">
                     <div class="weather-display-row">
                         <div class="temperature-container">
-                            <h3 class="temperature" th:text="${forecastTemp}"></h3>
+                            <h5>Low</h5>
+                            <h4 class="temperature" th:text="${forecastMinTemp}"></h4>
                             <span><sup style="font-weight: bold">&deg;C</sup></span>
                         </div>
+                        <div class="temperature-container">
+                            <h5>High</h5>
+                            <h4 class="temperature" th:text="${forecastMaxTemperature.get(iter.index)}"></h4>
+                            <span><sup style="font-weight: bold">&deg;C</sup></span>
+                        </div>
+                        <br>
                         <p th:text="${forecastWeatherDescription.get(iter.index)}"></p>
-                        <p th:text="${forcastHumidities.get(iter.index)} + '%' + ' Humidity'"></p>
+                        <p th:text="${forecastHumidities.get(iter.index)} + '%' + ' Humidity'"></p>
                     </div>
                 </div>
             </div>
@@ -150,13 +176,29 @@
             </div>
         </div>
     </div>
+    <div id="notification" class="notification" th:if="${wateringTip}">
+        <p th:text="${wateringTip}"></p>
+        <form id="lastNotifiedForm" method="post" th:action="@{../gardens/details/dismissNotification}">
+            <input th:name="gardenId" th:value="${garden.id}" type="hidden">
+            <button type="submit" onclick="closeNotification()" class="close-button">x</button>
+        </form>
+    </div>
+
 </div>
+
 <script>
+    function handleImageClick(plantId) {
+        document.getElementById('fileInput_' + plantId).click();
+    }
+
+    function handleImageChange(plantId) {
+        document.getElementById('uploadPlantForm_' + plantId).submit();
+    }
 
     // got from stack overflow: https://stackoverflow.com/questions/30022728/perform-action-when-clicking-html5-datalist-option
     // it is used to check if the user clicked an option from the autocomplete and if so to submit the form
     const tagInput = document.getElementById('tag-input');
-    const tagForm = document.getElementById("tagForm");
+    const tagForm = document.getElementById("hidden-tag-form");
     let keypress = false;
     tagInput.addEventListener("keydown", (e) => {
         if(e.key) {
@@ -165,20 +207,11 @@
     });
     tagForm.addEventListener('input', (e) => {
         if (keypress === false) {
+            document.getElementById('hidden-tag-input').value = tagInput.value;
             tagForm.submit();
         }
         keypress = false;
     });
-
-
-
-    function handleImageClick(plantId) {
-        document.getElementById('fileInput_' + plantId).click();
-    }
-
-    function handleImageChange(plantId) {
-        document.getElementById('uploadPlantForm_' + plantId).submit();
-    }
 
     const currentDate = new Date();
     const dateOptions = {
@@ -189,35 +222,42 @@
     };
     document.getElementById("currentDateDisplay").innerHTML = currentDate.toLocaleString("en-Nz", dateOptions);
 
-    //referenced ChatGPT for this part.
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const showModal = urlParams.get('showModal');
-        if (showModal === 'true') {
-            displayAddTagsModal(true);
-        }
-    });
+    function transformToInput() {
+        document.getElementById('add-tag').style.display = 'none';
+        document.getElementById('tag-input').style.display = 'block';
+        document.getElementById('submit-tag').style.display = 'block';
+        document.getElementById('tag-input').focus();
+    }
 
-    function displayAddTagsModal(show) {
-        const addTagsModal = document.getElementById("add-tag-modal");
-        if (show) {
-            addTagsModal.style.display = "block";
-            updateQueryStringParameter('showModal', 'true');
-        } else {
-            addTagsModal.style.display = "none";
-            updateQueryStringParameter('showModal', 'false');
+    function submitTagOnEnter(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const tagInput = document.getElementById('tag-input').value.trim();
+            if (tagInput) {
+                console.log('Submitting tag:', tagInput);
+                // Set the hidden form inputs
+                document.getElementById('hidden-tag-input').value = tagInput;
+                document.getElementById('hidden-tag-form').submit();
+            } else {
+                console.log('No tag input to submit');
+            }
         }
     }
 
-    // referenced ChatGPT for this part.
-    function updateQueryStringParameter(key, value) {
-        const url = new URL(window.location);
-        if (value === 'false') {
-            url.searchParams.delete(key);
+    function submitTag() {
+        const tagInput = document.getElementById('tag-input').value.trim();
+        if (tagInput) {
+            console.log('Submitting tag:', tagInput);
+            // Set the hidden form inputs
+            document.getElementById('hidden-tag-input').value = tagInput;
+            document.getElementById('hidden-tag-form').submit();
         } else {
-            url.searchParams.set(key, value);
+            console.log('No tag input to submit');
         }
-        window.history.replaceState({}, '', url);
+    }
+
+    function closeNotification() {
+        document.getElementById('notification').style.display = 'none';
     }
 
 </script>

@@ -2,11 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
@@ -15,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.util.TagValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WordFilter;
+import nz.ac.canterbury.seng302.gardenersgrove.util.NotificationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +24,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import java.util.*;
 import java.net.URISyntaxException;
 
@@ -49,10 +48,14 @@ public class GardenFormController {
 
   /**
    * Constructor used to create a new instance of the gardenformcontroller. Autowires a
-   * gardenservice object
+   * various service objects
    *
    * @param gardenService the garden service used to interact with the database
-   * @param gardenerFormService - object that is used to interact with the database
+   * @param gardenerFormService the gardener form service used to interact with the database
+   * @param relationshipService the relationship service used to manage gardener relationships
+   * @param requestService the request service used to manage HTTP requests
+   * @param weatherService the weather service used to retrieve weather information
+   * @param tagService the tag service used to manage garden tags
    */
   @Autowired
   public GardenFormController(
@@ -88,6 +91,8 @@ public class GardenFormController {
    *
    * @param model the model for passing attributes to the view
    * @param request the request used to find the current uri
+   * @param request the request used to find the current URI
+   * @param response the response used to set headers
    * @return the gardens template which defines the user interface for the my gardens page
    */
   @GetMapping("/gardens")
@@ -156,64 +161,97 @@ public class GardenFormController {
    *
    * @param name The name of the garden.
    * @param location The location of the garden.
+   * @param suburb The suburb of the garden.
+   * @param city The city of the garden.
+   * @param country The country of the garden.
+   * @param postcode The postcode of the garden.
    * @param size The size of the garden.
+   * @param description The garden description.
    * @param redirect the uri to redirect to if the cancel button is pressed
    * @param model The model for passing data to the view.
-   * @param authentication Used to check whether the user is authenticated
-   * @return The name of the template for displaying the garden form.
+   * the name of the template for displaying the garden form
    */
   @PostMapping("gardens/form")
   public String submitForm(
       @RequestParam(name = "name") String name,
       @RequestParam(name = "location") String location,
+      @RequestParam(name = "suburb") String suburb,
+      @RequestParam(name = "city") String city,
+      @RequestParam(name = "country") String country,
+      @RequestParam(name = "postcode") String postcode,
       @RequestParam(name = "size") String size,
+      @RequestParam(name = "description") String description,
       @RequestParam(name = "redirect") String redirect,
-      Model model,
-      Authentication authentication) {
+      Model model) {
     logger.info("POST /form");
     String validatedName = ValidityChecker.validateGardenName(name);
-    String validatedLocation = ValidityChecker.validateGardenLocation(location);
     String validatedSize = ValidityChecker.validateGardenSize(size);
-    String currentUserEmail = authentication.getName();
+    String validatedDescription = ValidityChecker.validateGardenDescription(description);
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+
     boolean isValid = true;
 
-    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
     gardenerOptional.ifPresent(value -> gardener = value);
+
+    String newLocation;
+    newLocation = Objects.requireNonNullElse(location, "");
+
+    String newSuburb;
+    newSuburb = Objects.requireNonNullElse(suburb, "");
+
+    String newPostcode;
+    newPostcode = Objects.requireNonNullElse(postcode, "");
 
     if (!Objects.equals(name, validatedName)) {
       model.addAttribute("nameError", validatedName);
-      isValid = false;
-    }
-    if (!Objects.equals(location, validatedLocation)) {
-      model.addAttribute("locationError", validatedLocation);
       isValid = false;
     }
     if (!Objects.equals(size.replace(',', '.'), validatedSize)) {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }
+    if (!Objects.equals(description, validatedDescription)) {
+      model.addAttribute("descriptionError", validatedDescription);
+      isValid = false;
+    }
+
+    if (Objects.equals(city, "")) {
+      model.addAttribute("cityError", "City is required.");
+      isValid = false;
+    }
+    if(Objects.equals(country, "")) {
+      model.addAttribute("countryError", "Country is required.");
+      isValid = false;
+    }
+
 
     if (isValid) {
       Garden garden;
       if (Objects.equals(size.trim(), "")) {
-        garden = gardenService.addGarden(new Garden(name, location, gardener));
+        garden = gardenService.addGarden(new Garden(name,  newLocation, newSuburb, city, country, newPostcode, gardener, description));
       } else {
         garden =
             gardenService.addGarden(
                 new Garden(
                     name,
-                    location,
+                        newLocation, newSuburb, city, country, newPostcode,
                     new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(),
-                    gardener));
+                    gardener, description));
       }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
+
     } else {
       List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
       model.addAttribute("gardens", gardens);
       model.addAttribute("requestURI", redirect);
       model.addAttribute("name", name);
-      model.addAttribute("location", location);
+      model.addAttribute("location", newLocation);
+      model.addAttribute("suburb", newSuburb);
+      model.addAttribute("city", city);
+      model.addAttribute("country", country);
+      model.addAttribute("postcode", newPostcode);
       model.addAttribute("size", size);
+      model.addAttribute("description", description);
       return "gardensFormTemplate";
     }
   }
@@ -236,7 +274,6 @@ public class GardenFormController {
       @RequestParam(name = "uploadError", required = false) String uploadError,
       @RequestParam(name = "errorId", required = false) String errorId,
       @RequestParam(name = "userId", required = false) String userId,
-      @RequestParam(name = "showModal", required = false) String showModal,
       @RequestParam(name = "tagValid", required = false) String tagValid,
       Model model,
       HttpServletRequest request)
@@ -252,6 +289,9 @@ public class GardenFormController {
 
     model.addAttribute("gardens", gardens);
 
+    if (gardenId == null) {
+      return "redirect:/gardens";
+    }
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
 
@@ -267,23 +307,35 @@ public class GardenFormController {
       if (tagValid != null) {
         model.addAttribute("tagValid", tagValid);
       }
-      if (showModal != null && showModal.equals("true")) {
-        model.addAttribute("showModal", true);
-      }
       if (userId == null || gardener.getId() == parseLong(userId, 10)) {
         Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
-        if (currentWeather != null) {
+        PrevWeather prevWeathers = weatherService.getPrevWeather(garden.get().getLocation());
+        if (currentWeather != null && prevWeathers != null) {
           model.addAttribute("date", currentWeather.getDate());
           model.addAttribute("temperature", currentWeather.getTemperature());
           model.addAttribute("weatherImage", currentWeather.getWeatherImage());
           model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
           model.addAttribute("humidity", currentWeather.getHumidity());
           model.addAttribute("forecastDates", currentWeather.getForecastDates());
-          model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
+          model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
+          model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
           model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
           model.addAttribute(
               "forecastWeatherDescription", currentWeather.getForecastDescriptions());
-          model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
+          model.addAttribute("forecastHumidities", currentWeather.getForecastHumidities());
+          LocalDate currentDate = LocalDate.now();
+          LocalDate lastNotifiedDate = garden.get().getLastNotified();
+          if (lastNotifiedDate != null && lastNotifiedDate.equals(currentDate)) {
+            model.addAttribute("wateringTip", null);
+          }  else {
+            if (lastNotifiedDate != null) {
+              gardenService.updateLastNotifiedbyId(parseLong(gardenId), null);
+            }
+            String wateringTip = NotificationUtil.generateWateringTip(currentWeather, prevWeathers);
+            model.addAttribute("wateringTip", wateringTip);
+          }
+
+
         }
         return "gardenDetailsTemplate";
       } else {
@@ -299,18 +351,107 @@ public class GardenFormController {
           return "redirect:/gardens";
         }
       }
+    }
+    return "redirect:/gardens";
+  }
 
-    } else {
+  /**
+   * Posts a form response with a new Garden
+   * @param isGardenPublic is public checkbox selected
+   * @param gardenId id for Garden being viewed
+   * @param model (map-like) representation of isGardenPublic boolean for use in thymeleaf,
+   *              with value being set to relevant parameter provided
+   * @return thymeleaf Garden Details form template
+   */
+  @PostMapping("/gardens/details")
+  public String submitForm(@RequestParam(name = "isGardenPublic", required = false) boolean isGardenPublic,
+                           @RequestParam(name = "gardenId") String gardenId,
+
+                           @RequestParam(name = "uploadError", required = false) String uploadError,
+                           @RequestParam(name = "errorId", required = false) String errorId,
+                           @RequestParam(name = "userId", required = false) String userId,
+
+                           Model model, HttpServletRequest request) {
+    logger.info("POST /gardens/details");
+
+    model.addAttribute("isGardenPublic", isGardenPublic);
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String currentUserEmail = authentication.getName();
+    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail(currentUserEmail);
+
+    if (gardenId == null || gardenerOptional.isEmpty()) {
       return "redirect:/gardens";
     }
+    List<Garden> gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+    model.addAttribute("gardens", gardens);
+    Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
+    if (garden.isPresent()) {
+
+      Garden existingGarden = garden.get();
+      existingGarden.setIsGardenPublic(isGardenPublic);
+      gardenService.addGarden(existingGarden);
+
+      String requestUri = requestService.getRequestURI(request);
+      model.addAttribute("requestURI", requestUri);
+
+      model.addAttribute("garden", garden.get());
+
+      if(uploadError != null) {
+        model.addAttribute("uploadError", uploadError);
+        model.addAttribute("errorId", errorId);
+      }
+      if(userId == null || gardener.getId() == parseLong(userId, 10)) {
+        return "redirect:/gardens/details?gardenId=" + gardenId;
+      } else {
+        Optional<Gardener> friend = gardenerFormService.findById(parseLong(userId, 10));
+        if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+          model.addAttribute("gardener", friend.get());
+          return "unauthorizedGardenDetailsTemplate";
+        } else {
+          return "redirect:/gardens";
+        }
+      }
+    }
+    return "redirect:/gardens";
+  }
+
+  /**
+   * Dismisses a notification for a garden and sets the last notified date
+   *
+   * @param gardenId the ID of the garden related to the notification
+   * @return a redirect string to the garden details page
+   */
+  @PostMapping("/gardens/details/dismissNotification")
+  public String submitNotificationForm(
+                           @RequestParam(name = "gardenId") String gardenId) {
+    logger.info("POST /gardens/details/dismissNotification");
+    if (gardenId == null) {
+      return "redirect:/gardens";
+    }
+
+    Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
+    if (garden.isPresent()) {
+      LocalDate date = LocalDate.now();
+      gardenService.updateLastNotifiedbyId(parseLong(gardenId), date);
+    }
+
+
+     return "redirect:/gardens/details?gardenId=" + gardenId;
   }
 
   /**
    * Updates the details of a garden in the database based on the details provided in the form
+   * If the location is changed the notifications are reset
    *
    * @param name The name of the garden
    * @param location the location of the garden
+   * @param suburb The suburb of the garden.
+   * @param city The city of the garden.
+   * @param country The country of the garden.
+   * @param postcode The postcode of the garden.
    * @param size the size of the garden
+   * @param description the garden description
    * @param gardenId the id of the garden to edit
    * @param model the model
    * @return the garden details template
@@ -319,15 +460,26 @@ public class GardenFormController {
   public String submitEditForm(
       @RequestParam(name = "name") String name,
       @RequestParam(name = "location") String location,
+      @RequestParam(name = "suburb") String suburb,
+      @RequestParam(name = "city") String city,
+      @RequestParam(name = "country") String country,
+      @RequestParam(name = "postcode") String postcode,
       @RequestParam(name = "size") String size,
+      @RequestParam(name = "description") String description,
       @RequestParam(name = "gardenId") String gardenId,
       Model model,
       HttpServletRequest request) {
     logger.info("POST gardens/edit");
-
     String validatedName = ValidityChecker.validateGardenName(name);
-    String validatedLocation = ValidityChecker.validateGardenLocation(location);
     String validatedSize = ValidityChecker.validateGardenSize(size);
+    String validatedDescription = ValidityChecker.validateGardenDescription(description);
+
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+    List<Garden> gardens = new ArrayList<>();
+    if (gardenerOptional.isPresent()) {
+      gardener = gardenerOptional.get();
+      gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+    }
 
     boolean isValid = true;
     String returnedTemplate = "redirect:/gardens/details?gardenId=" + gardenId;
@@ -336,19 +488,39 @@ public class GardenFormController {
       model.addAttribute("nameError", validatedName);
       isValid = false;
     }
-    if (!Objects.equals(location, validatedLocation)) {
-      model.addAttribute("locationError", validatedLocation);
-      isValid = false;
-    }
     if (!Objects.equals(size.replace(',', '.'), validatedSize)) {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }
+    if (Objects.equals(city, "")) {
+      model.addAttribute("cityError", "City is required.");
+      isValid = false;
+    }
+    if(Objects.equals(country, "")) {
+      model.addAttribute("countryError", "Country is required.");
+      isValid = false;
+    }
+      if (!Objects.equals(description, validatedDescription) && !description.trim().isEmpty()) {
+          model.addAttribute("descriptionError", validatedDescription);
+          isValid = false;
+      }
+    if(description.trim().isEmpty()) {
+      description = "";
+    }
 
     if (isValid) {
       Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
+      if (!existingGarden.getLocation().equals(location)){
+        existingGarden.setLastNotified(null);
+
+      }
       existingGarden.setName(name);
       existingGarden.setLocation(location);
+      existingGarden.setSuburb(suburb);
+      existingGarden.setCity(city);
+      existingGarden.setCountry(country);
+      existingGarden.setPostcode(postcode);
+      existingGarden.setDescription(description);
 
       if (Objects.equals(size.trim(), "")) {
         existingGarden.setSize(null);
@@ -358,10 +530,14 @@ public class GardenFormController {
         gardenService.addGarden(existingGarden);
       }
     } else {
-      List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
       model.addAttribute("gardens", gardens);
       model.addAttribute("name", name);
       model.addAttribute("location", location);
+      model.addAttribute("description", description);
+      model.addAttribute("suburb", suburb);
+      model.addAttribute("city", city);
+      model.addAttribute("country", country);
+      model.addAttribute("postcode", postcode);
       model.addAttribute("size", size.replace(',', '.'));
       model.addAttribute(gardenService.getGarden(parseLong(gardenId)).get());
       model.addAttribute("requestURI", requestService.getRequestURI(request));
@@ -394,6 +570,14 @@ public class GardenFormController {
     Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
     if (garden.isPresent()) {
       model.addAttribute("requestURI", requestService.getRequestURI(request));
+      model.addAttribute("name", garden.get().getName());
+      model.addAttribute("description", garden.get().getDescription());
+      model.addAttribute("size", garden.get().getSize().replace(',', '.'));
+      model.addAttribute("location", garden.get().getLocation());
+      model.addAttribute("suburb", garden.get().getSuburb());
+      model.addAttribute("city", garden.get().getCity());
+      model.addAttribute("country", garden.get().getCountry());
+      model.addAttribute("postcode", garden.get().getPostcode());
       model.addAttribute("garden", garden.get());
       return "editGardensFormTemplate";
     } else {
@@ -406,14 +590,14 @@ public class GardenFormController {
    *
    * @param tag the tag to be added
    * @param id the garden id
-   * @param redirectAttributes to store the error message when redirecting
+   * @param model the model
    * @return redirects back to the garden details or add tag modal based on the tag validation
    */
   @PostMapping("gardens/addTag")
   public String addTag(
       @RequestParam(name = "tag-input") String tag,
       @RequestParam(name = "gardenId") long id,
-      RedirectAttributes redirectAttributes) {
+      Model model) throws IOException, URISyntaxException {
 
     logger.info("POST /addTag");
     tag = tag.strip();
@@ -422,26 +606,70 @@ public class GardenFormController {
     if (gardenOptional.isEmpty()) {
       return "redirect:/gardens";
     }
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+    List<Garden> gardens = new ArrayList<>();
+    if (gardenerOptional.isPresent()) {
+      gardener = gardenerOptional.get();
+      gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+    }
+    model.addAttribute("gardens", gardens);
     Garden garden = gardenOptional.get();
-
     Optional<String> validTagError = tagValidation.validateTag(tag);
     Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
 
-    if (validTagError.isPresent()) {
-      redirectAttributes.addFlashAttribute("tagValid", validTagError.get());
-      return "redirect:/gardens/details?gardenId=" + id + "&showModal=true";
+    Weather currentWeather = weatherService.getWeather(garden.getLocation());
+    PrevWeather prevWeathers = weatherService.getPrevWeather(garden.getLocation());
+    if (currentWeather != null && prevWeathers != null) {
+      model.addAttribute("date", currentWeather.getDate());
+      model.addAttribute("temperature", currentWeather.getTemperature());
+      model.addAttribute("weatherImage", currentWeather.getWeatherImage());
+      model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
+      model.addAttribute("humidity", currentWeather.getHumidity());
+      model.addAttribute("forecastDates", currentWeather.getForecastDates());
+      model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
+      model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
+      model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
+      model.addAttribute(
+              "forecastWeatherDescription", currentWeather.getForecastDescriptions());
+      model.addAttribute("forecastHumidities", currentWeather.getForecastHumidities());
+      LocalDate currentDate = LocalDate.now();
+      LocalDate lastNotifiedDate = garden.getLastNotified();
+      if (lastNotifiedDate != null && lastNotifiedDate.equals(currentDate)) {
+        model.addAttribute("wateringTip", null);
+      }  else {
+        if (lastNotifiedDate != null) {
+          gardenService.updateLastNotifiedbyId(id, null);
+        }
+        String wateringTip = NotificationUtil.generateWateringTip(currentWeather, prevWeathers);
+        model.addAttribute("wateringTip", wateringTip);
+      }
+
+
     }
+    if (validTagError.isPresent()) {
+      model.addAttribute("tagValid", validTagError.get());
+      model.addAttribute("tag", tag);
+      model.addAttribute("allTags", tagService.getUniqueTagNames(id));
+      model.addAttribute("tags", tagService.getTags(garden.getId()));
+      model.addAttribute("garden", garden);
+      return "gardenDetailsTemplate";
+    }
+
     if (tagInUse.isEmpty()) {
       if (!WordFilter.doesContainBadWords(tag)) {
         Tag newTag = new Tag(tag, gardenService.getGarden(id).get());
         tagService.addTag(newTag);
         logger.info("Tag '{}' passes moderation checks", tag);
       } else {
-        redirectAttributes.addFlashAttribute("tagValid", "Submitted tag fails moderation requirements");
-        return "redirect:/gardens/details?gardenId=" + id + "&showModal=true";
+        model.addAttribute("garden", garden);
+        model.addAttribute("tag", tag);
+        model.addAttribute("allTags", tagService.getUniqueTagNames(id));
+        model.addAttribute("tags", tagService.getTags(garden.getId()));
+        model.addAttribute("tagValid", "Submitted tag fails moderation requirements");
+        return "gardenDetailsTemplate";
       }
     }
-
+    model.addAttribute("garden", garden);
     return "redirect:/gardens/details?gardenId=" + id;
   }
 }

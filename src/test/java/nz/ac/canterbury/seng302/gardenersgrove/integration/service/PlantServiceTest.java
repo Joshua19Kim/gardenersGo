@@ -24,7 +24,7 @@ public class PlantServiceTest {
 
     @Test
     public void PlantAdded_ValidInputs_PlantSavedToRepository() {
-        Garden garden = new Garden("Botanical","Homestead Lane", "100", testGardener);
+        Garden garden = new Garden("Botanical","20 Marquess street",null,"ChristChurch","New Zealand", "8870", testGardener, "");
         PlantService plantService = new PlantService(new PlantRepository() {
             @Override
             public Optional<Plant> findById(long id) {
@@ -105,7 +105,7 @@ public class PlantServiceTest {
     @Test
     public void PlantAdded_ValidInputs_PlantReturned() {
         PlantService plantService = new PlantService(plantRepository);
-        Garden garden = new Garden("Botanical","Homestead Lane", "100", testGardener);
+        Garden garden = new Garden("Botanical","20 Marquess street",null,"ChristChurch","New Zealand", "8870", testGardener, "");
         Plant plant = plantService.addPlant(new Plant("Flower","2", "Rose", "08/02/2024", garden));
         Assertions.assertEquals(plant.getName(), "Flower");
         Assertions.assertEquals(plant.getCount(), "2");
