@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.step_definitions;
+package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
