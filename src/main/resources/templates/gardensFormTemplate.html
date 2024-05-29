@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<html lang="en-uk">
 <head>
-  <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Create New Garden</title>
   <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
 </head>
@@ -96,7 +96,7 @@
 
       <script th:src="@{/javascript/locationAutocomplete.js}"></script>
 
-      <button type="submit" class="create-garden-button">Create!</button>
+      <button type="submit" onclick="checkValidAddress()" class="create-garden-button">Create!</button>
     </form>
     <a th:href="@{${requestURI}}" class="create-garden-cancel-link">
       <button class="create-garden-cancel">Cancel</button>
@@ -144,7 +144,9 @@
       characterCount.textContent = textarea.value.length;
     }
   </script>
-
+  <div class="error-message">
+    <span id="location-not-found"></span>
+  </div>
 </div>
 </body>
 </html>
