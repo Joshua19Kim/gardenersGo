@@ -2,11 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
@@ -15,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.util.TagValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WordFilter;
+import nz.ac.canterbury.seng302.gardenersgrove.util.NotificationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +24,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.time.LocalDate;
+
+import java.util.*;
 import java.net.URISyntaxException;
 
-import java.util.List;
-import java.util.Objects;
 import static java.lang.Long.parseLong;
-import java.util.Optional;
 
 /** Controller class responsible for handling garden-related HTTP requests. */
 @Controller
@@ -52,10 +48,14 @@ public class GardenFormController {
 
   /**
    * Constructor used to create a new instance of the gardenformcontroller. Autowires a
-   * gardenservice object
+   * various service objects
    *
    * @param gardenService the garden service used to interact with the database
-   * @param gardenerFormService - object that is used to interact with the database
+   * @param gardenerFormService the gardener form service used to interact with the database
+   * @param relationshipService the relationship service used to manage gardener relationships
+   * @param requestService the request service used to manage HTTP requests
+   * @param weatherService the weather service used to retrieve weather information
+   * @param tagService the tag service used to manage garden tags
    */
   @Autowired
   public GardenFormController(
@@ -91,6 +91,8 @@ public class GardenFormController {
    *
    * @param model the model for passing attributes to the view
    * @param request the request used to find the current uri
+   * @param request the request used to find the current URI
+   * @param response the response used to set headers
    * @return the gardens template which defines the user interface for the my gardens page
    */
   @GetMapping("/gardens")
@@ -167,7 +169,7 @@ public class GardenFormController {
    * @param description The garden description.
    * @param redirect the uri to redirect to if the cancel button is pressed
    * @param model The model for passing data to the view.
-   * @return The name of thegetName template for displaying the garden form.
+   * the name of the template for displaying the garden form
    */
   @PostMapping("gardens/form")
   public String submitForm(
@@ -272,7 +274,6 @@ public class GardenFormController {
       @RequestParam(name = "uploadError", required = false) String uploadError,
       @RequestParam(name = "errorId", required = false) String errorId,
       @RequestParam(name = "userId", required = false) String userId,
-      @RequestParam(name = "showModal", required = false) String showModal,
       @RequestParam(name = "tagValid", required = false) String tagValid,
       Model model,
       HttpServletRequest request)
@@ -305,23 +306,35 @@ public class GardenFormController {
       if (tagValid != null) {
         model.addAttribute("tagValid", tagValid);
       }
-      if (showModal != null && showModal.equals("true")) {
-        model.addAttribute("showModal", true);
-      }
       if (userId == null || gardener.getId() == parseLong(userId, 10)) {
         Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
-        if (currentWeather != null) {
+        PrevWeather prevWeathers = weatherService.getPrevWeather(garden.get().getLocation());
+        if (currentWeather != null && prevWeathers != null) {
           model.addAttribute("date", currentWeather.getDate());
           model.addAttribute("temperature", currentWeather.getTemperature());
           model.addAttribute("weatherImage", currentWeather.getWeatherImage());
           model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
           model.addAttribute("humidity", currentWeather.getHumidity());
           model.addAttribute("forecastDates", currentWeather.getForecastDates());
-          model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
+          model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
+          model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
           model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
           model.addAttribute(
               "forecastWeatherDescription", currentWeather.getForecastDescriptions());
-          model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
+          model.addAttribute("forecastHumidities", currentWeather.getForecastHumidities());
+          LocalDate currentDate = LocalDate.now();
+          LocalDate lastNotifiedDate = garden.get().getLastNotified();
+          if (lastNotifiedDate != null && lastNotifiedDate.equals(currentDate)) {
+            model.addAttribute("wateringTip", null);
+          }  else {
+            if (lastNotifiedDate != null) {
+              gardenService.updateLastNotifiedbyId(parseLong(gardenId), null);
+            }
+            String wateringTip = NotificationUtil.generateWateringTip(currentWeather, prevWeathers);
+            model.addAttribute("wateringTip", wateringTip);
+          }
+
+
         }
         return "gardenDetailsTemplate";
       } else {
@@ -342,7 +355,7 @@ public class GardenFormController {
   }
 
   /**
-   * Posts a form response with a new Gardener
+   * Posts a form response with a new Garden
    * @param isGardenPublic is public checkbox selected
    * @param gardenId id for Garden being viewed
    * @param model (map-like) representation of isGardenPublic boolean for use in thymeleaf,
@@ -403,7 +416,32 @@ public class GardenFormController {
   }
 
   /**
+   * Dismisses a notification for a garden and sets the last notified date
+   *
+   * @param gardenId the ID of the garden related to the notification
+   * @return a redirect string to the garden details page
+   */
+  @PostMapping("/gardens/details/dismissNotification")
+  public String submitNotificationForm(
+                           @RequestParam(name = "gardenId") String gardenId) {
+    logger.info("POST /gardens/details/dismissNotification");
+    if (gardenId == null) {
+      return "redirect:/gardens";
+    }
+
+    Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
+    if (garden.isPresent()) {
+      LocalDate date = LocalDate.now();
+      gardenService.updateLastNotifiedbyId(parseLong(gardenId), date);
+    }
+
+
+     return "redirect:/gardens/details?gardenId=" + gardenId;
+  }
+
+  /**
    * Updates the details of a garden in the database based on the details provided in the form
+   * If the location is changed the notifications are reset
    *
    * @param name The name of the garden
    * @param location the location of the garden
@@ -471,6 +509,10 @@ public class GardenFormController {
 
     if (isValid) {
       Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
+      if (!existingGarden.getLocation().equals(location)){
+        existingGarden.setLastNotified(null);
+
+      }
       existingGarden.setName(name);
       existingGarden.setLocation(location);
       existingGarden.setSuburb(suburb);
@@ -574,10 +616,10 @@ public class GardenFormController {
     model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
     model.addAttribute("humidity", currentWeather.getHumidity());
     model.addAttribute("forecastDates", currentWeather.getForecastDates());
-    model.addAttribute("forecastTemperature", currentWeather.getForecastTemperatures());
+    model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
+    model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
     model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
-    model.addAttribute(
-            "forecastWeatherDescription", currentWeather.getForecastDescriptions());
+    model.addAttribute("forecastWeatherDescription", currentWeather.getForecastDescriptions());
     model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
     model.addAttribute("gardens", gardenService.getGardensByGardenerId(garden.getGardener().getId()));
 

@@ -1,11 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
@@ -29,6 +25,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -261,13 +259,13 @@ public class GardenFormControllerTest {
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
-        Assertions.assertEquals("Rose Garden", garden.getName());
-        Assertions.assertEquals("5 test address", garden.getLocation());
-        Assertions.assertEquals("Ilam", garden.getSuburb());
-        Assertions.assertEquals("Christchurch", garden.getCity());
-        Assertions.assertEquals("New Zealand", garden.getCountry());
-        Assertions.assertEquals("8888", garden.getPostcode());
-        Assertions.assertEquals(null, garden.getSize());
+        assertEquals("Rose Garden", garden.getName());
+        assertEquals("5 test address", garden.getLocation());
+        assertEquals("Ilam", garden.getSuburb());
+        assertEquals("Christchurch", garden.getCity());
+        assertEquals("New Zealand", garden.getCountry());
+        assertEquals("8888", garden.getPostcode());
+        assertEquals(null, garden.getSize());
     }
 
     @Test
@@ -294,13 +292,13 @@ public class GardenFormControllerTest {
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
-        Assertions.assertEquals("Rose Garden", garden.getName());
-        Assertions.assertEquals("5 test address", garden.getLocation());
-        Assertions.assertEquals("", garden.getSuburb());
-        Assertions.assertEquals("Christchurch", garden.getCity());
-        Assertions.assertEquals("New Zealand", garden.getCountry());
-        Assertions.assertEquals("8888", garden.getPostcode());
-        Assertions.assertEquals(null, garden.getSize());
+        assertEquals("Rose Garden", garden.getName());
+        assertEquals("5 test address", garden.getLocation());
+        assertEquals("", garden.getSuburb());
+        assertEquals("Christchurch", garden.getCity());
+        assertEquals("New Zealand", garden.getCountry());
+        assertEquals("8888", garden.getPostcode());
+        assertEquals(null, garden.getSize());
     }
 
     @Test
@@ -327,13 +325,13 @@ public class GardenFormControllerTest {
                 .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
-        Assertions.assertEquals("Rose Garden", garden.getName());
-        Assertions.assertEquals("5 test address", garden.getLocation());
-        Assertions.assertEquals("Ilam", garden.getSuburb());
-        Assertions.assertEquals("Christchurch", garden.getCity());
-        Assertions.assertEquals("New Zealand", garden.getCountry());
-        Assertions.assertEquals("", garden.getPostcode());
-        Assertions.assertEquals(null, garden.getSize());
+        assertEquals("Rose Garden", garden.getName());
+        assertEquals("5 test address", garden.getLocation());
+        assertEquals("Ilam", garden.getSuburb());
+        assertEquals("Christchurch", garden.getCity());
+        assertEquals("New Zealand", garden.getCountry());
+        assertEquals("", garden.getPostcode());
+        assertEquals(null, garden.getSize());
     }
 
     @Test
@@ -361,14 +359,14 @@ public class GardenFormControllerTest {
         verify(gardenService, times(1)).getGarden(1L);
         verify(gardenService, times(1)).addGarden(garden);
         Assertions.assertFalse(garden.getIsGardenPublic());
-        Assertions.assertEquals("Rose Garden", garden.getName());
-        Assertions.assertEquals("", garden.getLocation());
+        assertEquals("Rose Garden", garden.getName());
+        assertEquals("", garden.getLocation());
         Assertions.assertNull(garden.getSize());
-        Assertions.assertEquals("", garden.getLocation());
-        Assertions.assertEquals("Ilam", garden.getSuburb());
-        Assertions.assertEquals("Christchurch", garden.getCity());
-        Assertions.assertEquals("New Zealand", garden.getCountry());
-        Assertions.assertEquals("8888", garden.getPostcode());
+        assertEquals("", garden.getLocation());
+        assertEquals("Ilam", garden.getSuburb());
+        assertEquals("Christchurch", garden.getCity());
+        assertEquals("New Zealand", garden.getCountry());
+        assertEquals("8888", garden.getPostcode());
         Assertions.assertNull(garden.getSize());
     }
 
@@ -834,7 +832,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -846,7 +845,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -873,7 +873,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void NewTagSubmitted_OffensiveTagName_TagNotAdded() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -885,7 +886,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -943,7 +945,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -955,7 +958,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -979,7 +983,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -991,7 +996,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -1015,7 +1021,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -1027,7 +1034,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -1051,7 +1059,8 @@ public class GardenFormControllerTest {
   @WithMockUser
   public void addTag_SameTagNameInDifferentGardens() throws Exception {
       String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
-      Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+      Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
       String[] forecastImages = new String[] {"image1", "image2", "image3"};
       String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
       Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -1063,7 +1072,8 @@ public class GardenFormControllerTest {
       when(currentWeather.getWeatherImage()).thenReturn("image");
       when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
       when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-      when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+      when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+      when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
       when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
       when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
       when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
@@ -1103,6 +1113,8 @@ public class GardenFormControllerTest {
     public void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
         String[] forecastImages = new String[] {"image1", "image2", "image3"};
         String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
         Integer[] forecastHumidities = new Integer[] {1, 2, 3};
@@ -1115,13 +1127,24 @@ public class GardenFormControllerTest {
         when(currentWeather.getWeatherImage()).thenReturn("image");
         when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
         when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
-        when(currentWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
         when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
         when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
         when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
 
+        PrevWeather prevWeather = Mockito.mock(PrevWeather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(prevWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(prevWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(prevWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(prevWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
         Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(weatherService.getWeather(any())).thenReturn(currentWeather);
+        when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
         GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
                 relationshipService, requestService, weatherService, tagService);
@@ -1135,10 +1158,11 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("weatherDescription", "Sunny"))
                 .andExpect(model().attribute("weatherImage", "image"))
                 .andExpect(model().attribute("forecastDates",List.of(forecastDates)))
-                .andExpect(model().attribute("forecastTemperature",List.of(forecastTemperatures)))
+                .andExpect(model().attribute("forecastMinTemperature",List.of(forecastMinTemperatures)))
+                .andExpect(model().attribute("forecastMaxTemperature",List.of(forecastMaxTemperatures)))
                 .andExpect(model().attribute("forecastWeatherImage",List.of(forecastImages)))
                 .andExpect(model().attribute("forecastWeatherDescription",List.of(forecastDescriptions)))
-                .andExpect(model().attribute("forcastHumidities",List.of(forecastHumidities)))
+                .andExpect(model().attribute("forecastHumidities",List.of(forecastHumidities)))
                 .andExpect(model().attribute("garden", garden));
     }
 
@@ -1166,8 +1190,208 @@ public class GardenFormControllerTest {
                 .andExpect(model().attributeDoesNotExist("forecastTemperature"))
                 .andExpect(model().attributeDoesNotExist("forecastWeatherImage"))
                 .andExpect(model().attributeDoesNotExist("forecastWeatherDescription"))
-                .andExpect(model().attributeDoesNotExist("forcastHumidities"))
+                .andExpect(model().attributeDoesNotExist("forecastHumidities"))
                 .andExpect(model().attribute("garden", garden));
 
     }
+
+    @Test
+    @WithMockUser
+    public void GetWeather_WhenRaining_RainNotificationReturned() throws Exception {
+        String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+        Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
+        String[] forecastImages = new String[] {"image1", "image2", "image3"};
+        String[] forecastDescriptions = new String[] {"Sunny", "Sunny", "Clear"};
+        Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+        Weather currentWeather = Mockito.mock(Weather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(currentWeather.getTemperature()).thenReturn(12.0f);
+        when(currentWeather.getHumidity()).thenReturn(50);
+        when(currentWeather.getWeatherDescription()).thenReturn("Heavy Rain");
+        when(currentWeather.getWeatherImage()).thenReturn("image");
+        when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+        when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
+        when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+        PrevWeather prevWeather = Mockito.mock(PrevWeather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(prevWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(prevWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(prevWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(prevWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(weatherService.getWeather(any())).thenReturn(currentWeather);
+        when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
+
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
+                relationshipService, requestService, weatherService, tagService);
+        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        MOCK_MVC
+                .perform((MockMvcRequestBuilders.get("/gardens/details")
+                        .param("gardenId", "1")))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("wateringTip", "Outdoor plants don’t need any water today"));
+    }
+
+    @Test
+    @WithMockUser
+    public void GetPrevWeather_WhenPrevSunny_DryNotificationReturned() throws Exception {
+        String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+        Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
+        String[] forecastImages = new String[] {"image1", "image2", "image3"};
+        String[] forecastDescriptions = new String[] {"Sunny", "Sunny", "Clear"};
+        Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+        Weather currentWeather = Mockito.mock(Weather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(currentWeather.getTemperature()).thenReturn(12.0f);
+        when(currentWeather.getHumidity()).thenReturn(50);
+        when(currentWeather.getWeatherDescription()).thenReturn("Clear");
+        when(currentWeather.getWeatherImage()).thenReturn("image");
+        when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+        when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
+        when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+        PrevWeather prevWeather = Mockito.mock(PrevWeather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(prevWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(prevWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(prevWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(prevWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(weatherService.getWeather(any())).thenReturn(currentWeather);
+        when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
+
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
+                relationshipService, requestService, weatherService, tagService);
+        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        MOCK_MVC
+                .perform((MockMvcRequestBuilders.get("/gardens/details")
+                        .param("gardenId", "1")))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("wateringTip", "There hasn’t been any rain recently, make sure to water your plants if they need it"));
+    }
+
+    @Test
+    @WithMockUser
+    public void GetDate_WhenNotificationClosed_NoNotificationReturned() throws Exception {
+        String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+        Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
+        String[] forecastImages = new String[] {"image1", "image2", "image3"};
+        String[] forecastDescriptions = new String[] {"Sunny", "Sunny", "Clear"};
+        Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+        Weather currentWeather = Mockito.mock(Weather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(currentWeather.getTemperature()).thenReturn(12.0f);
+        when(currentWeather.getHumidity()).thenReturn(50);
+        when(currentWeather.getWeatherDescription()).thenReturn("Clear");
+        when(currentWeather.getWeatherImage()).thenReturn("image");
+        when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+        when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
+        when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+        PrevWeather prevWeather = Mockito.mock(PrevWeather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(prevWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(prevWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(prevWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(prevWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
+        LocalDate currentDate = LocalDate.now();
+        garden.setLastNotified(currentDate);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(weatherService.getWeather(any())).thenReturn(currentWeather);
+        when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
+
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
+                relationshipService, requestService, weatherService, tagService);
+        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        MOCK_MVC
+                .perform((MockMvcRequestBuilders.get("/gardens/details")
+                        .param("gardenId", "1")))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeDoesNotExist("wateringTip"));
+        assertEquals(garden.getLastNotified(), currentDate);
+    }
+    @Test
+    @WithMockUser
+    public void GivenOnGardenDetails_WhenNotificationClosed_LastNotifiedDateUpdated() throws Exception {
+        String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+        Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
+        String[] forecastImages = new String[] {"image1", "image2", "image3"};
+        String[] forecastDescriptions = new String[] {"Sunny", "Sunny", "Clear"};
+        Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+        Weather currentWeather = Mockito.mock(Weather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(currentWeather.getTemperature()).thenReturn(12.0f);
+        when(currentWeather.getHumidity()).thenReturn(50);
+        when(currentWeather.getWeatherDescription()).thenReturn("Clear");
+        when(currentWeather.getWeatherImage()).thenReturn("image");
+        when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+        when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
+        when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+        PrevWeather prevWeather = Mockito.mock(PrevWeather.class);
+        when(weatherService.getWeather(Mockito.anyString())).thenReturn(currentWeather);
+        when(prevWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(prevWeather.getForecastTemperatures()).thenReturn(List.of(forecastTemperatures));
+        when(prevWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(prevWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(prevWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
+        LocalDate currentDate = LocalDate.now();
+        garden.setLastNotified(currentDate);
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(weatherService.getWeather(any())).thenReturn(currentWeather);
+        when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
+
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
+                relationshipService, requestService, weatherService, tagService);
+        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        MOCK_MVC
+                .perform((MockMvcRequestBuilders.post("/gardens/details/dismissNotification")
+                        .param("gardenId", "1")))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(model().attributeDoesNotExist("wateringTip"));
+        assertEquals(garden.getLastNotified(), currentDate);
+    }
+
 }
+
+

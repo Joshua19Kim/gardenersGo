@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InputValidationUtilTest {
 
     private final GardenerFormService gardenerFormService;
-    private final Logger logger = LoggerFactory.getLogger(InputValidationUtilTest.class);
+
     @MockBean
     private EmailUserService emailUserService;
     @MockBean
@@ -341,7 +341,6 @@ public class InputValidationUtilTest {
                 "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
                 "cdabcdabcdabcdabcdabcdabcdabc@gmail.com";
         Optional<String> isValid = validate.checkValidEmail(email);
-        logger.info(isValid.toString());
         assertFalse(isValid.isEmpty());
     }
 

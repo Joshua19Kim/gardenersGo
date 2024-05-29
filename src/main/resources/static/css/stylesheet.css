@@ -565,7 +565,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     font-size: 3vw !important;
 }
 .weather-display-container {
-    min-height: 35vh;
+    min-height: 24vh;
     width: 100%;
     margin: 5vh 0;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -1137,6 +1137,43 @@ form.search-bar::after {
 .create-garden-cancel {
     width: 100% !important;
 }
+
+.notification {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background-color: #45a049;
+    color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+.notification form {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.notification button {
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 16px;
+}
+
+.notification button:hover {
+    text-decoration: underline;
+}
+
+
 
 .autocomplete-container {
     position: relative;

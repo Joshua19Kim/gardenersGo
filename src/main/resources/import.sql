@@ -31,7 +31,7 @@ INSERT INTO authority (gardener_id, role) VALUES (13, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (14, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (15, 'ROLE_USER');
 
-INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'my first garden','12 Marquess avenue', null, 'Christchurch','New Zealand', null, '32', false);
+INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'My First Garden','12 Marquess avenue', null, 'Christchurch','New Zealand', null, '32', false);
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'Uni Garden','20 Kirkwood avenue', null, 'Christchurch','New Zealand', null, '100', false);
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'Chch Garden','1 Molesworth Street', 'Pipitea', 'Wellington','New Zealand', '6011', '300', false);
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'Council Garden','53 Hereford Street', null, 'Christchurch','New Zealand', '8154', '15', false);

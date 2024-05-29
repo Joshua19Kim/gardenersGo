@@ -1,7 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /** Represents a garden entity with its name, location, size, and list of plants. */
@@ -59,12 +62,16 @@ public class Garden {
   @Column
   private boolean publicGarden;
 
+  @Column
+  private LocalDate lastNotified;
+
   /** Default constructor required by JPA. */
   protected Garden() {}
 
 
   /**
    * Constructs a garden with the given name, location, size and gardener.
+   * By default, a garden is private
    *
    * @param name The name of the garden (required).
    * @param location The street number and street name of the garden.
@@ -85,6 +92,7 @@ public class Garden {
     this.description = description;
     plants = new ArrayList<>();
     this.publicGarden = false; // Defaults to private
+    this.lastNotified = null; // Defaults to null
   }
   /**
    * Constructs a garden with the given name, location, size and gardener.
@@ -110,6 +118,7 @@ public class Garden {
     this.description = description;
     plants = new ArrayList<>();
     this.publicGarden = false; // Defaults to private
+    this.lastNotified = null; // Defaults to null
   }
 
   /**
@@ -297,6 +306,9 @@ public class Garden {
   public void setIsGardenPublic(boolean isGardenPublic) {
     this.publicGarden = isGardenPublic;
   }
+
+  public void setLastNotified(LocalDate lastNotified){this.lastNotified = lastNotified;}
+  public LocalDate getLastNotified(){return lastNotified;}
 
     /**
      * Sets the description of the garden
