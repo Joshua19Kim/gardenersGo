@@ -1,13 +1,12 @@
-// This class was adapted from: https://gist.github.com/PimDeWitte/c04cc17bc5fa9d7e3aee6670d4105941
-
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,13 +33,21 @@ public class WordFilter {
      * Processes each .csv file in the wordlists directory.
      */
     private static void loadConfigs() {
-        Path dir = Paths.get("src/main/resources/static/wordlists/");
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.csv")) {
-            for (Path entry : stream) {
-                processFile(entry);
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            InputStream wordlistsStream = classLoader.getResourceAsStream("static/wordlists");
+            if (wordlistsStream == null) {
+                logger.error("Wordlists directory not found");
+                return;
             }
-        } catch (IOException e) {
-            logger.error("IO error while loading config files", e);
+            Path wordlistsPath = Paths.get(Objects.requireNonNull(classLoader.getResource("static/wordlists")).toURI());
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(wordlistsPath, "*.csv")) {
+                for (Path entry : stream) {
+                    processFile(entry);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error while loading config files", e);
         }
     }
 
@@ -50,35 +57,28 @@ public class WordFilter {
      * Wordlist was sourced from: <a href="https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words">...</a>
      */
     private static void processFile(Path filePath) {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath.toFile()));
-            String line = "";
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(filePath)))) {
+            String line;
             int counter = 0;
 
             while((line = reader.readLine()) != null) {
                 counter++;
-                String[] content = null;
-
-                try {
-                    content = line.split(",");
-                    if(content.length == 0) {
-                        continue;
-                    }
-
-                    String word = content[0];
-                    String[] wordsToIgnore = new String[]{};
-                    if(content.length > 1) {
-                        wordsToIgnore = content[1].split("_");
-                    }
-
-                    if(word.length() > largestWordLength) {
-                        largestWordLength = word.length();
-                    }
-
-                    words.put(word.replaceAll(" ", ""), wordsToIgnore);
-                } catch(Exception e) {
-                    logger.error(e.getMessage());
+                String[] content = line.split(",");
+                if(content.length == 0) {
+                    continue;
                 }
+
+                String word = content[0];
+                String[] wordsToIgnore = new String[]{};
+                if(content.length > 1) {
+                    wordsToIgnore = content[1].split("_");
+                }
+
+                if(word.length() > largestWordLength) {
+                    largestWordLength = word.length();
+                }
+
+                words.put(word.replaceAll(" ", ""), wordsToIgnore);
             }
             logger.info("Loaded {} words from file {}", counter, filePath.getFileName());
         } catch (IOException e) {
