@@ -198,7 +198,7 @@ public class UserProfileControllerTest {
     void GivenUserDoesNotHaveEmailInServer_WhenUserAccessesUpdatePasswordPage_RedirectToLoginPage() {
         Mockito.when(authentication.getName()).thenReturn("");
         String testResult = userProfileController.updatePassword("dodgyAccess","dodgyAccess!", "dodgyAccess!", mockRequest, modelMock);
-        String expectedNextPage = "login";
+        String expectedNextPage = "loginForm";
         assertEquals(expectedNextPage, testResult);
     }
 }

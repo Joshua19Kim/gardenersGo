@@ -59,7 +59,7 @@ public class LoginController {
             return "redirect:/gardens";
         }
 
-        return "login";
+        return "loginForm";
     }
 
 }
