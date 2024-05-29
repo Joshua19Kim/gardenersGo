@@ -188,6 +188,10 @@ public class ValidityChecker {
         if (suburb != null && !suburb.trim().isEmpty() && !suburb.matches(regex)) {
             return "Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
         }
+        regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
+        if (suburb != null && !suburb.trim().isEmpty() && !suburb.matches(regex)) {
+            return "Suburb must must contain at least one alphanumeric character";
+        }
         if(suburb.length() > 90) {
             return "Please enter a suburb less than 90 characters";
         }
@@ -206,6 +210,10 @@ public class ValidityChecker {
         if (!city.matches(regex)) {
             return "City must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
         }
+        regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
+        if (!city.matches(regex)) {
+            return "City must must contain at least one alphanumeric character";
+        }
         if(city.length() > 180) {
             return "Please enter a city less than 180 characters";
         }
@@ -223,6 +231,10 @@ public class ValidityChecker {
         if (!country.matches(regex)) {
             return "Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
         }
+        regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
+        if (!country.matches(regex)) {
+            return "Country must must contain at least one alphanumeric character";
+        }
         if(country.length() > 60) {
             return "Please enter a country less than 60 characters";
         }
@@ -237,6 +249,10 @@ public class ValidityChecker {
         if (address != null && !address.trim().isEmpty() && !address.matches(regex)) {
             return "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
         }
+        regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
+        if (address != null && !address.trim().isEmpty() && !address.matches(regex)) {
+            return "Street number and name must must contain at least one alphanumeric character";
+        }
         if(address.length() > 60) {
             return "Please enter a street number and name less than 60 characters";
         }
@@ -246,6 +262,10 @@ public class ValidityChecker {
         String regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
         if (postcode != null && !postcode.trim().isEmpty() && !postcode.matches(regex)) {
             return "Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
+        }
+        regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
+        if (postcode != null && !postcode.trim().isEmpty() && !postcode.matches(regex)) {
+            return "Postcode must must contain at least one alphanumeric character";
         }
         if(postcode.length() > 10) {
             return "Please enter a postcode less than 10 characters";
