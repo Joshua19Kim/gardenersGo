@@ -82,7 +82,7 @@ public class PubliciseGardensFeature {
     private  Authentication auth;
     private MvcResult result;
 
-    @Before
+    @Before("@U19")
     public void setUp() {
         testGardener = new Gardener("Test", "Gardener",
                 LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
