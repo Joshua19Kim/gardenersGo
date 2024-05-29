@@ -66,6 +66,7 @@ public class WeatherService {
     }
   }
 
+  @Cacheable(value = "prevWeather", key = "#location")
   public PrevWeather getPrevWeather(String location) throws IOException, URISyntaxException {
 
     LocalDate twoDaysAgo = LocalDate.now().minusDays(2);
@@ -101,9 +102,11 @@ public class WeatherService {
   }
 
   /** Used to clear the cache every hour to ensure that the weather data is not stale */
-  @CacheEvict(value = "currentWeather", allEntries = true)
+  @CacheEvict(value = {"currentWeather", "prevWeather"}, allEntries = true)
   @Scheduled(fixedRateString = "${caching.spring.currentWeatherTTL}")
-  public void emptyCurrentWeatherCache() {
-    logger.info("Emptying current weather cache");
+  public void emptyWeatherCache() {
+    logger.info("Emptying weather cache");
   }
+
+
 }
