@@ -182,6 +182,7 @@ public class GardenFormController {
       @RequestParam(name = "redirect") String redirect,
       Model model) {
     logger.info("POST /form");
+    logger.info("sfsf");
     String validatedName = ValidityChecker.validateGardenName(name);
     String validatedAddress = ValidityChecker.validateGardenAddress(location);
     String validatedSuburb = ValidityChecker.validateGardenSuburb(suburb);
