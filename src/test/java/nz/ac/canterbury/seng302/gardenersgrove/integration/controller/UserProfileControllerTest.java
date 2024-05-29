@@ -191,7 +191,7 @@ public class UserProfileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
                 .andExpect(model().attribute("email", "testEmailgmail.m"))
-                .andExpect(model().attribute("emailValid", "Email address must be in the form ‘jane@doe.nz"));
+                .andExpect(model().attribute("emailValid", "Email address must be in the form 'jane@doe.nz'"));
     }
 
     @Test

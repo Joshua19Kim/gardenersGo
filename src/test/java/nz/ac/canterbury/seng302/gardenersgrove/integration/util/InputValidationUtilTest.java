@@ -7,8 +7,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.LocationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InputValidationUtilTest {
 
     private final GardenerFormService gardenerFormService;
-    private final Logger logger = LoggerFactory.getLogger(InputValidationUtilTest.class);
+
     @MockBean
     private EmailUserService emailUserService;
     @MockBean
@@ -341,7 +339,6 @@ public class InputValidationUtilTest {
                 "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdab" +
                 "cdabcdabcdabcdabcdabcdabcdabc@gmail.com";
         Optional<String> isValid = validate.checkValidEmail(email);
-        logger.info(isValid.toString());
         assertFalse(isValid.isEmpty());
     }
 
@@ -352,7 +349,7 @@ public class InputValidationUtilTest {
         InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "$@gmail.com";
         Optional<String> isValid = validate.checkValidEmail(email);
-        assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
+        assertTrue(isValid.get().matches("Email address must be in the form 'jane@doe.nz'"));
     }
 
 
@@ -361,7 +358,7 @@ public class InputValidationUtilTest {
         InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = ".failure@gmail.com";
         Optional<String> isValid = validate.checkValidEmail(email);
-        assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
+        assertTrue(isValid.get().matches("Email address must be in the form 'jane@doe.nz'"));
     }
 
     @Test
@@ -369,7 +366,7 @@ public class InputValidationUtilTest {
         InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "failure.@gmail.com";
         Optional<String> isValid = validate.checkValidEmail(email);
-        assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
+        assertTrue(isValid.get().matches("Email address must be in the form 'jane@doe.nz'"));
     }
 
     @Test
@@ -377,7 +374,7 @@ public class InputValidationUtilTest {
         InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "this...fails@gmail.com";
         Optional<String> isValid = validate.checkValidEmail(email);
-        assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
+        assertTrue(isValid.get().matches("Email address must be in the form 'jane@doe.nz'"));
     }
 
     @Test
@@ -393,7 +390,7 @@ public class InputValidationUtilTest {
         InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "longsuffix@uc.christchurch";
         Optional<String> isValid = validate.checkValidEmail(email);
-        assertTrue(isValid.get().matches("Email address must be in the form ‘jane@doe.nz"));
+        assertTrue(isValid.get().matches("Email address must be in the form 'jane@doe.nz'"));
     }
 
     @Test

@@ -15,77 +15,76 @@
                 <div>
                     <label for="name"> Name: </label>
                     <input type="text" class="form-control" id="name" maxlength="64" placeholder="Name"
-                           th:name="name" th:value="${garden.name}" data-cy="name" autofocus
+                           th:name="name" th:value="*{name}" data-cy="name" autofocus
                            th:classappend="${nameError} ? 'error' : ''">
                     <span th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage"></span>
                 </div>
                 <div>
                     <label for="size"> Size (m<sup>2</sup>): </label>
                     <input type="text" class="form-control" id="size" maxlength="12" placeholder=""
-                           th:name="size" th:value="${garden.size != 0.0 ? garden.size : ''}" data-cy="size" autofocus
+                           th:name="size" th:value="*{size}" data-cy="size" autofocus
                            th:classappend="${sizeError} ? 'error' : ''">
                     <span th:if="${sizeError}" th:text="${sizeError}" class="smallErrorMessage"></span>
                 </div>
-                <div>
-                    <label for="description"> Description:</label>
-                    <input type="text" class="form-control" id="size" maxlength="512" placeholder=""
-                           th:name="description" th:value="${garden.description}" data-cy="description" autofocus
-                           th:classappend="${descriptionError} ? 'error' : ''">
-                    <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
+            </div>
+
+
+            <div>
+                <br/>
+                <label for="description"> Description:</label>
+                <br/>
+                <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
+                <textarea class="form-control" id="description" maxlength="512" placeholder=""
+                       th:name="description" th:value="*{description}" data-cy="description" autofocus
+                       th:classappend="${descriptionError} ? 'error' : ''">[[${description != null ? description : garden.description}]]</textarea>
+                <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
+            </div>
+            <div style="display: flex; margin-top: 40px; justify-content: flex-end;">
+                <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
+            </div>
+            <div style="display: flex;">
+                <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
+                    <label for="location"> Address: </label>
+                    <input type="text" id="location" maxlength="128" placeholder="Start typing your address..."
+                           th:name="location" th:value="*{location}" data-cy="location" autofocus
+                           th:classappend="${locationError} ? 'error' : ''"
+                    >
+                    <span th:if="${locationError}" th:text="${locationError}" class="smallErrorMessage"></span>
+                    <div class="autocomplete-results" id="autocomplete-results"></div>
                 </div>
                 <br/>
             </div>
 
 
-            <div>
-                <div style="display: flex; margin-top: 40px; justify-content: flex-end;">
-                    <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
-                </div>
-                <div style="display: flex;">
-                    <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
-                        <label for="location"> Address: </label>
-                        <input type="text" id="location" maxlength="128" placeholder="Start typing your address..."
-                               th:name="location" th:value="${location != null ? location : garden.location}" data-cy="location" autofocus
-                               th:classappend="${locationError} ? 'error' : ''"
-                        >
-                        <span th:if="${locationError}" th:text="${locationError}" class="smallErrorMessage"></span>
-                        <div class="autocomplete-results" id="autocomplete-results"></div>
-                    </div>
-                </div>
-            </div>
 
             <div class="autocomplete-container">
+                <br/>
                 <div class="create-garden-row">
                     <div>
                         <label for="suburb">Suburb:</label>
-                        <input type="text" id="suburb" th:name="suburb" th:value="${suburb != null ? suburb : garden.suburb}">
+                        <input type="text" id="suburb" th:name="suburb" th:value="*{suburb}">
                         <span th:if="${suburbError}" th:text="${suburbError}" class="smallErrorMessage"></span>
-
                     </div>
                     <div>
                         <label for="city">City:</label>
-                        <input type="text" id="city" th:name="city" th:value="${city != null ? city : garden.city}">
+                        <input type="text" id="city" th:name="city" th:value="*{city}">
                         <span th:if="${cityError}" th:text="${cityError}" class="smallErrorMessage"></span>
-
                     </div>
-                    <br/>
                 </div>
-
+                <br/>
                 <div class="create-garden-row">
                     <div>
                         <label for="country">Country:</label>
-                        <input type="text" id="country" th:name="country" th:value="${country != null ? country : garden.country}">
+                        <input type="text" id="country" th:name="country" th:value="*{country}">
                         <span th:if="${countryError}" th:text="${countryError}" class="smallErrorMessage"></span>
-
                     </div>
                     <div>
                         <label for="postcode">Postcode:</label>
-                        <input type="text" id="postcode" th:name="postcode" th:value="${postcode != null ? postcode : garden.postcode}">
+                        <input type="text" id="postcode" th:name="postcode" th:value="*{postcode}">
                         <span th:if="${postcodeError}" th:text="${postcodeError}" class="smallErrorMessage"></span>
-
                     </div>
-                    <br/>
                 </div>
+                <br/>
             </div>
 
             <button type="submit">Submit</button>
@@ -107,6 +106,35 @@
             }
         });
     </script>
+
+    <script type="text/javascript">
+        const txHeight = 16;
+        const tx = document.getElementsByTagName("textarea");
+        for (let i = 0; i < tx.length; i++) {
+            if (tx[i].value === '') {
+                tx[i].setAttribute("style", "height:" + txHeight + "px;overflow-y:hidden;");
+            } else {
+                tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+            }
+            tx[i].addEventListener("input", OnInput, false);
+            document.addEventListener('DOMContentLoaded', function() {
+                updateCharacterCount();
+            });
+            document.addEventListener('input', function() {
+                updateCharacterCount();
+            });
+
+        }
+
+        function OnInput() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + "px";
+        }
+        function updateCharacterCount() {
+            var textarea = document.getElementById("description");
+            var characterCount = document.getElementById("characterCount");
+            characterCount.textContent = textarea.value.length;
+        }
+    </script>
 </div>
 </body>
-</html>
