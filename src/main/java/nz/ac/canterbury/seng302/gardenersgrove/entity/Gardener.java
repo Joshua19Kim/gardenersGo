@@ -14,6 +14,7 @@ import java.util.List;
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
 @Entity
+@Table(name = "gardener")
 public class Gardener {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -19,11 +19,12 @@ public class Weather {
     @JsonProperty("location")
     private JsonNode location;
 
-    @JsonProperty("current")
+    @JsonProperty(value = "current")
     private JsonNode current;
     @JsonProperty("forecast")
     private JsonNode forecast;
-    private List<Float> forecastTemperatures = new ArrayList<Float>();
+    private List<Float> forecastMinTemperatures = new ArrayList<Float>();
+    private List<Float> forecastMaxTemperatures = new ArrayList<Float>();
     private List<String> forecastImages = new ArrayList<String>();
     private List<String> forecastDescriptions = new ArrayList<>();
     private List<Integer> forecastHumidities = new ArrayList<>();
@@ -48,6 +49,11 @@ public class Weather {
         this.currentLocation = location.get("name").asText();
     }
 
+    /**
+     * Sets the current weather information and processes the data to populate the current weather details.
+     *
+     * @param current The current weather information as a JsonNode.
+     */
     public void setCurrent(JsonNode current) {
         this.current = current;
         this.currentWeatherImage = current.get("condition").get("icon").asText().replace("64x64", "128x128");
@@ -56,12 +62,18 @@ public class Weather {
         this.currentHumidity = current.get("humidity").intValue();
     }
 
+    /**
+     * Sets the forecast information and processes the data to populate the forecast details.
+     *
+     * @param forecast The forecast information as a JsonNode.
+     */
     public void setForecast(JsonNode forecast) {
         this.forecast = forecast;
         this.date = LocalDate.parse(forecast.get("forecastday").get(0).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
         for (int i = 0; i < 3; i++) {
             this.forecastDates.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
-            this.forecastTemperatures.add(forecast.get("forecastday").get(i).get("day").get("avgtemp_c").floatValue());
+            this.forecastMinTemperatures.add(forecast.get("forecastday").get(i).get("day").get("mintemp_c").floatValue());
+            this.forecastMaxTemperatures.add(forecast.get("forecastday").get(i).get("day").get("maxtemp_c").floatValue());
             this.forecastImages.add(forecast.get("forecastday").get(i).get("day").get("condition").get("icon").asText().replace("64x64", "128x128"));
             this.forecastDescriptions.add(forecast.get("forecastday").get(i).get("day").get("condition").get("text").asText());
             this.forecastHumidities.add(forecast.get("forecastday").get(i).get("day").get("avghumidity").intValue());
@@ -88,8 +100,11 @@ public class Weather {
         return currentHumidity;
     }
 
-    public List<Float> getForecastTemperatures() {
-        return forecastTemperatures;
+    public List<Float> getForecastMinTemperatures() {
+        return forecastMinTemperatures;
+    }
+    public List<Float> getForecastMaxTemperatures() {
+        return forecastMaxTemperatures;
     }
 
     public List<String> getForecastImages() {

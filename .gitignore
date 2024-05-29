@@ -41,3 +41,6 @@ out/
 
 ### Environment Vars
 .env
+
+### Local application properties
+**/resources/application-*.properties

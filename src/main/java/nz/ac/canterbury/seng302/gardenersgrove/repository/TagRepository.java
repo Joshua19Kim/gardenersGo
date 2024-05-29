@@ -25,7 +25,7 @@ public interface TagRepository extends CrudRepository<Tag, Long> {
    * @return a list of all tags for the garden
    */
 
-  @Query(value = "SELECT tag_name FROM Tag WHERE garden = ?1 ", nativeQuery = true)
+  @Query(value = "SELECT tag_name FROM tag WHERE garden = ?1 ", nativeQuery = true)
   List<String> getTagsByGardenId(long gardenId);
 
   /**
