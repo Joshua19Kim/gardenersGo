@@ -12,11 +12,7 @@
 </div>
 <div class="garden-details-container">
     <div class="container" style="margin: 0; width: 1200px">
-        <h1 class="garden-details-links">Garden Details
-            <a class="edit-garden-button" th:href="@{../gardens/edit(gardenId=${garden.id})}">Edit Garden</a>
-            <a class="add-plant-button" th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}">Add New
-                Plant</a>
-        </h1>
+        <h1 class="garden-details-links">Garden Details</h1>
 
         <div class="left-details-container">
             <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
@@ -34,12 +30,15 @@
                 </div>
                 <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
                    onclick="transformToInput()">+</a>
-                <input type="text" id="tag-input" th:value="${tag != null ? tag : ''}"
-                       th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
-                       maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus>
-                <form id="hidden-tag-form" method="post" th:action="@{addTag}" style="display: none;">
+                <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{addTag}">
+                    <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
+                           th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
+                           maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus>
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
                     <input type="hidden" name="gardenId" th:value="${garden.id}">
+                    <datalist id="tagList">
+                        <option th:each="tag : ${allTags}" th:value="${tag}" th:text="${tag}"></option>
+                    </datalist>
                 </form>
                 <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
                    onclick="submitTag()">+</a>
@@ -190,6 +189,43 @@
     function handleImageChange(plantId) {
         document.getElementById('uploadPlantForm_' + plantId).submit();
     }
+
+    // got from stack overflow: https://stackoverflow.com/questions/30022728/perform-action-when-clicking-html5-datalist-option
+    // it is used to check if the user clicked an option from the autocomplete and if so to submit the form
+    const tagInput = document.getElementById('tag-input');
+    const tagForm = document.getElementById("hidden-tag-form");
+    const dataList = document.getElementById("tagList");
+    let removedOption = "";
+    let keypress = false;
+    tagInput.addEventListener("keydown", (e) => {
+        if(e.key) {
+            keypress = true;
+        }
+    });
+    tagForm.addEventListener('input', (e) => {
+        const inputValue = tagInput.value;
+        const options = dataList.options
+        if (keypress === false) {
+            document.getElementById('hidden-tag-input').value = inputValue;
+            tagForm.submit();
+        }
+        if(inputValue !== removedOption && removedOption !== "") {
+            let newOption = document.createElement("option");
+            newOption.value = removedOption;
+            newOption.text = removedOption;
+            dataList.appendChild(newOption);
+            removedOption = "";
+        }
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === inputValue) {
+                removedOption = options[i].value;
+                options[i].remove();
+                break;
+            }
+        }
+
+        keypress = false;
+    });
 
     const currentDate = new Date();
     const dateOptions = {

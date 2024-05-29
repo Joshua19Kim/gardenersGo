@@ -2,16 +2,13 @@ package nz.ac.canterbury.seng302.gardenersgrove.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
-
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import static nz.ac.canterbury.seng302.gardenersgrove.util.TokenGenerator.generateToken;
 
-import java.util.Locale;
 import java.util.UUID;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.util.TokenGenerator.generateToken;
 /**
  * Util class for writing and sending emails.
  */
@@ -20,9 +17,12 @@ import java.util.UUID;
 @Component
 public class WriteEmail {
     private TokenService tokenService;
+    private final EmailUserService emailService;
 
-    @Autowired
-    private EmailUserService emailService;
+    public WriteEmail(EmailUserService emailUserService)
+    {
+        this.emailService = emailUserService;
+    }
 
     /**
      * Sends a signup email to the given Gardener's email
@@ -64,18 +64,21 @@ public class WriteEmail {
         String subject = "Password Updated";
         emailService.sendEmail(email, subject, message); // *** Blocking
 
+
+    }
+
     /**
      * Get the url of the current server to create the reset password link
-     * @Param request
+     * @param request the request object
      */
-    }    public String getAppUrl(HttpServletRequest request) {
+    public String getAppUrl(HttpServletRequest request) {
         return request.getServerName() + ":" + request.getServerPort();
     }
 
     /**
      *
-     * @param contextPath
-     * @param token
+     * @param contextPath the path of the server
+     * @param token the token to be sent to the user
      * @return the content of the email which is the link to reset the users password
      */
     public String constructLostPasswordTokenEmail(String contextPath, String token) {
