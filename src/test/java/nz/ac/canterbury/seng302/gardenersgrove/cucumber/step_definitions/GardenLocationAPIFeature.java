@@ -111,6 +111,7 @@ public class GardenLocationAPIFeature {
                 .param("country", country)
                 .param("postcode", "")
                 .param("size","")
+                .param("description", "")
                 .param("redirect","")
                 .with(csrf()));
     }
