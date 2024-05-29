@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.unit.util;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class ValidityCheckerTest {
     @Test
@@ -315,6 +317,71 @@ public class ValidityCheckerTest {
         String description = " ";
         String returnedInput = ValidityChecker.validatePlantDescription(description);
         Assertions.assertEquals(" ", returnedInput);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "Drury: Drury",
+            "12345: Please enter a suburb without only numerical characters",
+            "@@#$%^&&**(*: Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
+            "Achieving balance between work and life is essential for long-term happiness and overall well-being.: " +
+                    "Please enter a suburb less than 90 characters"
+    }, delimiter = ':')
+    public void ValidateGardenSuburbTest(String suburb, String expectedMessage) {
+        String actualMessage = ValidityChecker.validateGardenSuburb(suburb);
+        Assertions.assertEquals(expectedMessage, actualMessage);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "Drury: Drury",
+            "     : City is required",
+            "12345: Please enter a city without only numerical characters",
+            "@@#$%^&&**(*: City must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
+            "Achieving balance between work and life is essential for long-term happiness and overall well-being." +
+                    "Achieving balance between work and life is essential for long-term happiness and overall well-being.: " +
+                    "Please enter a city less than 180 characters"
+    }, delimiter = ':')
+    public void ValidateGardenCityTest(String city, String expectedMessage) {
+        String actualMessage = ValidityChecker.validateGardenCity(city);
+        Assertions.assertEquals(expectedMessage, actualMessage);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "Drury: Drury",
+            "     : Country is required",
+            "12345: Please enter a country without only numerical characters",
+            "@@#$%^&&**(*: Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
+            "Achieving balance between work and life is essential to an awesome life: Please enter a country less than 60 characters"
+    }, delimiter = ':')
+    public void ValidateGardenCountryTest(String country, String expectedMessage) {
+        String actualMessage = ValidityChecker.validateGardenCountry(country);
+        Assertions.assertEquals(expectedMessage, actualMessage);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "Drury: Drury",
+            "12345: Please enter a street number and name without only numerical characters",
+            "@@#$%^&&**(*: Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
+            "Achieving balance between work and life is essential to an awesome life: " +
+                    "Please enter a street number and name less than 60 characters"
+    }, delimiter = ':')
+    public void ValidateGardenAddressTest(String address, String expectedMessage) {
+        String actualMessage = ValidityChecker.validateGardenAddress(address);
+        Assertions.assertEquals(expectedMessage, actualMessage);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "12323242A: 12323242A",
+            "@@#$%^&&**(*: Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
+            "Achieving balance: Please enter a postcode less than 10 characters"
+    }, delimiter = ':')
+    public void ValidateGardenPostcodeTest(String postcode, String expectedMessage) {
+        String actualMessage = ValidityChecker.validateGardenPostcode(postcode);
+        Assertions.assertEquals(expectedMessage, actualMessage);
     }
 
 }

@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.step_definitions;
+package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -6,7 +6,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -16,7 +15,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpRequest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -113,8 +111,8 @@ public class ResetPasswordFeature {
                 .andReturn();
     }
 
-    @Then("an error message tells me {string}")
-    public void an_error_message_tells_me(String errorMessage) {
+    @Then("an error message says {string}")
+    public void an_error_message_says(String errorMessage) {
         MockHttpServletRequest request = mvcResult.getRequest();
         String emailError = (String) request.getAttribute("returnMessage");
         assertEquals(errorMessage, emailError);

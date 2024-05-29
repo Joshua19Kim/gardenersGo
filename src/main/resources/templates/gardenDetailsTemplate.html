@@ -16,8 +16,7 @@
 
         <div class="left-details-container">
             <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
-            <p><strong>Location:</strong> <span
-                    th:text="${garden.location +', ' + garden.city +', '+ garden.country}"></span></p>
+            <p><strong>Location:</strong> <span th:text="${garden.getFullLocation()}"></span></p>
             <p>
                 <strong>Size:</strong> <span th:if="${garden.size != null}" th:text="${garden.size + ' m^2'}"></span>
             </p>
@@ -127,7 +126,7 @@
     <div id="weather-information" th:if="${date}">
         <div class="weather-display-container">
             <div class="weather-display-row">
-                <h3 th:text="${garden.location}"></h3>
+                <h3 th:text="${garden.city + ', ' + garden.country}"></h3>
                 <p th:text="${date}"></p>
                 <div class="temperature-container">
                     <div class="weather-display-row">
@@ -139,7 +138,7 @@
                         <p th:text="${weatherDescription}"></p>
                         <p th:text="${humidity} + '%' + ' Humidity'"></p>
                     </div>
-                    <img alt="No image available" th:src="'https:' + ${weatherImage}" />
+                    <img alt="No image available" th:src="'https:' + ${weatherImage}"/>
                 </div>
             </div>
             <div>

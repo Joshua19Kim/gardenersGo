@@ -5,31 +5,36 @@ Feature: U19 - As Inaya, I want to be able to make my garden public so that othe
 #    When I tick the checkbox labelled "Make my garden public"
 #    Then My garden will be visible in search results.
 
+
+@U19
 Scenario: #AC2
   Given I on Create New Garden form
   When I add valid description of the garden
   And I submit the create form
   Then The new description is persisted.
 
+@U19
 Scenario: #AC3
   Given I on Create New Garden form
   When I do not add any description
   And I submit the create form
   Then The new description is persisted.
 
-
+@U19
 Scenario: #AC4
   Given I am on the Edit Garden form for one of the existing garden
   When I add valid description of the garden to update
   And I submit the edit form
   Then The updated description is persisted.
 
+@U19
 Scenario: #AC5
   Given I am on the Edit Garden form for one of the existing garden
   When I delete the current description and leave it empty to update
   And I submit the edit form
   Then The updated description is persisted.
 
+@U19
 Scenario Outline: #AC6
   Given I on Create New Garden form
   When I submit the create form with invalid <description> of the garden
@@ -43,6 +48,7 @@ Scenario Outline: #AC6
 #  598 letters
     | "aaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfjkasjdhflkjasdlkfjasdvkjahdkfjbvhakjfdkakfjasdvkjahdkfjbvhakjfdkaaaisjhdfkjaslfdkjsalkdjflaksjdflkasjdlfkjsadfasdfashatrjahkjahskdjhflkajshdlkfjaskdfasfgafdgadfhyfsafdbafdhbdafasakjhsdfljahsdflkjhasdflkjahsdflkjahslkfdjhalkdsjfhlkajvlkjdsabkuiibbboasjhdflkjahsdkjfdf" |
 
+@U19
 Scenario Outline: #AC7
   Given I on Create New Garden form
   When I submit the create form with <description> including bad words for the garden description

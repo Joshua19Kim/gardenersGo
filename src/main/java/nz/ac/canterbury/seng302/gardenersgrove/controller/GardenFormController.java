@@ -24,6 +24,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -169,7 +171,7 @@ public class GardenFormController {
    * @param description The garden description.
    * @param redirect the uri to redirect to if the cancel button is pressed
    * @param model The model for passing data to the view.
-   * the name of the template for displaying the garden form
+   * @return The name of the template for displaying the garden form.
    */
   @PostMapping("gardens/form")
   public String submitForm(
@@ -185,6 +187,11 @@ public class GardenFormController {
       Model model) {
     logger.info("POST /form");
     String validatedName = ValidityChecker.validateGardenName(name);
+    String validatedAddress = ValidityChecker.validateGardenAddress(location);
+    String validatedSuburb = ValidityChecker.validateGardenSuburb(suburb);
+    String validatedCity = ValidityChecker.validateGardenCity(city);
+    String validatedCountry = ValidityChecker.validateGardenCountry(country);
+    String validatedPostcode = ValidityChecker.validateGardenPostcode(postcode);
     String validatedSize = ValidityChecker.validateGardenSize(size);
     String validatedDescription = ValidityChecker.validateGardenDescription(description);
     Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
@@ -215,29 +222,36 @@ public class GardenFormController {
       isValid = false;
     }
 
-    if (Objects.equals(city, "")) {
-      model.addAttribute("cityError", "City is required.");
+    if(!Objects.equals(location, validatedAddress)) {
+      model.addAttribute("locationError", validatedAddress);
       isValid = false;
     }
-    if(Objects.equals(country, "")) {
-      model.addAttribute("countryError", "Country is required.");
+    if(!Objects.equals(suburb, validatedSuburb)) {
+      model.addAttribute("suburbError", validatedSuburb);
       isValid = false;
     }
+    if(!Objects.equals(city, validatedCity)) {
+      model.addAttribute("cityError", validatedCity);
+      isValid = false;
+    }
+    if(!Objects.equals(country, validatedCountry)) {
+      model.addAttribute("countryError", validatedCountry);
+      isValid = false;
+    }
+    if(!Objects.equals(postcode, validatedPostcode)) {
+      model.addAttribute("postcodeError", validatedPostcode);
+      isValid = false;
+    }
+
 
 
     if (isValid) {
-      Garden garden;
-      if (Objects.equals(size.trim(), "")) {
-        garden = gardenService.addGarden(new Garden(name,  newLocation, newSuburb, city, country, newPostcode, gardener, description));
-      } else {
-        garden =
-            gardenService.addGarden(
-                new Garden(
-                    name,
-                        newLocation, newSuburb, city, country, newPostcode,
-                    new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(),
-                    gardener, description));
-      }
+        Garden garden;
+        if (Objects.equals(size.trim(), "")) {
+          garden = gardenService.addGarden(new Garden(name ,newLocation.trim(), newSuburb.trim(), city, country, newPostcode.trim(), gardener, description));
+        } else {
+          garden = gardenService.addGarden((new Garden(name, newLocation.trim(), newSuburb.trim(), city, country, newPostcode.trim(), new BigDecimal(validatedSize).stripTrailingZeros().toPlainString(), gardener, description)));
+        }
       return "redirect:/gardens/details?gardenId=" + garden.getId();
 
     } else {
@@ -308,8 +322,8 @@ public class GardenFormController {
         model.addAttribute("tagValid", tagValid);
       }
       if (userId == null || gardener.getId() == parseLong(userId, 10)) {
-        Weather currentWeather = weatherService.getWeather(garden.get().getLocation());
-        PrevWeather prevWeathers = weatherService.getPrevWeather(garden.get().getLocation());
+        Weather currentWeather = weatherService.getWeather(garden.get().getCity() + ", " + garden.get().getCountry());
+        PrevWeather prevWeathers = weatherService.getPrevWeather(garden.get().getCity() + ", " + garden.get().getCountry());
         if (currentWeather != null && prevWeathers != null) {
           model.addAttribute("date", currentWeather.getDate());
           model.addAttribute("temperature", currentWeather.getTemperature());
@@ -471,6 +485,11 @@ public class GardenFormController {
       HttpServletRequest request) {
     logger.info("POST gardens/edit");
     String validatedName = ValidityChecker.validateGardenName(name);
+    String validatedAddress = ValidityChecker.validateGardenAddress(location);
+    String validatedSuburb = ValidityChecker.validateGardenSuburb(suburb);
+    String validatedCity = ValidityChecker.validateGardenCity(city);
+    String validatedCountry = ValidityChecker.validateGardenCountry(country);
+    String validatedPostcode = ValidityChecker.validateGardenPostcode(postcode);
     String validatedSize = ValidityChecker.validateGardenSize(size);
     String validatedDescription = ValidityChecker.validateGardenDescription(description);
 
@@ -492,12 +511,12 @@ public class GardenFormController {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }
-    if (Objects.equals(city, "")) {
-      model.addAttribute("cityError", "City is required.");
+    if(!Objects.equals(location, validatedAddress)) {
+      model.addAttribute("locationError", validatedAddress);
       isValid = false;
     }
-    if(Objects.equals(country, "")) {
-      model.addAttribute("countryError", "Country is required.");
+    if(!Objects.equals(suburb, validatedSuburb)) {
+      model.addAttribute("suburbError", validatedSuburb);
       isValid = false;
     }
       if (!Objects.equals(description, validatedDescription) && !description.trim().isEmpty()) {
@@ -507,6 +526,19 @@ public class GardenFormController {
     if(description.trim().isEmpty()) {
       description = "";
     }
+    if(!Objects.equals(city, validatedCity)) {
+      model.addAttribute("cityError", validatedCity);
+      isValid = false;
+    }
+    if(!Objects.equals(country, validatedCountry)) {
+      model.addAttribute("countryError", validatedCountry);
+      isValid = false;
+    }
+    if(!Objects.equals(postcode, validatedPostcode)) {
+      model.addAttribute("postcodeError", validatedPostcode);
+      isValid = false;
+    }
+
 
     if (isValid) {
       Garden existingGarden = gardenService.getGarden(parseLong(gardenId)).get();
@@ -515,11 +547,11 @@ public class GardenFormController {
 
       }
       existingGarden.setName(name);
-      existingGarden.setLocation(location);
-      existingGarden.setSuburb(suburb);
+      existingGarden.setLocation(location.trim());
+      existingGarden.setSuburb(suburb.trim());
       existingGarden.setCity(city);
       existingGarden.setCountry(country);
-      existingGarden.setPostcode(postcode);
+      existingGarden.setPostcode(postcode.trim());
       existingGarden.setDescription(description);
 
       if (Objects.equals(size.trim(), "")) {

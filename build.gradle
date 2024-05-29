@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.2'
@@ -29,6 +31,7 @@ dependencies {
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-test
 	testImplementation 'org.springframework.security:spring-security-test:6.2.3'
@@ -36,6 +39,7 @@ dependencies {
 
 	//Cucumber dependencies
 	testImplementation 'io.cucumber:cucumber-java:7.15.0'
+	testImplementation 'io.cucumber:cucumber-spring:7.15.0'
 	testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.15.0'
 	testImplementation 'org.junit.platform:junit-platform-suite:1.10.2'
 }
@@ -43,6 +47,19 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 	finalizedBy jacocoTestReport
+}
+
+tasks.register("cucumber", Test) {
+	testLogging.showStandardStreams = true
+	systemProperty "spring.config.additional-location", "classpath:/application-cucumber.properties"
+	useJUnitPlatform()
+	filter {
+		includeTestsMatching "nz.ac.canterbury.seng302.gardenersgrove.cucumber.*"
+	}
+	testLogging {
+		events "passed", "skipped", "failed", "standardOut", "standardError"
+		exceptionFormat TestExceptionFormat.FULL
+	}
 }
 
 // Selects what reports Jacoco generates and where to put them

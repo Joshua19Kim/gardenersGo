@@ -11,7 +11,7 @@ Feature: U16 - As Sarah, I want to be able to change my password over email, so 
     Given I am on the forgot your password page
     And I enter the empty or malformed email address <email>
     When I submit the invalid email
-    Then an error message tells me "Email address must be in the form ‘jane@doe.nz"
+    Then an error message says "Email address must be in the form 'jane@doe.nz'"
     Examples:
       |email|
       |""|

@@ -21,19 +21,19 @@ public class Garden {
   private String name;
 
   /** The location(Street number and name) of the garden. */
-  @Column(length=64 ,nullable = false)
+  @Column(length=60)
   private String location;
 
   /** The suburb of the garden. */
-  @Column(length=64)
+  @Column(length=90)
   private String suburb;
 
   /** The city of the garden. */
-  @Column(length=96 ,nullable = false)
+  @Column(length=180 ,nullable = false)
   private String city;
 
   /** The country of the garden. */
-  @Column(length=64 ,nullable = false)
+  @Column(length=60 ,nullable = false)
   private String country;
 
   /** The postcode of the garden. */
@@ -318,4 +318,20 @@ public class Garden {
     public void setDescription(String description) {
         this.description = description;
     }
+
+
+  /**
+   * Gets the address, city, and location of the garden
+   * if the address is null it just gets the city and country
+   *
+   * @return the full location
+   */
+  public String getFullLocation() {
+    if(location == null || location.isEmpty()) {
+      return city + ", " + country;
+    } else {
+      return location + ", " + city + ", " + country;
+    }
+  }
+
 }

@@ -1,5 +1,6 @@
-package nz.ac.canterbury.seng302.gardenersgrove.step_definitions;
+package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import io.cucumber.spring.CucumberContextConfiguration;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -13,9 +14,9 @@ import io.cucumber.java.ParameterType;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.context.SpringBootTest;
 
-
-
+@SpringBootTest
 public class CheckCharactersValid {
     private final GardenerFormService gardenerFormService = new GardenerFormService(null, null);
     private final InputValidationUtil inputValidationService = new InputValidationUtil(gardenerFormService);

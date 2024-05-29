@@ -393,7 +393,7 @@ public class GardenFormControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("editGardensFormTemplate"))
                 .andExpect(model().attributeExists("cityError", "name", "location", "suburb", "country", "postcode", "size"))
-                .andExpect(model().attribute("cityError", "City is required."));
+                .andExpect(model().attribute("cityError", "City is required"));
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
 
@@ -420,7 +420,7 @@ public class GardenFormControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("editGardensFormTemplate"))
                 .andExpect(model().attributeExists("countryError", "name", "location", "suburb", "city", "postcode", "size"))
-                .andExpect(model().attribute("countryError", "Country is required."));
+                .andExpect(model().attribute("countryError", "Country is required"));
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
 
@@ -670,7 +670,7 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("postcode", postcode))
                 .andExpect(model().attribute("size", size))
                 .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("cityError", "City is required."));
+                .andExpect(model().attribute("cityError", "City is required"));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
@@ -709,7 +709,7 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("postcode", postcode))
                 .andExpect(model().attribute("size", size))
                 .andExpect(model().attribute("requestURI", redirectURI))
-                .andExpect(model().attribute("countryError", "Country is required."));
+                .andExpect(model().attribute("countryError", "Country is required"));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
