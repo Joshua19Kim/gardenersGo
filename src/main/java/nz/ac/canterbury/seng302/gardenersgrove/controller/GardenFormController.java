@@ -3,16 +3,11 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
+import nz.ac.canterbury.seng302.gardenersgrove.util.NotificationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.util.TagValidation;
-import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WordFilter;
-import nz.ac.canterbury.seng302.gardenersgrove.util.NotificationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +15,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-
-import java.util.*;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static java.lang.Long.parseLong;
 
@@ -92,7 +86,6 @@ public class GardenFormController {
    * Gets the home page that displays the list of gardens
    *
    * @param model the model for passing attributes to the view
-   * @param request the request used to find the current uri
    * @param request the request used to find the current URI
    * @param response the response used to set headers
    * @return the gardens template which defines the user interface for the my gardens page
@@ -604,7 +597,7 @@ public class GardenFormController {
       model.addAttribute("requestURI", requestService.getRequestURI(request));
       model.addAttribute("name", garden.get().getName());
       model.addAttribute("description", garden.get().getDescription());
-      model.addAttribute("size", garden.get().getSize().replace(',', '.'));
+      model.addAttribute("size", garden.get().getSize() != null ? garden.get().getSize().replace(',', '.') : "");
       model.addAttribute("location", garden.get().getLocation());
       model.addAttribute("suburb", garden.get().getSuburb());
       model.addAttribute("city", garden.get().getCity());
