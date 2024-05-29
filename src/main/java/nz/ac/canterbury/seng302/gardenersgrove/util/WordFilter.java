@@ -34,7 +34,7 @@ public class WordFilter {
      * Processes each .csv file in the wordlists directory.
      */
     private static void loadConfigs() {
-        Path dir = Paths.get("/wordlists/");
+        Path dir = Paths.get("src/main/resources/static/wordlists/");
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.csv")) {
             for (Path entry : stream) {
                 processFile(entry);
