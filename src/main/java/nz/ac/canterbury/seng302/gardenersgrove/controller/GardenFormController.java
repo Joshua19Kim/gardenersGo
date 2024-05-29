@@ -299,6 +299,7 @@ public class GardenFormController {
 
       model.addAttribute("garden", garden.get());
       model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
+      model.addAttribute("allTags", tagService.getUniqueTagNames(parseLong(gardenId)));
       if (uploadError != null) {
         model.addAttribute("uploadError", uploadError);
         model.addAttribute("errorId", errorId);
@@ -605,27 +606,50 @@ public class GardenFormController {
     if (gardenOptional.isEmpty()) {
       return "redirect:/gardens";
     }
+    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+    List<Garden> gardens = new ArrayList<>();
+    if (gardenerOptional.isPresent()) {
+      gardener = gardenerOptional.get();
+      gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
+    }
+    model.addAttribute("gardens", gardens);
     Garden garden = gardenOptional.get();
     Optional<String> validTagError = tagValidation.validateTag(tag);
     Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
 
     Weather currentWeather = weatherService.getWeather(garden.getLocation());
-    model.addAttribute("date", currentWeather.getDate());
-    model.addAttribute("temperature", currentWeather.getTemperature());
-    model.addAttribute("weatherImage", currentWeather.getWeatherImage());
-    model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
-    model.addAttribute("humidity", currentWeather.getHumidity());
-    model.addAttribute("forecastDates", currentWeather.getForecastDates());
-    model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
-    model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
-    model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
-    model.addAttribute("forecastWeatherDescription", currentWeather.getForecastDescriptions());
-    model.addAttribute("forcastHumidities", currentWeather.getForecastHumidities());
-    model.addAttribute("gardens", gardenService.getGardensByGardenerId(garden.getGardener().getId()));
+    PrevWeather prevWeathers = weatherService.getPrevWeather(garden.getLocation());
+    if (currentWeather != null && prevWeathers != null) {
+      model.addAttribute("date", currentWeather.getDate());
+      model.addAttribute("temperature", currentWeather.getTemperature());
+      model.addAttribute("weatherImage", currentWeather.getWeatherImage());
+      model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
+      model.addAttribute("humidity", currentWeather.getHumidity());
+      model.addAttribute("forecastDates", currentWeather.getForecastDates());
+      model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
+      model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
+      model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
+      model.addAttribute(
+              "forecastWeatherDescription", currentWeather.getForecastDescriptions());
+      model.addAttribute("forecastHumidities", currentWeather.getForecastHumidities());
+      LocalDate currentDate = LocalDate.now();
+      LocalDate lastNotifiedDate = garden.getLastNotified();
+      if (lastNotifiedDate != null && lastNotifiedDate.equals(currentDate)) {
+        model.addAttribute("wateringTip", null);
+      }  else {
+        if (lastNotifiedDate != null) {
+          gardenService.updateLastNotifiedbyId(id, null);
+        }
+        String wateringTip = NotificationUtil.generateWateringTip(currentWeather, prevWeathers);
+        model.addAttribute("wateringTip", wateringTip);
+      }
 
+
+    }
     if (validTagError.isPresent()) {
       model.addAttribute("tagValid", validTagError.get());
       model.addAttribute("tag", tag);
+      model.addAttribute("allTags", tagService.getUniqueTagNames(id));
       model.addAttribute("tags", tagService.getTags(garden.getId()));
       model.addAttribute("garden", garden);
       return "gardenDetailsTemplate";
@@ -639,6 +663,7 @@ public class GardenFormController {
       } else {
         model.addAttribute("garden", garden);
         model.addAttribute("tag", tag);
+        model.addAttribute("allTags", tagService.getUniqueTagNames(id));
         model.addAttribute("tags", tagService.getTags(garden.getId()));
         model.addAttribute("tagValid", "Submitted tag fails moderation requirements");
         return "gardenDetailsTemplate";
