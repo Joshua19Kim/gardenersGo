@@ -195,6 +195,8 @@
     // it is used to check if the user clicked an option from the autocomplete and if so to submit the form
     const tagInput = document.getElementById('tag-input');
     const tagForm = document.getElementById("hidden-tag-form");
+    const dataList = document.getElementById("tagList");
+    let removedOption = "";
     let keypress = false;
     tagInput.addEventListener("keydown", (e) => {
         if(e.key) {
@@ -202,10 +204,27 @@
         }
     });
     tagForm.addEventListener('input', (e) => {
+        const inputValue = tagInput.value;
+        const options = dataList.options
         if (keypress === false) {
-            document.getElementById('hidden-tag-input').value = tagInput.value;
+            document.getElementById('hidden-tag-input').value = inputValue;
             tagForm.submit();
         }
+        if(inputValue !== removedOption && removedOption !== "") {
+            let newOption = document.createElement("option");
+            newOption.value = removedOption;
+            newOption.text = removedOption;
+            dataList.appendChild(newOption);
+            removedOption = "";
+        }
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === inputValue) {
+                removedOption = options[i].value;
+                options[i].remove();
+                break;
+            }
+        }
+
         keypress = false;
     });
 
