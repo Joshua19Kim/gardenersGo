@@ -642,8 +642,8 @@ public class GardenFormController {
     Optional<String> validTagError = tagValidation.validateTag(tag);
     Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
 
-    Weather currentWeather = weatherService.getWeather(garden.getLocation());
-    PrevWeather prevWeathers = weatherService.getPrevWeather(garden.getLocation());
+    Weather currentWeather = weatherService.getWeather(garden.getCity() + ", " + garden.getCountry());
+    PrevWeather prevWeathers = weatherService.getPrevWeather(garden.getCity() + ", " + garden.getCountry());
     if (currentWeather != null && prevWeathers != null) {
       model.addAttribute("date", currentWeather.getDate());
       model.addAttribute("temperature", currentWeather.getTemperature());
