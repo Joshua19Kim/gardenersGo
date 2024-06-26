@@ -4,6 +4,7 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenDetailsController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -105,12 +106,12 @@ public class PubliciseGardensFeature {
         gardenerFormService = Mockito.mock(GardenerFormService.class);
         when(authentication.getName()).thenReturn("testgardener@gmail.com");
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
+        GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
                 new RelationshipService(Mockito.mock(RelationshipRepository.class), gardenerFormService),
                 new RequestService(), Mockito.mock(WeatherService.class),
                 new TagService(Mockito.mock(TagRepository.class)));
 
-        mockMvc = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
     }
 
     //AC2,3
