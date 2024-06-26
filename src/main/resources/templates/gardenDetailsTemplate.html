@@ -64,11 +64,7 @@
                     <script th:inline="javascript">
                         // Credit: https://stackoverflow.com/questions/31771821/thymeleaf-how-to-add-conditional-block-in-javascript
                         let isGardenPublic = [[${garden.isGardenPublic}]];
-                        if (isGardenPublic) {
-                            document.getElementById("isGardenPublic").checked = true;
-                        } else {
-                            document.getElementById("isGardenPublic").checked = false;
-                        }
+                        document.getElementById("isGardenPublic").checked = isGardenPublic;
                     </script>
 
                 </form>
@@ -127,6 +123,7 @@
         <div class="weather-display-container">
             <div class="weather-display-row">
                 <h3 th:text="${garden.city + ', ' + garden.country}"></h3>
+                <h4 th:text="${day}"></h4>
                 <p th:text="${date}"></p>
                 <div class="temperature-container">
                     <div class="weather-display-row">
@@ -148,6 +145,7 @@
         <div class="future-weather weather-display-container" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
             <div class="weather-display-row">
                 <p th:text="${forecastDates.get(iter.index)}"></p>
+                <h4 th:text="${forecastDays.get(iter.index)}"></h4>
                 <div class="temperature-container">
                     <div class="weather-display-row">
                         <div class="temperature-container">
