@@ -9,6 +9,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,64 +105,6 @@ public class PlantEditFormControllerTest {
 
     @Test
     @WithMockUser
-    public void EditPlantFormSubmitted_AllInvalid_AllErrorMessagesAdded() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        String name = "My Pl@nt";
-        String plantId = "1";
-        String count = "two";
-        String description = "On the other hand, we denounce with righteous indignation and dislike men who are so " +
-                "beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they " +
-                "cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who " +
-                "fail in their duty through weakness of will, which is the same as saying through shrinking from " +
-                "toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our " +
-                "power of choice is untrammelled and when nothing prevents our being able to do what we like best, " +
-                "every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to " +
-                "the claims of duty or the obligations of business it will frequently occur that pleasures have to " +
-                "be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this " +
-                "principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures " +
-                "pains to avoid worse pains.";
-        String date = "10/10/2023";
-        Plant plant = new Plant("My Plant", "2", "Rose", date, garden);
-        when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
-
-        MockMultipartFile mockMultipartFile = new MockMultipartFile(
-                "file",
-                "file.txt",
-                "plain/text",
-                "Hello World!".getBytes()
-        );
-        String uploadMessage = "Image must be of type png, jpg or svg";
-        when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(testGardener));
-        when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.of(uploadMessage));
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/edit")
-                        .file(mockMultipartFile)
-                        .param("name", name)
-                        .param("count", count)
-                        .param("description", description)
-                        .param("date", "2023-10-10")
-                        .param("plantId", plantId)
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("editPlantFormTemplate"))
-                .andExpect(model().attributeExists("nameError", "countError", "descriptionError", "uploadError", "name", "count", "description", "date", "plant", "garden"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("count", count))
-                .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", "2023-10-10"))
-                .andExpect(model().attribute("nameError", "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"))
-                .andExpect(model().attribute("countError", "Plant count must be a positive number"))
-                .andExpect(model().attribute("descriptionError", "Plant description must be less than 512 characters"))
-                .andExpect(model().attribute("plant", plant))
-                .andExpect(model().attribute("uploadError", uploadMessage))
-                .andExpect(model().attribute("garden", garden));
-
-        verify(plantService, never()).addPlant(plant);
-        verify(imageService, never()).savePlantImage(mockMultipartFile, plant);
-
-    }
-
-    @Test
-    @WithMockUser
     public void EditPlantFormSubmitted_AllValidChanges_PlantUpdatedAndBackToGardenDetails() throws Exception {
         Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         String name = "My Plant 2";
@@ -196,6 +140,56 @@ public class PlantEditFormControllerTest {
         Assertions.assertEquals(count, plant.getCount());
         Assertions.assertEquals(description, plant.getDescription());
         Assertions.assertEquals(date, plant.getDatePlanted());
+    }
+
+    @ParameterizedTest
+    @WithMockUser
+    @CsvSource(
+            value = {
+                    "'':2:My first tree in my garden:2024-04-10:nameError:Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes",
+                    "@pple Tree:2:My first tree in my garden:2024-04-10:nameError:Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes",
+                    "Apple Tree:two:My first tree in my garden:2024-04-10:countError:Plant count must be a positive number",
+                    "Apple Tree:-2:My first tree in my garden:2024-04-10:countError:Plant count must be a positive number",
+                    "Apple Tree:2:Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt.:2024-04-10:descriptionError:Plant description must be less than 512 characters"
+            },
+            delimiter = ':')
+    public void editPlantFormSubmitted_invalidInput_errorMessagesAdded(String name, String count, String description, String date, String errorName, String errorMessage) throws Exception {
+        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
+        String plantId = "1";
+        Plant plant = new Plant("My Plant", "2", "Rose","10/10/2023", garden);
+        when(plantService.getPlant(Long.parseLong(plantId))).thenReturn(Optional.of(plant));
+
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "file",
+                "file.txt",
+                "plain/text",
+                "Hello World!".getBytes()
+        );
+        String uploadMessage = "Image must be of type png, jpg or svg";
+        when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(testGardener));
+        when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.of(uploadMessage));
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/edit")
+                        .file(mockMultipartFile)
+                        .param("name", name)
+                        .param("count", count)
+                        .param("description", description)
+                        .param("date", date)
+                        .param("plantId", plantId)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("editPlantFormTemplate"))
+                .andExpect(model().attributeExists("uploadError", "name", "count", "description", "date", "plant", "garden"))
+                .andExpect(model().attribute("name", name))
+                .andExpect(model().attribute("count", count))
+                .andExpect(model().attribute("description", description))
+                .andExpect(model().attribute("date", "2024-04-10"))
+                .andExpect(model().attribute(errorName, errorMessage))
+                .andExpect(model().attribute("plant", plant))
+                .andExpect(model().attribute("uploadError", uploadMessage))
+                .andExpect(model().attribute("garden", garden));
+
+        verify(plantService, never()).addPlant(plant);
+        verify(imageService, never()).savePlantImage(mockMultipartFile, plant);
     }
 
 
