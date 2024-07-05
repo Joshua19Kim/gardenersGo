@@ -1,15 +1,22 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unit.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PrevWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.NotificationUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -18,6 +25,7 @@ import static org.mockito.Mockito.when;
 public class NotificationUtilTest {
 
     private WeatherService weatherService;
+    Logger logger = LoggerFactory.getLogger(PlantFormController.class);
     @BeforeEach
     public void setUp() {
         weatherService = Mockito.mock(WeatherService.class);
