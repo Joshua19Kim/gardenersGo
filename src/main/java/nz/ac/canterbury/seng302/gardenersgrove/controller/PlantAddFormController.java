@@ -117,7 +117,7 @@ public class PlantAddFormController {
             Model model) {
         logger.info("/gardens/details/plants/form");
         String validatedDate = "";
-        if (!date.trim().isEmpty()) {
+        if (date != null && !date.trim().isEmpty()) {
             LocalDate localDate = LocalDate.parse(date);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             validatedDate = localDate.format(formatter);
@@ -134,7 +134,7 @@ public class PlantAddFormController {
             model.addAttribute("nameError", validatedPlantName);
             isValid = false;
         }
-        if (!Objects.equals(count.replace(",", "."), validatedPlantCount)) {
+        if (count != null && !Objects.equals(count.replace(",", "."), validatedPlantCount)) {
             model.addAttribute("countError", validatedPlantCount);
             isValid = false;
         }
@@ -152,9 +152,9 @@ public class PlantAddFormController {
 
         if (isValid) {
             Plant plant = new Plant(name, garden);
-            boolean countPresent = !Objects.equals(validatedPlantCount.trim(), "");
-            boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
-            boolean datePresent = !Objects.equals(date.trim(), "");
+            boolean countPresent = count != null && !validatedPlantCount.trim().isEmpty();
+            boolean descriptionPresent = description != null && !validatedPlantDescription.trim().isEmpty();
+            boolean datePresent = !validatedDate.isEmpty() && !Objects.equals(date.trim(), "");
 
             if (countPresent) {
                 plant.setCount(new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());

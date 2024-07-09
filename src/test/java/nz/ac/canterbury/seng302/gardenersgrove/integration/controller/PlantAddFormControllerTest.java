@@ -1,5 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.LocalDate;
+import java.util.Optional;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantAddFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -7,6 +15,9 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,513 +26,243 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @WebMvcTest(controllers = {GardenFormController.class, PlantAddFormController.class})
 public class PlantAddFormControllerTest {
-    Gardener testGardener = new Gardener("Test", "Gardener",
-            LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
-            "Password1!");
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private GardenService gardenService;
-
-    @MockBean
-    // This is not explicitly used but is necessary for adding gardeners to the repository for testing
-    private GardenerFormService gardenerFormService;
-
-    @MockBean
-    private PlantService plantService;
-
-    @MockBean
-    private ImageService imageService;
-    @MockBean
-    private RequestService requestService;
-
-    @MockBean
-    private RelationshipService relationshipService;
-
-    @MockBean
-    private TagService tagService;
-
-    @MockBean
-    private WeatherService weatherService;
-
-    @Test
-    @WithMockUser
-    public void GardenDetailsRequested_ExistentIdGiven_PlantDetailsProvided() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null,
-                "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        Plant plant = new Plant("My Plant", garden);
-        garden.getPlants().add(plant);
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        mockMvc
-                .perform(MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("My Plant")));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam",
-                null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        mockMvc
-                .perform(MockMvcRequestBuilders.get("/gardens/details/plants/form").param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("plantsFormTemplate"))
-                .andExpect(content().string(containsString("Name:")))
-                .andExpect(content().string(containsString("Plant Count:")))
-                .andExpect(content().string(containsString("Description:")))
-                .andExpect(content().string(containsString("Date Planted:")));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_ValidNameOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "My Plant";
-        String description = "";
-        String date = "";
-        Plant plant = new Plant(name, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc
-                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", "")
-                        .param("description", description)
-                        .param("date", date)
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-
-        verify(plantService, times(2)).addPlant(any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_ValidNameAndCountOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "My Plant";
-        String count = "2.0";
-        Plant plant = new Plant(name, count, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc
-                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", count)
-                        .param("description", "")
-                        .param("date", "")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-
-        verify(plantService, times(2)).addPlant(any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_ValidNameAndDescriptionOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "My Plant";
-        String description = "A Plant in My Garden";
-        Plant plant = new Plant(name, description, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc
-                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", "")
-                        .param("description", description)
-                        .param("date", "")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-
-        verify(plantService, times(2)).addPlant(any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_ValidNameAndDateOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "My Plant";
-        String date = "10/03/2024";
-        Plant plant = new Plant(name, garden, date);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc
-                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", "")
-                        .param("description", "")
-                        .param("date", "2024-01-10")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-
-        verify(plantService, times(2)).addPlant(any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_ValidNameCountAndDescriptionOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "My Plant";
-        String count = "2";
-        String description = "A Plant in My Garden";
-        Plant plant = new Plant(name, count, description, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc
-                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", "2")
-                        .param("description", description)
-                        .param("date", "")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-
-        verify(plantService, times(2)).addPlant(any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_ValidNameCountAndDateOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "My Plant";
-        String count = "2";
-        String date = "10/03/2024";
-        Plant plant = new Plant(name, date, garden, count);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc
-                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", "2")
-                        .param("description", "")
-                        .param("date", "2024-03-10")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-
-        verify(plantService, times(2)).addPlant(any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_ValidNameDescriptionAndDateOnly_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "My Plant";
-        String description = "A Plant in My Garden";
-        String date = "10/03/2024";
-        Plant plant = new Plant(name, description, date, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc
-                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", "")
-                        .param("description", description)
-                        .param("date", "2024-01-10")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-
-        verify(plantService, times(2)).addPlant(any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_AllValidInputs_PlantAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "My Plant";
-        String count = "2";
-        String description = "A Plant in My Garden";
-        String date = "10/03/2024";
-        Plant plant = new Plant(name, count, description, date, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile mockMultipartFile = new MockMultipartFile(
-                "file",
-                "image.jpg",
-                "image/jpeg",
-                "image content".getBytes()
-        );
-        when(imageService.savePlantImage(eq(mockMultipartFile), any(Plant.class))).thenReturn(Optional.empty());
-
-        mockMvc
-                .perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(mockMultipartFile)
-                        .param("name", name)
-                        .param("count", "2")
-                        .param("description", description)
-                        .param("date", "2024-01-10")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
-
-        verify(plantService, times(1)).addPlant(any(Plant.class));
-        verify(imageService, times(1)).savePlantImage(eq(mockMultipartFile), any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_EmptyName_ErrorMessageAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "";
-        String count = "2";
-        String description = "A Plant in My Garden";
-        String date = "10/03/2024";
-        Plant plant = new Plant(name, count, description, date, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", "2.0")
-                        .param("description", description)
-                        .param("date", "2024-03-10")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("plantsFormTemplate"))
-                .andExpect(model().attributeExists("nameError", "name", "count", "description", "date"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("count", "2.0"))
-                .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", "2024-03-10"))
-                .andExpect(model().attribute("nameError",
-                        "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"));
-
-        verify(plantService, never()).addPlant(any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_InvalidName_ErrorMessageAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "~!@#$%^&*()_+";
-        String count = "2";
-        String description = "A Plant in My Garden";
-        String date = "10/03/2024";
-        Plant plant = new Plant(name, count, description, date, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", "2.0")
-                        .param("description", description)
-                        .param("date", "2024-03-10")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("plantsFormTemplate"))
-                .andExpect(model().attributeExists("nameError", "name", "count", "description", "date"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("count", "2.0"))
-                .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", "2024-03-10"))
-                .andExpect(model().attribute("nameError",
-                        "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"));
-
-        verify(plantService, never()).addPlant(any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_CountNotANumber_ErrorMessageAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "My Plant";
-        String count = "2";
-        String description = "A Plant in My Garden";
-        String date = "10/03/2024";
-        Plant plant = new Plant(name, count, description, date, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", "Not a Number")
-                        .param("description", description)
-                        .param("date", "2024-03-10")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("plantsFormTemplate"))
-                .andExpect(model().attributeExists("countError", "name", "count", "description", "date"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("count", "Not a Number"))
-                .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", "2024-03-10"))
-                .andExpect(model().attribute("countError",
-                        "Plant count must be a positive number"));
-
-        verify(plantService, never()).addPlant(any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_NegativeCount_ErrorMessageAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-
-        String name = "My Plant";
-        String count = "-2";
-        String description = "A Plant in My Garden";
-        String date = "10/03/2024";
-        Plant plant = new Plant(name, count, description, date, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", "-2.0")
-                        .param("description", description)
-                        .param("date", "2024-03-10")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("plantsFormTemplate"))
-                .andExpect(model().attributeExists("countError", "name", "count", "description", "date"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("count", "-2.0"))
-                .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", "2024-03-10"))
-                .andExpect(model().attribute("countError",
-                        "Plant count must be a positive number"));
-
-        verify(plantService, never()).addPlant(any(Plant.class));
-    }
-
-    @Test
-    @WithMockUser
-    public void PlantFormSubmitted_DescriptionOverLimit_ErrorMessageAddedAndViewUpdated() throws Exception {
-        Garden garden = new Garden("Test garden", "Ilam", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
-        List<Garden> gardens = new ArrayList<>();
-        gardens.add(garden);
-        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(testGardener));
-        when(gardenService.getGardensByGardenerId(any())).thenReturn(gardens);
-
-        String name = "My Plant";
-        String count = "2";
-        String description = "On the other hand, we denounce with righteous indignation and dislike men who are so " +
-                "beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they " +
-                "cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who " +
-                "fail in their duty through weakness of will, which is the same as saying through shrinking from " +
-                "toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our " +
-                "power of choice is untrammelled and when nothing prevents our being able to do what we like best, " +
-                "every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to " +
-                "the claims of duty or the obligations of business it will frequently occur that pleasures have to " +
-                "be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this " +
-                "principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures " +
-                "pains to avoid worse pains.";
-        String date = "10/03/2024";
-        Plant plant = new Plant(name, count, description, date, garden);
-        when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
-        MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                        .file(emptyFile)
-                        .param("name", name)
-                        .param("count", "2.0")
-                        .param("description", description)
-                        .param("date", "2024-03-10")
-                        .param("gardenId", "1")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("plantsFormTemplate"))
-                .andExpect(model().attributeExists("descriptionError", "name", "count", "description", "date"))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("count", "2.0"))
-                .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", "2024-03-10"))
-                .andExpect(model().attribute("descriptionError",
-                        "Plant description must be less than 512 characters"));
-
-        verify(plantService, never()).addPlant(any(Plant.class));
-    }
+  Gardener testGardener =
+      new Gardener(
+          "Test", "Gardener", LocalDate.of(2024, 4, 1), "testgardener@gmail.com", "Password1!");
+
+  @Autowired private MockMvc mockMvc;
+
+  @MockBean private GardenService gardenService;
+
+  @MockBean
+  // This is not explicitly used but is necessary for adding gardeners to the repository for testing
+  private GardenerFormService gardenerFormService;
+
+  @MockBean private PlantService plantService;
+
+  @MockBean private ImageService imageService;
+  @MockBean private RequestService requestService;
+
+  @MockBean private RelationshipService relationshipService;
+
+  @MockBean private TagService tagService;
+
+  @MockBean private WeatherService weatherService;
+
+  @Test
+  @WithMockUser
+  public void GardenDetailsRequested_ExistentIdGiven_PlantDetailsProvided() throws Exception {
+    Garden garden =
+        new Garden(
+            "Test garden",
+            "Ilam",
+            null,
+            "Christchurch",
+            "New Zealand",
+            null,
+            "9999",
+            testGardener,
+            "");
+    Plant plant = new Plant("My Plant", garden);
+    garden.getPlants().add(plant);
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1").with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("My Plant")));
+  }
+
+  @Test
+  @WithMockUser
+  public void PlantFormDisplayed_DefaultValues_ModelAttributesPresent() throws Exception {
+    Garden garden =
+        new Garden(
+            "Test garden",
+            "Ilam",
+            null,
+            "Christchurch",
+            "New Zealand",
+            null,
+            "9999",
+            testGardener,
+            "");
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get("/gardens/details/plants/form")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(view().name("plantsFormTemplate"))
+        .andExpect(content().string(containsString("Name:")))
+        .andExpect(content().string(containsString("Plant Count:")))
+        .andExpect(content().string(containsString("Description:")))
+        .andExpect(content().string(containsString("Date Planted:")));
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+      value = {
+        "Apple Tree:::",
+        "Apple Tree:2::",
+        "Apple Tree::My first tree in my garden:",
+        "Apple Tree:::2024-04-10",
+        "Apple Tree:1:My first tree in my garden:",
+        "Apple Tree:1::2024-04-10",
+        "Apple Tree::My first tree in my garden:2024-04-10",
+        "Apple Tree:1:My first tree in my garden:2024-04-10",
+        "Apple Tree:2:Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt:2024-04-10"
+      },
+      delimiter = ':')
+  @WithMockUser
+  public void plantFormSubmitted_validInputs_plantAddedAndViewUpdated(
+      String name, String count, String description, String date) throws Exception {
+    Garden garden =
+        new Garden(
+            "Test garden",
+            "Ilam",
+            null,
+            "Christchurch",
+            "New Zealand",
+            null,
+            "9999",
+            testGardener,
+            "");
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+
+    Plant plant = new Plant(name, count, description, date, garden);
+    when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
+
+    MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                .file(emptyFile)
+                .param("name", name)
+                .param("count", count)
+                .param("description", description)
+                .param("date", date)
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+
+    verify(plantService, times(2)).addPlant(any(Plant.class));
+  }
+
+  @Test
+  @WithMockUser
+  public void PlantFormSubmitted_EmptyName_ErrorMessageAddedAndViewUpdated() throws Exception {
+    Garden garden =
+        new Garden(
+            "Test garden",
+            "Ilam",
+            null,
+            "Christchurch",
+            "New Zealand",
+            null,
+            "9999",
+            testGardener,
+            "");
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+
+    String name = "";
+    String count = "2";
+    String description = "A Plant in My Garden";
+    String date = "10/03/2024";
+    Plant plant = new Plant(name, count, description, date, garden);
+    when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
+
+    MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                .file(emptyFile)
+                .param("name", name)
+                .param("count", "2.0")
+                .param("description", description)
+                .param("date", "2024-03-10")
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(view().name("plantsFormTemplate"))
+        .andExpect(model().attributeExists("nameError", "name", "count", "description", "date"))
+        .andExpect(model().attribute("name", name))
+        .andExpect(model().attribute("count", "2.0"))
+        .andExpect(model().attribute("description", description))
+        .andExpect(model().attribute("date", "2024-03-10"))
+        .andExpect(
+            model()
+                .attribute(
+                    "nameError",
+                    "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"));
+
+    verify(plantService, never()).addPlant(any(Plant.class));
+  }
+
+  @ParameterizedTest
+  @WithMockUser
+  @CsvSource(
+      value = {
+        "'':2:My first tree in my garden:2024-04-10:nameError:Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes",
+        "@pple Tree:2:My first tree in my garden:2024-04-10:nameError:Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes",
+        "Apple Tree:two:My first tree in my garden:2024-04-10:countError:Plant count must be a positive number",
+        "Apple Tree:-2:My first tree in my garden:2024-04-10:countError:Plant count must be a positive number",
+        "Apple Tree:2:Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt.:2024-04-10:descriptionError:Plant description must be less than 512 characters"
+      },
+      delimiter = ':')
+  public void plantFormSubmitted_invalidInput_errorMessageAndViewUpdated(
+      String name,
+      String count,
+      String description,
+      String date,
+      String errorName,
+      String errorMessage)
+      throws Exception {
+    Garden garden =
+        new Garden(
+            "Test garden",
+            "Ilam",
+            null,
+            "Christchurch",
+            "New Zealand",
+            null,
+            "9999",
+            testGardener,
+            "");
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+
+    Plant plant = new Plant(name, count, description, date, garden);
+    when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
+    when(gardenerFormService.findByEmail(Mockito.anyString()))
+        .thenReturn(Optional.of(testGardener));
+
+    MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                .file(emptyFile)
+                .param("name", name)
+                .param("count", count)
+                .param("description", description)
+                .param("date", date)
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(view().name("plantsFormTemplate"))
+        .andExpect(model().attributeExists("name", "count", "description", "date"))
+        .andExpect(model().attribute("name", name))
+        .andExpect(model().attribute("count", count))
+        .andExpect(model().attribute("description", description))
+        .andExpect(model().attribute("date", "2024-04-10"))
+        .andExpect(model().attribute(errorName, errorMessage));
+
+    verify(plantService, never()).addPlant(any(Plant.class));
+  }
 }
