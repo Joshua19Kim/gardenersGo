@@ -67,6 +67,8 @@ public class PlantEditFormController {
      * Retrieve an optional of a gardener using the current authentication
      * We will always have to check whether the gardener was retrieved in the calling method, so the return type was left as an optional
      * @return An optional of the requested gardener
+     *
+     * Note this code is also used in PlantAddFormController
      */
     public Optional<Gardener> getGardenerFromAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
