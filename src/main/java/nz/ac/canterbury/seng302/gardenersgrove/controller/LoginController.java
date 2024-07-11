@@ -40,9 +40,7 @@ public class LoginController {
      */
     @GetMapping("/login")
     public String login(Authentication authentication, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException {
-        logger.info("GET /");
-        logger.info("Authentication: " + authentication);
-        logger.info("DB USERNAME: " + System.getenv("DB_USERNAME"));
+        logger.info("GET /login");
         HttpSession session = request.getSession();
         if (session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION") != null ) {
             if (session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION").toString().contains("Email not verified")) {
