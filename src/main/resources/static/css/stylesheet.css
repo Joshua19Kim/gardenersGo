@@ -1,15 +1,16 @@
 /*--------------------------------BOOTSTRAP TEST CSS--------------------------------*/
 
 :root {
-    --background-color: #015249; /* Forest */
-    --primary-color: #57b890; /* Marine */
-    --secondary-color: #77c9d4; /* Feather */
-    --accent-color: #a5a5af; /* Sleek Grey */
-    --text-color: #333;
     --button-hover-color: #015249;
     --input-background-color: #eef3f7;
     --card-background-color: #e7f0dc;
     --alert-background-color: #f9f9f9;
+
+    --text-color: #040316;
+    --background-color: #ffffff;
+    --primary-color: #66996F;
+    --secondary-color: #adce73;
+    --accent-color: #168aad;
 }
 
 * {
@@ -37,12 +38,14 @@ body {
     padding: 20px;
     max-width: 400px;
     width: 100%;
+    color: var(--text-color);
+    background-color: var(--primary-color);
 }
 
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
-    color: var(--primary-color);
+    color: var(--text-color);
 }
 
 .form-control {
@@ -74,7 +77,7 @@ h1 {
 }
 
 .btn-link {
-    color: var(--primary-color);
+    color: var(--text-color);
     text-decoration: none;
     display: block;
     text-align: center;
