@@ -13,7 +13,7 @@ public class AdditionalResourceWebConfiguration implements WebMvcConfigurer {
             {
                     "classpath:/META-INF/resources/", "classpath:/resources/",
                     "classpath:/static/", "classpath:/public/", "classpath:/static/vendor/," +
-                    "classpath:/node_modules/"
+                    "classpath:/webjars/"
             };
 
     /**
