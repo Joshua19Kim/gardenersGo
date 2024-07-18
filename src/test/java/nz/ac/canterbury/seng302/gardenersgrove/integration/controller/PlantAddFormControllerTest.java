@@ -177,7 +177,8 @@ public class PlantAddFormControllerTest {
     String date = "10/03/2024";
     Plant plant = new Plant(name, count, description, date, garden);
     when(plantService.addPlant(any(Plant.class))).thenReturn(plant);
-
+    when(gardenerFormService.findByEmail(Mockito.anyString()))
+            .thenReturn(Optional.of(testGardener));
     MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
 
     mockMvc
