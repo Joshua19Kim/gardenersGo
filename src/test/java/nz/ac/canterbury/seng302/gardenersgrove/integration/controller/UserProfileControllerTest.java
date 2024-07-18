@@ -155,7 +155,7 @@ public class UserProfileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
                 .andExpect(model().attribute("DoB", LocalDate.of(2400,1,1)))
-                .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account"));
+                .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account <br/>"));
     }
 
     @Test

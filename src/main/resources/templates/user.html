@@ -51,14 +51,14 @@
                     document.getElementById('lastNameEdit').disabled = this.checked;
                 };
             </script>
-            <p class="smallErrorMessage" th:text="${lastNameValid}"></p>
+            <p class="smallErrorMessage" th:utext="${lastNameValid}"></p>
             <br/>
 
             <label for="DoB"> Date of Birth: </label>
             <span id="DoB" th:text="${DoB}"></span>
             <input class="form-control" data-cy="DoB" id="DoBEdit"
                    th:name="DoB" th:value="*{DoB}" type="date" style="display: none;">
-            <p class="smallErrorMessage" id="DoBInvalid" th:text="${DoBValid}"></p>
+            <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
             <script>
                 document.getElementById("DoBEdit").addEventListener("invalid",
                     function (event) {
@@ -74,7 +74,7 @@
             <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email" maxlength="320"
                    th:name="email" th:value="*{email}" type="text" style="display: none;"
                    th:classappend="${emailValid != '' ? 'error' : ''}">
-            <p class="smallErrorMessage" th:text="${emailValid}"></p>
+            <p class="smallErrorMessage" th:utext="${emailValid}"></p>
             <br/>
 
             <div id="editButtonDiv">

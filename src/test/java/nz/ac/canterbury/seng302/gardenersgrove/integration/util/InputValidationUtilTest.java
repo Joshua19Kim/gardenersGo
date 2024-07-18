@@ -243,7 +243,7 @@ public class InputValidationUtilTest {
         String first  = "First";
         boolean lastName = false;
         Optional<String> isValid = validate.checkValidName(name, first, lastName);
-        assertTrue(isValid.get().matches(first +" name must be 64 characters long or less"));
+        assertTrue(isValid.get().matches(first +" name must be 64 characters long or less <br/>"));
     }
 
     @Test

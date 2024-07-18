@@ -169,7 +169,7 @@ public class RegisterControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("register"))
                 .andExpect(model().attributeExists("DoBValid"))
-                .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account"));
+                .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account <br/>"));
     }
 
     @Test

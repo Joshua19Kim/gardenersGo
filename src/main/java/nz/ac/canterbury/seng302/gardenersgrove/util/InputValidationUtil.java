@@ -69,10 +69,10 @@ public class InputValidationUtil {
                     "be 64 characters long or less <br/>";
         } if (name == null || name.trim().isEmpty()) {
             result += firstOrLast + " name cannot be empty and must only include letters, spaces, " +
-                    "hyphens or apostrophes <br/>";
+                    "hyphens or apostrophes";
         } else if (!name.matches(nameRegex)) {
             result += firstOrLast + " name cannot be empty and must only include letters, spaces, " +
-                    "hyphens or apostrophes <br/>";
+                    "hyphens or apostrophes";
         }
         if (result.isEmpty()) {
             return Optional.empty();
@@ -88,11 +88,17 @@ public class InputValidationUtil {
      */
     public Optional<String> checkValidEmail (String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        String result = "";
         if (email.length() > 320) {
-            return Optional.of("Email address must be 320 characters or less");
-        } else {
-            return (email.matches(emailRegex) ? Optional.empty() : Optional.of("Email address must be in the form 'jane@doe.nz'"));
+            result = "Email address must be 320 characters or less <br/>";
         }
+        if(!email.matches(emailRegex)) {
+            result += "Email address must be in the form 'jane@doe.nz'";
+        }
+        if(result.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(result);
     }
 
     /**
@@ -109,12 +115,17 @@ public class InputValidationUtil {
      * @return empty optional if date is valid, otherwise returns Optional error string
      */
     public Optional<String> checkDoB (LocalDate DoB) {
+        String result = "";
         if (Period.between(DoB, LocalDate.now()).getYears() < 13) {
-            return Optional.of("You must be 13 years or older to create an account");
-        } else {
-            return (Period.between(DoB, LocalDate.now()).getYears() > 120 ?
-                    Optional.of("The maximum age allowed is 120 years") : Optional.empty());
+            result = "You must be 13 years or older to create an account <br/>";
         }
+        if(Period.between(DoB, LocalDate.now()).getYears() > 120) {
+            result += "The maximum age allowed is 120 years";
+        }
+        if(result.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(result);
     }
 
 
