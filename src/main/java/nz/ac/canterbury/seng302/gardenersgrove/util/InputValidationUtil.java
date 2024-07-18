@@ -61,20 +61,23 @@ public class InputValidationUtil {
      */
     public Optional<String> checkValidName (String name, String firstOrLast, boolean isLastNameOptional) {
         String nameRegex = "[\\p{L}]+((?:[-' ]?\\p{L}+)?)*";
+        String result = "";
         if (isLastNameOptional && Objects.equals(firstOrLast, "Last")) {
             return Optional.empty();
-        } else if (name.length() > 64) {
-            return Optional.of(firstOrLast +" name must " +
-                    "be 64 characters long or less");
-        } else if (name == null || name.trim().isEmpty()) {
-            return Optional.of(firstOrLast + " name cannot be empty and must only include letters, spaces, " +
-                    "hyphens or apostrophes");
+        } if (name.length() > 64) {
+            result = firstOrLast +" name must " +
+                    "be 64 characters long or less <br/>";
+        } if (name == null || name.trim().isEmpty()) {
+            result += firstOrLast + " name cannot be empty and must only include letters, spaces, " +
+                    "hyphens or apostrophes <br/>";
         } else if (!name.matches(nameRegex)) {
-            return Optional.of(firstOrLast + " name cannot be empty and must only include letters, spaces, " +
-                    "hyphens or apostrophes");
-        } else {
+            result += firstOrLast + " name cannot be empty and must only include letters, spaces, " +
+                    "hyphens or apostrophes <br/>";
+        }
+        if (result.isEmpty()) {
             return Optional.empty();
         }
+        return Optional.of(result);
     }
 
 

@@ -30,7 +30,7 @@
                    placeholder="First Name" required th:name="firstName" th:value="*{firstName}" type="text"
                    style="display: none;"
                    th:classappend="${firstNameValid != '' ? 'error' : ''}">
-            <p class="smallErrorMessage" th:text="${firstNameValid}"></p>
+            <p class="smallErrorMessage" th:utext="${firstNameValid}"></p>
             <br/>
 
             <label for="lastName"> Last Name: </label>
