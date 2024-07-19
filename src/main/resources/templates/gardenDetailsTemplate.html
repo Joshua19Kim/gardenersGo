@@ -123,7 +123,7 @@
         <div class="weather-display-container">
             <div class="weather-display-row">
                 <h3 th:text="${garden.city + ', ' + garden.country}"></h3>
-                <h4 text="" id="currentDate"></h4>
+                <h4 th:text="" id="currentDate"></h4>
                 <p th:text="${date}"></p>
                 <div class="temperature-container">
                     <div class="weather-display-row">
@@ -145,7 +145,7 @@
         <div class="future-weather weather-display-container" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
             <div class="weather-display-row">
                 <p th:text="${forecastDates.get(iter.index)}"></p>
-                <h4 th:text="${forecastDays.get(iter.index)}"></h4>
+                <h4 th:text="TUESDAY"></h4>
                 <div class="temperature-container">
                     <div class="weather-display-row">
                         <div class="temperature-container">

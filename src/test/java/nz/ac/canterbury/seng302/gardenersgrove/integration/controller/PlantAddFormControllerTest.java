@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 import java.util.Optional;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantAddFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantControllers.PlantAddFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;

@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unit.util;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantAddFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantControllers.PlantAddFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PrevWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;

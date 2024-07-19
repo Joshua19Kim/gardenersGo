@@ -322,7 +322,7 @@ public class GardenFormController {
           model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
           model.addAttribute("humidity", currentWeather.getHumidity());
           model.addAttribute("forecastDates", currentWeather.getForecastDates());
-          model.addAttribute("forecastDays", currentWeather.getForecastDays());
+//          model.addAttribute("forecastDays", currentWeather.getForecastDays());
           model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
           model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
           model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
