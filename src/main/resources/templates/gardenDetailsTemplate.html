@@ -123,7 +123,7 @@
         <div class="weather-display-container">
             <div class="weather-display-row">
                 <h3 th:text="${garden.city + ', ' + garden.country}"></h3>
-                <h4 th:text="" id="currentDate"></h4>
+                <h4 id="currentDate"></h4>
                 <p th:text="${date}"></p>
                 <div class="temperature-container">
                     <div class="weather-display-row">
@@ -145,7 +145,7 @@
         <div class="future-weather weather-display-container" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
             <div class="weather-display-row">
                 <p th:text="${forecastDates.get(iter.index)}"></p>
-                <h4 th:text="TUESDAY"></h4>
+                <h4 th:id="${(iter.index)}" onload=getDay()></h4>
                 <div class="temperature-container">
                     <div class="weather-display-row">
                         <div class="temperature-container">
@@ -185,6 +185,25 @@
         const d = new Date();
         const day = weekday[d.getDay()];
         document.getElementById("currentDate").innerHTML = day;
+        for(let i = 0; i <= 2 ; i++) {
+            let d = new Date();
+            d.setDate(d.getDate() + i);
+            const day = weekday[d.getDay()];
+            document.getElementById(i.toString()).innerHTML = day;
+        }
+    }
+
+    function getCurrentDay() {
+        const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        // const day = weekday[date.getDay()];
+
+    }
+
+    function getDay(date) {
+        const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        const day = weekday[date.getDay()];
+        document.getElementById(date).innerHTML = day;
+
     }
     function handleImageClick(plantId) {
         document.getElementById('fileInput_' + plantId).click();
@@ -231,14 +250,14 @@
         keypress = false;
     });
 
-    const currentDate = new Date();
-    const dateOptions = {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    };
-    document.getElementById("currentDateDisplay").innerHTML = currentDate.toLocaleString("en-Nz", dateOptions);
+    // const currentDate = new Date();
+    // const dateOptions = {
+    //     weekday: 'long',
+    //     day: 'numeric',
+    //     month: 'long',
+    //     year: 'numeric'
+    // };
+    // document.getElementById("currentDateDisplay").innerHTML = currentDate.toLocaleString("en-Nz", dateOptions);
 
     function transformToInput() {
         document.getElementById('add-tag').style.display = 'none';
