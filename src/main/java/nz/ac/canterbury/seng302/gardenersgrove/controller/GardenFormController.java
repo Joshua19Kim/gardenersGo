@@ -316,7 +316,7 @@ public class GardenFormController {
         PrevWeather prevWeathers = weatherService.getPrevWeather(garden.get().getCity() + ", " + garden.get().getCountry());
         if (currentWeather != null && prevWeathers != null) {
           model.addAttribute("date", currentWeather.getDate());
-          model.addAttribute("day", currentWeather.getDay());
+//          model.addAttribute("day", currentWeather.getDay());
           model.addAttribute("temperature", currentWeather.getTemperature());
           model.addAttribute("weatherImage", currentWeather.getWeatherImage());
           model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());

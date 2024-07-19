@@ -123,7 +123,7 @@
         <div class="weather-display-container">
             <div class="weather-display-row">
                 <h3 th:text="${garden.city + ', ' + garden.country}"></h3>
-                <h4 th:text="${day}"></h4>
+                <h4 text="" id="currentDate"></h4>
                 <p th:text="${date}"></p>
                 <div class="temperature-container">
                     <div class="weather-display-row">
@@ -180,6 +180,12 @@
 </div>
 
 <script>
+    window.onload = function () {
+        const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        const d = new Date();
+        const day = weekday[d.getDay()];
+        document.getElementById("currentDate").innerHTML = day;
+    }
     function handleImageClick(plantId) {
         document.getElementById('fileInput_' + plantId).click();
     }

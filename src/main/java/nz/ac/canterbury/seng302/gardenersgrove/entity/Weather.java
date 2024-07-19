@@ -34,7 +34,7 @@ public class Weather {
     private Float currentTemperature;
     private Integer currentHumidity;
     private String date;
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 
     public Weather() {
@@ -71,7 +71,7 @@ public class Weather {
     public void setForecast(JsonNode forecast) {
         this.forecast = forecast;
         this.date = LocalDate.parse("2024-07-19").format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
-        logger.info("Date string: " + date);
+//        logger.info("Date string: " + date);
         for (int i = 0; i < 3; i++) {
             this.forecastDates.add(LocalDate.parse("2024-07-20").format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
             this.forecastDays.add(LocalDate.parse("2024-07-21").getDayOfWeek());
@@ -130,17 +130,17 @@ public class Weather {
         return date;
     }
 
-    /**
-     * gets day of week based on date stored in weather object
-     *
-     * @return DayOfWeek Enum where Monday has a numerical value of 1 and Sunday 7
-     */
-    public String getDay() {
-        logger.info("Date string to be parsed: " + date);
-//        logger.info("Day returned: " + LocalDate.parse(date, formatter).getDayOfWeek());
-//        return LocalDate.parse(date, formatter).getDayOfWeek();
-        return date;
-    }
+//    /**
+//     * gets day of week based on date stored in weather object
+//     *
+//     * @return DayOfWeek Enum where Monday has a numerical value of 1 and Sunday 7
+//     */
+//    public String getDay() {
+//        logger.info("Date string to be parsed: " + date);
+////        logger.info("Day returned: " + LocalDate.parse(date, formatter).getDayOfWeek());
+////        return LocalDate.parse(date, formatter).getDayOfWeek();
+//        return date;
+//    }
 
     public List<String> getForecastDates() {
         return forecastDates;
