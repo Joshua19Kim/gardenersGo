@@ -34,7 +34,8 @@ public class Weather {
     private Float currentTemperature;
     private Integer currentHumidity;
     private String date;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
+
 
     public Weather() {
 
@@ -69,9 +70,9 @@ public class Weather {
      */
     public void setForecast(JsonNode forecast) {
         this.forecast = forecast;
-        this.date = LocalDate.parse(forecast.get("forecastday").get(0).get("date").asText()).format(formatter);
+        this.date = LocalDate.parse(forecast.get("forecastday").get(0).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
         for (int i = 0; i < 3; i++) {
-            this.forecastDates.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).format(formatter));
+            this.forecastDates.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
             this.forecastDays.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).getDayOfWeek());
             this.forecastMinTemperatures.add(forecast.get("forecastday").get(i).get("day").get("mintemp_c").floatValue());
             this.forecastMaxTemperatures.add(forecast.get("forecastday").get(i).get("day").get("maxtemp_c").floatValue());
@@ -134,7 +135,7 @@ public class Weather {
      * @return DayOfWeek Enum where Monday has a numerical value of 1 and Sunday 7
      */
     public DayOfWeek getDay() {
-        return LocalDate.parse(date, formatter).getDayOfWeek();
+        return LocalDate.parse(date, inputFormatter).getDayOfWeek();
     }
 
     public List<String> getForecastDates() {
