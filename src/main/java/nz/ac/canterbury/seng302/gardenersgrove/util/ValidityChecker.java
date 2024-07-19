@@ -48,7 +48,7 @@ public class ValidityChecker {
      * @return The description of the garden if it is valid, else returns an error message
      */
     public static String validateGardenDescription(String description) {
-        if (description.length() == 0) {
+        if (description == null || description.isEmpty()) {
             return description;
         }
         String regex = "^(?=.*[\\p{L}]).+";

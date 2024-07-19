@@ -62,6 +62,15 @@ public class ValidityCheckerTest {
         Assertions.assertEquals("Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes <br/>", returnedInput);
     }
 
+    @Test
+    public void GardenNameEntered_MultipleErrors_MultipleErrorMessagesReturned() {
+        String input = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" +
+                "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@";
+        String returnedInput = ValidityChecker.validateGardenName(input);
+        Assertions.assertEquals("Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes <br/>" +
+                "Garden name must be less than 64 characters", returnedInput);
+    }
+
 
     @Test
     public void LocationEntered_AlphaNumericInput_NameReturned() {
@@ -326,6 +335,7 @@ public class ValidityCheckerTest {
         Assertions.assertEquals(" ", returnedInput);
     }
 
+
     @ParameterizedTest
     @CsvSource(value = {
             "Drury: Drury",
@@ -333,6 +343,10 @@ public class ValidityCheckerTest {
             "@@#$%^&&**(*: Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes " +
                     "<br/>Suburb must must contain at least one alphanumeric character <br/>",
             "Achieving balance between work and life is essential for long-term happiness and overall well-being.: " +
+                    "Please enter a suburb less than 90 characters",
+            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: " +
+                    "Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes " +
+                    "<br/>Suburb must must contain at least one alphanumeric character <br/>" +
                     "Please enter a suburb less than 90 characters"
     }, delimiter = ':')
     public void ValidateGardenSuburbTest(String suburb, String expectedMessage) {
@@ -349,6 +363,11 @@ public class ValidityCheckerTest {
                     "<br/>City must must contain at least one alphanumeric character <br/>",
             "Achieving balance between work and life is essential for long-term happiness and overall well-being." +
                     "Achieving balance between work and life is essential for long-term happiness and overall well-being.: " +
+                    "Please enter a city less than 180 characters",
+            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" +
+                    "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: " +
+                    "City must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes " +
+                    "<br/>City must must contain at least one alphanumeric character <br/>" +
                     "Please enter a city less than 180 characters"
     }, delimiter = ':')
     public void ValidateGardenCityTest(String city, String expectedMessage) {
@@ -363,7 +382,11 @@ public class ValidityCheckerTest {
             "12345: Please enter a country without only numerical characters <br/>",
             "@@#$%^&&**(*: Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes" +
                     " <br/>Country must must contain at least one alphanumeric character <br/>",
-            "Achieving balance between work and life is essential to an awesome life: Please enter a country less than 60 characters"
+            "Achieving balance between work and life is essential to an awesome life: Please enter a country less than 60 characters",
+            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: " +
+                    "Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes " +
+                    "<br/>Country must must contain at least one alphanumeric character <br/>" +
+                    "Please enter a country less than 60 characters"
     }, delimiter = ':')
     public void ValidateGardenCountryTest(String country, String expectedMessage) {
         String actualMessage = ValidityChecker.validateGardenCountry(country);
@@ -377,6 +400,10 @@ public class ValidityCheckerTest {
             "@@#$%^&&**(*: Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes" +
                     " <br/>Street number and name must must contain at least one alphanumeric character <br/>",
             "Achieving balance between work and life is essential to an awesome life: " +
+                    "Please enter a street number and name less than 60 characters",
+            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: " +
+                    "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes " +
+                    "<br/>Street number and name must must contain at least one alphanumeric character <br/>" +
                     "Please enter a street number and name less than 60 characters"
     }, delimiter = ':')
     public void ValidateGardenAddressTest(String address, String expectedMessage) {
@@ -389,10 +416,33 @@ public class ValidityCheckerTest {
             "12323242A: 12323242A",
             "@@#$%^&&**(*: Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes " +
                     "<br/>Postcode must must contain at least one alphanumeric character <br/>Please enter a postcode less than 10 characters",
-            "Achieving balance: Please enter a postcode less than 10 characters"
+            "Achieving balance: Please enter a postcode less than 10 characters",
+            ",,,....: Postcode must must contain at least one alphanumeric character <br/>",
+            "@A: Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>"
     }, delimiter = ':')
     public void ValidateGardenPostcodeTest(String postcode, String expectedMessage) {
         String actualMessage = ValidityChecker.validateGardenPostcode(postcode);
+        Assertions.assertEquals(expectedMessage, actualMessage);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "The majestic Oak tree, known scientifically as Quercus, is a symbol of fucken strength, endurance, " +
+                    "and wisdom. This towering deciduous tree is a hallmark of many landscapes, with its spreading branches " +
+                    "and dense foliage providing shade and shelter to countless creatures. With a lifespan spanning centuries, " +
+                    "the Oak tree has witnessed the ebb and flow of history, its sturdy trunk bearing the scars of time. " +
+                    "From ancient mythologies to modern literature, the Oak tree has captivated the human imagination, " +
+                    "inspiring awe and reverence. Its acorns, a source of sustenance for wildlife, are also a symbol of " +
+                    "potential and renewal. In folklore and legend, the Oak tree is often associated with gods and spirits," +
+                    " embodying resilience and resilience. From the whispering leaves to the gnarled bark," +
+                    " every aspect of the Oak tree tells a story of resilience, adaptability, and the enduring power of nature." +
+                    ": Garden description must be less than 512 characters <br/>The description does not match the language standards of the app.",
+            "123: Description must be 512 characters or less and contain some text <br/>",
+            "shit: The description does not match the language standards of the app.",
+            "hi : hi"
+    }, delimiter = ':')
+    public void ValidateGardenDescriptionTest(String description, String expectedMessage) {
+        String actualMessage = ValidityChecker.validateGardenDescription(description);
         Assertions.assertEquals(expectedMessage, actualMessage);
     }
 
