@@ -50,6 +50,10 @@ public class Gardener {
     @OneToMany(mappedBy = "gardener")
     private List<Garden> gardens;
 
+    /** A counter for how many bad words the gardener tries to use */
+    @Column(name="bad_word_count")
+    private int badWordCount;
+
     /**
      * JPA required no-args constructor
      */
@@ -71,6 +75,7 @@ public class Gardener {
         this.email = email;
         this.password = hashPasword(password);
         this.profilePicture = "/images/defaultProfilePic.png";
+        this.badWordCount = 0;
         gardens = new ArrayList<>();
     }
 
@@ -128,6 +133,8 @@ public class Gardener {
 
     public String getProfilePicture() { return this.profilePicture; }
 
+    public int getBadWordCount() { return badWordCount; }
+
     public String getSearchResult() {
         String searchResult = "";
         if (lastName == null) {
@@ -155,6 +162,8 @@ public class Gardener {
     public void updatePassword(String password) { this.password = hashPasword(password); }
 
     public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
+
+    public void setBadWordCount(int badWordCount) { this.badWordCount = badWordCount; }
 
     public String getSearchString() {
         String gardenerString = firstName;
