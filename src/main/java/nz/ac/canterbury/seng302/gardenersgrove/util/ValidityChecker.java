@@ -123,13 +123,16 @@ public class ValidityChecker {
      * @return Either an error message or the plant name
      */
     public static String validatePlantName(String name) {
-
         String regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        String result = "";
         if (name == null || name.trim().isEmpty() || !name.matches(regex)) {
-            return "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+            result += "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>";
         }
         if(name.length() > 64) {
-            return "Plant name must be less than 64 characters";
+            result += "Plant name must be less than 64 characters";
+        }
+        if (result != "") {
+            return result;
         }
         return name;
     }
@@ -145,7 +148,6 @@ public class ValidityChecker {
         }
 
         String countReplaced = count.replace(',', '.');
-
         if (countReplaced.contains("-")) {
             return "Plant count must be a positive number";
         }
