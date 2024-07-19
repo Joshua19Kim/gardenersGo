@@ -135,10 +135,11 @@ public class Weather {
      *
      * @return DayOfWeek Enum where Monday has a numerical value of 1 and Sunday 7
      */
-    public DayOfWeek getDay() {
+    public String getDay() {
         logger.info("Date string to be parsed: " + date);
-        logger.info("Day returned: " + LocalDate.parse(date, formatter).getDayOfWeek());
-        return LocalDate.parse(date, formatter).getDayOfWeek();
+//        logger.info("Day returned: " + LocalDate.parse(date, formatter).getDayOfWeek());
+//        return LocalDate.parse(date, formatter).getDayOfWeek();
+        return date;
     }
 
     public List<String> getForecastDates() {
