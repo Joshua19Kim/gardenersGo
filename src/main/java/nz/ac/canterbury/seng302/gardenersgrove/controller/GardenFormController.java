@@ -23,10 +23,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static java.lang.Long.parseLong;
 
@@ -319,11 +316,13 @@ public class GardenFormController {
         PrevWeather prevWeathers = weatherService.getPrevWeather(garden.get().getCity() + ", " + garden.get().getCountry());
         if (currentWeather != null && prevWeathers != null) {
           model.addAttribute("date", currentWeather.getDate());
+          model.addAttribute("day", currentWeather.getDay());
           model.addAttribute("temperature", currentWeather.getTemperature());
           model.addAttribute("weatherImage", currentWeather.getWeatherImage());
           model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
           model.addAttribute("humidity", currentWeather.getHumidity());
           model.addAttribute("forecastDates", currentWeather.getForecastDates());
+          model.addAttribute("forecastDays", currentWeather.getForecastDays());
           model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
           model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
           model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
@@ -642,8 +641,8 @@ public class GardenFormController {
     Optional<String> validTagError = tagValidation.validateTag(tag);
     Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
 
-    Weather currentWeather = weatherService.getWeather(garden.getLocation());
-    PrevWeather prevWeathers = weatherService.getPrevWeather(garden.getLocation());
+    Weather currentWeather = weatherService.getWeather(garden.getCity() + ", " + garden.getCountry());
+    PrevWeather prevWeathers = weatherService.getPrevWeather(garden.getCity() + ", " + garden.getCountry());
     if (currentWeather != null && prevWeathers != null) {
       model.addAttribute("date", currentWeather.getDate());
       model.addAttribute("temperature", currentWeather.getTemperature());
