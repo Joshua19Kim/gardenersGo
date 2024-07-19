@@ -34,7 +34,7 @@ public class Weather {
     private Float currentTemperature;
     private Integer currentHumidity;
     private String date;
-    private static final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 
     public Weather() {
@@ -137,8 +137,8 @@ public class Weather {
      */
     public DayOfWeek getDay() {
         logger.info("Date string to be parsed: " + date);
-
-        return LocalDate.parse(date, inputFormatter).getDayOfWeek();
+        logger.info("Day returned: " + LocalDate.parse(date, formatter).getDayOfWeek());
+        return LocalDate.parse(date, formatter).getDayOfWeek();
     }
 
     public List<String> getForecastDates() {
