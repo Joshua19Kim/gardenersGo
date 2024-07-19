@@ -69,9 +69,9 @@ public class Weather {
      */
     public void setForecast(JsonNode forecast) {
         this.forecast = forecast;
-        this.date = LocalDate.parse(forecast.get("forecastday").get(0).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+        this.date = LocalDate.parse(forecast.get("forecastday").get(0).get("date").asText()).format(formatter);
         for (int i = 0; i < 3; i++) {
-            this.forecastDates.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+            this.forecastDates.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).format(formatter));
             this.forecastDays.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).getDayOfWeek());
             this.forecastMinTemperatures.add(forecast.get("forecastday").get(i).get("day").get("mintemp_c").floatValue());
             this.forecastMaxTemperatures.add(forecast.get("forecastday").get(i).get("day").get("maxtemp_c").floatValue());
