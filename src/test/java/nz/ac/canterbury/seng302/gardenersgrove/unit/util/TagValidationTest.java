@@ -37,8 +37,8 @@ public class TagValidationTest {
   @CsvSource(
       value = {
         "ValidTag123: ",
-        "ThisTagNameIsWayTooLongAndInvalid: A tag cannot exceed 25 characters",
-        "Invalid@Tag: The tag name must only contain alphanumeric characters, spaces, -, _, ', or \"",
+        "ThisTagNameIsWayTooLongAndInvalid: A tag cannot exceed 25 characters <br/>",
+        "Invalid@Tag: The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>",
         "-: The tag name must contain at least one alphanumeric character"
       },
       delimiter = ':')
