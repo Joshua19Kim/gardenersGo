@@ -59,7 +59,7 @@ public class ValidityCheckerTest {
     public void NameEntered_InvalidInput_ErrorMessageReturned() {
         String input = "J@(K_Er$K!^e";
         String returnedInput = ValidityChecker.validateGardenName(input);
-        Assertions.assertEquals("Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes", returnedInput);
+        Assertions.assertEquals("Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes <br/>", returnedInput);
     }
 
 
@@ -115,7 +115,7 @@ public class ValidityCheckerTest {
     public void LocationEntered_InvalidInput_ErrorMessageReturned() {
         String input = "J@(K_Er$K!^e";
         String returnedInput = ValidityChecker.validateGardenLocation(input);
-        Assertions.assertEquals("Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes", returnedInput);
+        Assertions.assertEquals("Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>", returnedInput);
     }
 
     @Test
@@ -322,8 +322,9 @@ public class ValidityCheckerTest {
     @ParameterizedTest
     @CsvSource(value = {
             "Drury: Drury",
-            "12345: Please enter a suburb without only numerical characters",
-            "@@#$%^&&**(*: Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
+            "12345: Please enter a suburb without only numerical characters <br/>",
+            "@@#$%^&&**(*: Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes " +
+                    "<br/>Suburb must must contain at least one alphanumeric character <br/>",
             "Achieving balance between work and life is essential for long-term happiness and overall well-being.: " +
                     "Please enter a suburb less than 90 characters"
     }, delimiter = ':')
@@ -336,8 +337,9 @@ public class ValidityCheckerTest {
     @CsvSource(value = {
             "Drury: Drury",
             "     : City is required",
-            "12345: Please enter a city without only numerical characters",
-            "@@#$%^&&**(*: City must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
+            "12345: Please enter a city without only numerical characters <br/>",
+            "@@#$%^&&**(*: City must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes " +
+                    "<br/>City must must contain at least one alphanumeric character <br/>",
             "Achieving balance between work and life is essential for long-term happiness and overall well-being." +
                     "Achieving balance between work and life is essential for long-term happiness and overall well-being.: " +
                     "Please enter a city less than 180 characters"
@@ -351,8 +353,9 @@ public class ValidityCheckerTest {
     @CsvSource(value = {
             "Drury: Drury",
             "     : Country is required",
-            "12345: Please enter a country without only numerical characters",
-            "@@#$%^&&**(*: Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
+            "12345: Please enter a country without only numerical characters <br/>",
+            "@@#$%^&&**(*: Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes" +
+                    " <br/>Country must must contain at least one alphanumeric character <br/>",
             "Achieving balance between work and life is essential to an awesome life: Please enter a country less than 60 characters"
     }, delimiter = ':')
     public void ValidateGardenCountryTest(String country, String expectedMessage) {
@@ -363,8 +366,9 @@ public class ValidityCheckerTest {
     @ParameterizedTest
     @CsvSource(value = {
             "Drury: Drury",
-            "12345: Please enter a street number and name without only numerical characters",
-            "@@#$%^&&**(*: Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
+            "12345: Please enter a street number and name without only numerical characters <br/>",
+            "@@#$%^&&**(*: Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes" +
+                    " <br/>Street number and name must must contain at least one alphanumeric character <br/>",
             "Achieving balance between work and life is essential to an awesome life: " +
                     "Please enter a street number and name less than 60 characters"
     }, delimiter = ':')
@@ -376,7 +380,8 @@ public class ValidityCheckerTest {
     @ParameterizedTest
     @CsvSource(value = {
             "12323242A: 12323242A",
-            "@@#$%^&&**(*: Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
+            "@@#$%^&&**(*: Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes " +
+                    "<br/>Postcode must must contain at least one alphanumeric character <br/>Please enter a postcode less than 10 characters",
             "Achieving balance: Please enter a postcode less than 10 characters"
     }, delimiter = ':')
     public void ValidateGardenPostcodeTest(String postcode, String expectedMessage) {

@@ -234,8 +234,8 @@ public class PubliciseGardensFeature {
         MockHttpServletRequest request = result.getRequest();
         String descriptionError = (String) request.getAttribute("descriptionError");
         assertTrue(
-                "Garden description must be less than 512 characters".equals(descriptionError) ||
-                        "Description must be 512 characters or less and contain some text".equals(descriptionError));
+                "Garden description must be less than 512 characters <br/>".equals(descriptionError) ||
+                        "Description must be 512 characters or less and contain some text <br/>".equals(descriptionError));
     }
 
     @When("I submit the create form with {string} including bad words for the garden description")
