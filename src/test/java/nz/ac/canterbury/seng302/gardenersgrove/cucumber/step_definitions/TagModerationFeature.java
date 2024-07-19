@@ -47,11 +47,12 @@ public class TagModerationFeature {
     private MockMvc mockMvcGardenFormController;
     private Garden garden;
     private Tag tag;
+    private Gardener gardener;
 
 
     @Before("@U22")
     public void setUp() {
-        Gardener gardener = new Gardener("Test", "Gardener",
+        gardener = new Gardener("Test", "Gardener",
                 LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
                 "Password1!");
         garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", gardener, "");
@@ -112,5 +113,10 @@ public class TagModerationFeature {
     @Then("the tag is not added to the list of user-defined tags")
     public void the_tag_is_not_added_to_the_list_of_user_defined_tags() {
         Mockito.verify(tagService, times(0)).addTag(any());
+    }
+
+    @Then("the users bad word counter is incremented by one")
+    public void the_users_bad_word_counter_is_incremented_by_one() {
+        assertEquals(1, gardener.getBadWordCount());
     }
 }
