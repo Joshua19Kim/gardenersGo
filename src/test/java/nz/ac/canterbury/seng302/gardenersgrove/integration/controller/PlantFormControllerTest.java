@@ -364,7 +364,7 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("description", description))
                 .andExpect(model().attribute("date", "2024-03-10"))
                 .andExpect(model().attribute("nameError",
-                        "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"));
+                        "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>"));
 
         verify(plantService, never()).addPlant(any(Plant.class));
     }
@@ -400,7 +400,7 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("description", description))
                 .andExpect(model().attribute("date", "2024-03-10"))
                 .andExpect(model().attribute("nameError",
-                        "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"));
+                        "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>"));
 
         verify(plantService, never()).addPlant(any(Plant.class));
     }
@@ -612,7 +612,7 @@ public class PlantFormControllerTest {
                 .andExpect(model().attribute("count", count))
                 .andExpect(model().attribute("description", description))
                 .andExpect(model().attribute("date", "2023-10-10"))
-                .andExpect(model().attribute("nameError", "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"))
+                .andExpect(model().attribute("nameError", "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>"))
                 .andExpect(model().attribute("countError", "Plant count must be a positive number"))
                 .andExpect(model().attribute("descriptionError", "Plant description must be less than 512 characters"))
                 .andExpect(model().attribute("plant", plant))
