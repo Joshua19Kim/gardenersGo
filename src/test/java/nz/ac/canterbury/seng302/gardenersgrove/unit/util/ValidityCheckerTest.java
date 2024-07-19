@@ -229,6 +229,13 @@ public class ValidityCheckerTest {
     }
 
     @Test
+    public void PlantNameEntered_NameTooLongAndInvalid_MultipleErrorMessagesReturned() {
+        String input = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean@";
+        String returnedInput = ValidityChecker.validatePlantName(input);
+        Assertions.assertEquals("Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>Plant name must be less than 64 characters", returnedInput);
+    }
+
+    @Test
     public void PlantCountEntered_EmptyInput_EmptyInputReturned() {
         String input = "";
         String returnedInput = ValidityChecker.validatePlantCount(input);
