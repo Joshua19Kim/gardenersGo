@@ -301,6 +301,31 @@ public class InputValidationUtilTest {
     }
 
     @Test
+    public void FirstNameEntered_MultipleErrors_MultipleErrorMessagesReturned() {
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
+        String name = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@";
+        String first = "First";
+        boolean lastName = false;
+        Optional<String> actualMessage = validate.checkValidName(name, first, lastName);
+        Optional<String> expectedMessage = Optional.of("First name must be 64 characters long or less <br/>" +
+                "First name cannot be empty and must only include letters, spaces, hyphens or apostrophes");
+        assertEquals(expectedMessage, actualMessage);
+    }
+
+    @Test
+    public void EmailEntered_MultipleErrors_MultipleErrorMessagesReturned() {
+        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
+        String email = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" +
+                "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" +
+                "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" +
+                "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@";
+        Optional<String> actualMessage = validate.checkValidEmail(email);
+        Optional<String> expectedMessage = Optional.of("Email address must be 320 characters or less <br/>" +
+                "Email address must be in the form 'jane@doe.nz'");
+        assertEquals(expectedMessage,actualMessage);
+    }
+
+    @Test
     void testNumbersInEmail() {
         InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
         String email = "sky123@yahoo.com";
