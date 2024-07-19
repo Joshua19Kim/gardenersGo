@@ -73,11 +73,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function fillAddressDetails(address) {
-        selectedLocation = address;
         const addressInputValue = `${address.address.house_number || ''} ${address.address.road || ''}`;
-        addressInput.value = addressInputValue.trim();
+
+        if (address.address.name !== null) {
+            addressInput.value = `${address.address.name || ''}` + addressInputValue.trim();
+        } else {
+            addressInput.value = addressInputValue.trim();
+        }
         suburbInput.value = address.address.suburb || '';
-        cityInput.value = address.address.city || '';
+
+        let cityAndStateValue
+        if (address.address.city !== null) {
+            cityAndStateValue = `${address.address.city || ''}`;
+        } else {
+            cityAndStateValue = `${address.address.state || ''}`;
+        }
+        cityInput.value = cityAndStateValue;
         countryInput.value = address.address.country || '';
         postcodeInput.value = address.address.postcode || '';
     }
