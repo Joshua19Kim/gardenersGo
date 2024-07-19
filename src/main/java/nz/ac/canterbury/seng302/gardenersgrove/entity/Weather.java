@@ -71,6 +71,7 @@ public class Weather {
     public void setForecast(JsonNode forecast) {
         this.forecast = forecast;
         this.date = LocalDate.parse(forecast.get("forecastday").get(0).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+        logger.info("Date string: " + date);
         for (int i = 0; i < 3; i++) {
             this.forecastDates.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
             this.forecastDays.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).getDayOfWeek());
@@ -135,6 +136,8 @@ public class Weather {
      * @return DayOfWeek Enum where Monday has a numerical value of 1 and Sunday 7
      */
     public DayOfWeek getDay() {
+        logger.info("Date string to be parsed: " + date);
+
         return LocalDate.parse(date, inputFormatter).getDayOfWeek();
     }
 
