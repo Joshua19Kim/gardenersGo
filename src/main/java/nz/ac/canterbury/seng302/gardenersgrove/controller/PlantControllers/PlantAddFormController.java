@@ -1,14 +1,10 @@
-package nz.ac.canterbury.seng302.gardenersgrove.controller;
+package nz.ac.canterbury.seng302.gardenersgrove.controller.PlantControllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +27,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.Long.parseLong;
-
-/**
- * This class serves as a controller for handling plant-related operations such as form submission
- * and editing.
- */
 @Controller
-public class PlantEditFormController {
-    Logger logger = LoggerFactory.getLogger(PlantEditFormController.class);
+public class PlantAddFormController {
+    Logger logger = LoggerFactory.getLogger(PlantAddFormController.class);
 
     private final PlantService plantService;
     private final GardenService gardenService;
@@ -54,21 +45,20 @@ public class PlantEditFormController {
      * @param gardenService Service for managing garden-related operations.
      */
     @Autowired
-    public PlantEditFormController(PlantService plantService, GardenService gardenService, RequestService requestService,
-                                   GardenerFormService gardenerFormService, ImageService imageService) {
+    public PlantAddFormController(PlantService plantService, GardenService gardenService, RequestService requestService,
+                                  GardenerFormService gardenerFormService, ImageService imageService) {
         this.plantService = plantService;
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
         this.requestService = requestService;
     }
-
     /**
      * Retrieve an optional of a gardener using the current authentication
      * We will always have to check whether the gardener was retrieved in the calling method, so the return type was left as an optional
      * @return An optional of the requested gardener
      *
-     * Note this code is also used in PlantAddFormController
+     * Note this code is also used in PlantEditFormController
      */
     public Optional<Gardener> getGardenerFromAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -77,16 +67,16 @@ public class PlantEditFormController {
     }
 
     /**
-     * Gets the plant to edit by the id and returns the edit plant form template
+     * Displays the form for adding a new plant to a garden.
      *
-     * @param plantId The id of the plant to edit.
-     * @param model   The model for passing data to the view.
-     * @param request The HTTP request received by the server.
-     * @return The edit plant form template or the gardens template if the plant does not exist.
+     * @param gardenId The ID of the garden to which the plant is being added.
+     * @param model    The model for passing data to the view.
+     * @param request  The HTTP request received by the server.
+     * @return The desired template based on the presence of the garden.
      */
-    @GetMapping("gardens/details/plants/edit")
-    public String editPlant(@RequestParam(name = "plantId") String plantId, Model model, HttpServletRequest request) {
-        logger.info("GET /gardens/details/plants/edit");
+    @GetMapping("gardens/details/plants/form")
+    public String form(@RequestParam(name = "gardenId") String gardenId, Model model, HttpServletRequest request) {
+        logger.info("GET /gardens/details/plants/form");
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         List<Garden> gardens = new ArrayList<>();
@@ -94,57 +84,48 @@ public class PlantEditFormController {
             gardener = gardenerOptional.get();
             gardens = gardenService.getGardensByGardenerId(gardener.getId());
         }
-
         model.addAttribute("gardens", gardens);
-        Optional<Plant> plant = plantService.getPlant(parseLong(plantId));
-        if (plant.isPresent()) {
-            model.addAttribute("requestURI", requestService.getRequestURI(request));
-            model.addAttribute("plant", plant.get());
-            model.addAttribute("garden", plant.get().getGarden());
+        Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
 
-            if (plant.get().getDatePlanted() != null) {
-                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDate date = LocalDate.parse(plant.get().getDatePlanted(), dateTimeFormatter);
-                DateTimeFormatter htmlFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
-                String formattedDate = date.format(htmlFormatter);
-                model.addAttribute("formattedDate", formattedDate);
-            }
-            return "editPlantFormTemplate";
+        if (garden.isPresent()) {
+            model.addAttribute("requestURI", requestService.getRequestURI(request));
+            model.addAttribute("garden", garden.get());
+            return "plantsFormTemplate";
         } else {
             return "redirect:/gardens";
         }
     }
 
     /**
-     * Handles the submission of the edit plant form.
+     * Handles the submission of the plant form.
      *
-     * @param name The updated name of the plant.
-     * @param count The updated count of the plant.
-     * @param description The updated description of the plant.
-     * @param date The updated date the plant was planted.
-     * @param plantId The ID of the plant being edited.
+     * @param name The name of the plant.
+     * @param count The count of the plant.
+     * @param description The description of the plant.
+     * @param date The date the plant was planted.
+     * @param gardenId The ID of the garden to which the plant belongs.
      * @param model The model for passing data to the view.
-     * @return The template for the edit plant form or redirects to the garden details page.
+     * @return The template for the plant form or redirects to the garden details page.
      */
-    @PostMapping("gardens/details/plants/edit")
-    public String submitEditPlantForm(
+    @PostMapping("gardens/details/plants/form")
+    public String submitForm(
             @RequestParam(name = "name") String name,
             @RequestParam(name = "count", required = false) String count,
             @RequestParam(name = "description", required = false) String description,
             @RequestParam(name = "date", required = false) String date,
-            @RequestParam(name = "plantId") String plantId,
+            @RequestParam(name = "gardenId") String gardenId,
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request,
             Model model) {
-        logger.info("POST /gardens/details/plants/edit");
-        String formattedDate = "";
-        if (!date.trim().isEmpty()) {
+        logger.info("/gardens/details/plants/form");
+        String validatedDate = "";
+        if (date != null && !date.trim().isEmpty()) {
             LocalDate localDate = LocalDate.parse(date);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            formattedDate = localDate.format(formatter);
+            validatedDate = localDate.format(formatter);
         }
 
-        Plant plant = plantService.getPlant(parseLong(plantId)).get();
+        Garden garden = gardenService.getGarden(Long.parseLong(gardenId)).get();
         String validatedPlantName = ValidityChecker.validatePlantName(name);
         String validatedPlantCount = ValidityChecker.validatePlantCount(count);
         String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
@@ -155,7 +136,7 @@ public class PlantEditFormController {
             model.addAttribute("nameError", validatedPlantName);
             isValid = false;
         }
-        if (!Objects.equals(count.replace(",", "."), validatedPlantCount)) {
+        if (count != null && !Objects.equals(count.replace(",", "."), validatedPlantCount)) {
             model.addAttribute("countError", validatedPlantCount);
             isValid = false;
         }
@@ -172,31 +153,28 @@ public class PlantEditFormController {
         }
 
         if (isValid) {
-            plant.setName(validatedPlantName);
-            boolean countPresent = !Objects.equals(validatedPlantCount.trim(), "");
-            boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
-            boolean datePresent = !Objects.equals(date.trim(), "");
+            Plant plant = new Plant(name, garden);
+            boolean countPresent = count != null && !validatedPlantCount.trim().isEmpty();
+            boolean descriptionPresent = description != null && !validatedPlantDescription.trim().isEmpty();
+            boolean datePresent = !validatedDate.isEmpty() && !Objects.equals(date.trim(), "");
+
             if (countPresent) {
                 plant.setCount(new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
-            } else {
-                plant.setCount(null);
             }
             if (descriptionPresent) {
                 plant.setDescription(validatedPlantDescription);
-            } else {
-                plant.setDescription(null);
             }
             if (datePresent) {
-                plant.setDatePlanted(formattedDate);
-            } else {
-                plant.setDatePlanted(null);
+                plant.setDatePlanted(validatedDate);
             }
-            if(!file.isEmpty()) {
-                imageService.savePlantImage(file, plant);
-            } else {
+            plantService.addPlant(plant);
+            if(file.isEmpty()) {
+                plant.setImage("/images/placeholder.jpg");
                 plantService.addPlant(plant);
+            } else {
+                imageService.savePlantImage(file, plant);
             }
-            return "redirect:/gardens/details?gardenId=" + plant.getGarden().getId();
+            return "redirect:/gardens/details?gardenId=" + gardenId;
         } else {
             Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
             gardenerOptional.ifPresent(value -> gardener = value);
@@ -207,10 +185,8 @@ public class PlantEditFormController {
             model.addAttribute("count", count);
             model.addAttribute("description", description);
             model.addAttribute("date", date);
-            model.addAttribute("plant", plant);
-            model.addAttribute("garden", plant.getGarden());
-            return "editPlantFormTemplate";
+            model.addAttribute("garden", garden);
+            return "plantsFormTemplate";
         }
     }
-
 }
