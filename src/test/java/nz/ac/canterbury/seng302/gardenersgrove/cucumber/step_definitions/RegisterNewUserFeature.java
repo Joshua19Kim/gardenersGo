@@ -39,13 +39,40 @@ public class RegisterNewUserFeature {
     @When("I see the home page")
     public void i_see_the_home_page() {
         assertEquals(mvcResult.getResponse().getStatus(), 200);
+    }
+
+    @Then("It includes a form for registering a new user")
+    public void it_includes_a_form_for_registering_a_new_user() {
         assertEquals(Objects.requireNonNull(mvcResult.getModelAndView()).getViewName(), "loginForm");
     }
 
-    @Then("It includes a button labelled {string}")
-    public void it_includes_a_button_labelled(String buttonName) throws UnsupportedEncodingException {
-        assertTrue(mvcResult.getResponse().getContentAsString().contains(buttonName));
+    @Given("I am on the registration form")
+    public void i_am_on_the_registration_form() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
     }
 
+    @Given("I enter valid values for all fields")
+    public void i_enter_valid_values_for_all_fields() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
 
+    @When("I submit the register form")
+    public void i_submit_the_register_form() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @Then("I am automatically logged in to my new account")
+    public void i_am_automatically_logged_in_to_my_new_account() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @Then("I see my user profile page")
+    public void i_see_my_user_profile_page() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
 }
