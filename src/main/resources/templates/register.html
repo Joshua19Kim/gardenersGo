@@ -40,9 +40,8 @@
         </script>
         <br/>
         <label for="DoB"> Date of Birth: </label>
-        <input class="form-control" data-cy="DoB" id="DoB"
-               th:name="DoB" th:value="*{DoB}" type="date">
-        <p class="smallErrorMessage" th:text="${DoBValid}"></p>
+        <input type="date" class="form-control" th:value="*{DoB}" id="DoB" th:name="DoB"  >
+        <p id = "DoBInvalid" class="smallErrorMessage"></p>
         <script>
             document.getElementById( "DoB" ).addEventListener( "invalid",
                 function( event ) {
