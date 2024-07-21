@@ -44,9 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 public class PubliciseGardensFeature {
 
-    @Autowired
-    private AuthorityFormRepository authorityFormRepository;
-
     private MockMvc mockGardenFormControllerMvc;
 
     private MockMvc mockGardenEditControllerMvc;
@@ -56,9 +53,6 @@ public class PubliciseGardensFeature {
 
     @MockBean
     private GardenerFormService gardenerFormService;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
 
     @MockBean
     private Authentication authentication;
@@ -75,7 +69,6 @@ public class PubliciseGardensFeature {
     private String testSize;
     private String editTestGardenDescription;
     private Garden testGarden;
-    private  Authentication auth;
     private MvcResult result;
 
     @Before("@U19")
@@ -94,7 +87,7 @@ public class PubliciseGardensFeature {
 
         authentication = Mockito.mock(Authentication.class);
         gardenService = Mockito.mock(GardenService.class);
-        auth = new UsernamePasswordAuthenticationToken("testgardener@gmail.com", "Password1!");
+        Authentication auth = new UsernamePasswordAuthenticationToken("testgardener@gmail.com", "Password1!");
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(auth);
         SecurityContextHolder.setContext(securityContext);
