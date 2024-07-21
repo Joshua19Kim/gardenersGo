@@ -365,6 +365,7 @@ public class ValidityCheckerTest {
             "Drury: Drury",
             "A: A",
             "1 Ilam Road:1 Ilam Road",
+            "a0 ,.'-:a0 ,.'-",
             "12345: Street number and name must contain at least one letter",
             "0 ,.'-: Street number and name must contain at least one letter",
             "@@#$%^&&**(*: Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
