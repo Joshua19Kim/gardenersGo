@@ -1,7 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import static java.lang.Long.parseLong;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.util.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.NotificationUtil;
@@ -18,14 +25,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.util.*;
-
-import static java.lang.Long.parseLong;
 
 /** Controller class responsible for handling garden-related HTTP requests. */
 @Controller
@@ -203,7 +202,7 @@ public class GardenFormController {
       model.addAttribute("nameError", validatedName);
       isValid = false;
     }
-    if (!Objects.equals(size.replace(',', '.'), validatedSize)) {
+    if (!Objects.equals(size.trim().replace(',', '.'), validatedSize)) {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }
@@ -312,17 +311,17 @@ public class GardenFormController {
         model.addAttribute("tagValid", tagValid);
       }
       if (userId == null || gardener.getId() == parseLong(userId, 10)) {
-        Weather currentWeather = weatherService.getWeather(garden.get().getCity() + ", " + garden.get().getCountry());
-        PrevWeather prevWeathers = weatherService.getPrevWeather(garden.get().getCity() + ", " + garden.get().getCountry());
+        Weather currentWeather =
+            weatherService.getWeather(garden.get().getCity() + "," + garden.get().getCountry());
+        PrevWeather prevWeathers =
+            weatherService.getPrevWeather(garden.get().getCity() + "," + garden.get().getCountry());
         if (currentWeather != null && prevWeathers != null) {
           model.addAttribute("date", currentWeather.getDate());
-//          model.addAttribute("day", currentWeather.getDay());
           model.addAttribute("temperature", currentWeather.getTemperature());
           model.addAttribute("weatherImage", currentWeather.getWeatherImage());
           model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
           model.addAttribute("humidity", currentWeather.getHumidity());
           model.addAttribute("forecastDates", currentWeather.getForecastDates());
-//          model.addAttribute("forecastDays", currentWeather.getForecastDays());
           model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
           model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
           model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
@@ -641,8 +640,10 @@ public class GardenFormController {
     Optional<String> validTagError = tagValidation.validateTag(tag);
     Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
 
-    Weather currentWeather = weatherService.getWeather(garden.getCity() + ", " + garden.getCountry());
-    PrevWeather prevWeathers = weatherService.getPrevWeather(garden.getCity() + ", " + garden.getCountry());
+    Weather currentWeather =
+        weatherService.getWeather(garden.getCity() + "," + garden.getCountry());
+    PrevWeather prevWeathers =
+        weatherService.getPrevWeather(garden.getCity() + "," + garden.getCountry());
     if (currentWeather != null && prevWeathers != null) {
       model.addAttribute("date", currentWeather.getDate());
       model.addAttribute("temperature", currentWeather.getTemperature());
