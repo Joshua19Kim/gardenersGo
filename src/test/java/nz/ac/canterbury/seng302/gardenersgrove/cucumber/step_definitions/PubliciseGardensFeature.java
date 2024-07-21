@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenDetailsController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenEditController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -54,7 +55,9 @@ public class PubliciseGardensFeature {
     @Autowired
     private AuthorityFormRepository authorityFormRepository;
 
-    private MockMvc mockMvc;
+    private MockMvc mockGardenFormControllerMvc;
+
+    private MockMvc mockGardenEditControllerMvc;
 
     @MockBean
     private GardenService gardenService;
@@ -106,16 +109,16 @@ public class PubliciseGardensFeature {
         gardenerFormService = Mockito.mock(GardenerFormService.class);
         when(authentication.getName()).thenReturn("testgardener@gmail.com");
 
-        GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                new RelationshipService(Mockito.mock(RelationshipRepository.class), gardenerFormService),
-                new RequestService(), Mockito.mock(WeatherService.class),
-                new TagService(Mockito.mock(TagRepository.class)));
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService);
+        GardenEditController gardenEditController = new GardenEditController(gardenService, gardenerFormService,
+                new RequestService());
 
-        mockMvc = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
+        mockGardenFormControllerMvc = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        mockGardenEditControllerMvc = MockMvcBuilders.standaloneSetup(gardenEditController).build();
     }
 
     //AC2,3
-    @Given("I on Create New Garden form")
+    @Given("I am on Create New Garden form")
     public void i_on_create_new_garden_form() {
         List<Authority> userRoles = new ArrayList<>();
         testGardener.setUserRoles(userRoles);
@@ -138,7 +141,7 @@ public class PubliciseGardensFeature {
         testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
         testGarden.setId(testGardenId);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+        mockGardenFormControllerMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", testGardenName)
                         .param("location", testStreetNumberName)
                         .param("suburb", testSuburb)
@@ -187,7 +190,7 @@ public class PubliciseGardensFeature {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(testGarden));
         when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
         when(gardenService.getGardensByGardenerId(any())).thenReturn(List.of(testGarden));
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/edit")
+        mockGardenEditControllerMvc.perform(MockMvcRequestBuilders.post("/gardens/edit")
                         .param("name", testGardenName)
                         .param("location", testStreetNumberName)
                         .param("suburb", testSuburb)
@@ -216,7 +219,7 @@ public class PubliciseGardensFeature {
         testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
         testGarden.setId(testGardenId);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
-        result = mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+        result = mockGardenFormControllerMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", testGardenName)
                         .param("location", testStreetNumberName)
                         .param("suburb", testSuburb)
@@ -245,7 +248,7 @@ public class PubliciseGardensFeature {
         testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
         testGarden.setId(testGardenId);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
-        result = mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+        result = mockGardenFormControllerMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", testGardenName)
                         .param("location", testStreetNumberName)
                         .param("suburb", testSuburb)
