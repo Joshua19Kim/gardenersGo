@@ -181,4 +181,14 @@ public class RegisterNewUserFeature {
     public void an_error_message_for_the_date_of_birth_on_the_signup_form_tells_me(String errorMessage) {
         assertEquals(Objects.requireNonNull(mvcResult.getModelAndView()).getModel().get("DoBValid"), errorMessage);
     }
+
+    @Then("an error message for the passwords matching on the signup form tells me {string}")
+    public void an_error_message_for_the_passwords_matching_on_the_signup_form_tells_me(String errorMessage) {
+        assertEquals(Objects.requireNonNull(mvcResult.getModelAndView()).getModel().get("passwordsMatch"), errorMessage);
+    }
+
+    @Then("an error message for the password strength on the signup form tells me {string}")
+    public void an_error_message_for_the_password_strength_on_the_signup_form_tells_me(String errorMessage) {
+        assertEquals(Objects.requireNonNull(mvcResult.getModelAndView()).getModel().get("passwordStrong"), errorMessage);
+    }
 }

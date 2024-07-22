@@ -161,3 +161,29 @@ Feature: U1 - As Sarah, I want to register on Gardener’s Grove so that I can u
     When I submit the register form
     Then an error message for the date of birth on the signup form tells me "The maximum age allowed is 120 years"
     And no account is created
+
+  @U1
+  Scenario: #AC11
+    Given I am on the registration form
+    And I enter the first name "John"
+    And I enter the last name "Doe"
+    And I enter the email address "a@gmail.com"
+    And I enter the password "Password1!"
+    And I confirm my password as "Password1@"
+    And I enter a date of birth of "01/01/2000"
+    When I submit the register form
+    Then an error message for the passwords matching on the signup form tells me "Passwords do not match."
+    And no account is created
+
+  @U1
+  Scenario: #AC12
+    Given I am on the registration form
+    And I enter the first name "John"
+    And I enter the last name "Doe"
+    And I enter the email address "a@gmail.com"
+    And I enter the password "Password"
+    And I confirm my password as "Password"
+    And I enter a date of birth of "01/01/2000"
+    When I submit the register form
+    Then an error message for the password strength on the signup form tells me "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."
+    And no account is created
