@@ -54,6 +54,7 @@ public class RegisterNewUserFeature {
     private String password;
     private String passwordConfirm;
     private LocalDate DoB;
+    private Boolean isLastNameOptional = false;
 
     @Before("@U1")
     public void setUp() {
@@ -126,37 +127,44 @@ public class RegisterNewUserFeature {
 
     @When("I submit the register form")
     public void i_submit_the_register_form() throws Exception {
-        mvcResult = mockMvcRegister.perform(MockMvcRequestBuilders.post("/register")
+        mvcResult = mockMvcRegister.perform(MockMvcRequestBuilders.post("/register/")
                 .param("firstName", firstName)
                 .param("lastName", lastName)
                 .param("email", email)
                 .param("password", password)
                 .param("passwordConfirm", passwordConfirm)
-                .param("DoB", DoB.toString()))
+                .param("DoB", DoB.toString())
+                .param("isLastNameOptional", String.valueOf(isLastNameOptional)))
                 .andReturn();
     }
 
     @Then("I am redirected to the signup code page")
     public void i_am_redirected_to_the_signup_code_page() {
         assertEquals(mvcResult.getResponse().getStatus(), 302);
-        assertEquals(mvcResult.getModelAndView().getViewName(), "redirect:/signup");
+        assertEquals(Objects.requireNonNull(mvcResult.getModelAndView()).getViewName(), "redirect:/signup");
         verify(gardenerFormService, times(1)).addGardener(any(Gardener.class));
         verify(writeEmail, times(1)).sendSignupEmail(any(Gardener.class), eq(tokenService));
     }
 
-    @Given("I click the check box marked I have no surname ticked,")
-    public void i_click_the_check_box_marked_i_have_no_surname_ticked() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+    @Given("I check the box to indicate I have no surname")
+    public void i_check_the_box_to_indicate_i_have_no_surname() {
+        this.isLastNameOptional = true;
     }
-    @Then("the last name text field is disabled")
-    public void the_last_name_text_field_is_disabled() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+
+    @Then("an error message for the first name on the signup form tells me {string}")
+    public void an_error_message_for_the_first_name_on_the_signup_form_tells_me(String errorMessage) {
+        assertEquals(Objects.requireNonNull(mvcResult.getModelAndView()).getModel().get("firstNameValid"), errorMessage);
     }
-    @Then("it will be ignored when I click the Sign Up button")
-    public void it_will_be_ignored_when_i_click_the_sign_up_button() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+
+    @Then("an error message for the last name on the signup form tells me {string}")
+    public void an_error_message_for_the_last_name_on_the_signup_form_tells_me(String errorMessage) {
+        assertEquals(Objects.requireNonNull(mvcResult.getModelAndView()).getModel().get("lastNameValid"), errorMessage);
     }
+
+    @Then("no account is created")
+    public void no_account_is_created() {
+        verify(gardenerFormService, times(0)).addGardener(any(Gardener.class));
+        verify(writeEmail, times(0)).sendSignupEmail(any(Gardener.class), eq(tokenService));
+    }
+
 }
