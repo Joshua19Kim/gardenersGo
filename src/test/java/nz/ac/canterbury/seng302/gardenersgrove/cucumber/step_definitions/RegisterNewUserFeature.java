@@ -167,4 +167,8 @@ public class RegisterNewUserFeature {
         verify(writeEmail, times(0)).sendSignupEmail(any(Gardener.class), eq(tokenService));
     }
 
+    @Then("an error message for the email address on the signup form tells me {string}")
+    public void an_error_message_for_the_email_address_on_the_signup_form_tells_me(String errorMessage) {
+        assertEquals(Objects.requireNonNull(mvcResult.getModelAndView()).getModel().get("emailValid"), errorMessage);
+    }
 }
