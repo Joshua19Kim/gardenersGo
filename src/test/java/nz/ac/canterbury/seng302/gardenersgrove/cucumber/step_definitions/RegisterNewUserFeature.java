@@ -176,4 +176,9 @@ public class RegisterNewUserFeature {
     public void the_email_address_is_in_use() {
         when(gardenerFormService.findByEmail(any())).thenReturn(Optional.ofNullable(gardener));
     }
+
+    @Then("an error message for the date of birth on the signup form tells me {string}")
+    public void an_error_message_for_the_date_of_birth_on_the_signup_form_tells_me(String errorMessage) {
+        assertEquals(Objects.requireNonNull(mvcResult.getModelAndView()).getModel().get("DoBValid"), errorMessage);
+    }
 }

@@ -135,3 +135,29 @@ Feature: U1 - As Sarah, I want to register on Gardener’s Grove so that I can u
     When I submit the register form
     Then an error message for the email address on the signup form tells me "This email address is already in use"
     And no account is created
+
+  @U1
+  Scenario: #AC9
+    Given I am on the registration form
+    And I enter the first name "John"
+    And I enter the last name "Doe"
+    And I enter the email address "a@gmail.com"
+    And I enter the password "Password1!"
+    And I confirm my password as "Password1!"
+    And I enter a date of birth of "01/01/2024"
+    When I submit the register form
+    Then an error message for the date of birth on the signup form tells me "You must be 13 years or older to create an account <br/>"
+    And no account is created
+
+  @U1
+  Scenario: #AC10
+    Given I am on the registration form
+    And I enter the first name "John"
+    And I enter the last name "Doe"
+    And I enter the email address "a@gmail.com"
+    And I enter the password "Password1!"
+    And I confirm my password as "Password1!"
+    And I enter a date of birth of "01/01/1900"
+    When I submit the register form
+    Then an error message for the date of birth on the signup form tells me "The maximum age allowed is 120 years"
+    And no account is created
