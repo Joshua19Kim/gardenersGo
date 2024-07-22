@@ -121,3 +121,17 @@ Feature: U1 - As Sarah, I want to register on Gardener’s Grove so that I can u
     When I submit the register form
     Then an error message for the email address on the signup form tells me "Email address must be in the form 'jane@doe.nz'"
     And no account is created
+
+  @U1
+  Scenario: #AC7
+    Given I am on the registration form
+    And I enter the first name "John"
+    And I enter the last name "Doe"
+    And I enter the email address "a@gmail.com"
+    And I enter the password "Password1!"
+    And I confirm my password as "Password1!"
+    And I enter a date of birth of "01/01/2000"
+    And the email address is in use
+    When I submit the register form
+    Then an error message for the email address on the signup form tells me "This email address is already in use"
+    And no account is created
