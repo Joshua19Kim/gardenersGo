@@ -123,4 +123,20 @@ public class RegisterNewUserFeature {
         verify(gardenerFormService, times(1)).addGardener(any(Gardener.class));
         verify(writeEmail, times(1)).sendSignupEmail(any(Gardener.class), eq(tokenService));
     }
+
+    @Given("I click the check box marked I have no surname ticked,")
+    public void i_click_the_check_box_marked_i_have_no_surname_ticked() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+    @Then("the last name text field is disabled")
+    public void the_last_name_text_field_is_disabled() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+    @Then("it will be ignored when I click the Sign Up button")
+    public void it_will_be_ignored_when_i_click_the_sign_up_button() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
 }
