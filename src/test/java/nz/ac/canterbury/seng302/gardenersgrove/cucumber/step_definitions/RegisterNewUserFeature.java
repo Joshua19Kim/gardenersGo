@@ -94,13 +94,33 @@ public class RegisterNewUserFeature {
                 .andExpect(view().name("register"));
     }
 
-    @Given("I enter the first name {string}, last name {string}, email address {string}, the password {string} twice, and a date of birth of {string}")
-    public void i_enter_the_first_name_last_name_email_address_the_password_twice_and_a_date_of_birth_of(String firstName, String lastName, String email, String password, String DoB) {
+    @Given("I enter the first name {string}")
+    public void i_enter_the_first_name(String firstName) {
         this.firstName = firstName;
+    }
+
+    @Given("I enter the last name {string}")
+    public void i_enter_the_last_name(String lastName) {
         this.lastName = lastName;
+    }
+
+    @Given("I enter the email address {string}")
+    public void i_enter_the_email_address(String email) {
         this.email = email;
+    }
+
+    @Given("I enter the password {string}")
+    public void i_enter_the_password(String password) {
         this.password = password;
-        this.passwordConfirm = password;
+    }
+
+    @Given("I confirm my password as {string}")
+    public void i_confirm_my_password_as(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
+    }
+
+    @Given("I enter a date of birth of {string}")
+    public void i_enter_a_date_of_birth_of(String DoB) {
         this.DoB = LocalDate.parse(DoB, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
