@@ -48,6 +48,6 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
      */
     @Transactional
     @Modifying
-    @Query(value = "UPDATE GARDEN SET last_notified = ?2 WHERE id = ?1 ", nativeQuery = true)
+    @Query(value = "UPDATE garden SET last_notified = ?2 WHERE id = ?1 ", nativeQuery = true)
     void updateLastNotifiedbyId(Long gardenId, LocalDate date);
 }

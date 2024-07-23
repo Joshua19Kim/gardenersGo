@@ -8,14 +8,14 @@ Feature: U19 - As Inaya, I want to be able to make my garden public so that othe
 
 @U19
 Scenario: #AC2
-  Given I on Create New Garden form
+  Given I am on Create New Garden form
   When I add valid description of the garden
   And I submit the create form
   Then The new description is persisted.
 
 @U19
 Scenario: #AC3
-  Given I on Create New Garden form
+  Given I am on Create New Garden form
   When I do not add any description
   And I submit the create form
   Then The new description is persisted.
@@ -36,7 +36,7 @@ Scenario: #AC5
 
 @U19
 Scenario Outline: #AC6
-  Given I on Create New Garden form
+  Given I am on Create New Garden form
   When I submit the create form with invalid <description> of the garden
   Then The error message for invalid description comes up.
   Examples:
@@ -50,7 +50,7 @@ Scenario Outline: #AC6
 
 @U19
 Scenario Outline: #AC7
-  Given I on Create New Garden form
+  Given I am on Create New Garden form
   When I submit the create form with <description> including bad words for the garden description
   Then The error message for inappropriate words comes up.
   Examples:
@@ -59,4 +59,3 @@ Scenario Outline: #AC7
     | "Gilipollas dont know the meaning? but definitely bad words" |
     | "this is bad word fotze as well" |
     | "from danish, pikhår." |
-
