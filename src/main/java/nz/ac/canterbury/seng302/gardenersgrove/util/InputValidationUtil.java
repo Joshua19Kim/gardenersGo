@@ -73,7 +73,7 @@ public class InputValidationUtil {
         } else if (!name.matches(nameRegex)) {
             result += firstOrLast + " name cannot be empty and must only include letters, spaces, " +
                     "hyphens or apostrophes <br/>";
-        } if (!name.matches(".*[A-Za-zÀ-ÖØ-öø-ž].*")) {
+        } if (!name.matches("\\p{L}.*")) {
             result += firstOrLast + " name must include at least one letter";
         }
         if (result.isEmpty()) {

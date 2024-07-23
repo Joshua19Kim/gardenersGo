@@ -254,7 +254,7 @@ public class InputValidationUtilTest {
         boolean lastName = false;
         Optional<String> isValid = validate.checkValidName(name, first, lastName);
         assertTrue(isValid.get().matches(first + " name cannot be empty and must only include letters, spaces, " +
-                "hyphens or apostrophes"));
+                "hyphens or apostrophes <br/>" + first + " name must include at least one letter"));
     }
 
     @Test
@@ -265,7 +265,7 @@ public class InputValidationUtilTest {
         boolean lastName = false;
         Optional<String> isValid = validate.checkValidName(name, first, lastName);
         assertTrue(isValid.get().matches(first + " name cannot be empty and must only include letters, spaces, " +
-                "hyphens or apostrophes"));
+                "hyphens or apostrophes <br/>" + first + " name must include at least one letter"));
     }
 
     @Test
@@ -297,7 +297,7 @@ public class InputValidationUtilTest {
         boolean lastName = false;
         Optional<String> isValid = validate.checkValidName(name, first, lastName);
         assertTrue(isValid.get().matches(first + " name cannot be empty and must only include letters, spaces, " +
-                "hyphens or apostrophes"));
+                "hyphens or apostrophes <br/>" + first + " name must include at least one letter"));
     }
 
     @Test
@@ -308,7 +308,7 @@ public class InputValidationUtilTest {
         boolean lastName = false;
         Optional<String> actualMessage = validate.checkValidName(name, first, lastName);
         Optional<String> expectedMessage = Optional.of("First name must be 64 characters long or less <br/>" +
-                "First name cannot be empty and must only include letters, spaces, hyphens or apostrophes");
+                "First name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>" + first + " name must include at least one letter");
         assertEquals(expectedMessage, actualMessage);
     }
 
