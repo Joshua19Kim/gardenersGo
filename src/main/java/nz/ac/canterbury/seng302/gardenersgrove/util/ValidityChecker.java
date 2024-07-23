@@ -1,12 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.Optional;
 
 /**
  *  A class used to validate the inputs of forms. Contains static methods that will either return the input if
@@ -71,7 +65,8 @@ public class ValidityChecker {
      * @return The location of the garden if it is valid, else returns an error message
      */
     public static String validateGardenLocation(String location) {
-        if (location == null || location.trim().isEmpty()) {
+    location = location.trim();
+    if (location == null || location.isEmpty()) {
             return "Location cannot be empty";
         }
 
@@ -92,7 +87,8 @@ public class ValidityChecker {
      * @return The size of the garden if it is valid, else returns an error message
      */
     public static String validateGardenSize(String size) {
-        if (size == null || size.trim().isEmpty()) {
+    size = size.trim();
+    if (size == null || size.isEmpty()) {
             return size;
         }
 
@@ -241,17 +237,13 @@ public class ValidityChecker {
         return country;
     }
     public static String validateGardenAddress(String address) {
-        String regex = "^[0-9]+$";
-        if(address.matches(regex)) {
-            return "Please enter a street number and name without only numerical characters";
-        }
-        regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+    String regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
         if (address != null && !address.trim().isEmpty() && !address.matches(regex)) {
             return "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes";
         }
-        regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
+    regex = ".*[A-Za-zÀ-Ö].*";
         if (address != null && !address.trim().isEmpty() && !address.matches(regex)) {
-            return "Street number and name must must contain at least one alphanumeric character";
+      return "Street number and name must contain at least one letter";
         }
         if(address.length() > 60) {
             return "Please enter a street number and name less than 60 characters";
