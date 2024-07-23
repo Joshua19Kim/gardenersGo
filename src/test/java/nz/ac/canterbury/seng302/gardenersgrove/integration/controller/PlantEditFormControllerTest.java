@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantControllers.PlantEditFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;

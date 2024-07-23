@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unit.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenEditController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenEditController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
