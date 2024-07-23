@@ -242,7 +242,7 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("size", size))
                 .andExpect(model().attribute("requestURI", redirectURI))
                 .andExpect(model().attribute("nameError",
-                        "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes"));
+                        "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes <br/>"));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
