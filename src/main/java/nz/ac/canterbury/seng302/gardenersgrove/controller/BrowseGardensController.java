@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Controller class that handles all the logic for the browse gardens page
+ */
 @Controller
 public class BrowseGardensController {
 
@@ -23,13 +26,21 @@ public class BrowseGardensController {
         this.gardenService = gardenService;
     }
 
+    /**
+     * Handles GET request for the browse gardens page. It gets a Page of Garden objects by
+     * specifying the page number and page size.
+     *
+     * @param pageNo the page number
+     * @param pageSize the page size
+     * @param model the model
+     * @return the browse gardens html template which contains the user interface for the browse gardens page
+     */
     @RequestMapping("/browseGardens")
     public String browseGardens(
             @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
             @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
             Model model
     ) {
-        System.out.println(pageNo);
         Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
@@ -38,9 +49,6 @@ public class BrowseGardensController {
                     .boxed()
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
-        }
-        for(Garden garden: gardensPage.getContent()) {
-            System.out.println(garden.getName());
         }
         return "browseGardensTemplate";
     }
