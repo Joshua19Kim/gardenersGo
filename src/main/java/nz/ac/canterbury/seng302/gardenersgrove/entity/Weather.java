@@ -34,7 +34,7 @@ public class Weather {
     private Float currentTemperature;
     private Integer currentHumidity;
     private String date;
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 
     public Weather() {
@@ -70,11 +70,11 @@ public class Weather {
      */
     public void setForecast(JsonNode forecast) {
         this.forecast = forecast;
-        this.date = LocalDate.parse("2024-07-19").format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
-        logger.info("Date string: " + date);
+        this.date = LocalDate.parse(forecast.get("forecastday").get(0).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+//        logger.info("Date string: " + date);
         for (int i = 0; i < 3; i++) {
-            this.forecastDates.add(LocalDate.parse("2024-07-20").format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
-            this.forecastDays.add(LocalDate.parse("2024-07-21").getDayOfWeek());
+            this.forecastDates.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+//            this.forecastDays.add(LocalDate.parse("2024-07-21").getDayOfWeek());
             this.forecastMinTemperatures.add(forecast.get("forecastday").get(i).get("day").get("mintemp_c").floatValue());
             this.forecastMaxTemperatures.add(forecast.get("forecastday").get(i).get("day").get("maxtemp_c").floatValue());
             this.forecastImages.add(forecast.get("forecastday").get(i).get("day").get("condition").get("icon").asText().replace("64x64", "128x128"));
@@ -130,23 +130,23 @@ public class Weather {
         return date;
     }
 
-    /**
-     * gets day of week based on date stored in weather object
-     *
-     * @return DayOfWeek Enum where Monday has a numerical value of 1 and Sunday 7
-     */
-    public String getDay() {
-        logger.info("Date string to be parsed: " + date);
-//        logger.info("Day returned: " + LocalDate.parse(date, formatter).getDayOfWeek());
-//        return LocalDate.parse(date, formatter).getDayOfWeek();
-        return date;
-    }
+//    /**
+//     * gets day of week based on date stored in weather object
+//     *
+//     * @return DayOfWeek Enum where Monday has a numerical value of 1 and Sunday 7
+//     */
+//    public String getDay() {
+//        logger.info("Date string to be parsed: " + date);
+////        logger.info("Day returned: " + LocalDate.parse(date, formatter).getDayOfWeek());
+////        return LocalDate.parse(date, formatter).getDayOfWeek();
+//        return date;
+//    }
 
     public List<String> getForecastDates() {
         return forecastDates;
     }
 
-    public List<DayOfWeek> getForecastDays() {
-        return forecastDays;
-    }
+//    public List<DayOfWeek> getForecastDays() {
+//        return forecastDays;
+//    }
 }

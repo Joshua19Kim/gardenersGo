@@ -8,8 +8,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.util.Optional;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantAddFormController;
+
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenDetailsController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantControllers.PlantAddFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -26,11 +27,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-@WebMvcTest(controllers = {GardenFormController.class, PlantAddFormController.class})
+@WebMvcTest(controllers = {GardenDetailsController.class, PlantAddFormController.class})
 public class PlantAddFormControllerTest {
   Gardener testGardener =
       new Gardener(
-          "Test", "Gardener", LocalDate.of(2024, 4, 1), "testgardener@gmail.com", "Password1!");
+          "Test", "Gardener", LocalDate.of(2024, 4, 1),
+              "testgardener@gmail.com", "Password1!");
 
   @Autowired private MockMvc mockMvc;
 
@@ -70,7 +72,10 @@ public class PlantAddFormControllerTest {
     when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
     mockMvc
-        .perform(MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "1").with(csrf()))
+        .perform(
+            MockMvcRequestBuilders.get("/gardens/details")
+              .param("gardenId", "1")
+              .with(csrf()))
         .andExpect(status().isOk())
         .andExpect(content().string(containsString("My Plant")));
   }
