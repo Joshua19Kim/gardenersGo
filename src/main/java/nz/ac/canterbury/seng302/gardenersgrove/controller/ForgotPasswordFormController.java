@@ -68,7 +68,12 @@ public class ForgotPasswordFormController {
 
         InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
         Optional<String> validEmailError = inputValidator.checkValidEmail(email);
-        model.addAttribute("returnMessage", validEmailError.orElse(confirmationMessage));
+        if(validEmailError.isPresent()){
+            model.addAttribute("emailError", validEmailError.get());
+        } else {
+            model.addAttribute("returnMessage", confirmationMessage);
+        }
+
 
         if (validEmailError.isEmpty()){
             Optional<Gardener> gardener = gardenerFormService.findByEmail(email);
