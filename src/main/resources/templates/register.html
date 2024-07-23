@@ -31,9 +31,8 @@
         <br/>
         <label for="isLastNameOptional">I have no surname</label>
         <input class="form-control" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
-               th:id="isLastNameOptional" th:name="isLastNameOptional" type="checkbox"/>
+               th:id="isLastNameOptional" th:name="isLastNameOptional" type="checkbox" th:checked="${isLastNameOptional}"/>
         <script>
-            document.getElementById('isLastNameOptional').checked = false;
             document.getElementById('isLastNameOptional').onchange = function () {
                 document.getElementById('lastName').disabled = this.checked;
             };
