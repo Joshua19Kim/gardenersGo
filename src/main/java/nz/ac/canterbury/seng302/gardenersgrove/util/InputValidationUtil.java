@@ -69,10 +69,12 @@ public class InputValidationUtil {
                     "be 64 characters long or less <br/>";
         } if (name == null || name.trim().isEmpty()) {
             result += firstOrLast + " name cannot be empty and must only include letters, spaces, " +
-                    "hyphens or apostrophes";
+                    "hyphens or apostrophes <br/>";
         } else if (!name.matches(nameRegex)) {
             result += firstOrLast + " name cannot be empty and must only include letters, spaces, " +
-                    "hyphens or apostrophes";
+                    "hyphens or apostrophes <br/>";
+        } if (!name.matches(".*[A-Za-zÀ-ÖØ-öø-ž].*")) {
+            result += firstOrLast + " name must include at least one letter";
         }
         if (result.isEmpty()) {
             return Optional.empty();
