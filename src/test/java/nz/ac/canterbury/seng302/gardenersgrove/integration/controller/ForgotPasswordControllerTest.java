@@ -74,7 +74,7 @@ public class ForgotPasswordControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("forgotPasswordForm"))
-                .andExpect(model().attributeExists("returnMessage"))
-                .andExpect(model().attribute("returnMessage","Email address must be in the form 'jane@doe.nz'"));
+                .andExpect(model().attributeExists("emailError"))
+                .andExpect(model().attribute("emailError","Email address must be in the form 'jane@doe.nz'"));
     }
 }

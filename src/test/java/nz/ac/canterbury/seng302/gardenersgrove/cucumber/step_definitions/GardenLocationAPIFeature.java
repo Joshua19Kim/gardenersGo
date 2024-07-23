@@ -89,8 +89,7 @@ public class GardenLocationAPIFeature {
         address = "";
         country = "";
         city = "";
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService, relationshipService,
-        requestService, weatherService, tagService);
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService);
         mockMvc = MockMvcBuilders.standaloneSetup(gardenFormController).build();
     }
 
