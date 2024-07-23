@@ -337,6 +337,7 @@ public class GardenDetailsController {
                 tagService.addTag(newTag);
                 logger.info("Tag '{}' passes moderation checks", tag);
             } else {
+                gardener.setBadWordCount(gardener.getBadWordCount() + 1); // increase bad word count of gardener
                 model.addAttribute("garden", garden);
                 model.addAttribute("tag", tag);
                 model.addAttribute("allTags", tagService.getUniqueTagNames(id));

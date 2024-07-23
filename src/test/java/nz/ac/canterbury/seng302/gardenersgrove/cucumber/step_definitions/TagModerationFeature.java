@@ -4,7 +4,7 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenDetailsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
@@ -44,7 +44,7 @@ public class TagModerationFeature {
     private WeatherService weatherService;
     @Mock
     private TagService tagService;
-    private MockMvc mockMvcGardenFormController;
+    private MockMvc mockMvcGardenDetailsController;
     private Garden garden;
     private Tag tag;
     private Gardener gardener;
@@ -72,14 +72,14 @@ public class TagModerationFeature {
         when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
         when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(gardener));
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService,
+        GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService,
                 gardenerFormService,
                 relationshipService,
                 requestService,
                 weatherService,
                 tagService);
 
-        mockMvcGardenFormController = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        mockMvcGardenDetailsController = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
     }
 
     @Given("I am adding a valid tag")
@@ -97,7 +97,7 @@ public class TagModerationFeature {
 
     @When("I confirm the tag")
     public void i_confirm_the_tag() throws Exception {
-        mockMvcGardenFormController
+        mockMvcGardenDetailsController
                 .perform(
                         (MockMvcRequestBuilders.post("/gardens/addTag")
                                 .param("tag-input", tag.getName())

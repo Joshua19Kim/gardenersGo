@@ -39,6 +39,10 @@ public class Gardener {
     @Column(name = "profile_picture")
     private String profilePicture;
 
+    /** A counter for how many bad words the gardener tries to use */
+    @Column(name = "bad_word_count")
+    private Integer badWordCount;
+
     @Column()
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "gardener_id")
@@ -49,10 +53,6 @@ public class Gardener {
     /** The list of gardens belonging to the gardener. */
     @OneToMany(mappedBy = "gardener")
     private List<Garden> gardens;
-
-    /** A counter for how many bad words the gardener tries to use */
-    @Column(name="bad_word_count")
-    private int badWordCount;
 
     /**
      * JPA required no-args constructor
@@ -136,7 +136,7 @@ public class Gardener {
     public int getBadWordCount() { return badWordCount; }
 
     public String getSearchResult() {
-        String searchResult = "";
+        String searchResult;
         if (lastName == null) {
             searchResult = firstName + " " + email;
         } else {
