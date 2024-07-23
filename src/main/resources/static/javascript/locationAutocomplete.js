@@ -12,13 +12,15 @@ document.addEventListener('DOMContentLoaded', function () {
     addressInput.addEventListener('input', function () {
         const inputValue = this.value.trim();
         if (inputValue.length > 0) {
-            fetchAutocomplete(inputValue)
-                .then(data => {
-                    showAutocompleteResults(data);
-                })
-                .catch(err => {
-                    console.error(err);
-                });
+            if (isValidInput(inputValue)) {
+                fetchAutocomplete(inputValue)
+                    .then(data => {
+                        showAutocompleteResults(data);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    });
+            }
         } else {
             hideAutocompleteResults();
         }
@@ -104,4 +106,10 @@ document.addEventListener('DOMContentLoaded', function () {
             hideAutocompleteResults();
         }
     });
+
+
+    //This is added to accept only all the language and numeric characters plus some relevant special characters for addresses.
+    function isValidInput(input) {
+        return /^[\p{L}\p{N}\s\-',./()]+$/u.test(input);
+    }
 });
