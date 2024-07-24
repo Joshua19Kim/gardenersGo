@@ -2,6 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -74,6 +77,17 @@ public class GardenService {
     public void updateLastNotifiedbyId(Long gardenId, LocalDate date) {
         gardenRepository.updateLastNotifiedbyId(gardenId, date);
 
+    }
+
+    /**
+     * Gets a page of the specified size and number
+     * @param pageNo the page number
+     * @param pageSize the page size
+     * @return a page of garden objects
+     */
+    public Page<Garden> getGardensPaginated(int pageNo, int pageSize)  {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return gardenRepository.findAll(pageable);
     }
 
 }

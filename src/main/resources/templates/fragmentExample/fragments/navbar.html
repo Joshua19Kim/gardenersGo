@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <h1>Gardener's Grove</h1>
 <script>
     // JavaScript function to submit the logout form
@@ -31,6 +31,9 @@
     </li>
     <li>
         <a th:href="@{/manageFriends}">Manage Friends</a>
+    </li>
+    <li>
+        <a th:href="@{/browseGardens}">Browse Gardens</a>
     </li>
     <li>
     <li sec:authorize="isAuthenticated()">

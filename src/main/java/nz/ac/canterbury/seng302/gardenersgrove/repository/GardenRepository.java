@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -16,7 +19,7 @@ import java.util.Optional;
  * Repository interface for accessing and managing Garden entities.
  */
 @Repository
-public interface GardenRepository extends CrudRepository<Garden, Long> {
+public interface GardenRepository extends JpaRepository<Garden, Long> {
     /**
      * Retrieves a garden by its unique identifier.
      *
@@ -31,6 +34,13 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
      * @return A list of all gardens stored in the repository.
      */
     List<Garden> findAll();
+
+    /**
+     * Retrieves a page of gardens
+     * @param pageable a pageable object
+     * @return a page of gardens
+     */
+    Page<Garden> findAll(Pageable pageable);
 
     /**
      * Retrieves a list of gardens by their owner's gardener ID.
