@@ -44,7 +44,6 @@ dependencies {
 	testImplementation 'org.junit.platform:junit-platform-suite:1.10.2'
 
 	//Bootstrap dependencies
-//	runtimeOnly("org.webjars:bootstrap:5.3.3")
 	implementation 'org.webjars:bootstrap:5.3.3'
 }
 

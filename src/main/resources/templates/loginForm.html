@@ -3,12 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Please Log In</title>
-    <link th:href='@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}' rel='stylesheet'>
-    <link href="/css/stylesheet.css" rel="stylesheet"> <!-- Reference to the external stylesheet -->
-
 </head>
 <body>
-<!--<div th:insert="~{fragmentExample/fragments/bootstrap.html}"></div>-->
+<div th:insert="~{fragmentExample/fragments/bootstrap.html}"></div>
 <div class="container">
     <div id="form" class="card">
         <h1 class="text-center">Please Log In</h1>
@@ -38,8 +35,7 @@
         </form>
     </div>
 </div>
-<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
-<script href='/webjars/bootstrap/5.3.3/css/bootstrap.bundle.min.js'></script>
+
 <script type="text/javascript">
     document.getElementById("loginForm").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
