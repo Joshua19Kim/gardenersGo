@@ -5,6 +5,27 @@
     <title>Title</title>
 </head>
 <body>
+<div th:insert="~{fragmentExample/fragments/bootstrap.html}"></div>
+<div th:each="garden : ${gardensPage.content}">
+    <div class="card" style="width: 25rem;">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h5 class="card-title" th:text="${garden.name}"></h5>
+                </div>
+            </div>
+            <div class="row mt-auto">
+                <div class="col-6 text-left">
+                    <p class="card-text" th:text="${garden.gardener}"></p>
+                </div>
+                <div class="col-6 text-right">
+                    <p class="card-text" th:text="${garden.creationDate}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <table>
     <tbody>
     <tr th:each="garden : ${gardensPage.content}">

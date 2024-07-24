@@ -342,4 +342,11 @@ public class Garden {
     }
   }
 
+  public LocalDate getCreationDate() {
+    return creationDate;
+  }
+
+  public void setCreationDate(LocalDate creationDate) {
+    this.creationDate = creationDate;
+  }
 }
