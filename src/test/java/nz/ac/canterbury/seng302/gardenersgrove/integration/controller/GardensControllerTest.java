@@ -118,6 +118,39 @@ public class GardensControllerTest {
 
     @Test
     @WithMockUser
+    public void ViewPrivateGardensNotFriend_RedirectedBackToMyGardens() throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+        Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
+        currentUser.setId(1L);
+        otherUser.setId(2L);
+        gardenerFormService.addGardener(currentUser);
+        gardenerFormService.addGardener(otherUser);
+
+        List<Garden> testGardens = new ArrayList<>();
+        Garden testGarden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", otherUser, "");
+        testGardens.add(testGarden);
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+
+        List<Gardener> relationships = new ArrayList<>();
+        relationships.add(otherUser);
+
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+        when(relationshipService.getCurrentUserRelationships(currentUser.getId())).thenReturn(relationships);
+        when(gardenService.getGardensByGardenerId(2L)).thenReturn(testGardens);
+        when(gardenerFormService.findById(2L)).thenReturn(Optional.of(otherUser));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
+                        .principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("gardens", testGardens))
+                .andExpect(model().attribute("gardener", otherUser))
+                .andExpect(view().name("gardensTemplate"));
+    }
+
+    @Test
+    @WithMockUser
     public void ViewFriendsGardensRequested_UserIsNotFriend_RedirectedToOwnGardens() throws Exception {
         Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
         Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
