@@ -21,19 +21,18 @@
         <input autofocus class="form-control" data-cy="firstName" id="firstName" maxlength="255"
                placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
                th:classappend="${(firstNameValid != '' && firstNameValid != null) ? 'error' : ''}">
-        <p class="smallErrorMessage" th:text="${firstNameValid}" th:value="*{firstNameValid}"></p>
+        <p class="smallErrorMessage" th:utext="${firstNameValid}" th:value="*{firstNameValid}"></p>
         <br/>
         <label for="lastName"> Last Name: </label>
         <input class="form-control" data-cy="lastName" id="lastName" placeholder="Last Name" maxlength="255"
                th:name="lastName" th:value="*{lastName}" type="text"
                th:classappend="${(lastNameValid != '' && lastNameValid != null) ? 'error' : ''}">
-        <p class="smallErrorMessage" th:text="${lastNameValid}" th:value="*{lastNameValid}"></p>
+        <p class="smallErrorMessage" th:utext="${lastNameValid}" th:value="*{lastNameValid}"></p>
         <br/>
         <label for="isLastNameOptional">I have no surname</label>
         <input class="form-control" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
-               th:id="isLastNameOptional" th:name="isLastNameOptional" type="checkbox"/>
+               th:id="isLastNameOptional" th:name="isLastNameOptional" type="checkbox" th:checked="${isLastNameOptional}"/>
         <script>
-            document.getElementById('isLastNameOptional').checked = false;
             document.getElementById('isLastNameOptional').onchange = function () {
                 document.getElementById('lastName').disabled = this.checked;
             };
@@ -42,7 +41,7 @@
         <label for="DoB"> Date of Birth: </label>
         <input class="form-control" data-cy="DoB" id="DoB"
                th:name="DoB" th:value="*{DoB}" type="date">
-        <p class="smallErrorMessage" th:text="${DoBValid}"></p>
+        <p class="smallErrorMessage" th:utext="${DoBValid}"></p>
         <script>
             document.getElementById( "DoB" ).addEventListener( "invalid",
                 function( event ) {
@@ -56,7 +55,7 @@
         <input class="form-control" data-cy="email" id="email" placeholder="Email" maxlength="320"
                th:name="email" th:value="*{email}" type="text"
                th:classappend="${(emailValid != '' && emailValid != null) ? 'error' : ''}">
-        <p class="smallErrorMessage" th:text="${emailValid}" th:value="*{emailValid}"></p>
+        <p class="smallErrorMessage" th:utext="${emailValid}" th:value="*{emailValid}"></p>
         <br/>
         <label for="password"> Password: </label>
         <input class="form-control" data-cy="password" id="password" placeholder="Password" maxlength="255"

@@ -295,7 +295,7 @@ public class GardenDetailsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("gardenDetailsTemplate"))
                 .andExpect(model().attributeExists("tagValid"))
-                .andExpect(model().attribute("tagValid", "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
+                .andExpect(model().attribute("tagValid", "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>"));
     }
 
     @Test
@@ -333,7 +333,7 @@ public class GardenDetailsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("gardenDetailsTemplate"))
                 .andExpect(model().attributeExists("tagValid"))
-                .andExpect(model().attribute("tagValid", "A tag cannot exceed 25 characters"));
+                .andExpect(model().attribute("tagValid", "A tag cannot exceed 25 characters <br/>"));
     }
 
     @Test
@@ -371,7 +371,7 @@ public class GardenDetailsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("gardenDetailsTemplate"))
                 .andExpect(model().attributeExists("tagValid"))
-                .andExpect(model().attribute("tagValid", "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \""));
+                .andExpect(model().attribute("tagValid", "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>The tag name must contain at least one alphanumeric character"));
     }
 
     @Test

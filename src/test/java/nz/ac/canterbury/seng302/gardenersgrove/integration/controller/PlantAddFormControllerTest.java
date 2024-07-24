@@ -207,7 +207,7 @@ public class PlantAddFormControllerTest {
             model()
                 .attribute(
                     "nameError",
-                    "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"));
+                    "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>"));
 
     verify(plantService, never()).addPlant(any(Plant.class));
   }
@@ -216,8 +216,8 @@ public class PlantAddFormControllerTest {
   @WithMockUser
   @CsvSource(
       value = {
-        "'':2:My first tree in my garden:2024-04-10:nameError:Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes",
-        "@pple Tree:2:My first tree in my garden:2024-04-10:nameError:Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes",
+        "'':2:My first tree in my garden:2024-04-10:nameError:Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>",
+        "@pple Tree:2:My first tree in my garden:2024-04-10:nameError:Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>",
         "Apple Tree:two:My first tree in my garden:2024-04-10:countError:Plant count must be a positive number",
         "Apple Tree:-2:My first tree in my garden:2024-04-10:countError:Plant count must be a positive number",
         "Apple Tree:2:Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt.:2024-04-10:descriptionError:Plant description must be less than 512 characters"
