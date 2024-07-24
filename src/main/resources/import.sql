@@ -1,19 +1,19 @@
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('A', 'A', DATE '2004-01-07', 'a@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('B', 'B', DATE '2004-01-07', 'b@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('C', 'C', null, 'c@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('D', null, DATE '2004-01-07', 'd@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('E', null, DATE '2004-01-07', 'e@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test1@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test2@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test3@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test4@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test5@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test6@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test7@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test8@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test9@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
-INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test10@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('A', 'A', DATE '2004-01-07', 'a@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('B', 'B', DATE '2004-01-07', 'b@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('C', 'C', null, 'c@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('D', null, DATE '2004-01-07', 'd@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('E', null, DATE '2004-01-07', 'e@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+, bad_word_cou, 0nt
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test1@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test2@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test3@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test4@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test5@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test6@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test7@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test8@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test9@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test10@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
 
 INSERT INTO authority (gardener_id, role) VALUES (1, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');
@@ -35,7 +35,6 @@ INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (2, 'Uni Garden','20 Kirkwood avenue', null, 'Christchurch','New Zealand', null, '100', false);
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (3, 'Chch Garden','1 Molesworth Street', 'Pipitea', 'Wellington','New Zealand', '6011', '300', false);
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN) VALUES (1, 'Council Garden','53 Hereford Street', null, 'Christchurch','New Zealand', '8154', '15', false);
-
 
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('My Plant', 1, '2', 'Rose', '/images/placeholder.jpg');
 INSERT INTO plant (name, garden_id, count, description, image) VALUES ('My Plant 2', 1, '29', 'Daisy', '/images/placeholder.jpg');

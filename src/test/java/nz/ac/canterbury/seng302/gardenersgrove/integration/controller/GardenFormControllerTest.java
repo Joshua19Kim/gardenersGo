@@ -1,13 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -19,7 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -39,18 +37,6 @@ public class GardenFormControllerTest {
 
     @MockBean
     private GardenerFormService gardenerFormService;
-
-    @MockBean
-    private RelationshipService relationshipService;
-
-    @MockBean
-    private RequestService requestService;
-
-    @MockBean
-    private WeatherService weatherService;
-
-    @MockBean
-    private TagService tagService;
 
     @BeforeEach
     void setUp() {
@@ -359,5 +345,3 @@ public class GardenFormControllerTest {
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
 }
-
-

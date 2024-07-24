@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Controller
 public class ResetPasswordFormController {
-    Logger logger = LoggerFactory.getLogger(RegisterController.class);
+    Logger logger = LoggerFactory.getLogger(ResetPasswordFormController.class);
     private final GardenerFormService gardenerFormService;
     private final TokenService tokenService;
     private final WriteEmail writeEmail;

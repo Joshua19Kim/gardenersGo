@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenDetailsController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenDetailsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -429,6 +429,47 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
+    public void NewTagSubmitted_ValidTagName_BadWordsCounterNotChanged() throws Exception {
+
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
+        Tag tag = new Tag("My tag", garden);
+
+        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+        when(tagService.addTag(any())).thenReturn(tag);
+        int currentBadWords = testGardener.getBadWordCount();
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/addTag")
+                                .param("tag-input", "My tag")
+                                .param("gardenId", "1")
+                                .with(csrf())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+        assertEquals(currentBadWords, testGardener.getBadWordCount());
+    }
+
+    @Test
+    @WithMockUser
+    public void NewTagSubmitted_OffensiveTagName_BadWordCounterIncreased() throws Exception {
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
+        Tag tag = new Tag("Fuck", garden);
+        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+        when(tagService.addTag(any())).thenReturn(tag);
+        int currentBadWordsCount = testGardener.getBadWordCount();
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/addTag")
+                                .param("tag-input", "Fuck")
+                                .param("gardenId", "1")
+                                .with(csrf())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardenDetailsTemplate"));
+        assertEquals(currentBadWordsCount + 1, testGardener.getBadWordCount());
+    }
+
+
+    @Test
+    @WithMockUser
     public void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
@@ -709,6 +750,51 @@ public class GardenDetailsControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(model().attributeDoesNotExist("wateringTip"));
         assertEquals(garden.getLastNotified(), currentDate);
+    }
+
+    @Test
+    @WithMockUser
+    public void ViewFriendsGardensRequested_UserIsNotFriend_RedirectedToOwnGardens() throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+        Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
+        currentUser.setId(1L);
+        otherUser.setId(2L);
+        gardenerFormService.addGardener(currentUser);
+        gardenerFormService.addGardener(otherUser);
+
+        List<Gardener> relationships = new ArrayList<>();
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+        when(relationshipService.getCurrentUserRelationships(currentUser.getId())).thenReturn(relationships);
+        when(gardenerFormService.findById(2L)).thenReturn(Optional.of(otherUser));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "2")
+                        .principal(authentication))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens"));
+    }
+
+    @Test
+    @WithMockUser
+    public void ViewFriendsGardensRequested_FriendDoesNotExist_RedirectedToOwnGardens() throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+        currentUser.setId(1L);
+        gardenerFormService.addGardener(currentUser);
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+        when(gardenerFormService.findById(2L)).thenReturn(Optional.empty());
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "2").principal(authentication))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens"));
     }
 
 }

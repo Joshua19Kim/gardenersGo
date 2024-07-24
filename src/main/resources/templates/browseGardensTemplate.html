@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+    <tbody>
+    <tr th:each="garden : ${gardensPage.content}">
+        <td th:text="${garden.name}"></td>
+    </tr>
+    </tbody>
+</table>
+<div th:if="${gardensPage.totalPages > 0}" class="pagination"
+     th:each="pageNumber : ${pageNumbers}">
+    <a th:href="@{/browseGardens(pageSize=${gardensPage.size}, pageNo=${pageNumber - 1})}"
+       th:text="${pageNumber}"
+       th:class="${pageNumber==gardensPage.number + 1} ? active"></a>
+</div>
+</body>
+</html>
