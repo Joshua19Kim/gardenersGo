@@ -206,7 +206,7 @@ public class ValidityChecker {
         }
         regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
         if (suburb != null && !suburb.trim().isEmpty() && !suburb.matches(regex)) {
-            result += "Suburb must must contain at least one alphanumeric character <br/>";
+            result += "Suburb must contain at least one alphanumeric character <br/>";
         }
         if(suburb != null && suburb.length() > 90) {
             result += "Please enter a suburb less than 90 characters";
@@ -233,7 +233,7 @@ public class ValidityChecker {
         }
         regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
         if (!city.matches(regex)) {
-            result += "City must must contain at least one alphanumeric character <br/>";
+            result += "City must contain at least one alphanumeric character <br/>";
         }
         if(city.length() > 180) {
             result += "Please enter a city less than 180 characters";
@@ -258,7 +258,7 @@ public class ValidityChecker {
         }
         regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
         if (!country.matches(regex)) {
-            result += "Country must must contain at least one alphanumeric character <br/>";
+            result += "Country must contain at least one alphanumeric character <br/>";
         }
         if(country.length() > 60) {
             result += "Please enter a country less than 60 characters";
@@ -280,7 +280,7 @@ public class ValidityChecker {
         }
         regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
         if (address != null && !address.trim().isEmpty() && !address.matches(regex)) {
-            result += "Street number and name must must contain at least one alphanumeric character <br/>";
+            result += "Street number and name must contain at least one alphanumeric character <br/>";
         }
         if(address != null && address.length() > 60) {
             result += "Please enter a street number and name less than 60 characters";
@@ -299,7 +299,7 @@ public class ValidityChecker {
         }
         regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
         if (postcode != null && !postcode.trim().isEmpty() && !postcode.matches(regex)) {
-            result += "Postcode must must contain at least one alphanumeric character <br/>";
+            result += "Postcode must contain at least one alphanumeric character <br/>";
         }
         if(postcode != null && postcode.length() > 10) {
             result += "Please enter a postcode less than 10 characters";
