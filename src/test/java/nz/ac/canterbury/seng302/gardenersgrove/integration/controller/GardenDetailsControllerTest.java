@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenDetailsController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenDetailsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -709,6 +709,51 @@ public class GardenDetailsControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(model().attributeDoesNotExist("wateringTip"));
         assertEquals(garden.getLastNotified(), currentDate);
+    }
+
+    @Test
+    @WithMockUser
+    public void ViewFriendsGardensRequested_UserIsNotFriend_RedirectedToOwnGardens() throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+        Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
+        currentUser.setId(1L);
+        otherUser.setId(2L);
+        gardenerFormService.addGardener(currentUser);
+        gardenerFormService.addGardener(otherUser);
+
+        List<Gardener> relationships = new ArrayList<>();
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+        when(relationshipService.getCurrentUserRelationships(currentUser.getId())).thenReturn(relationships);
+        when(gardenerFormService.findById(2L)).thenReturn(Optional.of(otherUser));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "2")
+                        .principal(authentication))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens"));
+    }
+
+    @Test
+    @WithMockUser
+    public void ViewFriendsGardensRequested_FriendDoesNotExist_RedirectedToOwnGardens() throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+        currentUser.setId(1L);
+        gardenerFormService.addGardener(currentUser);
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.when(authentication.getPrincipal()).thenReturn(currentUser.getEmail());
+
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
+        when(gardenerFormService.findById(2L)).thenReturn(Optional.empty());
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "2").principal(authentication))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens"));
     }
 
 }
