@@ -14,6 +14,10 @@ INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_pictu
 INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test8@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
 INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test9@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
 INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test10@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test11@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test12@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test13@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
+INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture) VALUES ('test', 'user', null, 'test14@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png');
 
 INSERT INTO authority (gardener_id, role) VALUES (1, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');
