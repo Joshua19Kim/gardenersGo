@@ -275,7 +275,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 #tag-error-message {
     color: red;
-    text-align: center;
+    text-align: left;
     animation: fadeOut 2s forwards;
     animation-delay: 3s;
 }
