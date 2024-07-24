@@ -39,6 +39,10 @@ public class Gardener {
     @Column(name = "profile_picture")
     private String profilePicture;
 
+    /** A counter for how many bad words the gardener tries to use */
+    @Column(name = "bad_word_count")
+    private Integer badWordCount;
+
     @Column()
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "gardener_id")
@@ -71,6 +75,7 @@ public class Gardener {
         this.email = email;
         this.password = hashPasword(password);
         this.profilePicture = "/images/defaultProfilePic.png";
+        this.badWordCount = 0;
         gardens = new ArrayList<>();
     }
 
@@ -128,8 +133,10 @@ public class Gardener {
 
     public String getProfilePicture() { return this.profilePicture; }
 
+    public int getBadWordCount() { return badWordCount; }
+
     public String getSearchResult() {
-        String searchResult = "";
+        String searchResult;
         if (lastName == null) {
             searchResult = firstName + " " + email;
         } else {
@@ -155,6 +162,8 @@ public class Gardener {
     public void updatePassword(String password) { this.password = hashPasword(password); }
 
     public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
+
+    public void setBadWordCount(int badWordCount) { this.badWordCount = badWordCount; }
 
     public String getSearchString() {
         String gardenerString = firstName;

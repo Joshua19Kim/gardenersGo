@@ -429,6 +429,47 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
+    public void NewTagSubmitted_ValidTagName_BadWordsCounterNotChanged() throws Exception {
+
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
+        Tag tag = new Tag("My tag", garden);
+
+        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+        when(tagService.addTag(any())).thenReturn(tag);
+        int currentBadWords = testGardener.getBadWordCount();
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/addTag")
+                                .param("tag-input", "My tag")
+                                .param("gardenId", "1")
+                                .with(csrf())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/gardens/details?gardenId=1"));
+        assertEquals(currentBadWords, testGardener.getBadWordCount());
+    }
+
+    @Test
+    @WithMockUser
+    public void NewTagSubmitted_OffensiveTagName_BadWordCounterIncreased() throws Exception {
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
+        Tag tag = new Tag("Fuck", garden);
+        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+        when(tagService.addTag(any())).thenReturn(tag);
+        int currentBadWordsCount = testGardener.getBadWordCount();
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/addTag")
+                                .param("tag-input", "Fuck")
+                                .param("gardenId", "1")
+                                .with(csrf())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("gardenDetailsTemplate"));
+        assertEquals(currentBadWordsCount + 1, testGardener.getBadWordCount());
+    }
+
+
+    @Test
+    @WithMockUser
     public void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
