@@ -363,7 +363,11 @@ public class ValidityCheckerTest {
     @ParameterizedTest
     @CsvSource(value = {
             "Drury: Drury",
-            "12345: Please enter a street number and name without only numerical characters",
+            "A: A",
+            "1 Ilam Road:1 Ilam Road",
+            "a0 ,.'-:a0 ,.'-",
+            "12345: Street number and name must contain at least one letter",
+            "0 ,.'-: Street number and name must contain at least one letter",
             "@@#$%^&&**(*: Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes",
             "Achieving balance between work and life is essential to an awesome life: " +
                     "Please enter a street number and name less than 60 characters"
