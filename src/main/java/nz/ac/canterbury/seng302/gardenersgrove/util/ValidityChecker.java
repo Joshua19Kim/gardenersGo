@@ -74,31 +74,6 @@ public class ValidityChecker {
     }
 
     /**
-     * Checks that the garden location complies with the required format
-     * @param location the garden location
-     * @return The location of the garden if it is valid, else returns an error message
-     */
-    public static String validateGardenLocation(String location) {
-        String result = "";
-        if (location == null || location.trim().isEmpty()) {
-            return "Location cannot be empty";
-        }
-
-        String regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
-        if (!location.matches(regex)) {
-            result += "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>";
-        }
-        if(location.length() > 128) {
-            result += "Location must be less than 128 characters";
-        }
-        if(result.isEmpty()) {
-            return location;
-        }
-        return result;
-
-    }
-
-    /**
      * Checks that the garden size is a positive number
      * @param size the garden size
      * @return The size of the garden if it is valid, else returns an error message

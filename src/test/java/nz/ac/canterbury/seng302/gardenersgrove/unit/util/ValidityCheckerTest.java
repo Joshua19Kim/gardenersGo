@@ -71,62 +71,6 @@ public class ValidityCheckerTest {
                 "Garden name must be less than 64 characters", returnedInput);
     }
 
-
-    @Test
-    public void LocationEntered_AlphaNumericInput_NameReturned() {
-        String input = "JackErsk1ne";
-        String returnedInput = ValidityChecker.validateGardenLocation(input);
-        Assertions.assertEquals("JackErsk1ne", returnedInput);
-    }
-    @Test
-    public void LocationEntered_SpaceInput_NameReturned() {
-        String input = "a a";
-        String returnedInput = ValidityChecker.validateGardenLocation(input);
-        Assertions.assertEquals("a a", returnedInput);
-    }
-    @Test
-    public void LocationEntered_CommaInput_NameReturned() {
-        String input = ",";
-        String returnedInput = ValidityChecker.validateGardenLocation(input);
-        Assertions.assertEquals(",", returnedInput);
-    }
-    @Test
-    public void LocationEntered_DotInput_NameReturned() {
-        String input = ".";
-        String returnedInput = ValidityChecker.validateGardenLocation(input);
-        Assertions.assertEquals(".", returnedInput);
-    }
-    @Test
-    public void LocationEntered_HyphenInput_NameReturned() {
-        String input = "-";
-        String returnedInput = ValidityChecker.validateGardenLocation(input);
-        Assertions.assertEquals("-", returnedInput);
-    }
-    @Test
-    public void LocationEntered_ApostropheInput_NameReturned() {
-        String input = "'";
-        String returnedInput = ValidityChecker.validateGardenLocation(input);
-        Assertions.assertEquals("'", returnedInput);
-    }
-    @Test
-    public void LocationEntered_EmptyInput_ErrorMessageReturned() {
-        String input = "";
-        String returnedInput = ValidityChecker.validateGardenLocation(input);
-        Assertions.assertEquals("Location cannot be empty", returnedInput);
-    }
-    @Test
-    public void LocationEntered_EmptySpaceInput_ErrorMessageReturned() {
-        String input = " ";
-        String returnedInput = ValidityChecker.validateGardenLocation(input);
-        Assertions.assertEquals("Location cannot be empty", returnedInput);
-    }
-    @Test
-    public void LocationEntered_InvalidInput_ErrorMessageReturned() {
-        String input = "J@(K_Er$K!^e";
-        String returnedInput = ValidityChecker.validateGardenLocation(input);
-        Assertions.assertEquals("Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>", returnedInput);
-    }
-
     @Test
     public void SizeEntered_EmptyInput_EmptyInputReturned() {
         String input = "";
