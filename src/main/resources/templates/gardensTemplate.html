@@ -8,6 +8,8 @@
 <body>
 
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
+<div th:insert="~{fragmentExample/fragments/bootstrap.html}"></div>
+
 <div id="gardens_list">
     <h1 th:text="${gardener.firstName} + (${gardener.lastName != null}? ' ' + ${gardener.lastName} : '') + '\'s Gardens'"></h1>
     <th:block th:each="garden : ${gardens}">
