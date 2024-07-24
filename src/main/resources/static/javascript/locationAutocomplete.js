@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function showAutocompleteResults(results) {
-        autocompleteResults.innerHTML = '';
+        autocompleteResults.innerText = '';
         if (results.error) {
             const item = document.createElement('div');
             item.classList.add('autocomplete-item');
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function hideAutocompleteResults() {
-        autocompleteResults.innerHTML = '';
+        autocompleteResults.innerText = '';
         autocompleteResults.classList.remove('visible');
     }
 

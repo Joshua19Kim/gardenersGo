@@ -185,12 +185,12 @@
         const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         const d = new Date();
         const day = weekday[d.getDay()];
-        document.getElementById("currentDate").innerHTML = day;
+        document.getElementById("currentDate").innerText = day;
         for(let i = 0; i <= 2 ; i++) {
             let d = new Date();
             d.setDate(d.getDate() + i);
             const day = weekday[d.getDay()];
-            document.getElementById(i.toString()).innerHTML = day;
+            document.getElementById(i.toString()).innerText = day;
         }
     }
 
@@ -203,7 +203,7 @@
     function getDay(date) {
         const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         const day = weekday[date.getDay()];
-        document.getElementById(date).innerHTML = day;
+        document.getElementById(date).innerText = day;
 
     }
     function handleImageClick(plantId) {
@@ -258,7 +258,7 @@
     //     month: 'long',
     //     year: 'numeric'
     // };
-    // document.getElementById("currentDateDisplay").innerHTML = currentDate.toLocaleString("en-Nz", dateOptions);
+    // document.getElementById("currentDateDisplay").innerText = currentDate.toLocaleString("en-Nz", dateOptions);
 
     function transformToInput() {
         document.getElementById('add-tag').style.display = 'none';
