@@ -7,7 +7,7 @@
 <body>
 <div th:insert="~{fragmentExample/fragments/bootstrap.html}"></div>
 <div th:each="garden : ${gardensPage.content}">
-    <div class="card" style="width: 25rem;">
+    <div class="card" style="width: 23rem;">
         <div class="card-body">
             <div class="row">
                 <div class="col-12 text-center">
@@ -16,10 +16,15 @@
             </div>
             <div class="row mt-auto">
                 <div class="col-6 text-left">
-                    <p class="card-text" th:text="${garden.gardener}"></p>
+                    <div style="display: flex; flex-direction: row; justify-content: left; align-items: center">
+                        <img class="avatar" th:src="@{${garden.gardener.profilePicture}}"/>
+                        <p class="card-text" th:text="${garden.gardener.firstName} + ' ' + ${garden.gardener.lastName}"></p>
+                    </div>
                 </div>
                 <div class="col-6 text-right">
-                    <p class="card-text" th:text="${garden.creationDate}"></p>
+                    <div style="display: flex; justify-content: right; margin-top: 8px;">
+                        <p class="card-text" th:text="${garden.creationDate}"></p>
+                    </div>
                 </div>
             </div>
         </div>
