@@ -134,7 +134,7 @@ public class GardenFormController {
       model.addAttribute("nameError", validatedName);
       isValid = false;
     }
-    if (!Objects.equals(size.replace(',', '.'), validatedSize)) {
+    if (!Objects.equals(size.trim().replace(',', '.'), validatedSize)) {
       model.addAttribute("sizeError", validatedSize);
       isValid = false;
     }

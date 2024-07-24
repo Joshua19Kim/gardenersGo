@@ -116,8 +116,7 @@ public class UserProfileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
                 .andExpect(model().attribute("firstName", ""))
-                .andExpect(model().attribute("firstNameValid", "First name cannot be empty and must only include letters, spaces, " +
-                        "hyphens or apostrophes"));
+                .andExpect(model().attribute("firstNameValid", "First name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>First name must include at least one letter"));
     }
 
 
@@ -136,8 +135,7 @@ public class UserProfileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
                 .andExpect(model().attribute("lastName", "!%ASava"))
-                .andExpect(model().attribute("lastNameValid", "Last name cannot be empty and must only include letters, spaces, " +
-                        "hyphens or apostrophes"));
+                .andExpect(model().attribute("lastNameValid", "Last name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>Last name must include at least one letter"));
     }
 
     @Test
@@ -155,7 +153,7 @@ public class UserProfileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
                 .andExpect(model().attribute("DoB", LocalDate.of(2400,1,1)))
-                .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account"));
+                .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account <br/>"));
     }
 
     @Test
