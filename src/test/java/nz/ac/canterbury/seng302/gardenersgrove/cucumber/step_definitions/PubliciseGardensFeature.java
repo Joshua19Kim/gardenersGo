@@ -4,8 +4,8 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenEditController;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenEditController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -220,8 +220,8 @@ public class PubliciseGardensFeature {
         MockHttpServletRequest request = result.getRequest();
         String descriptionError = (String) request.getAttribute("descriptionError");
         assertTrue(
-                "Garden description must be less than 512 characters".equals(descriptionError) ||
-                        "Description must be 512 characters or less and contain some text".equals(descriptionError));
+                "Garden description must be less than 512 characters <br/>".equals(descriptionError) ||
+                        "Description must be 512 characters or less and contain some text <br/>".equals(descriptionError));
     }
 
     @When("I submit the create form with {string} including bad words for the garden description")

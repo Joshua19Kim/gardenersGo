@@ -1,9 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import org.junit.jupiter.api.BeforeEach;
@@ -230,7 +228,7 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("size", size))
                 .andExpect(model().attribute("requestURI", redirectURI))
                 .andExpect(model().attribute("nameError",
-                        "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes"));
+                        "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes <br/>"));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
     }

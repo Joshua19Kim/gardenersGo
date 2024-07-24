@@ -64,6 +64,7 @@ public class SecurityConfiguration {
                                 AntPathRequestMatcher.antMatcher("/javascript/**"),
                                 AntPathRequestMatcher.antMatcher("/wordlists/**"),
                                 AntPathRequestMatcher.antMatcher("/"),
+                                AntPathRequestMatcher.antMatcher("/webjars/**"),
                                 AntPathRequestMatcher.antMatcher("/login"),
                                 AntPathRequestMatcher.antMatcher("/register"),
                                 AntPathRequestMatcher.antMatcher("/forgotPassword"),

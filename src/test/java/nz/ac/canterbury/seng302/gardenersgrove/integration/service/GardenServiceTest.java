@@ -9,10 +9,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @DataJpaTest
 @Import(GardenService.class)
@@ -24,6 +30,96 @@ public class GardenServiceTest {
     @Test
     public void GardenAdded_ValidInputs_GardenSavedToRepository() {
         GardenService gardenService = new GardenService(new GardenRepository() {
+            @Override
+            public List<Garden> findAll(Sort sort) {
+                return null;
+            }
+
+            @Override
+            public Page<Garden> findAll(Pageable pageable) {
+                return null;
+            }
+
+            @Override
+            public void flush() {
+
+            }
+
+            @Override
+            public <S extends Garden> S saveAndFlush(S entity) {
+                return null;
+            }
+
+            @Override
+            public <S extends Garden> List<S> saveAllAndFlush(Iterable<S> entities) {
+                return null;
+            }
+
+            @Override
+            public void deleteAllInBatch(Iterable<Garden> entities) {
+
+            }
+
+            @Override
+            public void deleteAllByIdInBatch(Iterable<Long> longs) {
+
+            }
+
+            @Override
+            public void deleteAllInBatch() {
+
+            }
+
+            @Override
+            public Garden getOne(Long aLong) {
+                return null;
+            }
+
+            @Override
+            public Garden getById(Long aLong) {
+                return null;
+            }
+
+            @Override
+            public Garden getReferenceById(Long aLong) {
+                return null;
+            }
+
+            @Override
+            public <S extends Garden> Optional<S> findOne(Example<S> example) {
+                return Optional.empty();
+            }
+
+            @Override
+            public <S extends Garden> List<S> findAll(Example<S> example) {
+                return null;
+            }
+
+            @Override
+            public <S extends Garden> List<S> findAll(Example<S> example, Sort sort) {
+                return null;
+            }
+
+            @Override
+            public <S extends Garden> Page<S> findAll(Example<S> example, Pageable pageable) {
+                return null;
+            }
+
+            @Override
+            public <S extends Garden> long count(Example<S> example) {
+                return 0;
+            }
+
+            @Override
+            public <S extends Garden> boolean exists(Example<S> example) {
+                return false;
+            }
+
+            @Override
+            public <S extends Garden, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+                return null;
+            }
+
             @Override
             public Optional<Garden> findById(long id) {
                 return Optional.empty();
@@ -48,7 +144,7 @@ public class GardenServiceTest {
             }
 
             @Override
-            public <S extends Garden> Iterable<S> saveAll(Iterable<S> entities) {
+            public <S extends Garden> List<S> saveAll(Iterable<S> entities) {
                 return null;
             }
 
@@ -63,7 +159,7 @@ public class GardenServiceTest {
             }
 
             @Override
-            public Iterable<Garden> findAllById(Iterable<Long> longs) {
+            public List<Garden> findAllById(Iterable<Long> longs) {
                 return null;
             }
 
