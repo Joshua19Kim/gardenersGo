@@ -128,6 +128,94 @@ public class GardenFormControllerTest {
 
     @Test
     @WithMockUser
+    public void CreateGardenFormSubmitted_InvalidAddressesWithTooMuchOnlyNumbers_MultipleErrorMessagesAddedViewUpdate() throws Exception {
+        String name = "Test garden";
+        // 84 characters for testing location
+        String location = "666666666666666666666666666666666666666666666666666666666666666666666666666666666666";
+        // 93 characters for testing suburb
+        String suburb = "666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666";
+        // 183 characters for testing city
+        String city = "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777";
+        // 66 characters for testing country
+        String country = "666666666666666666666666666666666666666666666666666666666666666666666666666666666666";
+        // 16 characters for testing postcode
+        String postcode = "7777777777777777";
+        String size = "1.0";
+        String description = "This is the greatest garden";
+
+        Garden garden = new Garden("Test garden",
+                "666666666666666666666666666666666666666666666666666666666666666666666666666666666666",
+                "666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666",
+                "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777",
+                "666666666666666666666666666666666666666666666666666666666666666666666666666666666666",
+                "7777777777777777",
+                "1.0",
+                testGardener,
+                "The greatest garden.");
+        garden.setId(1L);
+        when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+                        .param("name", name)
+                        .param("location", location)
+                        .param("suburb", suburb)
+                        .param("city", city)
+                        .param("country", country)
+                        .param("postcode", postcode)
+                        .param("size", size)
+                        .param("redirect", "")
+                        .param("description", description)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("locationError","cityError", "countryError", "suburbError", "postcodeError", "name", "location", "suburb", "country", "postcode", "size"))
+                .andExpect(model().attribute("cityError", "Please enter a city without only numerical characters <br/>Please enter a city less than 180 characters"))
+                .andExpect(model().attribute("suburbError", "Please enter a suburb without only numerical characters <br/>Please enter a suburb less than 90 characters"))
+                .andExpect(model().attribute("countryError", "Please enter a country without only numerical characters <br/>Please enter a country less than 60 characters"))
+                .andExpect(model().attribute("postcodeError", "Please enter a postcode less than 10 characters"))
+                .andExpect(model().attribute("locationError", "Please enter a street number and name without only numerical characters <br/>Please enter a street number and name less than 60 characters"));
+
+        verify(gardenService, never()).addGarden(any(Garden.class));
+    }
+
+    @Test
+    @WithMockUser
+    public void CreateGardenFormSubmitted_InvalidAddressesWithOnlySpecialCharacters_MultipleErrorMessageAddedViewUpdate() throws Exception {
+        String name = "Test garden";
+        // test with only special characters
+        String location = ")!!!$%$@";
+        String suburb = ")!!*&^%(*";
+        String city = ")!!!$%$@";
+        String country = ")!!!$%$@";
+        String postcode = "#$^@$%^";
+        String size = "1.0";
+        String description = "This is the greatest garden";
+
+        Garden garden = new Garden("Test garden", ")!!!$%$@", ")!!*&^%(*", ")!!!$%$@", ")!!!$%$@", "#$^@$%^", "1.0", testGardener, "The greatest garden.");
+        garden.setId(1L);
+        when(gardenService.addGarden(any(Garden.class))).thenReturn(garden);
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+                        .param("name", name)
+                        .param("location", location)
+                        .param("suburb", suburb)
+                        .param("city", city)
+                        .param("country", country)
+                        .param("postcode", postcode)
+                        .param("size", size)
+                        .param("redirect", "")
+                        .param("description", description)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("locationError","cityError", "countryError", "suburbError", "postcodeError", "name", "location", "suburb", "country", "postcode", "size"))
+                .andExpect(model().attribute("cityError", "City must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>City must contain at least one alphanumeric character <br/>"))
+                .andExpect(model().attribute("suburbError", "Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Suburb must contain at least one alphanumeric character <br/>"))
+                .andExpect(model().attribute("countryError", "Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Country must contain at least one alphanumeric character <br/>"))
+                .andExpect(model().attribute("postcodeError", "Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Postcode must contain at least one alphanumeric character <br/>"))
+                .andExpect(model().attribute("locationError", "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Street number and name must contain at least one alphanumeric character <br/>"));
+
+        verify(gardenService, never()).addGarden(any(Garden.class));
+    }
+
+    @Test
+    @WithMockUser
     public void CreateGardenFormSubmitted_ValidInputsWithBadWordDescription_ErrorMessageAddedViewUpdate() throws Exception {
         String name = "Test garden";
         String location = "";
