@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Gardener's Grove</title>
-    <link href='/webjars/bootstrap/5.3.3/css/bootstrap.min.css' rel='stylesheet'>
-    <link href="/css/stylesheet.css" rel="stylesheet"> <!-- Reference to the external stylesheet - order matters, must be below webjars line -->
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" rel='stylesheet'>
+    <link th:href="@{/css/stylesheet.css}" rel="stylesheet"> <!-- Reference to the external stylesheet - order matters, must be below webjars line -->
 
 </head>
 <body>
-<script href='/webjars/bootstrap/5.3.3/css/bootstrap.bundle.min.js'></script>
+<script th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
