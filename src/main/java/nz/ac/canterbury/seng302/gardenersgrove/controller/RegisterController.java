@@ -51,6 +51,7 @@ public class RegisterController {
      * @param email user's email
      * @param password user's password
      * @param passwordConfirm user's confirmed password
+     * @param isLastNameOptional is the last name checkbox selected
      * @param model (map-like) representation of name, language and isJava boolean for use in thymeleaf
      * @return thymeleaf demoFormTemplate
      */
@@ -61,6 +62,7 @@ public class RegisterController {
                        @RequestParam(name="email", required = false, defaultValue = "") String email,
                        @RequestParam(name="password", required = false, defaultValue = "") String password,
                        @RequestParam(name="passwordConfirm", required = false, defaultValue = "") String passwordConfirm,
+                       @RequestParam(name= "isLastNameOptional", required = false) boolean isLastNameOptional,
                        Model model) {
         logger.info("GET /register");
 
@@ -75,14 +77,15 @@ public class RegisterController {
 
     /**
      * Posts a form response with a new Gardener
-     * @param firstName first name of user
-     * @param lastName last name of user
-     * @param DoB user's date of birth
-     * @param email user's email
-     * @param password user's password
+     *
+     * @param firstName       first name of user
+     * @param lastName        last name of user
+     * @param DoB             user's date of birth
+     * @param email           user's email
+     * @param password        user's password
      * @param passwordConfirm user's repeated password
-     * @param model (map-like) representation of name, language and isJava boolean for use in thymeleaf,
-     *              with values being set to relevant parameters provided
+     * @param model           (map-like) representation of name, language and isJava boolean for use in thymeleaf,
+     *                        with values being set to relevant parameters provided
      * @return thymeleaf registration form template or redirect to signup confirmation page
      */
     @PostMapping("/register")
