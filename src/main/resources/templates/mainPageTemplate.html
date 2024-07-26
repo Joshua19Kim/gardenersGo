@@ -2,36 +2,94 @@
 <html lang="en">
 <head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <title>Gardens</title>
+    <style>
+        .card {
+            background: #f0f0f0; /* Greyscale shading */
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .list-group-item {
+            background: #e0e0e0;
+            border: none;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            padding: 10px 15px;
+        }
+        .list-group-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+    </style>
 </head>
 <body>
 
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 
 <div class="container">
-    <div class="row justify-content-md-center">
-        <div class="col col-lg-2">
-            1 of 3
+    <div class="row">
+        <!-- Recently accessed gardens -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-title">Recently accessed gardens</div>
+                <ul class="list-group">
+                    <li class="list-group-item">Rinlada’s Garden <br><small>JE Building</small></li>
+                    <li class="list-group-item">Sam’s Garden <br><small>JE Building</small></li>
+                    <li class="list-group-item">Kush’s Garden <br><small>JE Building</small></li>
+                </ul>
+            </div>
         </div>
-        <div class="col-md-auto">
-            Variable width content
+        <!-- Newest Plants -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-title">Newest Plants</div>
+                <ul class="list-group">
+                    <li class="list-group-item"><img src="plant-icon.png" alt="Plant Icon"> Sapling <br><small>Fabian’s Garden</small></li>
+                    <li class="list-group-item"><img src="plant-icon.png" alt="Plant Icon"> Rose <br><small>Fabian’s Garden</small></li>
+                    <li class="list-group-item"><img src="plant-icon.png" alt="Plant Icon"> Plant <br><small>Fabian’s Garden</small></li>
+                </ul>
+            </div>
         </div>
-        <div class="col col-lg-2">
-            3 of 3
+        <!-- My Garden's List -->
+        <div class="col-md-4">
+            <div class="card" style="height: 100%;">
+                <div class="card-title">My Garden’s List</div>
+                <ul class="list-group" style="overflow-y: scroll; height: 250px;">
+                    <li class="list-group-item">Ben’s Garden <br><small>JE Building</small></li>
+                    <li class="list-group-item">Joshua’s Garden <br><small>JE Building</small></li>
+                </ul>
+            </div>
         </div>
     </div>
+
     <div class="row">
-        <div class="col">
-            1 of 3
-        </div>
-        <div class="col-md-auto">
-            Variable width content
-        </div>
-        <div class="col col-lg-2">
-            3 of 3
+        <!-- My Friend's List -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-title">My Friend’s List</div>
+                <div class="d-flex">
+                    <div class="p-2 flex-fill text-center">
+                        <img src="friend-icon.png" alt="Friend Icon"><br>
+                        Jasmine Ong
+                    </div>
+                    <div class="p-2 flex-fill text-center">
+                        <img src="friend-icon.png" alt="Friend Icon"><br>
+                        Arthur Bell
+                    </div>
+                    <div class="p-2 flex-fill text-center">
+                        <img src="friend-icon.png" alt="Friend Icon"><br>
+                        Isaac Steele
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
 
 </body>
 </html>
