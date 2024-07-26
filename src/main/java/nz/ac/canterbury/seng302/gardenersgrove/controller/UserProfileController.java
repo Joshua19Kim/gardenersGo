@@ -84,7 +84,6 @@ public class UserProfileController {
                                  @RequestParam(name = "DoB", required = false) LocalDate DoB,
                                  @RequestParam(name = "email", required = false) String email,
                                  @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
-                                 @RequestParam(name = "isDoBInvalid", required = false) boolean isDoBInvalid,
                                  @RequestParam(name = "user", required = false) String user,
                                  HttpServletRequest request,
                                  Model model) {
@@ -142,11 +141,9 @@ public class UserProfileController {
         model.addAttribute("lastNameValid", lastNameError.orElse(""));
 
         Optional<String> DoBError = Optional.empty();
-        if (isDoBInvalid) {
-            logger.info("INVALID ----------------");
-            DoBError = Optional.of("Date is not in valid format, DD/MM/YYYY");
-        } else if (DoB != null) {
+        if (DoB != null) {
             DoBError = inputValidator.checkDoB(DoB);
+            model.addAttribute("DoB", DoB);
         }
         model.addAttribute("DoBValid", DoBError.orElse(""));
 
