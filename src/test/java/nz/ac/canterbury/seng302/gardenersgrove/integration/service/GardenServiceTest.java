@@ -198,6 +198,11 @@ public class GardenServiceTest {
 
             }
 
+            @Override
+            public Page<Garden> findAllPublicGardens(Pageable pageable) {
+                return null;
+            }
+
         });
         gardenService.addGarden(new Garden("Botanical",
                 "Homestead Lane", null, "Christchurch", "New Zealand", null, "100", testGardener, "")
