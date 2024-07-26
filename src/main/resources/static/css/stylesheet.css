@@ -203,9 +203,10 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     cursor: pointer;
 }
 
-#tag-container {
+.tag-container {
     display: flex;
     width: auto;
+    align-self: start;
     margin-bottom: 20px;
     align-items: center;
 }
@@ -345,7 +346,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 #isGardenPublic {
     height: 30px;
     width: 30px;
-    vertical-align: middle;
+    /*vertical-align: middle;*/
 }
 
 .plant-list-container {
@@ -473,7 +474,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     background-color: #45a049;
 }
 
-.container .garden-details-links .edit-garden-button {
+.container .garden-details-links .edit-garden-button .back-to-my-gardens-button {
     background-color: #45a049;
     color: #fff;
     border: none;
@@ -483,8 +484,12 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     cursor: pointer;
 }
 
-.container .garden-details-links .edit-garden-button:hover {
+.container .garden-details-links .edit-garden-button:hover .back-to-my-gardens-button:hover {
     background-color: #45a049;
+}
+
+.edit-garden-button {
+    align-self: end;
 }
 
 .container .garden-details-links .add-plant-button {
