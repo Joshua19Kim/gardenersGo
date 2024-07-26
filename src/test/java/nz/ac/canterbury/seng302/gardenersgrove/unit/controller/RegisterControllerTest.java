@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.unit;
+package nz.ac.canterbury.seng302.gardenersgrove.unit.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
