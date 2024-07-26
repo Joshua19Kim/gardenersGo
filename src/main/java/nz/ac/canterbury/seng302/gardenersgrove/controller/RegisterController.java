@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 /**
@@ -53,7 +51,6 @@ public class RegisterController {
      * @param email user's email
      * @param password user's password
      * @param passwordConfirm user's confirmed password
-     * @param isLastNameOptional is the last name checkbox selected
      * @param model (map-like) representation of name, language and isJava boolean for use in thymeleaf
      * @return thymeleaf demoFormTemplate
      */
@@ -64,7 +61,6 @@ public class RegisterController {
                        @RequestParam(name="email", required = false, defaultValue = "") String email,
                        @RequestParam(name="password", required = false, defaultValue = "") String password,
                        @RequestParam(name="passwordConfirm", required = false, defaultValue = "") String passwordConfirm,
-                       @RequestParam(name= "isLastNameOptional", required = false) boolean isLastNameOptional,
                        Model model) {
         logger.info("GET /register");
 
@@ -90,14 +86,14 @@ public class RegisterController {
      * @return thymeleaf registration form template or redirect to signup confirmation page
      */
     @PostMapping("/register")
-    public String submitForm(HttpServletRequest request,
-                             @RequestParam(name="firstName") String firstName,
+    public String submitForm(@RequestParam(name="firstName") String firstName,
                              @RequestParam(name="lastName", required = false) String lastName,
-                             @RequestParam(name="DoB", required = false) String DoB,
+                             @RequestParam(name="DoB", required = false) LocalDate DoB,
                              @RequestParam(name="email") String email,
                              @RequestParam(name="password") String password,
                              @RequestParam(name = "passwordConfirm") String passwordConfirm,
                              @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
+                             @RequestParam(name = "isDoBInvalid", required = false) boolean isDoBInvalid,
                              Model model) {
         logger.info("POST /register");
 
@@ -114,7 +110,10 @@ public class RegisterController {
         model.addAttribute("lastNameValid", lastNameError.orElse(""));
 
         Optional<String> DoBError = Optional.empty();
-        if (DoB != null) {
+
+        if (isDoBInvalid) {
+            DoBError = Optional.of("Date is not in valid format, DD/MM/YYYY");
+        } else if (DoB != null) {
             DoBError = inputValidator.checkDoB(DoB);
         }
         model.addAttribute("DoBValid", DoBError.orElse(""));
@@ -137,9 +136,7 @@ public class RegisterController {
                 DoBError.isEmpty() &&
                 passwordStrengthError.isEmpty()) {
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy");
-            LocalDate parsedDoB = LocalDate.parse(DoB, formatter);
-            Gardener newGardener = new Gardener(firstName, lastName, parsedDoB, email, password);
+            Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password);
             gardenerFormService.addGardener(newGardener);
             writeEmail.sendSignupEmail(newGardener, tokenService);
             return "redirect:/signup";

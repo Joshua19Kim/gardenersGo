@@ -10,23 +10,23 @@
 
 <div id="form">
     <h1>Register</h1>
-    <form method="post" th:action="@{register}" id="registerForm" novalidate>
-        <div th:if="${param.expired}" id="error-message" >
+    <form id="registerForm" method="post" th:action="@{register}" novalidate>
+        <div id="error-message" th:if="${param.expired}">
             <p class="errorMessage">Signup code invalid</p>
         </div>
-        <input type="hidden"
-               th:name="${_csrf.parameterName}"
-               th:value="${_csrf.token}" />
+        <input th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}"
+               type="hidden"/>
         <label for="firstName"> First Name: </label>
         <input autofocus class="form-control" data-cy="firstName" id="firstName" maxlength="255"
-               placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
-               th:classappend="${(firstNameValid != '' && firstNameValid != null) ? 'error' : ''}">
+               placeholder="First Name" th:classappend="${(firstNameValid != '' && firstNameValid != null) ? 'error' : ''}" th:name="firstName" th:value="*{firstName}"
+               type="text">
         <p class="smallErrorMessage" th:text="${firstNameValid}" th:value="*{firstNameValid}"></p>
         <br/>
         <label for="lastName"> Last Name: </label>
-        <input class="form-control" data-cy="lastName" id="lastName" placeholder="Last Name" maxlength="255"
-               th:name="lastName" th:value="*{lastName}" type="text"
-               th:classappend="${(lastNameValid != '' && lastNameValid != null) ? 'error' : ''}">
+        <input class="form-control" data-cy="lastName" id="lastName" maxlength="255" placeholder="Last Name"
+               th:classappend="${(lastNameValid != '' && lastNameValid != null) ? 'error' : ''}" th:name="lastName" th:value="*{lastName}"
+               type="text">
         <p class="smallErrorMessage" th:text="${lastNameValid}" th:value="*{lastNameValid}"></p>
         <br/>
         <label for="isLastNameOptional">I have no surname</label>
@@ -40,57 +40,63 @@
         </script>
         <br/>
         <label for="DoB"> Date of Birth: </label>
-        <input type="text" class="form-control" th:value="*{DoB}" id="DoB" th:name="DoB">
-        <p id="DoBInvalid" class="smallErrorMessage"></p>
-<!--        <script>-->
-<!--            document.getElementById( "DoB" ).addEventListener( "invalid",-->
-<!--                function( event ) {-->
-<!--                    event.preventDefault();-->
-<!--                    document.getElementById("DoB").style.border = "1px solid red";-->
-<!--                    document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";-->
-<!--                });-->
-<!--        </script>-->
+        <input class="form-control" id="DoB" th:name="DoB" th:value="*{DoB}" type="date">
+        <p class="smallErrorMessage" id="DoBInvalid" th:text="${DoBValid}"></p>
+        <input type="hidden" id="isDoBInvalid" th:name="isDoBInvalid" th:value="false"/>
         <br/>
         <label for="email"> Email: </label>
-        <input class="form-control" data-cy="email" id="email" placeholder="Email" maxlength="320"
-               th:name="email" th:value="*{email}" type="text"
-               th:classappend="${(emailValid != '' && emailValid != null) ? 'error' : ''}">
+        <input class="form-control" data-cy="email" id="email" maxlength="320" placeholder="Email"
+               th:classappend="${(emailValid != '' && emailValid != null) ? 'error' : ''}" th:name="email" th:value="*{email}"
+               type="text">
         <p class="smallErrorMessage" th:text="${emailValid}" th:value="*{emailValid}"></p>
         <br/>
         <label for="password"> Password: </label>
-        <input class="form-control" data-cy="password" id="password" placeholder="Password" maxlength="255"
-               th:name="password" type="password"
-               th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'error' : ''}">
+        <input class="form-control" data-cy="password" id="password" maxlength="255" placeholder="Password"
+               th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'error' : ''}" th:name="password"
+               type="password">
         <br/>
         <label for="passwordConfirm"> Confirm Password: </label>
-        <input type="password" class="form-control" id="passwordConfirm" placeholder="Repeat password" maxlength="255"
-               th:name="passwordConfirm" data-cy="passwordConfirm"
-               th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'error' : ''}">
-        <p class="smallErrorMessage" th:value="*{passwordsMatch}" th:text="${passwordsMatch}"></p>
-        <p class="smallErrorMessage" th:value="*{passwordStrong}" th:text="${passwordStrong}"></p>
+        <input class="form-control" data-cy="passwordConfirm" id="passwordConfirm" maxlength="255" placeholder="Repeat password"
+               th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'error' : ''}" th:name="passwordConfirm"
+               type="password">
+        <p class="smallErrorMessage" th:text="${passwordsMatch}" th:value="*{passwordsMatch}"></p>
+        <p class="smallErrorMessage" th:text="${passwordStrong}" th:value="*{passwordStrong}"></p>
         <br/>
 
 
         <br/>
         <div>
             <input type="submit" value="Register"/>
-            <button type="reset" id="cancel" onclick="window.location='./'">Cancel</button>
-<!--            <script>-->
-<!--                document.getElementById("registerForm").addEventListener("submit", function(event) {-->
-<!--                    var dobInput = document.getElementById("DoB");-->
-<!--                    if (Date.parse(dobInput.value)) {-->
-<!--                        dobInput.setCustomValidity('Please enter your full name');-->
-<!--                        event.preventDefault();-->
-<!--                        dobInput.style.border = "1px solid red";-->
-<!--                        document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";-->
-<!--                    }-->
-<!--                });-->
-<!--            </script>-->
+            <button id="cancel" onclick="window.location='./'" type="reset">Cancel</button>
+            <!--            <script>-->
+            <!--                document.getElementById("registerForm").addEventListener("submit", function(event) {-->
+            <!--                    var dobInput = document.getElementById("DoB");-->
+            <!--                    if (Date.parse(dobInput.value)) {-->
+            <!--                        dobInput.setCustomValidity('Please enter your full name');-->
+            <!--                        event.preventDefault();-->
+            <!--                        dobInput.style.border = "1px solid red";-->
+            <!--                        document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";-->
+            <!--                    }-->
+            <!--                });-->
+            <!--            </script>-->
         </div>
     </form>
 </div>
 <script type="text/javascript">
-    document.getElementById("registerForm").addEventListener("keydown", function(event) {
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+        const dobInput = document.getElementById("DoB");
+        if (!(dobInput.checkValidity())) {
+            console.log("invalid date")
+            event.preventDefault();
+            document.getElementById("isDoBInvalid").value = true;
+            document.getElementById("registerForm").submit();
+        } else {
+            console.log("valid date")
+            document.getElementById("isDoBInvalid").value = false;
+        }
+    });
+
+    document.getElementById("registerForm").addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             var activeElement = document.activeElement;
             if (activeElement.id === "passwordConfirm" || activeElement.type === "submit" || activeElement.type === "reset") {
