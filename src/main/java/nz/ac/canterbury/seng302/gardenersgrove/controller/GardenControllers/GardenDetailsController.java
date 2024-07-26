@@ -165,7 +165,7 @@ public class GardenDetailsController {
                Boolean isFriend = relationshipService
                        .getCurrentUserRelationships(gardenOwner.getId())
                        .contains(currentUserOptional.get());
-               if (isFriend) {
+               if (isFriend || garden.get().getIsGardenPublic()) {
                    model.addAttribute("gardener", garden.get().getGardener());
                    model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
                    return "unauthorizedGardenDetailsTemplate";
