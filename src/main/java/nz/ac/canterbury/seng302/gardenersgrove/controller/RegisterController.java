@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 /**
@@ -92,7 +93,7 @@ public class RegisterController {
     public String submitForm(HttpServletRequest request,
                              @RequestParam(name="firstName") String firstName,
                              @RequestParam(name="lastName", required = false) String lastName,
-                             @RequestParam(name="DoB", required = false) LocalDate DoB,
+                             @RequestParam(name="DoB", required = false) String DoB,
                              @RequestParam(name="email") String email,
                              @RequestParam(name="password") String password,
                              @RequestParam(name = "passwordConfirm") String passwordConfirm,
@@ -136,7 +137,9 @@ public class RegisterController {
                 DoBError.isEmpty() &&
                 passwordStrengthError.isEmpty()) {
 
-            Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy");
+            LocalDate parsedDoB = LocalDate.parse(DoB, formatter);
+            Gardener newGardener = new Gardener(firstName, lastName, parsedDoB, email, password);
             gardenerFormService.addGardener(newGardener);
             writeEmail.sendSignupEmail(newGardener, tokenService);
             return "redirect:/signup";

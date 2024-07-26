@@ -10,7 +10,7 @@
 
 <div id="form">
     <h1>Register</h1>
-    <form method="post" th:action="@{register}" id="registerForm">
+    <form method="post" th:action="@{register}" id="registerForm" novalidate>
         <div th:if="${param.expired}" id="error-message" >
             <p class="errorMessage">Signup code invalid</p>
         </div>
@@ -40,16 +40,16 @@
         </script>
         <br/>
         <label for="DoB"> Date of Birth: </label>
-        <input type="date" class="form-control" th:value="*{DoB}" id="DoB" th:name="DoB"  >
-        <p id = "DoBInvalid" class="smallErrorMessage"></p>
-        <script>
-            document.getElementById( "DoB" ).addEventListener( "invalid",
-                function( event ) {
-                    event.preventDefault();
-                    document.getElementById("DoB").style.border = "1px solid red";
-                    document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";
-                });
-        </script>
+        <input type="text" class="form-control" th:value="*{DoB}" id="DoB" th:name="DoB">
+        <p id="DoBInvalid" class="smallErrorMessage"></p>
+<!--        <script>-->
+<!--            document.getElementById( "DoB" ).addEventListener( "invalid",-->
+<!--                function( event ) {-->
+<!--                    event.preventDefault();-->
+<!--                    document.getElementById("DoB").style.border = "1px solid red";-->
+<!--                    document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";-->
+<!--                });-->
+<!--        </script>-->
         <br/>
         <label for="email"> Email: </label>
         <input class="form-control" data-cy="email" id="email" placeholder="Email" maxlength="320"
@@ -75,6 +75,17 @@
         <div>
             <input type="submit" value="Register"/>
             <button type="reset" id="cancel" onclick="window.location='./'">Cancel</button>
+<!--            <script>-->
+<!--                document.getElementById("registerForm").addEventListener("submit", function(event) {-->
+<!--                    var dobInput = document.getElementById("DoB");-->
+<!--                    if (Date.parse(dobInput.value)) {-->
+<!--                        dobInput.setCustomValidity('Please enter your full name');-->
+<!--                        event.preventDefault();-->
+<!--                        dobInput.style.border = "1px solid red";-->
+<!--                        document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";-->
+<!--                    }-->
+<!--                });-->
+<!--            </script>-->
         </div>
     </form>
 </div>
