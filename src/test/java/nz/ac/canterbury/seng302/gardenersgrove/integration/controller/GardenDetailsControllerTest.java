@@ -2,12 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenDetailsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -57,14 +54,20 @@ public class GardenDetailsControllerTest {
     @MockBean
     private TagService tagService;
 
+    @MockBean
+    private LocationService locationService;
+
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException, InterruptedException {
         Mockito.reset(gardenerFormService);
         List<Authority> userRoles = new ArrayList<>();
         testGardener.setUserRoles(userRoles);
         testGardener.setId(1L);
         gardenerFormService.addGardener(testGardener);
         when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(testGardener));
+        HttpResponse<String> response = Mockito.mock(HttpResponse.class);
+        when(response.body()).thenReturn("test");
+        when(locationService.sendRequest(Mockito.anyString())).thenReturn(response);
     }
 
     @Test
@@ -507,7 +510,7 @@ public class GardenDetailsControllerTest {
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
         GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService);
+                relationshipService, requestService, weatherService, tagService, locationService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
@@ -534,7 +537,7 @@ public class GardenDetailsControllerTest {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
         GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService);
+                relationshipService, requestService, weatherService, tagService, locationService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
@@ -594,7 +597,7 @@ public class GardenDetailsControllerTest {
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
         GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService);
+                relationshipService, requestService, weatherService, tagService, locationService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
@@ -642,7 +645,7 @@ public class GardenDetailsControllerTest {
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
         GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService);
+                relationshipService, requestService, weatherService, tagService, locationService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
@@ -692,7 +695,7 @@ public class GardenDetailsControllerTest {
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
         GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService);
+                relationshipService, requestService, weatherService, tagService, locationService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
@@ -742,7 +745,7 @@ public class GardenDetailsControllerTest {
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
         GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService);
+                relationshipService, requestService, weatherService, tagService, locationService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.post("/gardens/details/dismissNotification")

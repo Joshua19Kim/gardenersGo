@@ -320,6 +320,75 @@ public class GardenEditControllerTest {
 
     @Test
     @WithMockUser
+    public void EditedGardenDetailsSubmitted_InvalidAddresses_ErrorMessageAddedAndViewUpdated() throws Exception {
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "999", testGardener, "");
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        when(gardenService.getGardensByGardenerId(any())).thenReturn(List.of(garden));
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/edit")
+                                .param("gardenId", "1")
+                                .param("name", "Rose Garden")
+                                // 84 characters for testing location
+                                .param("location", "666666666666666666666666666666666666666666666666666666666666666666666666666666666666")
+                                // 93 characters for testing suburb
+                                .param("suburb", "666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666")
+                                // 183 characters for testing city
+                                .param("city", "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777")
+                                // 66 characters for testing country
+                                .param("country", "666666666666666666666666666666666666666666666666666666666666666666666666666666666666")
+                                // 16 characters for testing postcode
+                                .param("postcode", "7777777777777777")
+                                .param("size", "9")
+                                .param("description", ""))
+                                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("editGardensFormTemplate"))
+                .andExpect(model().attributeExists("locationError","cityError", "countryError", "suburbError", "postcodeError", "name", "location", "suburb", "country", "postcode", "size"))
+                .andExpect(model().attribute("cityError", "Please enter a city without only numerical characters <br/>Please enter a city less than 180 characters"))
+                .andExpect(model().attribute("suburbError", "Please enter a suburb without only numerical characters <br/>Please enter a suburb less than 90 characters"))
+                .andExpect(model().attribute("countryError", "Please enter a country without only numerical characters <br/>Please enter a country less than 60 characters"))
+                .andExpect(model().attribute("postcodeError", "Please enter a postcode less than 10 characters"))
+                .andExpect(model().attribute("locationError", "Please enter a street number and name without only numerical characters <br/>Please enter a street number and name less than 60 characters"));
+        verify(gardenService, never()).addGarden(any(Garden.class));
+    }
+
+    @Test
+    @WithMockUser
+    public void EditedGardenDetailsSubmitted_InvalidAddressesWithOnlySpecialCharacters_ErrorMessageAddedAndViewUpdated() throws Exception {
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "999", testGardener, "");
+        when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+        when(gardenService.addGarden(garden)).thenReturn(garden);
+        when(gardenService.getGardensByGardenerId(any())).thenReturn(List.of(garden));
+        mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/edit")
+                                .param("gardenId", "1")
+                                .param("name", "Rose Garden")
+                                .param("location", "%&*%$^&*$%^&")
+                                .param("suburb", "%&*%$^&*$%^&")
+                                .param("city", "%&*%$^&*$%^&")
+                                .param("country", "%&*%$^&*$%^&")
+                                .param("postcode", "%&*%$^&*$%^&")
+                                .param("size", "9")
+                                .param("description", ""))
+                                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("editGardensFormTemplate"))
+                .andExpect(model().attributeExists("locationError","cityError", "countryError", "suburbError", "postcodeError", "name", "location", "suburb", "country", "postcode", "size"))
+                .andExpect(model().attribute("cityError", "City must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>City must contain at least one alphanumeric character <br/>"))
+                .andExpect(model().attribute("suburbError", "Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Suburb must contain at least one alphanumeric character <br/>"))
+                .andExpect(model().attribute("countryError", "Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Country must contain at least one alphanumeric character <br/>"))
+                .andExpect(model().attribute("postcodeError", "Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Postcode must contain at least one alphanumeric character <br/>Please enter a postcode less than 10 characters"))
+                .andExpect(model().attribute("locationError", "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Street number and name must contain at least one alphanumeric character <br/>"));
+
+        verify(gardenService, never()).addGarden(any(Garden.class));
+    }
+
+
+    @Test
+    @WithMockUser
     public void EditedGardenDetailsSubmitted_WithBadWord_ErrorMessageAddedAndViewUpdated() throws Exception {
         String badWordDescription = "this is fucking great garden";
         Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "999", testGardener, "");
