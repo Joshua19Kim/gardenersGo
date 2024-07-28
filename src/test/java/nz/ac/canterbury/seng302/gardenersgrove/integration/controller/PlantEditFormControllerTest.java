@@ -210,7 +210,7 @@ public class PlantEditFormControllerTest {
         .andExpect(model().attribute("name", name))
         .andExpect(model().attribute("count", count))
         .andExpect(model().attribute("description", description))
-        .andExpect(model().attribute("date", "2024-04-10"))
+        .andExpect(model().attribute("date", LocalDate.parse("2024-04-10")))
         .andExpect(model().attribute(errorName, errorMessage))
         .andExpect(model().attribute("plant", plant))
         .andExpect(model().attribute("garden", garden));

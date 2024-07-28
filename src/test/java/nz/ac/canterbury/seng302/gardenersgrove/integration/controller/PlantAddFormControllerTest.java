@@ -189,6 +189,7 @@ public class PlantAddFormControllerTest {
                 .param("count", "2.0")
                 .param("description", description)
                 .param("date", "2024-03-10")
+                .param("isDateInvalid", String.valueOf(false))
                 .param("gardenId", "1")
                 .with(csrf()))
         .andExpect(status().isOk())
@@ -197,12 +198,53 @@ public class PlantAddFormControllerTest {
         .andExpect(model().attribute("name", name))
         .andExpect(model().attribute("count", "2.0"))
         .andExpect(model().attribute("description", description))
-        .andExpect(model().attribute("date", "2024-03-10"))
+        .andExpect(model().attribute("date", LocalDate.parse("2024-03-10")))
         .andExpect(
             model()
                 .attribute(
                     "nameError",
                     "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes"));
+
+    verify(plantService, never()).addPlant(any(Plant.class));
+  }
+
+  @Test
+  @WithMockUser
+  public void PlantFormSubmitted_PartialDate_ErrorMessageAddedAndViewUpdated() throws Exception {
+    Garden garden =
+            new Garden(
+                    "Test garden",
+                    "Ilam",
+                    null,
+                    "Christchurch",
+                    "New Zealand",
+                    null,
+                    "9999",
+                    testGardener,
+                    "");
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+    when(gardenerFormService.findByEmail(Mockito.anyString()))
+            .thenReturn(Optional.of(testGardener));
+    MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
+    mockMvc
+            .perform(
+                    MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                            .file(emptyFile)
+                            .param("name", "tomato")
+                            .param("count", "2.0")
+                            .param("description", "yummy")
+                            .param("date", "")
+                            .param("isDateInvalid", String.valueOf(true))
+                            .param("gardenId", "1")
+                            .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(view().name("plantsFormTemplate"))
+            .andExpect(model().attributeExists("DateValid", "name", "count", "description"))
+            .andExpect(model().attribute("name", "tomato"))
+            .andExpect(model().attribute("count", "2.0"))
+            .andExpect(model().attribute("description", "yummy"))
+            .andExpect(model().attribute("DateValid", "Date is not in valid format, DD/MM/YYYY"));
 
     verify(plantService, never()).addPlant(any(Plant.class));
   }
@@ -261,7 +303,7 @@ public class PlantAddFormControllerTest {
         .andExpect(model().attribute("name", name))
         .andExpect(model().attribute("count", count))
         .andExpect(model().attribute("description", description))
-        .andExpect(model().attribute("date", "2024-04-10"))
+        .andExpect(model().attribute("date", LocalDate.parse(date)))
         .andExpect(model().attribute(errorName, errorMessage));
 
     verify(plantService, never()).addPlant(any(Plant.class));

@@ -40,7 +40,7 @@
         </script>
         <br/>
         <label for="DoB"> Date of Birth: </label>
-        <input class="form-control" id="DoB" th:name="DoB" th:value="*{DoB}" type="date">
+        <input class="form-control" id="DoB" th:name="DoB" th:value="*{DoB}" type="date" th:classappend="${(DoBValid != '' && DoBValid != null) ? 'error' : ''}">
         <p class="smallErrorMessage" id="DoBInvalid" th:text="${DoBValid}"></p>
         <input type="hidden" id="isDoBInvalid" th:name="isDoBInvalid" th:value="false"/>
         <br/>
@@ -68,17 +68,6 @@
         <div>
             <input type="submit" value="Register"/>
             <button id="cancel" onclick="window.location='./'" type="reset">Cancel</button>
-            <!--            <script>-->
-            <!--                document.getElementById("registerForm").addEventListener("submit", function(event) {-->
-            <!--                    var dobInput = document.getElementById("DoB");-->
-            <!--                    if (Date.parse(dobInput.value)) {-->
-            <!--                        dobInput.setCustomValidity('Please enter your full name');-->
-            <!--                        event.preventDefault();-->
-            <!--                        dobInput.style.border = "1px solid red";-->
-            <!--                        document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";-->
-            <!--                    }-->
-            <!--                });-->
-            <!--            </script>-->
         </div>
     </form>
 </div>
