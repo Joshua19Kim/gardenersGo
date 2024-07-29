@@ -61,8 +61,8 @@ public class LocationController {
         }
     }
 
-    // added for temp
-    @GetMapping("/getAllTagsList")
+
+    @GetMapping("/getUniqueTagsList")
     public Set<String> getAllTags(@RequestParam String gardenId) {
         return tagService.getUniqueTagNames(parseLong(gardenId));
     }
