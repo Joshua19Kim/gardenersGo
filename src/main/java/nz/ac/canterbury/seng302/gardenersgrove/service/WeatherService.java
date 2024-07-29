@@ -42,16 +42,18 @@ public class WeatherService {
    */
   @Cacheable(value = "currentWeather", key = "#location")
   public Weather getWeather(String location) throws IOException, URISyntaxException {
-    location =location.trim().replace(" ", "-");
+    location =location.trim().replace(" ", "%20");
 
     String uri = FORECAST_WEATHER_URL + "?key=" + api_key.trim() + "&q=" + location + "&aqi=no&days=3";
     URL url = new URI(uri).toURL();
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
+    logger.info("searching for location: " + location);
+    logger.info("url: " + url);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     try {
       Weather weather = objectMapper.readValue(url, Weather.class);
-      logger.info("WEATHER FROM JACKSON: " + weather.getCurrentLocation());
+      logger.info("WEATHER LOCATION FROM JACKSON: " + weather.getCurrentLocation());
       return weather;
     } catch (IOException ex) {
       // this occurs when no weather is found for that location.

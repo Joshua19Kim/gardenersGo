@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -53,6 +54,8 @@ public class PlantAddFormControllerTest {
 
   @MockBean private WeatherService weatherService;
 
+  @MockBean private LocationService locationService;
+
   @Test
   @WithMockUser
   public void GardenDetailsRequested_ExistentIdGiven_PlantDetailsProvided() throws Exception {
@@ -72,8 +75,10 @@ public class PlantAddFormControllerTest {
     when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
     testGardener.setId(1L);
-
+    HttpResponse<String> httpResponse = mock(HttpResponse.class);
+    when(httpResponse.body()).thenReturn("test");
     when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
+    when(locationService.sendRequest(anyString())).thenReturn(httpResponse);
     mockMvc
             .perform(
                     MockMvcRequestBuilders.get("/gardens/details")

@@ -21,6 +21,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -44,6 +46,8 @@ public class TagModerationFeature {
     private WeatherService weatherService;
     @Mock
     private TagService tagService;
+    @Mock
+    private LocationService locationService;
     private MockMvc mockMvcGardenDetailsController;
     private Garden garden;
     private Tag tag;
@@ -51,7 +55,7 @@ public class TagModerationFeature {
 
 
     @Before("@U22")
-    public void setUp() {
+    public void setUp() throws IOException, InterruptedException {
         gardener = new Gardener("Test", "Gardener",
                 LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
                 "Password1!");
@@ -62,6 +66,10 @@ public class TagModerationFeature {
         relationshipService = Mockito.mock(RelationshipService.class);
         weatherService = Mockito.mock(WeatherService.class);
         tagService = Mockito.mock(TagService.class);
+        locationService = Mockito.mock(LocationService.class);
+        HttpResponse<String> response = Mockito.mock(HttpResponse.class);
+        when(response.body()).thenReturn("test");
+        when(locationService.sendRequest(any())).thenReturn(response);
 
         Authentication authentication = Mockito.mock(Authentication.class);
         Authentication auth = new UsernamePasswordAuthenticationToken("testgardener@gmail.com", "Password1!");
@@ -77,7 +85,8 @@ public class TagModerationFeature {
                 relationshipService,
                 requestService,
                 weatherService,
-                tagService);
+                tagService,
+                locationService);
 
         mockMvcGardenDetailsController = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
     }
