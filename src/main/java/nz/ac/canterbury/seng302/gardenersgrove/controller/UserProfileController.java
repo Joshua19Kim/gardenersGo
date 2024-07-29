@@ -143,7 +143,6 @@ public class UserProfileController {
 
         Optional<String> DoBError = Optional.empty();
         if (isDoBInvalid) {
-            logger.info("INVALID ----------------");
             DoBError = Optional.of("Date is not in valid format, DD/MM/YYYY");
         } else if (DoB != null) {
             DoBError = inputValidator.checkDoB(DoB);
