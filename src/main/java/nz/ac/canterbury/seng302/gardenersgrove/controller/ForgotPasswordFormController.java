@@ -59,8 +59,9 @@ public class ForgotPasswordFormController {
      * @return thymeleaf forgotPasswordForm (if error) or redirects to LostPasswordTokenForm if valid
      */
     @PostMapping("/forgotPassword")
-    public String sendResetPasswordLink( HttpServletRequest request,
+    public String sendResetPasswordLink(HttpServletRequest request,
                                         @RequestParam(name="email") String email,
+                                        @RequestParam(name="url") String url,
                                         Model model) {
         logger.info("POST /forgotPassword");
 
@@ -78,8 +79,10 @@ public class ForgotPasswordFormController {
         if (validEmailError.isEmpty()){
             Optional<Gardener> gardener = gardenerFormService.findByEmail(email);
             if (gardener.isPresent()) {
+                int index = url.lastIndexOf("/");
+                url = url.substring(0,index);
 
-                writeEmail.sendPasswordForgotEmail(gardener.get(), request); // Blocks ***
+                writeEmail.sendPasswordForgotEmail(gardener.get(), url); // Blocks ***
                 return "forgotPasswordForm"; // Email sent
             }
             return "forgotPasswordForm"; // Email not in DB
