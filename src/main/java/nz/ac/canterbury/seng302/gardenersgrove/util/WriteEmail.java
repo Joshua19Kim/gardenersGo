@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.UUID;
 
@@ -67,12 +68,11 @@ public class WriteEmail {
 
     }
 
-    /**
-     * Get the url of the current server to create the reset password link
-     * @param request the request object
-     */
     public String getAppUrl(HttpServletRequest request) {
-        return request.getServerName() + ":" + request.getServerPort();
+        return ServletUriComponentsBuilder.fromRequestUri(request)
+                .replacePath(null)
+                .build()
+                .toUriString();
     }
 
     /**
