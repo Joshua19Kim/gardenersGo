@@ -59,7 +59,8 @@ public class ForgotPasswordFormController {
      * @return thymeleaf forgotPasswordForm (if error) or redirects to LostPasswordTokenForm if valid
      */
     @PostMapping("/forgotPassword")
-    public String sendResetPasswordLink(@RequestParam(name="email") String email,
+    public String sendResetPasswordLink(HttpServletRequest request,
+                                        @RequestParam(name="email") String email,
                                         @RequestParam(name="url") String url,
                                         Model model) {
         logger.info("POST /forgotPassword");
