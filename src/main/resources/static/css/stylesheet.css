@@ -63,6 +63,28 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     transition: 0.3s ease;
 }
 
+.card {
+    background: #8dab6e  !important; ;
+    border-radius: 15px;
+    padding: 15px;
+    /*margin: 10px;*/
+}
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+.list-group-item {
+    background: #d1dc97 !important;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    padding: 10px 15px;
+}
+.list-group-item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
 
 .dropdown {
     position: relative;
