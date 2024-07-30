@@ -6,66 +6,85 @@
     }
     console.log("Cookie: " + document.cookie);
 </script>
-
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #F9F9F4;
+    .nav-item {
+        padding: 7px 15px;
+        background-color: #8dab6e;
+        margin: 10px;
+        border-radius: 25px;
     }
 
-    header {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    h1 {
-        color: #6D9F57;
-    }
-
-    .nav-buttons {
+    .nav-container {
         display: flex;
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
     }
 
-    .btn-custom {
-        background-color: #B3D8A3;
-        color: #FFF;
-        padding: 10px 20px;
-        border-radius: 5px;
-        border: none;
-        transition: background-color 0.3s;
-        text-align: center;
+    .left-nav, .right-nav {
+        display: flex;
+        flex: 1;
     }
 
-    .btn-custom:hover {
-        background-color: #9ACD73;
+    .left-nav {
+        justify-content: flex-end;
+        margin-right: 7%;
     }
 
-    .btn-custom:active {
-        background-color: #86B365;
+    .right-nav {
+        justify-content: flex-start;
+        margin-left: 7%;
     }
 
+    .navbar-brand {
+        flex: 0 0 auto;
+        margin: 0 2rem; /* Adjust the margin to control spacing */
+    }
 </style>
-
-<!--need to implement dropdown & change up css -->
 <body>
-    <header class="text-center mb-4">
-        <nav class="nav-buttons">
-            <a th:href="@{/gardens}" class="btn btn-custom">My Gardens</a>
-            <a th:href="@{/gardens/form(redirect=${requestURI})}" class="btn btn-custom">Create New Garden</a>
-            <a th:href="@{/browseGardens}" class="btn btn-custom">Browse Gardens</a>
-            <h1>Gardener's Grove</h1>
-            <a th:href="@{/manageFriends}" class="btn btn-custom">Manage Friends</a>
-            <a th:href="@{/user}" class="btn btn-custom">My Profile</a>
-            <a href="#" class="btn btn-custom" onclick="logout(event)">Logout</a>
-            <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
-                <input type="submit" value="Logout"/>
-            </form>
-        </nav>
-    </header>
-</body>
+<nav class="navbar navbar-expand-lg navbar-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="nav-container">
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="left-nav">
+                <ul class="navbar-nav mr-auto" id="left-nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-custom" th:href="@{/gardens}">My Gardens</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-custom" th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-custom" th:href="@{/browseGardens}">Browse Gardens</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-brand" id="navbar-name">Gardener's Grove</div>
+            <div class="right-nav">
+                <ul class="navbar-nav ml-auto" id="right-nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-custom" th:href="@{/manageFriends}">Manage Friends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-custom" th:href="@{/user}">My Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-custom" href="#" onclick="logout(event)">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
+    <input type="submit" value="Logout"/>
+</form>
+
+
+
 
 <!--<ul>-->
 <!--    <li>-->
