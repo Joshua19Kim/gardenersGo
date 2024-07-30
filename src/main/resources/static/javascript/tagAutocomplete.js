@@ -67,21 +67,3 @@ function submitTag() {
         console.log('No tag input to submit');
     }
 }
-
-// function fetchUniqueTagsList(gardenId) {
-//     return fetch(`../getUniqueTagsList?gardenId=${encodeURIComponent(gardenId)}`)
-//         .then(response => response.json())
-//         .catch(error => {
-//             console.error('Error:', error);
-//             return [];
-//         });
-// }
-//
-// function fetchTagsList(gardenId) {
-//     return fetch(`../getTagList?gardenId=${encodeURIComponent(gardenId)}`)
-//         .then(response => response.json())
-//         .catch(error => {
-//             console.error('Error:', error);
-//             return [];
-//         });
-// }

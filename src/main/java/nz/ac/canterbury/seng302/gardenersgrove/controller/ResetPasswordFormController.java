@@ -35,45 +35,34 @@ public class ResetPasswordFormController {
         this.writeEmail = writeEmail;
     }
 
-//    /**
-//     * Displays the form for resetting the password
-//     *
-//     * @param token Unique token from reset link, used to get the gardener
-//     * @return The reset password form template
-//     */
-//    @GetMapping("/resetPassword")
-//    public String getResetPasswordForm(@RequestParam(name = "token") String token) {
-//        logger.info("GET /resetPassword");
-//        // Verifies token has associated user and is not expired
-//        String result = tokenService.validateLostPasswordToken(token);
-//        if (result == null) { // No issue
-//            Optional<Gardener> tempGardener = tokenService.findGardenerbyToken(token);
-//            if (tempGardener.isPresent()) {
-//                Optional<LostPasswordToken> usedToken = tokenService.getTokenFromString(token);
-//                usedToken.ifPresent(e -> tokenService.removeToken(e)); // Deletes token after One use
-//                gardener = tempGardener.get();
-//                return  "resetPasswordForm";
-//            }
-//            return "redirect:/login"; // Gardener / Id not present
-//        } else if (result.equals("expired")) {
-//            Optional<LostPasswordToken> expiredToken = tokenService.getTokenFromString(token);
-//            expiredToken.ifPresent(e -> tokenService.removeToken(e));
-//            return "redirect:/login?expired"; // Token is expired
-//        }
-//        return "redirect:/login"; // Token does not exist
-//    }
-
-
-////////     This is temporarily created to migrate resetPassword page to bootstrap    ///////////////
+    /**
+     * Displays the form for resetting the password
+     *
+     * @param token Unique token from reset link, used to get the gardener
+     * @return The reset password form template
+     */
     @GetMapping("/resetPassword")
-    public String getResetPasswordForm() {
+    public String getResetPasswordForm(@RequestParam(name = "token") String token) {
         logger.info("GET /resetPassword");
-
-        return "resetPasswordForm"; // Token does not exist
+        // Verifies token has associated user and is not expired
+        String result = tokenService.validateLostPasswordToken(token);
+        if (result == null) { // No issue
+            Optional<Gardener> tempGardener = tokenService.findGardenerbyToken(token);
+            if (tempGardener.isPresent()) {
+                Optional<LostPasswordToken> usedToken = tokenService.getTokenFromString(token);
+                usedToken.ifPresent(e -> tokenService.removeToken(e)); // Deletes token after One use
+                gardener = tempGardener.get();
+                return  "resetPasswordForm";
+            }
+            return "redirect:/login"; // Gardener / Id not present
+        } else if (result.equals("expired")) {
+            Optional<LostPasswordToken> expiredToken = tokenService.getTokenFromString(token);
+            expiredToken.ifPresent(e -> tokenService.removeToken(e));
+            return "redirect:/login?expired"; // Token is expired
+        }
+        return "redirect:/login"; // Token does not exist
     }
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+    
     /**
      * Validates and process the submitted reset password form
      * @param password The new password
