@@ -69,30 +69,20 @@ public class WriteEmail {
 
     }
 
-    // trying X-Forwarded-* method
+    /**
+     * Get the url of the current server to create the reset password link
+     * @param request the request object
+     */
     public String getAppUrl(HttpServletRequest request) {
-        String scheme = request.getHeader("X-Forwarded-Proto");
-        String host = request.getHeader("X-Forwarded-Host");
-        String prefix = request.getHeader("X-Forwarded-Prefix");
-
-        if (scheme == null) scheme = request.getScheme();
-        if (host == null) host = request.getServerName() + ":" + request.getServerPort();
-        if (prefix == null) prefix = request.getContextPath();
-
-        return UriComponentsBuilder.newInstance()
-                .scheme(scheme)
-                .host(host)
-                .path(prefix)
-                .build()
-                .toUriString();
+        return request.getServerName() + ":" + request.getServerPort();
     }
 
-    /**
-     *
-     * @param baseURL the path of the server
-     * @param token the token to be sent to the user
-     * @return the content of the email which is the link to reset the users password
-     */
+        /**
+         *
+         * @param baseURL the path of the server
+         * @param token the token to be sent to the user
+         * @return the content of the email which is the link to reset the users password
+         */
     public String constructLostPasswordTokenEmail(String baseURL, String token) {
         String url = baseURL + "/resetPassword?token=" + token;
         return ("Reset Password link:\n" + url +"\nThis link will expire after 10 mins.");
@@ -103,12 +93,12 @@ public class WriteEmail {
      * Sends an email with a link that takes user to a form where they can reset their password
      * @param gardener Gardener to get the email address
      */
-    public void sendPasswordForgotEmail(Gardener gardener, HttpServletRequest request) {
+    public void sendPasswordForgotEmail(Gardener gardener, String url) {
         // FROM https://www.baeldung.com/spring-security-registration-i-forgot-my-password
         String token = UUID.randomUUID().toString();
         tokenService.createLostPasswordTokenForGardener(gardener, token);
         String email = gardener.getEmail();
-        String emailMessage = constructLostPasswordTokenEmail(getAppUrl(request), token);
+        String emailMessage = constructLostPasswordTokenEmail(url, token);
         String subject = "Forgot password?";
         emailService.sendEmail(email, subject, emailMessage); // *** Blocking
     }
