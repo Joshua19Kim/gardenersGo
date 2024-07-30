@@ -84,6 +84,8 @@ public class RegisterController {
      * @param email           user's email
      * @param password        user's password
      * @param passwordConfirm user's repeated password
+     * @param isLastNameOptional Indication of existence of user's last name
+     * @param isDoBInvalid Indication of existence of a partially inputted date e.g. "10/mm/yyyy"
      * @param model           (map-like) representation of name, language and isJava boolean for use in thymeleaf,
      *                        with values being set to relevant parameters provided
      * @return thymeleaf registration form template or redirect to signup confirmation page

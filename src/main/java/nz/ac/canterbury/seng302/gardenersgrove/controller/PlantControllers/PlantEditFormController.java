@@ -123,6 +123,7 @@ public class PlantEditFormController {
      * @param description The updated description of the plant.
      * @param date The updated date the plant was planted.
      * @param plantId The ID of the plant being edited.
+     * @param isDateInvalid Indication of existence of a partially inputted date e.g. "10/mm/yyyy"
      * @param model The model for passing data to the view.
      * @return The template for the edit plant form or redirects to the garden details page.
      */

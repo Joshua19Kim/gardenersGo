@@ -104,6 +104,7 @@ public class PlantAddFormController {
      * @param description The description of the plant.
      * @param date The date the plant was planted.
      * @param gardenId The ID of the garden to which the plant belongs.
+     * @param isDateInvalid Indication of existence of a partially inputted date e.g. "10/mm/yyyy"
      * @param model The model for passing data to the view.
      * @return The template for the plant form or redirects to the garden details page.
      */

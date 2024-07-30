@@ -75,6 +75,7 @@ public class UserProfileController {
      * @param DoB Date of Birth of user to be entered on User profile form
      * @param email Email of Birth of user to be entered on User profile form
      * @param isLastNameOptional Indication of existence of user's last name
+     * @param isDoBInvalid Indication of existence of a partially inputted date e.g. "10/mm/yyyy"
      * @param model (map-like) representation of firstName, lastName, date of birth, email and profile picture for use in thymeleaf
      * @return thymeleaf user profile page or redirect user (to reload page)
      */
