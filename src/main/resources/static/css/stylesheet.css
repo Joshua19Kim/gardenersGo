@@ -80,14 +80,17 @@ h1 {
     opacity: 1;
 }
 
-.btn-primary {
-    background-color: var(--button-hover-color);
-    color: var(--text-color);
+.btn {
     border: none;
     border-radius: 25px;
     padding: 10px 15px;
     width: 50%;
     transition: 0.1s ease all;
+}
+
+.btn-primary {
+    background-color: var(--button-hover-color);
+    color: var(--text-color);
     /*box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2), 0 10px 10px rgba(0, 0, 0, 0.2);*/
 }
 
