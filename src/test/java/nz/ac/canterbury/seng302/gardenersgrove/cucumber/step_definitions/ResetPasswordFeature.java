@@ -107,7 +107,8 @@ public class ResetPasswordFeature {
     @When("I submit the invalid email")
     public void i_submit_the_invalid_email() throws Exception {
         mvcResult = mockMvcForgotPassword.perform(MockMvcRequestBuilders.post("/forgotPassword")
-                        .param("email", email))
+                        .param("email", email)
+                .param("url", "http://localhost:8080/forgotPassword"))
                 .andReturn();
     }
 
@@ -126,7 +127,7 @@ public class ResetPasswordFeature {
     @When("I submit the valid email that is not known to the system")
     public void i_submit_the_valid_email_that_is_not_known_to_the_system() throws Exception {
         mvcResult = mockMvcForgotPassword.perform(MockMvcRequestBuilders.post("/forgotPassword")
-                        .param("email", email))
+                        .param("email", email).param("url", "http://localhost:8080/forgotPassword"))
                 .andReturn();
     }
 
@@ -146,14 +147,14 @@ public class ResetPasswordFeature {
     @When("I submit the email that is known to the system")
     public void i_submit_the_email_that_is_known_to_the_system() throws Exception {
         mvcResult = mockMvcForgotPassword.perform(MockMvcRequestBuilders.post("/forgotPassword")
-                        .param("email", email))
+                        .param("email", email).param("url", "http://localhost:8080/forgotPassword"))
                 .andReturn();
     }
 
     @Then("an email is sent to the email address")
     public void an_email_is_sent_to_the_email_address() {
         ArgumentCaptor<Gardener> gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        ArgumentCaptor<HttpServletRequest> requestCaptor = ArgumentCaptor.forClass(HttpServletRequest.class);
+        ArgumentCaptor<String> requestCaptor = ArgumentCaptor.forClass(String.class);
         verify(writeEmail, times(1)).sendPasswordForgotEmail(gardenerCaptor.capture(), requestCaptor.capture());
     }
 }
