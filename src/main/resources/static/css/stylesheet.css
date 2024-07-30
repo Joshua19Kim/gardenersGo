@@ -1276,10 +1276,28 @@ form.search-bar::after {
     margin-right: 10px;
 }
 
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    margin: 20px auto;
+}
+
+.form-inline {
+    display: flex;
+    align-items: center;
+}
+
+.form-control {
+    margin-right: 10px;
+}
+
 .browse-gardens-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 20px;
+
 }
 
 /* Chat GPT helped with inspiration for the styling*/
