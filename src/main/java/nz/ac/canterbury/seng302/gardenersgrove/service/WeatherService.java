@@ -49,6 +49,7 @@ public class WeatherService {
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
     logger.info("searching for location: " + location);
+    logger.info("url: " + url);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     try {
       Weather weather = objectMapper.readValue(url, Weather.class);

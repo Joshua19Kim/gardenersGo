@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Edit Plant</title>
@@ -13,7 +14,7 @@
         <label for="name"> Name: </label>
         <input type="text" class="form-control" id="name" name="name" maxlength="64" th:value="${name != null ? name : plant.name}"
                th:classappend="${nameError} ? 'error' : ''">
-        <span th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage"></span>
+        <p th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></p>
         <br/>
         <label for="count"> Plant Count: </label>
         <input type="text" class="form-control" id="count" name="count" maxlength="12" th:value="${count != null ? count : (plant.count != 0.0 ? plant.count : '')}"
@@ -115,3 +116,4 @@
     }
 </script>
 </body>
+</html>

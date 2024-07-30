@@ -114,7 +114,7 @@ public class ResetPasswordFeature {
     @Then("an error message says {string}")
     public void an_error_message_says(String errorMessage) {
         MockHttpServletRequest request = mvcResult.getRequest();
-        String emailError = (String) request.getAttribute("returnMessage");
+        String emailError = (String) request.getAttribute("emailError");
         assertEquals(errorMessage, emailError);
     }
 

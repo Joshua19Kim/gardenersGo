@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
-<head>
+<html lang="en"><head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Create New Plant</title>
     <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
@@ -15,7 +14,7 @@
         <label for="name"> Name: </label>
         <input type="text" class="form-control" th:value="*{name}" id="name" name="name" maxlength="64" placeholder="Name"
                th:classappend="${nameError} ? 'error' : ''">
-        <span th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage"></span>
+        <p th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></p>
         <br/>
         <label for="count"> Plant Count: </label>
         <input type="text" class="form-control" th:value="*{count}" id="count"  name="count" maxlength="12" placeholder="How many?"

@@ -19,21 +19,20 @@
                type="hidden"/>
         <label for="firstName"> First Name: </label>
         <input autofocus class="form-control" data-cy="firstName" id="firstName" maxlength="255"
-               placeholder="First Name" th:classappend="${(firstNameValid != '' && firstNameValid != null) ? 'error' : ''}" th:name="firstName" th:value="*{firstName}"
-               type="text">
-        <p class="smallErrorMessage" th:text="${firstNameValid}" th:value="*{firstNameValid}"></p>
+               placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
+               th:classappend="${(firstNameValid != '' && firstNameValid != null) ? 'error' : ''}">
+        <p class="smallErrorMessage" th:utext="${firstNameValid}" th:value="*{firstNameValid}"></p>
         <br/>
         <label for="lastName"> Last Name: </label>
-        <input class="form-control" data-cy="lastName" id="lastName" maxlength="255" placeholder="Last Name"
-               th:classappend="${(lastNameValid != '' && lastNameValid != null) ? 'error' : ''}" th:name="lastName" th:value="*{lastName}"
-               type="text">
-        <p class="smallErrorMessage" th:text="${lastNameValid}" th:value="*{lastNameValid}"></p>
+        <input class="form-control" data-cy="lastName" id="lastName" placeholder="Last Name" maxlength="255"
+               th:name="lastName" th:value="*{lastName}" type="text"
+               th:classappend="${(lastNameValid != '' && lastNameValid != null) ? 'error' : ''}">
+        <p class="smallErrorMessage" th:utext="${lastNameValid}" th:value="*{lastNameValid}"></p>
         <br/>
         <label for="isLastNameOptional">I have no surname</label>
         <input class="form-control" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
-               th:id="isLastNameOptional" th:name="isLastNameOptional" type="checkbox"/>
+               th:id="isLastNameOptional" th:name="isLastNameOptional" type="checkbox" th:checked="${isLastNameOptional}"/>
         <script>
-            document.getElementById('isLastNameOptional').checked = false;
             document.getElementById('isLastNameOptional').onchange = function () {
                 document.getElementById('lastName').disabled = this.checked;
             };
@@ -41,14 +40,14 @@
         <br/>
         <label for="DoB"> Date of Birth: </label>
         <input class="form-control" id="DoB" th:name="DoB" th:value="*{DoB}" type="date" th:classappend="${(DoBValid != '' && DoBValid != null) ? 'error' : ''}">
-        <p class="smallErrorMessage" id="DoBInvalid" th:text="${DoBValid}"></p>
+        <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
         <input type="hidden" id="isDoBInvalid" th:name="isDoBInvalid" th:value="false"/>
         <br/>
         <label for="email"> Email: </label>
-        <input class="form-control" data-cy="email" id="email" maxlength="320" placeholder="Email"
-               th:classappend="${(emailValid != '' && emailValid != null) ? 'error' : ''}" th:name="email" th:value="*{email}"
-               type="text">
-        <p class="smallErrorMessage" th:text="${emailValid}" th:value="*{emailValid}"></p>
+        <input class="form-control" data-cy="email" id="email" placeholder="Email" maxlength="320"
+               th:name="email" th:value="*{email}" type="text"
+               th:classappend="${(emailValid != '' && emailValid != null) ? 'error' : ''}">
+        <p class="smallErrorMessage" th:utext="${emailValid}" th:value="*{emailValid}"></p>
         <br/>
         <label for="password"> Password: </label>
         <input class="form-control" data-cy="password" id="password" maxlength="255" placeholder="Password"

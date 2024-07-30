@@ -33,7 +33,8 @@
                 <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{addTag}">
                     <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
                            th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
-                           maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus>
+                           maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus
+                           th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
                     <input type="hidden" name="gardenId" th:value="${garden.id}">
                     <datalist id="tagList">
@@ -44,7 +45,7 @@
                    onclick="submitTag()">+</a>
             </div>
             <div id="tag-error-container">
-                <p id="tag-error-message" th:value="${tagValid}" th:text="${tagValid}"></p>
+                <p id="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
             </div>
         </div>
 
@@ -184,12 +185,12 @@
         const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         const d = new Date();
         const day = weekday[d.getDay()];
-        document.getElementById("currentDate").innerHTML = day;
+        document.getElementById("currentDate").innerText = day;
         for(let i = 0; i <= 2 ; i++) {
             let d = new Date();
             d.setDate(d.getDate() + i);
             const day = weekday[d.getDay()];
-            document.getElementById(i.toString()).innerHTML = day;
+            document.getElementById(i.toString()).innerText = day;
         }
     }
 
@@ -202,7 +203,7 @@
     function getDay(date) {
         const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         const day = weekday[date.getDay()];
-        document.getElementById(date).innerHTML = day;
+        document.getElementById(date).innerText = day;
 
     }
     function handleImageClick(plantId) {
@@ -257,7 +258,7 @@
     //     month: 'long',
     //     year: 'numeric'
     // };
-    // document.getElementById("currentDateDisplay").innerHTML = currentDate.toLocaleString("en-Nz", dateOptions);
+    // document.getElementById("currentDateDisplay").innerText = currentDate.toLocaleString("en-Nz", dateOptions);
 
     function transformToInput() {
         document.getElementById('add-tag').style.display = 'none';

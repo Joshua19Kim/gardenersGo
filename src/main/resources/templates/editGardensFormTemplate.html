@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<html lang="en">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Edit Garden</title>
@@ -18,14 +18,14 @@
                     <input type="text" class="form-control" id="name" maxlength="64" placeholder="Name"
                            th:name="name" th:value="*{name}" data-cy="name" autofocus
                            th:classappend="${nameError} ? 'error' : ''">
-                    <span th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage"></span>
+                    <span th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></span>
                 </div>
                 <div>
                     <label for="size"> Size (m<sup>2</sup>): </label>
                     <input type="text" class="form-control" id="size" maxlength="12" placeholder=""
                            th:name="size" th:value="*{size}" data-cy="size" autofocus
                            th:classappend="${sizeError} ? 'error' : ''">
-                    <span th:if="${sizeError}" th:text="${sizeError}" class="smallErrorMessage"></span>
+                    <span th:if="${sizeError}" th:utext="${sizeError}" class="smallErrorMessage"></span>
                 </div>
             </div>
 
@@ -38,7 +38,7 @@
                 <textarea class="form-control" id="description" maxlength="512" placeholder=""
                        th:name="description" th:value="*{description}" data-cy="description" autofocus
                        th:classappend="${descriptionError} ? 'error' : ''">[[${description != null ? description : garden.description}]]</textarea>
-                <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
+                <span th:if="${descriptionError}" th:utext="${descriptionError}" class="smallErrorMessage"></span>
             </div>
             <div style="display: flex; margin-top: 40px; justify-content: flex-end;">
                 <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
@@ -50,7 +50,7 @@
                            th:name="location" th:value="*{location}" data-cy="location" autofocus
                            th:classappend="${locationError} ? 'error' : ''"
                     >
-                    <span th:if="${locationError}" th:text="${locationError}" class="smallErrorMessage"></span>
+                    <span th:if="${locationError}" th:utext="${locationError}" class="smallErrorMessage"></span>
                     <div class="autocomplete-results" id="autocomplete-results"></div>
                 </div>
                 <br/>
@@ -65,13 +65,13 @@
                         <label for="suburb">Suburb:</label>
                         <input type="text" id="suburb" th:name="suburb" th:value="*{suburb}"
                                th:classappend="${suburbError} ? 'error' : ''">
-                        <span th:if="${suburbError}" th:text="${suburbError}" class="smallErrorMessage"></span>
+                        <span th:if="${suburbError}" th:utext="${suburbError}" class="smallErrorMessage"></span>
                     </div>
                     <div>
                         <label for="city">City:</label>
                         <input type="text" id="city" th:name="city" th:value="*{city}"
                                th:classappend="${cityError} ? 'error' : ''">
-                        <span th:if="${cityError}" th:text="${cityError}" class="smallErrorMessage"></span>
+                        <span th:if="${cityError}" th:utext="${cityError}" class="smallErrorMessage"></span>
                     </div>
                 </div>
                 <br/>
@@ -80,13 +80,13 @@
                         <label for="country">Country:</label>
                         <input type="text" id="country" th:name="country" th:value="*{country}"
                                th:classappend="${countryError} ? 'error' : ''">
-                        <span th:if="${countryError}" th:text="${countryError}" class="smallErrorMessage"></span>
+                        <span th:if="${countryError}" th:utext="${countryError}" class="smallErrorMessage"></span>
                     </div>
                     <div>
                         <label for="postcode">Postcode:</label>
                         <input type="text" id="postcode" th:name="postcode" th:value="*{postcode}"
                                th:classappend="${postcodeError} ? 'error' : ''">
-                        <span th:if="${postcodeError}" th:text="${postcodeError}" class="smallErrorMessage"></span>
+                        <span th:if="${postcodeError}" th:utext="${postcodeError}" class="smallErrorMessage"></span>
                     </div>
                 </div>
                 <br/>
@@ -143,3 +143,4 @@
     </script>
 </div>
 </body>
+</html>
