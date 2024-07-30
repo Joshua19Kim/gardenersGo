@@ -1,9 +1,13 @@
+/*@import*/
+/*url('https://rsms.me/inter/inter.css');*/
+
 * {
     box-sizing: border-box;
 }
 
 :root {
-    --button-hover-color: #344E41;
+    --button-hover-color: rgb(52, 72, 59);
+    --button-color: rgb(53, 91, 72);
     --input-background-color: #eef3f7;
     --card-background-color: #e7f0dc;
     --alert-background-color: #f9f9f9;
@@ -12,6 +16,8 @@
     --primary-color: #8dab6e;
     --secondary-color: #d1dc97;
     --accent-color: #f8dc30;
+    --size-bezel: .5rem;
+
 }
 
 body {
@@ -20,9 +26,7 @@ body {
     font-family: Arial, sans-serif;
     height: 100%;
     margin: 0;
-    display: flex;
     align-items: center;
-    justify-content: center;
 }
 
 .container {
@@ -61,7 +65,8 @@ h1 {
 }
 
 .form-group {
-    width: 100%;
+    position: relative;
+    padding: 15px 0 0;
 }
 
 .form-control {
@@ -89,7 +94,7 @@ h1 {
 }
 
 .btn-primary {
-    background-color: var(--button-hover-color);
+    background-color: var(--button-color);
     color: var(--text-color);
     /*box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2), 0 10px 10px rgba(0, 0, 0, 0.2);*/
 }
@@ -129,6 +134,42 @@ h1 {
     height: 75px;
 }
 
+/* Label code from https://codepen.io/lucasyem/pen/ZEEYKdj */
+
+.form-field {
+    &::placeholder {
+        color: transparent;
+    }
+
+    &:placeholder-shown ~ .form-label {
+        cursor: text;
+        top: 25px;
+    }
+}
+
+.form-label {
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    display: block;
+    transition: 0.2s;
+    color: white;
+}
+
+.form-field:focus {
+    ~ .form-label {
+        position: absolute;
+        top: -10px;
+        display: block;
+        transition: 0.2s;
+        color: white;
+    }
+    padding-bottom: 6px;
+}
+/* reset input */
+.form-field{
+    &:required,&:invalid { box-shadow:none; }
+}
 
 /*====================================================================================================================*/
 /* Rest of the CSS */
@@ -238,10 +279,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .errorMessage {
-    font-weight: 550;
-    font-style: italic;
-    color: red;
-    margin: 10px 0 10px 0;
+    color: var(--accent-color);
     font-size: smaller;
 }
 

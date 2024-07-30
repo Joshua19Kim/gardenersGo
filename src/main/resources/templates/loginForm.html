@@ -23,12 +23,19 @@
                 <p>Reset password link has expired.</p>
             </div>
             <div class="d-flex flex-column align-items-center">
-                <div class="form-group">
-                    <input name="username" placeholder="Username" type="text" maxlength="320" class="form-control" th:classappend="${param.error} ? 'is-invalid' : ''" required/>
+                <div class="form-group field">
+                    <label class="input">
+                        <input name="username" placeholder="Email" type="text" maxlength="320" class="form-control form-field" th:classappend="${param.error} ? 'is-invalid' : ''" required/>
+                        <span class="form-label">Email</span>
+                    </label>
                 </div>
-                <div class="form-group">
-                    <input name="password" placeholder="Password" type="password" maxlength="255" class="form-control" th:classappend="${param.error} ? 'is-invalid' : ''" required/>
-                    <div class="invalid-feedback" th:if="${param.error}" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></div>
+
+                <div class="errorMessage" th:if="${param.error}" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></div>
+                <div class="form-group field">
+                    <label class="input">
+                        <input name="password" placeholder="Password" type="password" maxlength="255" class="form-control form-field" th:classappend="${param.error} ? 'is-invalid' : ''" required/>
+                        <span class="form-label">Password</span>
+                    </label>
                 </div>
                 <button type="submit" class="btn btn-primary mb-3">Sign in</button>
 
