@@ -8,10 +8,11 @@
 </script>
 <style>
     .nav-item {
-        padding: 7px 15px;
+        padding: 7px 12px;
         background-color: #8dab6e;
-        margin: 10px;
-        border-radius: 25px;
+        margin: 5px;
+        border-radius: 15px;
+        font-size: 14px;
     }
 
     .nav-container {
@@ -28,21 +29,32 @@
 
     .left-nav {
         justify-content: flex-end;
-        margin-right: 7%;
+        margin-right: 18%;
     }
 
     .right-nav {
         justify-content: flex-start;
-        margin-left: 7%;
+        margin-left: 18%;
     }
 
     .navbar-brand {
         flex: 0 0 auto;
         margin: 0 2rem; /* Adjust the margin to control spacing */
+        font-size: 32px;
+        font-weight: bold;
     }
+
+    .nav-link {
+        color: #fffdf6 ;
+    }
+
+    .nav-link:hover {
+        color: #3A5A40 ;
+    }
+
 </style>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light">
+<nav class="navbar navbar-expand-lg navbar-light mt-2">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -61,7 +73,9 @@
                     </li>
                 </ul>
             </div>
-            <div class="navbar-brand" id="navbar-name">Gardener's Grove</div>
+            <div class="navbar-brand" id="navbar-name">
+                <a class="navbar-text" th:href="@{/home}">Gardener's Grove</a>
+            </div>
             <div class="right-nav">
                 <ul class="navbar-nav ml-auto" id="right-nav">
                     <li class="nav-item">
