@@ -78,6 +78,9 @@ public class BrowseGardensController {
         logger.info("POST /browseGardens");
 
         Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm);
+        if (gardensPage.getContent().isEmpty()) {
+            model.addAttribute("noSearchResults", "No gardens match your search.");
+        }
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
         if (totalPages > 0) {

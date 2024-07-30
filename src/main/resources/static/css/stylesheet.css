@@ -1276,6 +1276,14 @@ form.search-bar::after {
     margin-right: 10px;
 }
 
+.no-search-results-found-container {
+    justify-content: center;
+    display: flex;
+    margin-top: 40px;
+    color: grey;
+    font-style: italic;
+}
+
 .search-container {
     display: flex;
     justify-content: center;

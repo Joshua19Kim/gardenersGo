@@ -14,6 +14,9 @@
     </form>
 </div>
 <div class="browse-gardens-container">
+    <div class="no-search-results-found-container">
+        <span th:if="${noSearchResults}" th:text="${noSearchResults}"></span>
+    </div>
     <div class="row">
         <div th:each="garden : ${gardensPage.content}" class="col-md-6 mb-4">
             <a th:href="@{gardens/details(gardenId=${garden.id})}" style="text-decoration: none; color: inherit;">
