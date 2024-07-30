@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,17 +39,20 @@ public class GardenDetailsController {
     private final TagService tagService;
     private Gardener gardener;
     private final WeatherService weatherService;
+    private final LocationService locationService;
+
 
     /**
      * Constructor used to create a new instance of the GardenDetailsController. Autowires a
      * various service objects
      *
-     * @param gardenService the garden service used to interact with the database
+     * @param gardenService       the garden service used to interact with the database
      * @param gardenerFormService the gardener form service used to interact with the database
      * @param relationshipService the relationship service used to manage gardener relationships
-     * @param requestService the request service used to manage HTTP requests
-     * @param weatherService the weather service used to retrieve weather information
-     * @param tagService the tag service used to manage garden tags
+     * @param requestService      the request service used to manage HTTP requests
+     * @param weatherService      the weather service used to retrieve weather information
+     * @param tagService          the tag service used to manage garden tags
+     * @param locationService     the location service used to retrieve location from API
      */
     @Autowired
     public GardenDetailsController(
@@ -57,13 +61,14 @@ public class GardenDetailsController {
             RelationshipService relationshipService,
             RequestService requestService,
             WeatherService weatherService,
-            TagService tagService) {
+            TagService tagService, LocationService locationService) {
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
         this.requestService = requestService;
         this.weatherService = weatherService;
         this.tagService = tagService;
+        this.locationService = locationService;
     }
 
     /**
@@ -99,7 +104,7 @@ public class GardenDetailsController {
            @RequestParam(name = "tagValid", required = false) String tagValid,
            Model model,
            HttpServletRequest request)
-           throws IOException, URISyntaxException {
+           throws IOException, URISyntaxException, InterruptedException {
        logger.info("GET /gardens/details");
 
        Optional<Gardener> currentUserOptional = getGardenerFromAuthentication();
@@ -128,8 +133,15 @@ public class GardenDetailsController {
                model.addAttribute("tagValid", tagValid);
            }
            if (Objects.equals(garden.get().getGardener().getId(), currentUserOptional.get().getId())) {
-               Weather currentWeather = weatherService.getWeather(garden.get().getCity() + ", " + garden.get().getCountry());
-               PrevWeather prevWeathers = weatherService.getPrevWeather(garden.get().getCity() + ", " + garden.get().getCountry());
+               HttpResponse<String> location = locationService.sendRequest(garden.get().getCity() + ", " + garden.get().getCountry());
+               Weather currentWeather = null;
+               PrevWeather prevWeathers = null;
+               logger.info("LOCATION BODY: " + location.body());
+
+               if (! location.body().contains("error")) {
+                   currentWeather = weatherService.getWeather(garden.get().getCity() + ", " + garden.get().getCountry());
+                   prevWeathers = weatherService.getPrevWeather(garden.get().getCity() + ", " + garden.get().getCountry());
+               }
                if (currentWeather != null && prevWeathers != null) {
                    model.addAttribute("date", currentWeather.getDate());
                    model.addAttribute("temperature", currentWeather.getTemperature());
@@ -274,7 +286,7 @@ public class GardenDetailsController {
     public String addTag(
             @RequestParam(name = "tag-input") String tag,
             @RequestParam(name = "gardenId") long id,
-            Model model) throws IOException, URISyntaxException {
+            Model model) throws IOException, URISyntaxException, InterruptedException {
 
         logger.info("POST /addTag");
         tag = tag.strip();
@@ -293,9 +305,13 @@ public class GardenDetailsController {
         Garden garden = gardenOptional.get();
         Optional<String> validTagError = tagValidation.validateTag(tag);
         Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
-
-        Weather currentWeather = weatherService.getWeather(garden.getCity() + ", " + garden.getCountry());
-        PrevWeather prevWeathers = weatherService.getPrevWeather(garden.getCity() + ", " + garden.getCountry());
+        HttpResponse<String> location = locationService.sendRequest(garden.getCity() + ", " + garden.getCountry());
+        Weather currentWeather = null;
+        PrevWeather prevWeathers = null;
+        if (location != null) {
+            currentWeather = weatherService.getWeather(garden.getCity() + ", " + garden.getCountry());
+            prevWeathers = weatherService.getPrevWeather(garden.getCity() + ", " + garden.getCountry());
+        }
         if (currentWeather != null && prevWeathers != null) {
             model.addAttribute("date", currentWeather.getDate());
             model.addAttribute("temperature", currentWeather.getTemperature());
