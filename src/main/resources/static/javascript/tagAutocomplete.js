@@ -40,7 +40,6 @@ function transformToInput() {
     document.getElementById('tag-input').focus();
 }
 
-// original codes
 function submitTagOnEnter(event) {
     if (event.key === 'Enter') {
         event.preventDefault();

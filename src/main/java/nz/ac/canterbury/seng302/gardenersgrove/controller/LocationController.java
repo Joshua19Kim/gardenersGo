@@ -26,7 +26,6 @@ public class LocationController {
     private final LocationService locationService;
     private static HttpResponse<String> response;
     private final RateLimiterService rateLimiterService;
-    private final TagService tagService;
 
     /**
      * Constructor of LocationController
@@ -34,11 +33,9 @@ public class LocationController {
      * @param locationService The service providing 'Sending request' function.
      * @param rateLimiterService The service providing the function that can limit the amount of requests.
      */
-    public LocationController(LocationService locationService, RateLimiterService rateLimiterService, TagService tagService) {
+    public LocationController(LocationService locationService, RateLimiterService rateLimiterService) {
         this.locationService = locationService;
         this.rateLimiterService = rateLimiterService;
-        //added for temp
-        this.tagService = tagService;
     }
 
     /**
