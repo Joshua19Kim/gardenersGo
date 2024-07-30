@@ -5,7 +5,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
+
 
 import java.util.UUID;
 
@@ -68,21 +69,32 @@ public class WriteEmail {
 
     }
 
+    // trying X-Forwarded-* method
     public String getAppUrl(HttpServletRequest request) {
-        return ServletUriComponentsBuilder.fromRequestUri(request)
-                .replacePath(null)
+        String scheme = request.getHeader("X-Forwarded-Proto");
+        String host = request.getHeader("X-Forwarded-Host");
+        String prefix = request.getHeader("X-Forwarded-Prefix");
+
+        if (scheme == null) scheme = request.getScheme();
+        if (host == null) host = request.getServerName() + ":" + request.getServerPort();
+        if (prefix == null) prefix = request.getContextPath();
+
+        return UriComponentsBuilder.newInstance()
+                .scheme(scheme)
+                .host(host)
+                .path(prefix)
                 .build()
                 .toUriString();
     }
 
     /**
      *
-     * @param contextPath the path of the server
+     * @param baseURL the path of the server
      * @param token the token to be sent to the user
      * @return the content of the email which is the link to reset the users password
      */
-    public String constructLostPasswordTokenEmail(String contextPath, String token) {
-        String url = contextPath + "/resetPassword?token=" + token;
+    public String constructLostPasswordTokenEmail(String baseURL, String token) {
+        String url = baseURL + "/resetPassword?token=" + token;
         return ("Reset Password link:\n" + url +"\nThis link will expire after 10 mins.");
     }
 
