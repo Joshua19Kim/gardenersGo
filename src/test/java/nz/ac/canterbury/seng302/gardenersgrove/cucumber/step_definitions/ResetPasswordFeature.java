@@ -153,7 +153,7 @@ public class ResetPasswordFeature {
     @Then("an email is sent to the email address")
     public void an_email_is_sent_to_the_email_address() {
         ArgumentCaptor<Gardener> gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        ArgumentCaptor<HttpServletRequest> requestCaptor = ArgumentCaptor.forClass(HttpServletRequest.class);
+        ArgumentCaptor<String> requestCaptor = ArgumentCaptor.forClass(String.class);
         verify(writeEmail, times(1)).sendPasswordForgotEmail(gardenerCaptor.capture(), requestCaptor.capture());
     }
 }
