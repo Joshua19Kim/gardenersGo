@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensControlle
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,6 +34,9 @@ public class BrowseGardensControllerTest {
 
     @MockBean
     private GardenService gardenService;
+
+    @MockBean
+    private TagService tagService;
 
     private Gardener testGardener;
 
