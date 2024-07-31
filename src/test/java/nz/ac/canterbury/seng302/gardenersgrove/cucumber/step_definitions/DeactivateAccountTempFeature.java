@@ -61,8 +61,8 @@ public class DeactivateAccountTempFeature {
                                 .param("gardenId", "1")
                                 .with(csrf())));
     }
-    @Then("the system shows the warning message and send an warning email.")
-    public void the_system_shows_the_warning_message_and_send_an_warning_email() throws Exception {
+    @Then("the system shows the warning message")
+    public void the_system_shows_the_warning_message() throws Exception {
         resultActions.andExpect(model().attribute("tagWarning", "You have added an inappropriate tag for the fifth time"));
     }
 }

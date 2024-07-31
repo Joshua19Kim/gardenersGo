@@ -9,7 +9,10 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WordFilter;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Optional;
@@ -28,6 +31,8 @@ public class TagModerationFeature {
     private GardenerFormService gardenerFormService;
     @Autowired
     private GardenService gardenService;
+    @Autowired
+    private WriteEmail writeEmail;
     private Garden garden;
     private Tag tag;
     private Gardener gardener;
