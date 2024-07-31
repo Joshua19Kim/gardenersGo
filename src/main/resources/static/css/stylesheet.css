@@ -10,7 +10,7 @@
     --button-color: rgb(53, 91, 72);
     --input-background-color: #eef3f7;
     --card-background-color: #e7f0dc;
-    --alert-background-color: #f9f9f9;
+    --alert-background-color: rgb(52, 72, 59);
     --text-color: #fffdf6;
     --background-color: #fffdf6;
     --primary-color: #8dab6e;
@@ -35,7 +35,6 @@ body {
     justify-content: flex-start; /* Align items to the top */
     align-items: center;
     padding-top: 5vh; /* Add some padding at the top */
-    max-width: 400px;
 }
 
 .header-container {
@@ -48,7 +47,8 @@ body {
     border: 2px solid var(--card-background-color);
     border-radius: 10px;
     padding: 20px;
-    width: 150%;
+    width: 50%;
+    /*max-width: 400px;*/
     background-color: var(--primary-color);
     color: var(--text-color);
     display: flex;
@@ -169,6 +169,21 @@ h1 {
 /* reset input */
 .form-field{
     &:required,&:invalid { box-shadow:none; }
+}
+
+#autocomplete-results {
+    align-items: baseline;
+    max-height: 25vh;
+    overflow: scroll;
+}
+
+.autocomplete-item {
+    border: 1px solid white;
+    border-radius: 25px;
+    margin: 5px;
+    padding: 5px;
+    width: 98%;
+    padding-left: 20px;
 }
 
 /*====================================================================================================================*/
@@ -1005,7 +1020,7 @@ form.search-bar::after {
 }
 
 .friend-status {
-    width: 100%;
+    width: 110%;
     display: flex;
     flex-direction: column;
 }

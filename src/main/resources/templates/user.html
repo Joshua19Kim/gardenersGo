@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <title>User Profile</title>
-    <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
 </head>
 <body>
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
-<div th:insert="~{fragmentExample/fragments/bootstrap.html}"></div>
 <div id="user_div">
     <h1>User Profile</h1>
+
     <div class="UserProfilePicContainer">
         <form th:action="@{user}" method="post" enctype="multipart/form-data" id="uploadImageForm">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -19,18 +17,20 @@
                    onchange="handleImageChange()">
         </form>
     </div>
+
     <div class="warningMessageContainer">
         <p th:text="${uploadMessage}" th:value="*{uploadMessage}" class="errorMessage"></p>
     </div>
 
-    <div id="form">
+    <div class="container card">
         <form th:action="@{user}" method="get" id="userForm">
+
             <label for="firstName"> First Name: </label>
             <span id="firstName" th:text="${firstName}"></span>
             <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
                    placeholder="First Name" required th:name="firstName" th:value="*{firstName}" type="text"
                    style="display: none;"
-                   th:classappend="${firstNameValid != '' ? 'error' : ''}">
+                   th:classappend="${firstNameValid != '' ? 'is-invalid' : ''}">
             <p class="smallErrorMessage" th:utext="${firstNameValid}"></p>
             <br/>
 
@@ -38,20 +38,23 @@
             <span id="lastName" th:text="${lastName}"></span>
             <input class="form-control" data-cy="lastName" id="lastNameEdit" placeholder="Last Name" maxlength="255"
                    th:name="lastName" th:value="*{lastName}" type="text" style="display: none"
-                   th:classappend="${lastNameValid != '' ? 'error' : ''}">
+                   th:classappend="${lastNameValid != '' ? 'is-invalid' : ''}">
             <br/>
-            <div id="surnameCheck">
-                <label id="isLastNameOptionalLabelEdit" style="display: none;">I have no surname:</label>
-                <input class="form-control" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
+
+            <div id="surnameCheck" class="m-3">
+                <label id="isLastNameOptionalLabelEdit" for="isLastNameOptional" style="display: none;">I have no surname:</label>
+                <input class="form-check-input" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
                        placeholder="Last Name Tick Box Check"
                        th:name="isLastNameOptional" type="checkbox" style="display: none;">
             </div>
+
             <script>
                 document.getElementById('isLastNameOptional').checked = false;
                 document.getElementById('isLastNameOptional').onchange = function () {
                     document.getElementById('lastNameEdit').disabled = this.checked;
                 };
             </script>
+
             <p class="smallErrorMessage" th:utext="${lastNameValid}"></p>
             <br/>
 
@@ -60,6 +63,7 @@
             <input class="form-control" data-cy="DoB" id="DoBEdit"
                    th:name="DoB" th:value="*{DoB}" type="date" style="display: none;">
             <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
+
             <script>
                 document.getElementById("DoBEdit").addEventListener("invalid",
                     function (event) {
@@ -69,22 +73,23 @@
                         document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";
                     });
             </script>
+
             <br/>
             <label for="email"> Email: </label>
             <span id="email" th:text="${email}"></span>
             <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email" maxlength="320"
                    th:name="email" th:value="*{email}" type="text" style="display: none;"
-                   th:classappend="${emailValid != '' ? 'error' : ''}">
+                   th:classappend="${emailValid != '' ? 'is-invalid' : ''}">
             <p class="smallErrorMessage" th:utext="${emailValid}"></p>
             <br/>
 
             <div id="editButtonDiv">
-                <button class="buttonDesign" type="button" onclick="enableEditing()">Edit</button>
+                <button class="btn btn-primary mb-3" type="button" onclick="enableEditing()">Edit</button>
             </div>
-            <div id="saveCancelButtonDiv" style="display: none;">
-                <button type="button" onclick="window.location='./password'">Update password</button>
-                <input type="submit" value="Save"/>
-                <button type="button" onclick="disableEditing(); window.location='./user'">Cancel</button>
+            <div id="saveCancelButtonDiv" class="m-0 p-0 d-flex gap-5" style="display: none !important;">
+                <button class="btn btn-secondary mb-3" type="button" onclick="window.location='./password'">Update password</button>
+                <input class="btn btn-primary mb-3" type="submit" value="Save"/>
+                <button class="btn btn-danger mb-3" type="button" onclick="disableEditing(); window.location='./user'">Cancel</button>
             </div>
         </form>
     </div>

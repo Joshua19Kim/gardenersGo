@@ -8,8 +8,8 @@
 <body>
 
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
-<div>
-  <div id="form" class="create-garden">
+<div class="container">
+  <div class="container card">
     <h1> Create New Garden </h1>
     <form id="gardenForm" th:action="@{form(redirect=${requestURI})}" method="post">
       <div class="create-garden-row">
@@ -51,7 +51,7 @@
                    th:classappend="${locationError} ? 'error' : ''"
             >
             <span th:if="${locationError}" th:utext="${locationError}" class="smallErrorMessage"></span>
-            <div class="autocomplete-results" id="autocomplete-results"></div>
+            <div id="autocomplete-results"></div>
           </div>
         </div>
         <br/>
