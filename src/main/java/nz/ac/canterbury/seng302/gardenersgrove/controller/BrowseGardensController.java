@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -9,9 +11,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static java.lang.Long.parseLong;
 
 /**
  * Controller class that handles all the logic for the browse gardens page
@@ -21,9 +26,13 @@ public class BrowseGardensController {
 
     private final GardenService gardenService;
 
+    private final TagService tagService;
+
     @Autowired
-    public BrowseGardensController(GardenService gardenService) {
+    public BrowseGardensController(GardenService gardenService, TagService tagService) {
+
         this.gardenService = gardenService;
+        this.tagService = tagService;
     }
 
     /**
@@ -50,6 +59,10 @@ public class BrowseGardensController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
+
+        model.addAttribute("allTags", tagService.getAllTags());
+        model.addAttribute("tags", new ArrayList<String>());
+
         return "browseGardensTemplate";
     }
 }

@@ -34,4 +34,11 @@ public interface TagRepository extends CrudRepository<Tag, Long> {
    * @return a tag or empty if no matching tag
    */
   Optional<Tag> findByNameAndGarden(String name, Garden garden);
+
+  /**
+   * Gets all the tag names in the database
+   * @return all the tag names in the database
+   */
+  @Query(value = "select tag_name from tag where garden =?1", nativeQuery = true)
+  List<String> getAllTagNames();
 }

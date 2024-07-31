@@ -8,6 +8,31 @@
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div th:insert="~{fragmentExample/fragments/bootstrap.html}"></div>
 <div class="browse-gardens-container">
+    <div id="tag-container">
+        <strong>Tags:</strong>
+        <div th:if="${tags != null}" th:each="tag : ${tags}">
+            <div id="tag">
+                <span th:text="${tag}"></span>
+            </div>
+        </div>
+        <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
+           onclick="transformToInput()">+</a>
+        <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{addTag}">
+            <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
+                   th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
+                   maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus
+                   th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
+            <input type="hidden" name="tag-input" id="hidden-tag-input">
+            <datalist id="tagList">
+                <option th:each="tag : ${allTags}" th:value="${tag}" th:text="${tag}"></option>
+            </datalist>
+        </form>
+        <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
+           onclick="submitTag()">+</a>
+    </div>
+    <div id="tag-error-container">
+        <p id="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
+    </div>
     <div class="row">
         <div th:each="garden : ${gardensPage.content}" class="col-md-6 mb-4">
             <a th:href="@{gardens/details(gardenId=${garden.id})}" style="text-decoration: none; color: inherit;">
@@ -46,4 +71,5 @@
        th:class="${pageNumber==gardensPage.number + 1} ? active"></a>
 </div>
 </body>
+<script th:src="@{/javascript/tagAutocomplete.js}"></script>
 </html>

@@ -70,4 +70,14 @@ public class TagService {
     }
     return uniqueTagNames;
   }
+
+  /**
+   * Gets all the tag names in the database
+   * @return all the tag names in the database
+   */
+  public List<String> getAllTagNames() {
+    return tagRepository.getAllTagNames();
+  }
+
+
 }
