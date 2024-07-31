@@ -6,8 +6,11 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.springframework.stereotype.Service;
+import java.util.concurrent.CompletableFuture;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /** Service class for managing Plant entities */
 @Service
@@ -16,7 +19,7 @@ public class TagService {
   private final TagRepository tagRepository;
 
   private final WriteEmail writeEmail;
-
+  private final ExecutorService executorService;
   /**
    * Constructs a TagService with the TagRepository
    *
@@ -26,6 +29,7 @@ public class TagService {
 
     this.tagRepository = tagRepository;
     this.writeEmail = writeEmail;
+    this.executorService = Executors.newCachedThreadPool();
   }
 
   /**
@@ -63,7 +67,7 @@ public class TagService {
    * Gets a list of all unique tags in the system that do not exist in the specified garden
    *
    * @param id the id of the garden
-   * @return a list of all unique tags in the system that do not exist in the specified garden
+   * @return a set of all unique tags in the system that do not exist in the specified garden
    */
   public Set<String> getUniqueTagNames(Long id) {
     Set<String> uniqueTagNames = new HashSet<>();
@@ -90,9 +94,13 @@ public class TagService {
     gardener.setBadWordCount(gardener.getBadWordCount() + 1);
 
     if (gardener.getBadWordCount() == 5) {
-      writeEmail.sendTagWarningEmail(gardener);
-      return "You have added an inappropriate tag for the fifth time";
+      //This runAsync is added because error message was returning after sending an email which was quite slow considering UX.
+      //This will enable system sending email in the background asynchronously and return the message asap.
+      CompletableFuture.runAsync(() -> {
+        writeEmail.sendTagWarningEmail(gardener);
+      }, executorService);
 
+      return "You have added an inappropriate tag for the fifth time";
     } else if (gardener.getBadWordCount() == 6) {
 
       //maybe we can do the action to ban the account here(??)
