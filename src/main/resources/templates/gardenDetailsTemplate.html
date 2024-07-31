@@ -10,13 +10,12 @@
 </div>
 <div class="garden-details-container">
     <div class="container" style="margin: 0; width: 1200px">
-        <h1 class="garden-details-links">Garden Details</h1>
+        <h2 class="garden-details-links"><span th:text="${garden.name}"></span></h2>
 
         <div class="left-details-container">
-            <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
             <p><strong>Location:</strong> <span th:text="${garden.getFullLocation()}"></span></p>
             <p>
-                <strong>Size:</strong> <span th:if="${garden.size != null}" th:text="${garden.size + ' m^2'}"></span>
+                <strong>Size:</strong> <span th:if="${garden.size != null}" th:text="${garden.size + ' m&sup2;'}"></span>
             </p>
             <p><strong>Description:</strong> <span th:text="${garden.description}"></span></p>
             <div id="tag-container">
