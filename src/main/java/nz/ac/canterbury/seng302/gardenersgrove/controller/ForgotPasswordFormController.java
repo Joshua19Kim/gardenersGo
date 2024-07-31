@@ -29,19 +29,18 @@ public class ForgotPasswordFormController {
 
     private final String confirmationMessage = "An email was sent to the address if it was recognised";
 
-    private final String url;
+    @Value("${staging.url")
+    private String url;
 
     @Autowired
     public ForgotPasswordFormController(GardenerFormService gardenerFormService,
                                         TokenService tokenService,
                                         EmailUserService emailService,
-                                        WriteEmail writeEmail,
-                                        @Value("${staging.url}") String url) {
+                                        WriteEmail writeEmail) {
         this.gardenerFormService = gardenerFormService;
         this.tokenService = tokenService;
         this.emailService = emailService;
         this.writeEmail = writeEmail;
-        this.url = url;
     }
 
     /**

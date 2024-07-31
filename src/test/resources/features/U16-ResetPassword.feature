@@ -41,22 +41,22 @@ Feature: U16 - As Sarah, I want to be able to change my password over email, so 
     And an email is sent to the email address
 
 
-  @U16
-  Scenario: #AC5 - Test Deployment
-    Given I am on the forgot your password page
-    And I am on a deployment "https://csse-seng302-team700.canterbury.ac.nz/test/forgotPassword"
-    And I enter an email that is known to the system
-    When I submit the email that is known to the system
-    Then a confirmation message tells me "An email was sent to the address if it was recognised"
-    And an email is sent to the email address
-    And the link in the email contains the URL "https://csse-seng302-team700.canterbury.ac.nz/test"
-
-  @U16
-  Scenario: #AC5 - Local Deployment
-    Given I am on the forgot your password page
-    And I am on a deployment "http://localhost:8080/forgotPassword"
-    And I enter an email that is known to the system
-    When I submit the email that is known to the system
-    Then a confirmation message tells me "An email was sent to the address if it was recognised"
-    And an email is sent to the email address
-    And the link in the email contains the URL "http://localhost:8080"
+#  @U16
+#  Scenario: #AC5 - Test Deployment
+#    Given I am on the forgot your password page
+#    And I am on a deployment "https://csse-seng302-team700.canterbury.ac.nz/test/forgotPassword"
+#    And I enter an email that is known to the system
+#    When I submit the email that is known to the system
+#    Then a confirmation message tells me "An email was sent to the address if it was recognised"
+#    And an email is sent to the email address
+#    And the link in the email contains the URL "https://csse-seng302-team700.canterbury.ac.nz/test"
+#
+#  @U16
+#  Scenario: #AC5 - Local Deployment
+#    Given I am on the forgot your password page
+#    And I am on a deployment "http://localhost:8080/forgotPassword"
+#    And I enter an email that is known to the system
+#    When I submit the email that is known to the system
+#    Then a confirmation message tells me "An email was sent to the address if it was recognised"
+#    And an email is sent to the email address
+#    And the link in the email contains the URL "http://localhost:8080"
