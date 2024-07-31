@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en-uk">
-<head>
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <title>Garden Details</title>
     <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
 </head>
 <body>
 
-<nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
+<div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div id="location-error" th:if="${date == null}">Location not found, please update your location to see the weather
 </div>
 <div class="garden-details-container">
