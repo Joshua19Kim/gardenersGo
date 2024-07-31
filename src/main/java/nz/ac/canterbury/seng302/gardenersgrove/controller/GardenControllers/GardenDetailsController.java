@@ -361,7 +361,7 @@ public class GardenDetailsController {
                 model.addAttribute("tag", tag);
                 model.addAttribute("allTags", tagService.getUniqueTagNames(id));
                 model.addAttribute("tags", tagService.getTags(garden.getId()));
-                model.addAttribute("tagValid", warningMessage);
+                model.addAttribute("tagWarning", warningMessage);
                 return "gardenDetailsTemplate";
             }
         }
