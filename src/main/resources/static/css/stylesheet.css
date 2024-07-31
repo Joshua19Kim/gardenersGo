@@ -273,7 +273,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     height: auto;
 }
 
-#tag-error-message {
+.tag-error-message {
     color: red;
     text-align: left;
     animation: fadeOut 2s forwards;
@@ -1266,9 +1266,4 @@ form.search-bar::after {
 
 .create-garden-row > div:last-child {
     margin-right: 0;
-}
-
-.notifications-container {
-    display: flex;
-    flex-direction: column;
 }

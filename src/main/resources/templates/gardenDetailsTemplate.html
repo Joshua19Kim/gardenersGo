@@ -45,7 +45,8 @@
                    onclick="submitTag()">+</a>
             </div>
             <div id="tag-error-container">
-                <p id="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
+                <p class="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
+                <p class="tag-error-message" th:value="${tagWarning}" th:utext="${tagWarning}"></p>
             </div>
         </div>
 
@@ -170,17 +171,12 @@
             </div>
         </div>
     </div>
-    <div class="notifications-container">
-        <div id="notification" class="notification">
-            <p th:text="${wateringTip}"></p>
-            <form id="lastNotifiedForm" method="post" th:action="@{../gardens/details/dismissNotification}">
-                <input th:name="gardenId" th:value="${garden.id}" type="hidden">
-                <button type="submit" onclick="closeNotification()" class="close-button">x</button>
-            </form>
-        </div>
-        <div id="tagWarning" class="notification">
-            <p>You have added an inappropriate tag for the fifth time</p>
-        </div>
+    <div id="notification" class="notification" th:if="${wateringTip}">
+        <p th:text="${wateringTip}"></p>
+        <form id="lastNotifiedForm" method="post" th:action="@{../gardens/details/dismissNotification}">
+            <input th:name="gardenId" th:value="${garden.id}" type="hidden">
+            <button type="submit" onclick="closeNotification()" class="close-button">x</button>
+        </form>
     </div>
 </div>
 
