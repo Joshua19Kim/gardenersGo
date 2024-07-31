@@ -6,137 +6,44 @@
     }
     console.log("Cookie: " + document.cookie);
 </script>
-<style>
-    .nav-item {
-        padding: 7px 12px;
-        background-color: #8dab6e;
-        margin: 5px;
-        border-radius: 15px;
-        font-size: 14px;
-    }
 
-    .nav-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-    }
-
-    .left-nav, .right-nav {
-        display: flex;
-        flex: 1;
-    }
-
-    .left-nav {
-        justify-content: flex-end;
-        margin-right: 18%;
-    }
-
-    .right-nav {
-        justify-content: flex-start;
-        margin-left: 18%;
-    }
-
-    .navbar-brand {
-        flex: 0 0 auto;
-        margin: 0 2rem; /* Adjust the margin to control spacing */
-        font-size: 32px;
-        font-weight: bold;
-    }
-
-    .nav-link {
-        color: #fffdf6 ;
-    }
-
-    .nav-link:hover {
-        color: #3A5A40 ;
-    }
-
-</style>
-<body>
-<nav class="navbar navbar-expand-lg navbar-light mt-2">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="nav-container">
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <div class="left-nav">
-                <ul class="navbar-nav mr-auto" id="left-nav">
-                    <li class="nav-item">
-                        <a class="nav-link btn-custom" th:href="@{/gardens}">My Gardens</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-custom" th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-custom" th:href="@{/browseGardens}">Browse Gardens</a>
-                    </li>
-                </ul>
+<nav>
+    <h1 xmlns:sec="http://www.w3.org/1999/xhtml">Gardener's Grove</h1>
+    <ul>
+        <li>
+            <div class="dropdown">
+                <a th:href="@{/gardens}">
+                    <button class="dropbtn">My Gardens</button>
+                </a>
+                <div class="dropdown-content">
+                    <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
+                        <!-- Iterate over the list of gardens and display them -->
+                        <a th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a>
+                    </th:block>
+                </div>
             </div>
-            <div class="navbar-brand" id="navbar-name">
-                <a class="navbar-text" th:href="@{/home}">Gardener's Grove</a>
-            </div>
-            <div class="right-nav">
-                <ul class="navbar-nav ml-auto" id="right-nav">
-                    <li class="nav-item">
-                        <a class="nav-link btn-custom" th:href="@{/manageFriends}">Manage Friends</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-custom" th:href="@{/user}">My Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-custom" href="#" onclick="logout(event)">Logout</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+        </li>
+        <li>
+            <a th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>
+        </li>
+        <li>
+            <a th:href="@{/user}">My Profile</a>
+        </li>
+        <li>
+            <a th:href="@{/manageFriends}">Manage Friends</a>
+        </li>
+        <li>
+            <a th:href="@{/browseGardens}">Browse Gardens</a>
+        </li>
+        <li>
+        <li sec:authorize="isAuthenticated()">
+            <a href="#" onclick="logout(event)">Logout</a>
+            <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
+                <input type="submit" value="Logout"/>
+                <!--                old code below: -->
+                <!--            <form method="POST" th:action="@{logout}">-->
+                <!--                <input type="submit" value="Logout"/>-->
+            </form>
+        </li>
+    </ul>
 </nav>
-
-<form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
-    <input type="submit" value="Logout"/>
-</form>
-
-
-
-
-<!--<ul>-->
-<!--    <li>-->
-<!--        <div class="dropdown">-->
-<!--            <a th:href="@{/gardens}">-->
-<!--                <button class="dropbtn">My Gardens</button>-->
-<!--            </a>-->
-<!--            <div class="dropdown-content">-->
-<!--                <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">-->
-<!--                    &lt;!&ndash; Iterate over the list of gardens and display them &ndash;&gt;-->
-<!--                    <a th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a>-->
-<!--                </th:block>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </li>-->
-<!--    <li>-->
-<!--        <a th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>-->
-<!--    </li>-->
-<!--    <li>-->
-<!--        <a th:href="@{/user}">My Profile</a>-->
-<!--    </li>-->
-<!--    <li>-->
-<!--        <a th:href="@{/manageFriends}">Manage Friends</a>-->
-<!--    </li>-->
-<!--    <li>-->
-<!--        <a th:href="@{/browseGardens}">Browse Gardens</a>-->
-<!--    </li>-->
-<!--    <li>-->
-<!--    <li sec:authorize="isAuthenticated()">-->
-<!--        <a href="#" onclick="logout(event)">Logout</a>-->
-<!--        <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">-->
-<!--            <input type="submit" value="Logout"/>-->
-<!--            &lt;!&ndash;                old code below: &ndash;&gt;-->
-<!--            &lt;!&ndash;            <form method="POST" th:action="@{logout}">&ndash;&gt;-->
-<!--            &lt;!&ndash;                <input type="submit" value="Logout"/>&ndash;&gt;-->
-<!--        </form>-->
-<!--    </li>-->
-
-<!--</ul>-->
-
-
