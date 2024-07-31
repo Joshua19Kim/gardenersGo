@@ -359,6 +359,11 @@ public class GardenDetailsController {
             } else {
                 gardener.setBadWordCount(gardener.getBadWordCount() + 1); // increase bad word count of gardener
                 gardenerFormService.addGardener(gardener);
+
+                if (gardener.getBadWordCount() == 5) {
+                    model.addAttribute("tagWarning", "You have added an inappropriate tag for the fifth time");
+                }
+
                 model.addAttribute("garden", garden);
                 model.addAttribute("tag", tag);
                 model.addAttribute("allTags", tagService.getUniqueTagNames(id));

@@ -1268,3 +1268,7 @@ form.search-bar::after {
     margin-right: 0;
 }
 
+.notifications-container {
+    display: flex;
+    flex-direction: column;
+}

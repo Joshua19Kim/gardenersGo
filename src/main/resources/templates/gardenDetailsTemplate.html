@@ -170,14 +170,18 @@
             </div>
         </div>
     </div>
-    <div id="notification" class="notification" th:if="${wateringTip}">
-        <p th:text="${wateringTip}"></p>
-        <form id="lastNotifiedForm" method="post" th:action="@{../gardens/details/dismissNotification}">
-            <input th:name="gardenId" th:value="${garden.id}" type="hidden">
-            <button type="submit" onclick="closeNotification()" class="close-button">x</button>
-        </form>
+    <div class="notifications-container">
+        <div id="notification" class="notification">
+            <p th:text="${wateringTip}"></p>
+            <form id="lastNotifiedForm" method="post" th:action="@{../gardens/details/dismissNotification}">
+                <input th:name="gardenId" th:value="${garden.id}" type="hidden">
+                <button type="submit" onclick="closeNotification()" class="close-button">x</button>
+            </form>
+        </div>
+        <div id="tagWarning" class="notification">
+            <p>You have added an inappropriate tag for the fifth time</p>
+        </div>
     </div>
-
 </div>
 
 <script th:src="@{/javascript/tagAutocomplete.js}"></script>
@@ -196,38 +200,16 @@
         }
     }
 
-    function getCurrentDay() {
-        const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-        // const day = weekday[date.getDay()];
-
-    }
-
     function getDay(date) {
         const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         const day = weekday[date.getDay()];
         document.getElementById(date).innerText = day;
 
     }
-    function handleImageClick(plantId) {
-        document.getElementById('fileInput_' + plantId).click();
-    }
-    function handleImageChange(plantId) {
-        document.getElementById('uploadPlantForm_' + plantId).submit();
-    }
-
-    // const currentDate = new Date();
-    // const dateOptions = {
-    //     weekday: 'long',
-    //     day: 'numeric',
-    //     month: 'long',
-    //     year: 'numeric'
-    // };
-    // document.getElementById("currentDateDisplay").innerText = currentDate.toLocaleString("en-Nz", dateOptions);
 
     function closeNotification() {
         document.getElementById('notification').style.display = 'none';
     }
-
 </script>
 
 </body>
