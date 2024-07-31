@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -86,8 +87,8 @@ public class GardenService {
      * @return a page of garden objects
      */
     public Page<Garden> getGardensPaginated(int pageNo, int pageSize)  {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return gardenRepository.findAll(pageable);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("creation_date").descending());
+        return gardenRepository.findAllPublicGardens(pageable);
     }
 
 }
