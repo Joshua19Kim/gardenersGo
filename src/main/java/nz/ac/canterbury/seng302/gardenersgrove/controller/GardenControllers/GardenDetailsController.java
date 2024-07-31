@@ -119,7 +119,7 @@ public class GardenDetailsController {
        if (gardenId == null) {
            return "redirect:/gardens";
        }
-       model.addAttribute("gardenId", gardenId); ////////////////////////////////
+       model.addAttribute("gardenId", gardenId);
        Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
        if (garden.isPresent()) {
            model.addAttribute("requestURI", requestService.getRequestURI(request));
@@ -145,13 +145,11 @@ public class GardenDetailsController {
                }
                if (currentWeather != null && prevWeathers != null) {
                    model.addAttribute("date", currentWeather.getDate());
-//          model.addAttribute("day", currentWeather.getDay());
                    model.addAttribute("temperature", currentWeather.getTemperature());
                    model.addAttribute("weatherImage", currentWeather.getWeatherImage());
                    model.addAttribute("weatherDescription", currentWeather.getWeatherDescription());
                    model.addAttribute("humidity", currentWeather.getHumidity());
                    model.addAttribute("forecastDates", currentWeather.getForecastDates());
-//          model.addAttribute("forecastDays", currentWeather.getForecastDays());
                    model.addAttribute("forecastMinTemperature", currentWeather.getForecastMinTemperatures());
                    model.addAttribute("forecastMaxTemperature", currentWeather.getForecastMaxTemperatures());
                    model.addAttribute("forecastWeatherImage", currentWeather.getForecastImages());
