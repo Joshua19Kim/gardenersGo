@@ -119,6 +119,7 @@ public class GardenDetailsController {
        if (gardenId == null) {
            return "redirect:/gardens";
        }
+       model.addAttribute("gardenId", gardenId); ////////////////////////////////
        Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
        if (garden.isPresent()) {
            model.addAttribute("requestURI", requestService.getRequestURI(request));

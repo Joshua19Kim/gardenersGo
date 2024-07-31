@@ -16,10 +16,16 @@ junit:
   stage: test
   script:
     - ./gradlew test
-    - ls ./build/jacoco
-  artifacts:
-    paths:
-      - build/jacoco/test-report.xml
+
+integration-tests:
+  stage: test
+  script:
+    - ./gradlew integration
+
+integration-cucumber:
+  stage: test
+  script:
+    - ./gradlew cucumber
 
 sonarqube-report:
   stage: sonarqube
