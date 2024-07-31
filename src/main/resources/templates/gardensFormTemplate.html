@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en-uk">
-<head>
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Create New Garden</title>
   <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
 </head>
 <body>
 
-<nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
+<div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div>
   <div id="form" class="create-garden">
     <h1> Create New Garden </h1>
