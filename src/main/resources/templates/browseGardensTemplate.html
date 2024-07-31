@@ -17,7 +17,7 @@
         </div>
         <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
            onclick="transformToInput()">+</a>
-        <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{browseGardens}">
+        <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{browseGardens/addTag}">
             <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
                    th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
                    maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus

@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,10 @@ public class BrowseGardensController {
             @RequestParam(name="tags", required = false) List<String> tags,
             Model model
     ) {
+        if(model.containsAttribute("pageSize") && model.containsAttribute("pageNo")) {
+            pageSize = (int) model.getAttribute("pageSize");
+            pageNo = (int) model.getAttribute("pageNo");
+        }
         Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
@@ -61,48 +67,48 @@ public class BrowseGardensController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-
-        model.addAttribute("allTags", tagService.getAllTagNames());
-        model.addAttribute("tags", tags);
+        if(!model.containsAttribute("tags") && !model.containsAttribute("allTags")) {
+            List<String> allTags = tagService.getAllTagNames();
+            if(tags != null) {
+                for(String selectedTag: tags) {
+                    allTags.remove(selectedTag);
+                }
+            }
+            model.addAttribute("allTags", allTags);
+            model.addAttribute("tags", tags);
+        }
 
         return "browseGardensTemplate";
     }
 
-    @PostMapping("/browseGardens")
+    @PostMapping("/browseGardens/addTag")
     public String addTag(
             @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
             @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
             @RequestParam(name="tag-input") String tag,
             @RequestParam(name="tags", required = false) List<String> tags,
-            Model model
+            Model model, RedirectAttributes redirectAttributes
     ) {
-        Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
-        model.addAttribute("gardensPage", gardensPage);
-        int totalPages = gardensPage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
+        redirectAttributes.addAttribute("pageNo", pageNo);
+        redirectAttributes.addAttribute("pageSize", pageSize);
         if(tags == null) {
             tags = new ArrayList<>();
         }
         List<String> allTags = tagService.getAllTagNames();
         if(allTags.contains(tag)) {
             tags.add(tag);
-            for(String selectedTag: tags) {
-                allTags.remove(selectedTag);
-            }
         } else {
             String errorMessage = "No tag matching " + tag;
-            model.addAttribute("tag", tag);
-            model.addAttribute("tagValid", errorMessage);
+            redirectAttributes.addFlashAttribute("tag", tag);
+            redirectAttributes.addFlashAttribute("tagValid", errorMessage);
+        }
+        for(String selectedTag: tags) {
+            allTags.remove(selectedTag);
         }
 
-        model.addAttribute("tags", tags);
-        model.addAttribute("allTags", allTags);
+        redirectAttributes.addFlashAttribute("tags", tags);
+        redirectAttributes.addFlashAttribute("allTags", allTags);
 
-        return "browseGardensTemplate";
+        return "redirect:/browseGardens";
     }
 }
