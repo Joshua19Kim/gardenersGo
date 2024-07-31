@@ -102,6 +102,11 @@ public class TagModerationFeature {
     public void the_submitted_tag_is_evaluated_for_appropriateness() {
         tag = new Tag("Fuck", garden);
         when(tagService.addTag(any())).thenReturn(tag);
+        when(tagService.addBadWordCount(gardener)).thenAnswer(invocation -> {
+            Gardener gardener = invocation.getArgument(0);
+            gardener.setBadWordCount(gardener.getBadWordCount() + 1);
+            return "Submitted tag fails moderation requirements";
+        });
     }
 
     @When("I confirm the tag")
