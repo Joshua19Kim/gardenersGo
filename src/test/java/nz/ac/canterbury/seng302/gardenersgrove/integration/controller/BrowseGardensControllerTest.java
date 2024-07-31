@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.ceil;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = BrowseGardensController.class)
@@ -46,6 +47,8 @@ public class BrowseGardensControllerTest {
 
     private List<Garden> gardens;
 
+    private List<String> allTags;
+
     @BeforeEach
     public void setUp() {
         testGardener = new Gardener("Test", "Gardener",
@@ -56,6 +59,10 @@ public class BrowseGardensControllerTest {
         gardens = new ArrayList<>();
         for(int i = 0; i < 15; i++) {
             gardens.add(new Garden("Test garden" + i, "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, ""));
+        }
+        allTags = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            allTags.add("tag" + i);
         }
 
     }
@@ -105,6 +112,64 @@ public class BrowseGardensControllerTest {
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attributeDoesNotExist("pageNumbers"))
                 .andExpect(view().name("browseGardensTemplate"));
+    }
+
+    @Test
+    @WithMockUser
+    public void TagAdded_ValidTag_RedirectToBrowseGardens() throws Exception {
+        String tag = "tag2";
+        List<String> updatedAllTags = new ArrayList<>(allTags);
+        updatedAllTags.remove(tag);
+        Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
+        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
+                .param("tag-input", tag)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/browseGardens"))
+                .andExpect(flash().attribute("allTags", updatedAllTags))
+                .andExpect(flash().attribute("tags", List.of(tag)))
+                .andExpect(flash().attribute("pageNo", defaultPageNumber));
+    }
+
+    @Test
+    @WithMockUser
+    public void TagAdded_InvalidTag_RedirectToBrowseGardens() throws Exception {
+        String tag = "tag20";
+        String errorMessage = "No tag matching " + tag;
+        Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
+        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
+                        .param("tag-input", tag)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/browseGardens"))
+                .andExpect(flash().attribute("allTags", allTags))
+                .andExpect(flash().attribute("tags", List.of()))
+                .andExpect(flash().attribute("tag", tag))
+                .andExpect(flash().attribute("tagValid", errorMessage))
+                .andExpect(flash().attribute("pageNo", defaultPageNumber));
+
+    }
+
+    @Test
+    @WithMockUser
+    public void TagAdded_TagsExist_RedirectToBrowseGardens() throws Exception {
+        String tag = "tag3";
+        int pageNo = 2;
+        List<String> existingTags = new ArrayList<>(allTags.subList(0, 4));
+        List<String> updatedAllTags = new ArrayList<>(allTags.subList(4, allTags.size()));
+        Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
+        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
+                        .param("tag-input", tag)
+                        .param("tags", existingTags.get(0))
+                        .param("tags", existingTags.get(1))
+                        .param("tags", existingTags.get(2))
+                        .param("pageNo", String.valueOf(pageNo))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/browseGardens"))
+                .andExpect(flash().attribute("allTags", updatedAllTags))
+                .andExpect(flash().attribute("tags", existingTags))
+                .andExpect(flash().attribute("pageNo", pageNo));
     }
 
 }

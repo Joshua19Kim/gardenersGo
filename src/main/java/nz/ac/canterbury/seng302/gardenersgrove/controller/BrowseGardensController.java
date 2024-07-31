@@ -96,12 +96,12 @@ public class BrowseGardensController {
      */
     @PostMapping("/browseGardens/addTag")
     public String addTag(
-            @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
+            @RequestParam(name="pageNo", defaultValue = "0") String pageNo,
             @RequestParam(name="tag-input") String tag,
             @RequestParam(name="tags", required = false) List<String> tags,
             Model model, RedirectAttributes redirectAttributes
     ) {
-        redirectAttributes.addAttribute("pageNo", pageNo);
+        redirectAttributes.addFlashAttribute("pageNo", pageNo);
         if(tags == null) {
             tags = new ArrayList<>();
         }
