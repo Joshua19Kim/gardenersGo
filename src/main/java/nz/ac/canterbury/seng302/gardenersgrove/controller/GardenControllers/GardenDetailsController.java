@@ -119,6 +119,7 @@ public class GardenDetailsController {
        if (gardenId == null) {
            return "redirect:/gardens";
        }
+       model.addAttribute("gardenId", gardenId); ////////////////////////////////
        Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
        if (garden.isPresent()) {
            model.addAttribute("requestURI", requestService.getRequestURI(request));
@@ -177,7 +178,7 @@ public class GardenDetailsController {
                Boolean isFriend = relationshipService
                        .getCurrentUserRelationships(gardenOwner.getId())
                        .contains(currentUserOptional.get());
-               if (isFriend) {
+               if (isFriend || garden.get().getIsGardenPublic()) {
                    model.addAttribute("gardener", garden.get().getGardener());
                    model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
                    return "unauthorizedGardenDetailsTemplate";

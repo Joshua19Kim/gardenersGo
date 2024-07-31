@@ -69,14 +69,6 @@ public class WriteEmail {
 
     }
 
-    /**
-     * Get the url of the current server to create the reset password link
-     * @param request the request object
-     */
-    public String getAppUrl(HttpServletRequest request) {
-        return request.getServerName() + ":" + request.getServerPort();
-    }
-
         /**
          *
          * @param baseURL the path of the server

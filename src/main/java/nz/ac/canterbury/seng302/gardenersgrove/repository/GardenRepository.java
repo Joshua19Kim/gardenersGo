@@ -60,4 +60,8 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
     @Modifying
     @Query(value = "UPDATE garden SET last_notified = ?2 WHERE id = ?1 ", nativeQuery = true)
     void updateLastNotifiedbyId(Long gardenId, LocalDate date);
+
+    @Query(value= "select * from garden where public_garden is true", nativeQuery = true)
+    Page<Garden> findAllPublicGardens(Pageable pageable);
+
 }
