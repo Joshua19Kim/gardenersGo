@@ -90,7 +90,7 @@ public class TagService {
     gardener.setBadWordCount(gardener.getBadWordCount() + 1);
 
     if (gardener.getBadWordCount() == 5) {
-//      writeEmail.sendTagWarningEmail(gardener);
+      writeEmail.sendTagWarningEmail(gardener);
       return "You have added an inappropriate tag for the fifth time";
 
     } else if (gardener.getBadWordCount() == 6) {

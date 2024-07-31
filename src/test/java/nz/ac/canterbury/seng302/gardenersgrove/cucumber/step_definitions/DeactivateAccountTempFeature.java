@@ -5,34 +5,40 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;import org.springframework.beans.factory.annotation.Autowired;
+
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
-import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.util.WordFilter;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-public class TagModerationFeature {
+public class DeactivateAccountTempFeature {
 
     @Autowired
-    private MockMvc mockMvcGardenDetailsController;
+    private MockMvc mockMvc;
     @Autowired
     private TagService tagService;
     @Autowired
     private GardenerFormService gardenerFormService;
     @Autowired
     private GardenService gardenService;
+    private Gardener gardener;
     private Garden garden;
     private Tag tag;
-    private Gardener gardener;
+    private ResultActions resultActions;
 
-    @Before("@U22")
+    @Before("@U23")
     public void setUp() {
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail("a@gmail.com");
         gardener = gardenerOptional.get();
@@ -40,40 +46,23 @@ public class TagModerationFeature {
         garden = gardenOptional.get();
     }
 
-    @Given("I am adding a valid tag")
-    public void i_am_adding_a_valid_tag() {
-        tag = new Tag("My tag", garden);
-
-    }
-
-    @Given("I add an inappropriate tag")
-    public void the_submitted_tag_is_evaluated_for_appropriateness() {
+    @Given("I have added inappropriate words four times and am adding one more time")
+    public void i_have_added_inappropriate_words_four_times_and_am_adding_one_more_time() {
+        gardener.setBadWordCount(4);
+        gardenerFormService.addGardener(gardener);
         tag = new Tag("Fuck", garden);
     }
-
-    @When("I confirm the tag")
-    public void i_confirm_the_tag() throws Exception {
-        mockMvcGardenDetailsController
+    @When("I try to submit the tag")
+    public void i_try_to_submit_the_tag() throws Exception {
+        resultActions = mockMvc
                 .perform(
                         (MockMvcRequestBuilders.post("/gardens/addTag")
                                 .param("tag-input", tag.getName())
                                 .param("gardenId", "1")
-                                .with(csrf())))
-                .andReturn();
+                                .with(csrf())));
     }
-    @Then("The tag is checked for offensive or inappropriate words")
-    public void the_tag_is_checked_for_offensive_or_inappropriate_words() {
-        assertEquals(false, WordFilter.doesContainBadWords(tag.getName()));
-    }
-
-    @Then("the tag is not added to the list of user-defined tags")
-    public void the_tag_is_not_added_to_the_list_of_user_defined_tags() {
-        assertEquals(tagService.findTagByNameAndGarden("Fuck", garden), Optional.empty());
-    }
-
-    @Then("the users bad word counter is incremented by one")
-    public void the_users_bad_word_counter_is_incremented_by_one() {
-        gardenerFormService.addGardener(gardener);
-        assertEquals(1, gardener.getBadWordCount());
+    @Then("the system shows the warning message and send an warning email.")
+    public void the_system_shows_the_warning_message_and_send_an_warning_email() throws Exception {
+        resultActions.andExpect(model().attribute("tagWarning", "You have added an inappropriate tag for the fifth time"));
     }
 }
