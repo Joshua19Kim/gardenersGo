@@ -89,4 +89,22 @@ public class BrowseGardensControllerTest {
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
+    @Test
+    @WithMockUser
+    public void BrowseGardensPageRequested_NoGardens_PageReturned() throws Exception {
+        int pageNumber = 1;
+        int pageSize = 3;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        List<Garden> emptyList = new ArrayList<>();
+        Page<Garden> gardenPage = new PageImpl<>(emptyList, pageable, emptyList.size());
+        Mockito.when(gardenService.getGardensPaginated(pageNumber, pageSize)).thenReturn(gardenPage);
+        mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens")
+                        .param("pageNo", String.valueOf(pageNumber))
+                        .param("pageSize", String.valueOf(pageSize)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("gardensPage", gardenPage))
+                .andExpect(model().attributeDoesNotExist("pageNumbers"))
+                .andExpect(view().name("browseGardensTemplate"));
+    }
+
 }
