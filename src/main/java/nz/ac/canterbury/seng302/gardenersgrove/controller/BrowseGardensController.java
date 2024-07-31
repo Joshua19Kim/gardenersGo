@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -48,6 +49,7 @@ public class BrowseGardensController {
     public String browseGardens(
             @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
             @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(name="tags", required = false) List<String> tags,
             Model model
     ) {
         Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
@@ -60,8 +62,46 @@ public class BrowseGardensController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
 
-        model.addAttribute("allTags", tagService.getAllTags());
-        model.addAttribute("tags", new ArrayList<String>());
+        model.addAttribute("allTags", tagService.getAllTagNames());
+        model.addAttribute("tags", tags);
+
+        return "browseGardensTemplate";
+    }
+
+    @PostMapping("/browseGardens")
+    public String addTag(
+            @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
+            @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(name="tag-input") String tag,
+            @RequestParam(name="tags", required = false) List<String> tags,
+            Model model
+    ) {
+        Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
+        model.addAttribute("gardensPage", gardensPage);
+        int totalPages = gardensPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+        if(tags == null) {
+            tags = new ArrayList<>();
+        }
+        List<String> allTags = tagService.getAllTagNames();
+        if(allTags.contains(tag)) {
+            tags.add(tag);
+            for(String selectedTag: tags) {
+                allTags.remove(selectedTag);
+            }
+        } else {
+            String errorMessage = "No tag matching " + tag;
+            model.addAttribute("tag", tag);
+            model.addAttribute("tagValid", errorMessage);
+        }
+
+        model.addAttribute("tags", tags);
+        model.addAttribute("allTags", allTags);
 
         return "browseGardensTemplate";
     }

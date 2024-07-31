@@ -17,12 +17,17 @@
         </div>
         <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
            onclick="transformToInput()">+</a>
-        <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{addTag}">
+        <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{browseGardens}">
             <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
                    th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
                    maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus
                    th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
+            <input type="hidden" name="pageSize" th:value="${gardensPage.size}" >
+            <input type="hidden" name="pageNo" th:value="${gardensPage.number}" >
             <input type="hidden" name="tag-input" id="hidden-tag-input">
+            <div th:each="tag : ${tags}">
+                <input type="hidden" name="tags" th:value="${tag}" />
+            </div>
             <datalist id="tagList">
                 <option th:each="tag : ${allTags}" th:value="${tag}" th:text="${tag}"></option>
             </datalist>
