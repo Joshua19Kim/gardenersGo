@@ -10,8 +10,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WordFilter;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,87 +30,44 @@ import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-@SpringBootTest
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class TagModerationFeature {
-    @Mock
-    private GardenService gardenService;
-    @Mock
-    private GardenerFormService gardenerFormService;
-    @Mock
-    private RelationshipService relationshipService;
-    @Mock
-    private RequestService requestService;
-    @Mock
-    private WeatherService weatherService;
-    @Mock
-    private TagService tagService;
-    @Mock
-    private LocationService locationService;
+
+    @Autowired
     private MockMvc mockMvcGardenDetailsController;
+    @Autowired
+    private TagService tagService;
+    @Autowired
+    private GardenerFormService gardenerFormService;
+    @Autowired
+    private GardenService gardenService;
     private Garden garden;
     private Tag tag;
     private Gardener gardener;
 
-
     @Before("@U22")
-    public void setUp() throws IOException, InterruptedException {
-        gardener = new Gardener("Test", "Gardener",
-                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
-                "Password1!");
-        garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", gardener, "");
-        gardenService = Mockito.mock(GardenService.class);
-        gardenerFormService = Mockito.mock(GardenerFormService.class);
-        requestService = Mockito.mock(RequestService.class);
-        relationshipService = Mockito.mock(RelationshipService.class);
-        weatherService = Mockito.mock(WeatherService.class);
-        tagService = Mockito.mock(TagService.class);
-        locationService = Mockito.mock(LocationService.class);
-        HttpResponse<String> response = Mockito.mock(HttpResponse.class);
-        when(response.body()).thenReturn("test");
-        when(locationService.sendRequest(any())).thenReturn(response);
-
-        Authentication authentication = Mockito.mock(Authentication.class);
-        Authentication auth = new UsernamePasswordAuthenticationToken("testgardener@gmail.com", "Password1!");
-        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-        securityContext.setAuthentication(auth);
-        SecurityContextHolder.setContext(securityContext);
-        when(authentication.getName()).thenReturn("testgardener@gmail.com");
-        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
-        when(gardenerFormService.findByEmail(any())).thenReturn(Optional.of(gardener));
-
-        GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService,
-                gardenerFormService,
-                relationshipService,
-                requestService,
-                weatherService,
-                tagService,
-                locationService);
-
-        mockMvcGardenDetailsController = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
+    public void setUp() {
+        Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail("a@gmail.com");
+        gardener = gardenerOptional.get();
+        Optional<Garden> gardenOptional = gardenService.getGarden(1);
+        garden = gardenOptional.get();
     }
 
     @Given("I am adding a valid tag")
     public void i_am_adding_a_valid_tag() {
         tag = new Tag("My tag", garden);
-        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
-        when(tagService.addTag(any())).thenReturn(tag);
+
     }
 
     @Given("I add an inappropriate tag")
     public void the_submitted_tag_is_evaluated_for_appropriateness() {
         tag = new Tag("Fuck", garden);
-        when(tagService.addTag(any())).thenReturn(tag);
-        when(tagService.addBadWordCount(gardener)).thenAnswer(invocation -> {
-            Gardener gardener = invocation.getArgument(0);
-            gardener.setBadWordCount(gardener.getBadWordCount() + 1);
-            return "Submitted tag fails moderation requirements";
-        });
     }
 
     @When("I confirm the tag")
@@ -126,11 +87,12 @@ public class TagModerationFeature {
 
     @Then("the tag is not added to the list of user-defined tags")
     public void the_tag_is_not_added_to_the_list_of_user_defined_tags() {
-        Mockito.verify(tagService, times(0)).addTag(any());
+        assertEquals(tagService.findTagByNameAndGarden("Fuck", garden), Optional.empty());
     }
 
     @Then("the users bad word counter is incremented by one")
     public void the_users_bad_word_counter_is_incremented_by_one() {
+        gardenerFormService.addGardener(gardener);
         assertEquals(1, gardener.getBadWordCount());
     }
 }
