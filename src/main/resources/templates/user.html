@@ -25,7 +25,7 @@
     </div>
 
     <div id="form">
-        <form th:action="@{user}" method="get" id="userForm">
+        <form th:action="@{user}" method="get" id="userForm" novalidate>
             <label for="firstName"> First Name: </label>
             <span id="firstName" th:text="${firstName}"></span>
             <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
@@ -58,18 +58,9 @@
 
             <label for="DoB"> Date of Birth: </label>
             <span id="DoB" th:text="${DoB}"></span>
-            <input class="form-control" data-cy="DoB" id="DoBEdit"
-                   th:name="DoB" th:value="*{DoB}" type="date" style="display: none;">
+            <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;" th:classappend="${(DoBValid != '' && DoBValid != null) ? 'error' : ''}">
             <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
-            <script>
-                document.getElementById("DoBEdit").addEventListener("invalid",
-                    function (event) {
-                        event.preventDefault();
-                        console.log("invalid date");
-                        document.getElementById("DoBEdit").style.border = "1px solid red";
-                        document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";
-                    });
-            </script>
+            <input type="hidden" id="isDoBInvalid" th:name="isDoBInvalid" th:value="false"/>
             <br/>
             <label for="email"> Email: </label>
             <span id="email" th:text="${email}"></span>
@@ -104,6 +95,18 @@
     });
 </script>
 <script>
+    document.getElementById("userForm").addEventListener("submit", function(event) {
+        const dobInput = document.getElementById("DoBEdit");
+        if (!(dobInput.checkValidity())) {
+            console.log("invalid date")
+            event.preventDefault();
+            document.getElementById("isDoBInvalid").value = true;
+            document.getElementById("userForm").submit();
+        } else {
+            console.log("valid date")
+            document.getElementById("isDoBInvalid").value = false;
+        }
+    });
     function handleImageClick() {
         document.getElementById('fileInput').click();
     }
