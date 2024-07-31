@@ -22,7 +22,6 @@
                    th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
                    maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus
                    th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
-            <input type="hidden" name="pageSize" th:value="${gardensPage.size}" >
             <input type="hidden" name="pageNo" th:value="${gardensPage.number}" >
             <input type="hidden" name="tag-input" id="hidden-tag-input">
             <div th:each="tag : ${tags}">
@@ -71,7 +70,7 @@
 <!--Note: should use bootstrap here for pagination. this was just used as a proof of work in spike-->
 <div th:if="${gardensPage.totalPages > 0}" class="pagination"
      th:each="pageNumber : ${pageNumbers}">
-    <a th:href="@{/browseGardens(pageSize=${gardensPage.size}, pageNo=${pageNumber - 1})}"
+    <a th:href="@{/browseGardens(pageNo=${pageNumber - 1})}"
        th:text="${pageNumber}"
        th:class="${pageNumber==gardensPage.number + 1} ? active"></a>
 </div>

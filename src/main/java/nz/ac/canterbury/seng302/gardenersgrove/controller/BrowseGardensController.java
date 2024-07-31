@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -31,11 +32,14 @@ public class BrowseGardensController {
 
     private final TagService tagService;
 
+    private final int pageSize;
+
     @Autowired
     public BrowseGardensController(GardenService gardenService, TagService tagService) {
 
         this.gardenService = gardenService;
         this.tagService = tagService;
+        this.pageSize = 10;
     }
 
     /**
@@ -43,37 +47,19 @@ public class BrowseGardensController {
      * specifying the page number and page size.
      *
      * @param pageNoString the page number
-     * @param pageSizeString the page size
      * @param model the model
      * @return the browse gardens html template which contains the user interface for the browse gardens page
      */
     @RequestMapping("/browseGardens")
     public String browseGardens(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
-            @RequestParam(name="pageSize", defaultValue = "10") String pageSizeString,
             @RequestParam(name="tags", required = false) List<String> tags,
             Model model
     ) {
-        if(model.containsAttribute("pageSize") && model.containsAttribute("pageNo")) {
-            pageSizeString = (String) model.getAttribute("pageSize");
+        if(model.containsAttribute("pageNo")) {
             pageNoString = (String) model.getAttribute("pageNo");
         }
-        int pageNo;
-        int pageSize;
-        // this is to prevent people entering it in the url and causing errors.
-        if(pageNoString.length() * pageSizeString.length() > 10)  {
-            pageNo = 0;
-            pageSize = 10;
-        } else {
-            pageNo = Integer.parseInt(pageNoString, 10);
-            pageSize = Integer.parseInt(pageSizeString, 10);
-            if(pageNo < 0) {
-                pageNo = 0;
-            }
-            if(pageSize <= 0) {
-                pageSize = 10;
-            }
-        }
+        int pageNo = ValidityChecker.validatePageNumber(pageNoString);
         Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
@@ -102,7 +88,6 @@ public class BrowseGardensController {
      * their browse gardens search by
      *
      * @param pageNo the page number
-     * @param pageSize the page size
      * @param tag the tag the user typed in or selected
      * @param tags all the tags the user is filtering by
      * @param model the model
@@ -112,13 +97,11 @@ public class BrowseGardensController {
     @PostMapping("/browseGardens/addTag")
     public String addTag(
             @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
-            @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
             @RequestParam(name="tag-input") String tag,
             @RequestParam(name="tags", required = false) List<String> tags,
             Model model, RedirectAttributes redirectAttributes
     ) {
         redirectAttributes.addAttribute("pageNo", pageNo);
-        redirectAttributes.addAttribute("pageSize", pageSize);
         if(tags == null) {
             tags = new ArrayList<>();
         }
