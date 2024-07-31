@@ -62,7 +62,7 @@ public class ResetPasswordFormController {
         }
         return "redirect:/login"; // Token does not exist
     }
-
+    
     /**
      * Validates and process the submitted reset password form
      * @param password The new password
