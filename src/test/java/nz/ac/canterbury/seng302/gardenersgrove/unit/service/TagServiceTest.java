@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,6 +22,8 @@ public class TagServiceTest {
 
     private TagRepository tagRepository;
 
+    private WriteEmail writeEmail;
+
     private Garden garden;
 
     private final Long gardenId = 1L;
@@ -28,7 +31,7 @@ public class TagServiceTest {
     @BeforeEach
     public void setUp() {
         tagRepository = Mockito.mock(TagRepository.class);
-        tagService = new TagService(tagRepository);
+        tagService = new TagService(tagRepository, writeEmail);
         garden = Mockito.mock(Garden.class);
         garden.setId(gardenId);
     }

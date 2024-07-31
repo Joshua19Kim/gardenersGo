@@ -357,7 +357,6 @@ public class GardenDetailsController {
                 tagService.addTag(newTag);
                 logger.info("Tag '{}' passes moderation checks", tag);
             } else {
-                logger.info("is it adding?");
                 String warningMessage = tagService.addBadWordCount(gardener);
                 gardenerFormService.addGardener(gardener);
                 model.addAttribute("garden", garden);

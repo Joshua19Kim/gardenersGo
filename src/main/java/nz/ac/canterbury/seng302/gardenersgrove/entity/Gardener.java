@@ -49,7 +49,6 @@ public class Gardener {
     private List<Authority> userRoles;
     // Create an encoder with strength 16
 
-
     /** The list of gardens belonging to the gardener. */
     @OneToMany(mappedBy = "gardener")
     private List<Garden> gardens;
