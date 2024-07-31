@@ -54,6 +54,10 @@ public class BrowseGardensController {
             @RequestParam(name="tags", required = false) List<String> tags,
             Model model
     ) {
+        if(model.containsAttribute("pageSize") && model.containsAttribute("pageNo")) {
+            pageSizeString = (String) model.getAttribute("pageSize");
+            pageNoString = (String) model.getAttribute("pageNo");
+        }
         int pageNo;
         int pageSize;
         // this is to prevent people entering it in the url and causing errors.
@@ -61,18 +65,14 @@ public class BrowseGardensController {
             pageNo = 0;
             pageSize = 10;
         } else {
-            pageNo = Integer.parseInt(pageNoString);
-            pageSize = Integer.parseInt(pageNoString);
+            pageNo = Integer.parseInt(pageNoString, 10);
+            pageSize = Integer.parseInt(pageSizeString, 10);
             if(pageNo < 0) {
                 pageNo = 0;
             }
-            if(pageSize < 0) {
+            if(pageSize <= 0) {
                 pageSize = 10;
             }
-        }
-        if(model.containsAttribute("pageSize") && model.containsAttribute("pageNo")) {
-            pageSize = (int) model.getAttribute("pageSize");
-            pageNo = (int) model.getAttribute("pageNo");
         }
         Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
         model.addAttribute("gardensPage", gardensPage);
