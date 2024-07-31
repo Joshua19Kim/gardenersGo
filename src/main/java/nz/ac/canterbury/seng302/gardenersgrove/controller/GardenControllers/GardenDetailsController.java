@@ -357,18 +357,14 @@ public class GardenDetailsController {
                 tagService.addTag(newTag);
                 logger.info("Tag '{}' passes moderation checks", tag);
             } else {
-                gardener.setBadWordCount(gardener.getBadWordCount() + 1); // increase bad word count of gardener
+                logger.info("is it adding?");
+                String warningMessage = tagService.addBadWordCount(gardener);
                 gardenerFormService.addGardener(gardener);
-
-                if (gardener.getBadWordCount() == 5) {
-                    model.addAttribute("tagWarning", "You have added an inappropriate tag for the fifth time");
-                }
-
                 model.addAttribute("garden", garden);
                 model.addAttribute("tag", tag);
                 model.addAttribute("allTags", tagService.getUniqueTagNames(id));
                 model.addAttribute("tags", tagService.getTags(garden.getId()));
-                model.addAttribute("tagValid", "Submitted tag fails moderation requirements");
+                model.addAttribute("tagValid", warningMessage);
                 return "gardenDetailsTemplate";
             }
         }

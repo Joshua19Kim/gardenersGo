@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,17 +13,19 @@ import java.util.*;
 @Service
 public class TagService {
 
-  private TagRepository tagRepository;
+  private final TagRepository tagRepository;
 
-  private EmailUserService emailUserService;
+  private final WriteEmail writeEmail;
 
   /**
    * Constructs a TagService with the TagRepository
    *
    * @param tagRepository is the repo for managing Tags
    */
-  public TagService(TagRepository tagRepository) {
+  public TagService(TagRepository tagRepository, WriteEmail writeEmail) {
+
     this.tagRepository = tagRepository;
+    this.writeEmail = writeEmail;
   }
 
   /**
@@ -87,10 +90,8 @@ public class TagService {
     gardener.setBadWordCount(gardener.getBadWordCount() + 1);
 
     if (gardener.getBadWordCount() == 5) {
-      String emailTitle = "!! Warning for bad words !!";
-      String emailMessage = "You have reached the maximum number of bad words on our web site. If you add another inappropriate tag, Your account will be blocked for one week.";
-      emailUserService.sendEmail(gardener.getEmail(), emailTitle, emailMessage);
-      return "You have added an inappropriate tag for the fifth time, you will receive an warning email.";
+      writeEmail.sendTagWarningEmail(gardener);
+      return "You have added an inappropriate tag for the fifth time";
 
     } else if (gardener.getBadWordCount() == 6) {
 
