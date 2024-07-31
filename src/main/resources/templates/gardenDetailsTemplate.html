@@ -45,7 +45,8 @@
                    onclick="submitTag()">+</a>
             </div>
             <div id="tag-error-container">
-                <p id="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
+                <p class="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
+                <p class="tag-error-message" th:value="${tagWarning}" th:utext="${tagWarning}"></p>
             </div>
         </div>
 
@@ -177,7 +178,6 @@
             <button type="submit" onclick="closeNotification()" class="close-button">x</button>
         </form>
     </div>
-
 </div>
 
 <script th:src="@{/javascript/tagAutocomplete.js}"></script>
@@ -196,38 +196,16 @@
         }
     }
 
-    function getCurrentDay() {
-        const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-        // const day = weekday[date.getDay()];
-
-    }
-
     function getDay(date) {
         const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         const day = weekday[date.getDay()];
         document.getElementById(date).innerText = day;
 
     }
-    function handleImageClick(plantId) {
-        document.getElementById('fileInput_' + plantId).click();
-    }
-    function handleImageChange(plantId) {
-        document.getElementById('uploadPlantForm_' + plantId).submit();
-    }
-
-    // const currentDate = new Date();
-    // const dateOptions = {
-    //     weekday: 'long',
-    //     day: 'numeric',
-    //     month: 'long',
-    //     year: 'numeric'
-    // };
-    // document.getElementById("currentDateDisplay").innerText = currentDate.toLocaleString("en-Nz", dateOptions);
 
     function closeNotification() {
         document.getElementById('notification').style.display = 'none';
     }
-
 </script>
 
 </body>

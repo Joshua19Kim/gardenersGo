@@ -178,7 +178,7 @@ public class GardenDetailsController {
                Boolean isFriend = relationshipService
                        .getCurrentUserRelationships(gardenOwner.getId())
                        .contains(currentUserOptional.get());
-               if (isFriend || garden.get().getIsGardenPublic()) {
+               if (isFriend) {
                    model.addAttribute("gardener", garden.get().getGardener());
                    model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
                    return "unauthorizedGardenDetailsTemplate";
@@ -356,16 +356,19 @@ public class GardenDetailsController {
                 Tag newTag = new Tag(tag, garden);
                 tagService.addTag(newTag);
                 logger.info("Tag '{}' passes moderation checks", tag);
-            }else {
-                logger.info("adding number? " + gardener.getBadWordCount());
-                // In this function, count will be increased and check whether this dodgy man tried 5th or 6th times to ban.
-                String warningMessage = tagService.addBadWordCount(gardener);
+            } else {
+                gardener.setBadWordCount(gardener.getBadWordCount() + 1); // increase bad word count of gardener
+                gardenerFormService.addGardener(gardener);
+
+                if (gardener.getBadWordCount() == 5) {
+                    model.addAttribute("tagWarning", "You have added an inappropriate tag for the fifth time");
+                }
 
                 model.addAttribute("garden", garden);
                 model.addAttribute("tag", tag);
                 model.addAttribute("allTags", tagService.getUniqueTagNames(id));
                 model.addAttribute("tags", tagService.getTags(garden.getId()));
-                model.addAttribute("tagValid", warningMessage);
+                model.addAttribute("tagValid", "Submitted tag fails moderation requirements");
                 return "gardenDetailsTemplate";
             }
         }

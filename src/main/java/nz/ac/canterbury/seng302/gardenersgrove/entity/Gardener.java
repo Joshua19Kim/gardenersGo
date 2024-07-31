@@ -163,7 +163,9 @@ public class Gardener {
 
     public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
 
-    public void setBadWordCount(int badWordCount) { this.badWordCount = badWordCount; }
+    public void setBadWordCount(int badWordCount) {
+        this.badWordCount = badWordCount;
+    }
 
     public String getSearchString() {
         String gardenerString = firstName;
