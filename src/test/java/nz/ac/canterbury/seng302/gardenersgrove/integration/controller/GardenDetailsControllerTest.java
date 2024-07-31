@@ -656,6 +656,53 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
+    public void FifthTagSubmitted_OffensiveTagName_TagNotAddedWarningDisplayed() throws Exception {
+        testGardener.setBadWordCount(4);
+
+        String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
+        Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
+        Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
+        String[] forecastImages = new String[] {"image1", "image2", "image3"};
+        String[] forecastDescriptions = new String[] {"sunny", "rainy", "cloudy"};
+        Integer[] forecastHumidities = new Integer[] {1, 2, 3};
+
+        Weather currentWeather = Mockito.mock(Weather.class);
+        when(currentWeather.getTemperature()).thenReturn(12.0f);
+        when(currentWeather.getHumidity()).thenReturn(50);
+        when(currentWeather.getWeatherDescription()).thenReturn("Sunny");
+        when(currentWeather.getWeatherImage()).thenReturn("image");
+        when(currentWeather.getCurrentLocation()).thenReturn("Christchurch");
+        when(currentWeather.getForecastDates()).thenReturn(List.of(forecastDates));
+        when(currentWeather.getForecastMinTemperatures()).thenReturn(List.of(forecastMinTemperatures));
+        when(currentWeather.getForecastMaxTemperatures()).thenReturn(List.of(forecastMaxTemperatures));
+        when(currentWeather.getForecastImages()).thenReturn(List.of(forecastImages));
+        when(currentWeather.getForecastDescriptions()).thenReturn(List.of(forecastDescriptions));
+        when(currentWeather.getForecastHumidities()).thenReturn(List.of(forecastHumidities));
+
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
+        Tag tag = new Tag("Fuck", garden);
+
+        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+        when(tagService.addTag(any())).thenReturn(tag);
+        when(weatherService.getWeather(any())).thenReturn(currentWeather);
+
+    mockMvc
+        .perform(
+            (MockMvcRequestBuilders.post("/gardens/addTag")
+                .param("tag-input", "Fuck")
+                .param("gardenId", "1")
+                .with(csrf())))
+        .andExpect(status().isOk())
+        .andExpect(view().name("gardenDetailsTemplate"))
+        .andExpect(model().attributeExists("tagWarning")).andExpect(model().attribute("tagWarning", "You have added an inappropriate tag for the fifth time"));
+
+        verify(tagService, times(0)).addTag(any());
+        Assertions.assertEquals(testGardener.getBadWordCount(),5);
+
+    }
+
+    @Test
+    @WithMockUser
     public void GetDate_WhenNotificationClosed_NoNotificationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
