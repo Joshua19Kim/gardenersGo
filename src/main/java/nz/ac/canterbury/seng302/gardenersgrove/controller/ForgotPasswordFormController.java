@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
@@ -14,7 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class ForgotPasswordFormController {
@@ -55,7 +59,8 @@ public class ForgotPasswordFormController {
      * @return thymeleaf forgotPasswordForm (if error) or redirects to LostPasswordTokenForm if valid
      */
     @PostMapping("/forgotPassword")
-    public String sendResetPasswordLink(@RequestParam(name="email") String email,
+    public String sendResetPasswordLink(HttpServletRequest request,
+                                        @RequestParam(name="email") String email,
                                         @RequestParam(name="url") String url,
                                         Model model) {
         logger.info("POST /forgotPassword");
