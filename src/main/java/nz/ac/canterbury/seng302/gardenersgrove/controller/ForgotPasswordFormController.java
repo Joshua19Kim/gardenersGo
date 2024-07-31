@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
@@ -10,15 +9,14 @@ import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Locale;
 import java.util.Optional;
-import java.util.UUID;
 
 @Controller
 public class ForgotPasswordFormController {
@@ -31,15 +29,19 @@ public class ForgotPasswordFormController {
 
     private final String confirmationMessage = "An email was sent to the address if it was recognised";
 
+    private final String url;
+
     @Autowired
     public ForgotPasswordFormController(GardenerFormService gardenerFormService,
                                         TokenService tokenService,
                                         EmailUserService emailService,
-                                        WriteEmail writeEmail) {
+                                        WriteEmail writeEmail,
+                                        @Value("${staging.url}") String url) {
         this.gardenerFormService = gardenerFormService;
         this.tokenService = tokenService;
         this.emailService = emailService;
         this.writeEmail = writeEmail;
+        this.url = url;
     }
 
     /**
@@ -59,9 +61,7 @@ public class ForgotPasswordFormController {
      * @return thymeleaf forgotPasswordForm (if error) or redirects to LostPasswordTokenForm if valid
      */
     @PostMapping("/forgotPassword")
-    public String sendResetPasswordLink(HttpServletRequest request,
-                                        @RequestParam(name="email") String email,
-                                        @RequestParam(name="url") String url,
+    public String sendResetPasswordLink(@RequestParam(name="email") String email,
                                         Model model) {
         logger.info("POST /forgotPassword");
 
@@ -79,9 +79,6 @@ public class ForgotPasswordFormController {
         if (validEmailError.isEmpty()){
             Optional<Gardener> gardener = gardenerFormService.findByEmail(email);
             if (gardener.isPresent()) {
-                int index = url.lastIndexOf("/");
-                url = url.substring(0,index);
-
                 writeEmail.sendPasswordForgotEmail(gardener.get(), url); // Blocks ***
                 return "forgotPasswordForm"; // Email sent
             }
