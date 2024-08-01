@@ -49,6 +49,7 @@ public class ForgotPasswordFormController {
      */
     @GetMapping("/forgotPassword")
     public String getForgotPasswordForm() {
+        logger.info("Staging URL: " + url);
         logger.info("GET /forgotPassword");
         return "forgotPasswordForm";
     }
