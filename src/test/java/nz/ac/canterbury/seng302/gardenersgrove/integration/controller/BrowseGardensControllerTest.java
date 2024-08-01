@@ -128,7 +128,7 @@ public class BrowseGardensControllerTest {
                 .andExpect(redirectedUrl("/browseGardens"))
                 .andExpect(flash().attribute("allTags", updatedAllTags))
                 .andExpect(flash().attribute("tags", List.of(tag)))
-                .andExpect(flash().attribute("pageNo", defaultPageNumber));
+                .andExpect(flash().attribute("pageNo", String.valueOf(defaultPageNumber)));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class BrowseGardensControllerTest {
                 .andExpect(flash().attribute("tags", List.of()))
                 .andExpect(flash().attribute("tag", tag))
                 .andExpect(flash().attribute("tagValid", errorMessage))
-                .andExpect(flash().attribute("pageNo", defaultPageNumber));
+                .andExpect(flash().attribute("pageNo", String.valueOf(defaultPageNumber)));
 
     }
 
@@ -169,7 +169,7 @@ public class BrowseGardensControllerTest {
                 .andExpect(redirectedUrl("/browseGardens"))
                 .andExpect(flash().attribute("allTags", updatedAllTags))
                 .andExpect(flash().attribute("tags", existingTags))
-                .andExpect(flash().attribute("pageNo", pageNo));
+                .andExpect(flash().attribute("pageNo", String.valueOf(pageNo)));
     }
 
 }
