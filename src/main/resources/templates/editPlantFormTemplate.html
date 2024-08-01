@@ -10,7 +10,7 @@
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div id="form">
     <h1> Edit Plant </h1>
-    <form id="editPlantForm" th:action="@{edit(plantId=${plant.id})}" method="post" enctype="multipart/form-data">
+    <form id="editPlantForm" th:action="@{edit(plantId=${plant.id})}" method="post" enctype="multipart/form-data" novalidate>
         <label for="name"> Name: </label>
         <input type="text" class="form-control" id="name" name="name" maxlength="64" th:value="${name != null ? name : plant.name}"
                th:classappend="${nameError} ? 'error' : ''">
@@ -29,16 +29,9 @@
         <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
         <br/>
         <label for="datePlanted"> Date Planted: </label>
-        <input type="date" class="form-control" th:value="${date != null ? date : formattedDate}" id="datePlanted" name="date">
-        <span id="dateError" class="smallErrorMessage"></span>
-        <script>
-            document.getElementById( "datePlanted" ).addEventListener( "invalid",
-                function( event ) {
-                    event.preventDefault();
-                    document.getElementById("datePlanted").style.border = "1px solid red";
-                    document.getElementById("dateError").textContent = "Date is not in valid format, DD/MM/YYYY";
-                });
-        </script>
+        <input class="form-control" id="datePlanted" th:name="date" th:value="${date != null ? date : formattedDate}" type="date" th:classappend="${(DateValid != '' && DateValid != null) ? 'error' : ''}">
+        <p class="smallErrorMessage" id="dateError" th:text="${DateValid}"></p>
+        <input type="hidden" id="isDateInvalid" th:name="isDateInvalid" th:value="false"/>
         <br/>
         <label for="image"> Image: </label>
         <div class="plant-image-container" id="image">
@@ -55,6 +48,19 @@
     </a>
 </div>
 <script>
+    document.getElementById("editPlantForm").addEventListener("submit", function(event) {
+        const dateInput = document.getElementById("datePlanted");
+        if (!(dateInput.checkValidity())) {
+            console.log("invalid date")
+            event.preventDefault();
+            document.getElementById("isDateInvalid").value = true;
+            document.getElementById("editPlantForm").submit();
+        } else {
+            console.log("valid date")
+            document.getElementById("isDateInvalid").value = false;
+        }
+    });
+
     document.getElementById("editPlantForm").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             var activeElement = document.activeElement;
