@@ -11,6 +11,7 @@ import org.junit.platform.suite.api.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -28,6 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 @AutoConfigureMockMvc
 @ActiveProfiles("cucumber")
 @MockBean(WeatherService.class)
+@MockBean(Authentication.class)
 @MockBean(LocationService.class)
 @MockBean(EmailUserService.class)
 public class RunCucumberTest {
