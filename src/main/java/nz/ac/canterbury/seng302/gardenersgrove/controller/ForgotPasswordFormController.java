@@ -29,7 +29,7 @@ public class ForgotPasswordFormController {
 
     private final String confirmationMessage = "An email was sent to the address if it was recognised";
 
-    @Value("${staging.url")
+    @Value("${staging.url}")
     private String url;
 
     @Autowired
