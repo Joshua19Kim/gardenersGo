@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <title>Edit Garden</title>
-    <link  th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
 </head>
 <body>
 
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
-<div>
-    <div id="form" class="create-garden">
+<div class="container">
+    <div class="card">
         <h1> Edit Garden </h1>
         <form id="editGardenForm" th:action="@{edit(gardenId=${garden.id})}" method="post">
             <div class="create-garden-row">
