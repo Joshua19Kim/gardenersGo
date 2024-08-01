@@ -13,13 +13,13 @@
         <h1 class="text-center">Please Log In</h1>
         <form id="loginForm" method="post" th:action="@{/login}" class="needs-validation" novalidate>
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <div th:if="${param.logout}" class="alert alert-info">
+            <div th:if="${param.logout}" class="alert alert-info" role="alert">
                 <p>You have been logged out.</p>
             </div>
-            <div th:if="${param.signedup}" class="alert alert-success">
+            <div th:if="${param.signedup}" class="alert alert-success" role="alert">
                 <p>Your account has been activated, please log in</p>
             </div>
-            <div th:if="${param.expired}" id="error-message" class="alert alert-danger">
+            <div th:if="${param.expired}" class="alert alert-danger" role="alert">
                 <p>Reset password link has expired.</p>
             </div>
             <div class="d-flex flex-column align-items-center">

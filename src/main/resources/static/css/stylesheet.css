@@ -111,14 +111,14 @@ h1 {
     color: var(--button-hover-color);
 }
 
-.alert {
-    background-color: var(--alert-background-color);
-    border-left: 5px solid var(--primary-color);
-    color: var(--text-color);
-    margin-bottom: 15px;
-    padding: 10px;
-    text-align: center;
-}
+/*.alert {*/
+/*    background-color: var(--alert-background-color);*/
+/*    border-left: 5px solid var(--primary-color);*/
+/*    color: var(--text-color);*/
+/*    margin-bottom: 15px;*/
+/*    padding: 10px;*/
+/*    text-align: center;*/
+/*}*/
 
 .logo {
     width: 75px;
