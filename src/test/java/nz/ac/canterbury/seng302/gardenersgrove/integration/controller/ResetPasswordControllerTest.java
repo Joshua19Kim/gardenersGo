@@ -50,12 +50,12 @@ public class ResetPasswordControllerTest {
     @Test
     @WithMockUser
     void onResetPasswordPage_expiredTokenGiven_redirectToLoginExpired() throws Exception {
-        Mockito.when(tokenService.validateLostPasswordToken(Mockito.anyString())).thenReturn("expired");
+        Mockito.when(tokenService.validateLostPasswordToken(Mockito.anyString())).thenReturn("invalidToken");
         ResetPasswordFormController resetPasswordFormController = new ResetPasswordFormController(gardenerFormService, tokenService,mockWriteEmail);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(resetPasswordFormController).build();
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.get("/resetPassword")
-                        .param("token", "expired")
+                        .param("token", "invalidToken")
                 )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/login?expired"));
