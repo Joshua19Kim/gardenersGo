@@ -7,6 +7,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,6 +54,8 @@ public class Gardener {
     /** The list of gardens belonging to the gardener. */
     @OneToMany(mappedBy = "gardener")
     private List<Garden> gardens;
+
+    private Date banExpiryDate;
 
     /**
      * JPA required no-args constructor
@@ -187,4 +191,19 @@ public class Gardener {
         return gardenerString;
     }
 
+    public void banGardener() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(new Date().getTime());
+        calendar.add(Calendar.DATE, 7);
+        this.banExpiryDate = new Date(calendar.getTime().getTime());
+    }
+
+    public boolean isBanned() {
+        if (banExpiryDate != null && banExpiryDate.after(new Date())) {
+            return true;
+        } else {
+            banExpiryDate = null;
+            return false;
+        }
+    }
 }

@@ -62,6 +62,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if ((u.getAuthorities().isEmpty())) {
             throw new BadCredentialsException("Email not verified");
         }
+
+        if (u.isBanned()) {
+            throw new BadCredentialsException("This account has been banned");
+        }
         return new UsernamePasswordAuthenticationToken(u.getEmail(), null, u.getAuthorities());
     }
 

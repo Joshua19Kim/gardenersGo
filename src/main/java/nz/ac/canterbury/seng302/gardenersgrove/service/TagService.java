@@ -96,16 +96,12 @@ public class TagService {
     if (gardener.getBadWordCount() == 5) {
       //This runAsync is added because error message was returning after sending an email which was quite slow considering UX.
       //This will enable system sending email in the background asynchronously and return the message asap.
-      CompletableFuture.runAsync(() -> {
-        writeEmail.sendTagWarningEmail(gardener);
-      }, executorService);
+      CompletableFuture.runAsync(() -> writeEmail.sendTagWarningEmail(gardener), executorService);
 
       return "You have added an inappropriate tag for the fifth time";
     } else if (gardener.getBadWordCount() == 6) {
-
-      //maybe we can do the action to ban the account here(??)
-
-      return "You have added an inappropriate tag for the sixth time, your account will be blocked for one week.";
+      gardener.banGardener();
+      return "BANNED";
     }
     return "Submitted tag fails moderation requirements";
   }
