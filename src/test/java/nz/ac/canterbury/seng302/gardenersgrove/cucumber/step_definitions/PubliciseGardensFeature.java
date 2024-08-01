@@ -142,7 +142,7 @@ public class PubliciseGardensFeature {
         ArgumentCaptor<Garden> gardenCaptor = ArgumentCaptor.forClass(Garden.class);
         verify(gardenService, Mockito.times(1)).addGarden(gardenCaptor.capture());
         List<Garden> addGarden = gardenCaptor.getAllValues();
-        assertEquals(testGardenDescription, addGarden.getFirst().getDescription());
+        assertEquals(testGardenDescription, addGarden.get(0).getDescription());
     }
 
 
@@ -191,7 +191,7 @@ public class PubliciseGardensFeature {
         ArgumentCaptor<Garden> gardenCaptor = ArgumentCaptor.forClass(Garden.class);
         verify(gardenService, Mockito.times(1)).addGarden(gardenCaptor.capture());
         List<Garden> addGarden = gardenCaptor.getAllValues();
-        assertEquals(editTestGardenDescription, addGarden.getFirst().getDescription());
+        assertEquals(editTestGardenDescription, addGarden.get(0).getDescription());
     }
 
 
