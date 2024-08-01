@@ -46,7 +46,7 @@
             </div>
             <div id="tag-error-container">
                 <p class="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
-                <p class="tag-error-message" th:value="${tagWarning}" th:utext="${tagWarning}"></p>
+                <p class="tag-error-message" id="tagWarning" th:value="${tagWarning}" th:utext="${tagWarning}"></p>
             </div>
         </div>
 
@@ -178,11 +178,22 @@
             <button type="submit" onclick="closeNotification()" class="close-button">x</button>
         </form>
     </div>
+
+    <div id="warningModal" class="modal">
+        <div class="modal-content">
+            <h2>Oopps!!!</h2>
+            <p id="modalMessage"></p>
+            <button class="close-btn" onclick="closeModal()">Ok! I got it!</button>
+        </div>
+    </div>
 </div>
+
+
 
 <script th:src="@{/javascript/tagAutocomplete.js}"></script>
 
 <script>
+
     window.onload = function () {
         const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         const d = new Date();
@@ -200,12 +211,36 @@
         const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         const day = weekday[date.getDay()];
         document.getElementById(date).innerText = day;
-
     }
 
     function closeNotification() {
         document.getElementById('notification').style.display = 'none';
     }
+
+
+    var modal = document.getElementById("warningModal");
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    function closeModal() {
+        document.getElementById('warningModal').style.display = 'none';
+    }
+    function openModal(message) {
+        document.getElementById('modalMessage').textContent = message;
+        document.getElementById('warningModal').style.display = 'block';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var tagWarningElement = document.getElementById('tagWarning');
+        var tagWarning = tagWarningElement ? tagWarningElement.textContent.trim() : '';
+        console.log('Tag Warning:', tagWarning);
+
+        if (tagWarning === "You have added an inappropriate tag for the fifth time. If you add one more, your account will be blocked for one week.") {
+            openModal(tagWarning);
+        }
+    });
+
 </script>
 
 </body>

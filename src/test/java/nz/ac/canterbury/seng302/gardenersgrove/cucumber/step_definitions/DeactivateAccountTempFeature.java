@@ -11,7 +11,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -27,8 +26,6 @@ public class DeactivateAccountTempFeature {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private TagService tagService;
     @Autowired
     private GardenerFormService gardenerFormService;
     @Autowired
@@ -63,6 +60,6 @@ public class DeactivateAccountTempFeature {
     }
     @Then("the system shows the warning message")
     public void the_system_shows_the_warning_message() throws Exception {
-        resultActions.andExpect(model().attribute("tagWarning", "You have added an inappropriate tag for the fifth time"));
+        resultActions.andExpect(model().attribute("tagWarning", "You have added an inappropriate tag for the fifth time. If you add one more, your account will be blocked for one week."));
     }
 }

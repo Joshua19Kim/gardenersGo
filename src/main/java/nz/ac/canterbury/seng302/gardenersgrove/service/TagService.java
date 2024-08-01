@@ -100,7 +100,7 @@ public class TagService {
         writeEmail.sendTagWarningEmail(gardener);
       }, executorService);
 
-      return "You have added an inappropriate tag for the fifth time";
+      return "You have added an inappropriate tag for the fifth time. If you add one more, your account will be blocked for one week.";
     } else if (gardener.getBadWordCount() == 6) {
 
       //maybe we can do the action to ban the account here(??)
