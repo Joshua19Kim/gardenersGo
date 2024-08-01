@@ -9,7 +9,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,7 +38,6 @@ public class GardenDetailsControllerTest {
     private Gardener mockUser;
     private Gardener mockOwner;
     private Authentication authentication;
-    private InputValidationUtil inputValidator;
     private HttpServletRequest mockRequest;
     private Garden mockGarden;
     private List<Garden> mockGardens;
@@ -64,7 +62,6 @@ public class GardenDetailsControllerTest {
                 mockRelationshipService, requestService, mockWeatherService, mockTagService, mockLocationService);
 
         mockModel = Mockito.mock(Model.class);
-        inputValidator = Mockito.mock(InputValidationUtil.class);
 
         mockGarden = Mockito.mock(Garden.class);
         mockGardens = Mockito.mock(ArrayList.class);
@@ -107,8 +104,8 @@ public class GardenDetailsControllerTest {
         Mockito.when(mockGardenService.getGarden(any(long.class))).thenReturn(Optional.of(mockGarden));
         // Garden owner
         Mockito.when(mockGarden.getGardener()).thenReturn(mockOwner);
-        Mockito.when(mockOwner.getId()).thenReturn(1l);
-        Mockito.when(mockUser.getId()).thenReturn(2l);
+        Mockito.when(mockOwner.getId()).thenReturn(1L);
+        Mockito.when(mockUser.getId()).thenReturn(2L);
         // Friend check
         List<Gardener> mockFriends = Mockito.mock(ArrayList.class);
         Mockito.when(mockRelationshipService.getCurrentUserRelationships(anyLong()))
@@ -127,8 +124,8 @@ public class GardenDetailsControllerTest {
         Mockito.when(mockGardenService.getGarden(any(long.class))).thenReturn(Optional.of(mockGarden));
         // Garden owner
         Mockito.when(mockGarden.getGardener()).thenReturn(mockOwner);
-        Mockito.when(mockOwner.getId()).thenReturn(1l);
-        Mockito.when(mockUser.getId()).thenReturn(2l);
+        Mockito.when(mockOwner.getId()).thenReturn(1L);
+        Mockito.when(mockUser.getId()).thenReturn(2L);
         // Friend check
         List<Gardener> mockFriends = Mockito.mock(ArrayList.class);
         Mockito.when(mockRelationshipService.getCurrentUserRelationships(anyLong()))
@@ -146,8 +143,8 @@ public class GardenDetailsControllerTest {
         Mockito.when(mockGardenService.getGarden(any(long.class))).thenReturn(Optional.of(mockGarden));
         // Garden owner
         Mockito.when(mockGarden.getGardener()).thenReturn(mockOwner);
-        Mockito.when(mockOwner.getId()).thenReturn(1l);
-        Mockito.when(mockUser.getId()).thenReturn(1l);
+        Mockito.when(mockOwner.getId()).thenReturn(1L);
+        Mockito.when(mockUser.getId()).thenReturn(1L);
         // Location
         HttpResponse<String> mockLocation = Mockito.mock(HttpResponse.class);
         Mockito.when(mockLocationService.sendRequest(anyString())).thenReturn(mockLocation);
