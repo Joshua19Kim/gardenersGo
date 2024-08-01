@@ -79,6 +79,7 @@ public class ForgotPasswordFormController {
             Optional<Gardener> gardener = gardenerFormService.findByEmail(email);
             if (gardener.isPresent()) {
                 writeEmail.sendPasswordForgotEmail(gardener.get(), url); // Blocks ***
+                logger.info("Staging URL: " + url);
                 return "forgotPasswordForm"; // Email sent
             }
             return "forgotPasswordForm"; // Email not in DB
