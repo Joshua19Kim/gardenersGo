@@ -44,12 +44,17 @@ public class BrowseGardensController {
         Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+        if(totalPages > 0) {
+            int lowerBound = Math.max(pageNo - 1, 1);
+            int upperBound = Math.min(pageNo + 3, totalPages);
+            System.out.println(lowerBound);
+            System.out.println(upperBound);
+            List<Integer> pageNumbers = IntStream.rangeClosed(lowerBound, upperBound)
                     .boxed()
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
+
         return "browseGardensTemplate";
     }
 }

@@ -1298,7 +1298,7 @@ form.search-bar::after {
 }
 
 .browse-gardens-container {
-    max-width: 800px;
+    max-width: 1800px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -1320,6 +1320,8 @@ form.search-bar::after {
 body {
     background-color: #fffdf6;
 }
+
+
 
 
 
