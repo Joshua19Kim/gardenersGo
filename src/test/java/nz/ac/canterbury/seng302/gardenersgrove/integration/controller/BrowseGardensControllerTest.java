@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,9 @@ public class BrowseGardensControllerTest {
     private GardenService gardenService;
 
     @MockBean
+    private TagService tagService;
+
+    @MockBean
     private PlantService plantService;
 
     private Gardener testGardener;
@@ -48,6 +52,8 @@ public class BrowseGardensControllerTest {
     private int defaultPageSize;
 
     private List<Garden> gardens;
+
+    private List<String> allTags;
 
     @BeforeEach
     public void setUp() {
@@ -60,13 +66,17 @@ public class BrowseGardensControllerTest {
         for(int i = 0; i < 15; i++) {
             gardens.add(new Garden("Test garden" + i, "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, ""));
         }
+        allTags = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            allTags.add("tag" + i);
+        }
 
     }
 
 
     @Test
     @WithMockUser
-    public void BrowseGardensPageRequested_NoPageNumberAndSizeSpecified_DefaultPageReturned() throws Exception {
+    public void BrowseGardensPageRequested_NoPageNumberSpecified_DefaultPageReturned() throws Exception {
         Pageable pageable = PageRequest.of(defaultPageNumber, defaultPageSize);
         Page<Garden> gardenPage = new PageImpl<>(gardens, pageable, gardens.size());
         Mockito.when(gardenService.getGardensPaginated(defaultPageNumber, defaultPageSize)).thenReturn(gardenPage);
@@ -80,20 +90,92 @@ public class BrowseGardensControllerTest {
 
     @Test
     @WithMockUser
-    public void BrowseGardensPageRequested_PageNumberAndSizeSpecified_PageReturned() throws Exception {
+    public void BrowseGardensPageRequested_PageNumberSpecified_PageReturned() throws Exception {
         int pageNumber = 1;
-        int pageSize = 3;
-        List<Integer> expectedPageNumbers = List.of(1,2,3,4,5);
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Garden> gardenPage = new PageImpl<>(gardens, pageable, gardens.size());
-        Mockito.when(gardenService.getGardensPaginated(pageNumber, pageSize)).thenReturn(gardenPage);
+        List<Integer> expectedPageNumbers = List.of(1,2);
+        Pageable pageable = PageRequest.of(pageNumber, defaultPageSize);
+        Page<Garden> gardenPage = new PageImpl<>(gardens.subList(defaultPageSize, gardens.size()), pageable, gardens.size());
+        Mockito.when(gardenService.getGardensPaginated(pageNumber, defaultPageSize)).thenReturn(gardenPage);
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens")
-                        .param("pageNo", String.valueOf(pageNumber))
-                        .param("pageSize", String.valueOf(pageSize)))
+                        .param("pageNo", String.valueOf(pageNumber)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
                 .andExpect(view().name("browseGardensTemplate"));
+    }
+
+    @Test
+    @WithMockUser
+    public void BrowseGardensPageRequested_NoGardens_PageReturned() throws Exception {
+        int pageNumber = 1;
+        Pageable pageable = PageRequest.of(pageNumber, defaultPageSize);
+        List<Garden> emptyList = new ArrayList<>();
+        Page<Garden> gardenPage = new PageImpl<>(emptyList, pageable, emptyList.size());
+        Mockito.when(gardenService.getGardensPaginated(pageNumber, defaultPageSize)).thenReturn(gardenPage);
+        mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens")
+                        .param("pageNo", String.valueOf(pageNumber)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("gardensPage", gardenPage))
+                .andExpect(model().attributeDoesNotExist("pageNumbers"))
+                .andExpect(view().name("browseGardensTemplate"));
+    }
+
+    @Test
+    @WithMockUser
+    public void TagAdded_ValidTag_RedirectToBrowseGardens() throws Exception {
+        String tag = "tag2";
+        List<String> updatedAllTags = new ArrayList<>(allTags);
+        updatedAllTags.remove(tag);
+        Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
+        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
+                .param("tag-input", tag)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/browseGardens"))
+                .andExpect(flash().attribute("allTags", updatedAllTags))
+                .andExpect(flash().attribute("tags", List.of(tag)))
+                .andExpect(flash().attribute("pageNo", String.valueOf(defaultPageNumber)));
+    }
+
+    @Test
+    @WithMockUser
+    public void TagAdded_InvalidTag_RedirectToBrowseGardens() throws Exception {
+        String tag = "tag20";
+        String errorMessage = "No tag matching " + tag;
+        Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
+        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
+                        .param("tag-input", tag)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/browseGardens"))
+                .andExpect(flash().attribute("allTags", allTags))
+                .andExpect(flash().attribute("tags", List.of()))
+                .andExpect(flash().attribute("tag", tag))
+                .andExpect(flash().attribute("tagValid", errorMessage))
+                .andExpect(flash().attribute("pageNo", String.valueOf(defaultPageNumber)));
+
+    }
+
+    @Test
+    @WithMockUser
+    public void TagAdded_TagsExist_RedirectToBrowseGardens() throws Exception {
+        String tag = "tag3";
+        int pageNo = 2;
+        List<String> existingTags = new ArrayList<>(allTags.subList(0, 4));
+        List<String> updatedAllTags = new ArrayList<>(allTags.subList(4, allTags.size()));
+        Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
+        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
+                        .param("tag-input", tag)
+                        .param("tags", existingTags.get(0))
+                        .param("tags", existingTags.get(1))
+                        .param("tags", existingTags.get(2))
+                        .param("pageNo", String.valueOf(pageNo))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/browseGardens"))
+                .andExpect(flash().attribute("allTags", updatedAllTags))
+                .andExpect(flash().attribute("tags", existingTags))
+                .andExpect(flash().attribute("pageNo", String.valueOf(pageNo)));
     }
 
     @Test

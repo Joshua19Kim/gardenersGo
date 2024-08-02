@@ -13,7 +13,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableCaching
 @EnableScheduling
 public class GardenersGroveApplication {
-
 	/**
 	 * Main entry point, runs the Spring application
 	 * @param args command line arguments
@@ -21,5 +20,4 @@ public class GardenersGroveApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GardenersGroveApplication.class, args);
 	}
-
 }

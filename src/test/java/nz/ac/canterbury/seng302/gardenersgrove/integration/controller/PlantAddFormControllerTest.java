@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -53,6 +54,8 @@ public class PlantAddFormControllerTest {
 
   @MockBean private WeatherService weatherService;
 
+  @MockBean private LocationService locationService;
+
   @Test
   @WithMockUser
   public void GardenDetailsRequested_ExistentIdGiven_PlantDetailsProvided() throws Exception {
@@ -72,8 +75,10 @@ public class PlantAddFormControllerTest {
     when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
     testGardener.setId(1L);
-
+    HttpResponse<String> httpResponse = mock(HttpResponse.class);
+    when(httpResponse.body()).thenReturn("test");
     when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
+    when(locationService.sendRequest(anyString())).thenReturn(httpResponse);
     mockMvc
             .perform(
                     MockMvcRequestBuilders.get("/gardens/details")
@@ -197,6 +202,7 @@ public class PlantAddFormControllerTest {
                 .param("count", "2.0")
                 .param("description", description)
                 .param("date", "2024-03-10")
+                .param("isDateInvalid", String.valueOf(false))
                 .param("gardenId", "1")
                 .with(csrf()))
         .andExpect(status().isOk())
@@ -205,12 +211,53 @@ public class PlantAddFormControllerTest {
         .andExpect(model().attribute("name", name))
         .andExpect(model().attribute("count", "2.0"))
         .andExpect(model().attribute("description", description))
-        .andExpect(model().attribute("date", "2024-03-10"))
+        .andExpect(model().attribute("date", LocalDate.parse("2024-03-10")))
         .andExpect(
             model()
                 .attribute(
                     "nameError",
                     "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>"));
+
+    verify(plantService, never()).addPlant(any(Plant.class));
+  }
+
+  @Test
+  @WithMockUser
+  public void PlantFormSubmitted_PartialDate_ErrorMessageAddedAndViewUpdated() throws Exception {
+    Garden garden =
+            new Garden(
+                    "Test garden",
+                    "Ilam",
+                    null,
+                    "Christchurch",
+                    "New Zealand",
+                    null,
+                    "9999",
+                    testGardener,
+                    "");
+    when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
+    when(gardenerFormService.findByEmail(Mockito.anyString()))
+            .thenReturn(Optional.of(testGardener));
+    MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
+
+    mockMvc
+            .perform(
+                    MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                            .file(emptyFile)
+                            .param("name", "tomato")
+                            .param("count", "2.0")
+                            .param("description", "yummy")
+                            .param("date", "")
+                            .param("isDateInvalid", String.valueOf(true))
+                            .param("gardenId", "1")
+                            .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(view().name("plantsFormTemplate"))
+            .andExpect(model().attributeExists("DateValid", "name", "count", "description"))
+            .andExpect(model().attribute("name", "tomato"))
+            .andExpect(model().attribute("count", "2.0"))
+            .andExpect(model().attribute("description", "yummy"))
+            .andExpect(model().attribute("DateValid", "Date is not in valid format, DD/MM/YYYY"));
 
     verify(plantService, never()).addPlant(any(Plant.class));
   }
@@ -254,23 +301,23 @@ public class PlantAddFormControllerTest {
 
     MockMultipartFile emptyFile = new MockMultipartFile("file", new byte[0]);
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
-                            .file(emptyFile)
-                            .param("name", name)
-                            .param("count", count)
-                            .param("description", description)
-                            .param("date", date)
-                            .param("gardenId", "1")
-                            .with(csrf()))
-            .andExpect(status().isOk())
-            .andExpect(view().name("plantsFormTemplate"))
-            .andExpect(model().attributeExists("name", "count", "description", "date"))
-            .andExpect(model().attribute("name", name))
-            .andExpect(model().attribute("count", count))
-            .andExpect(model().attribute("description", description))
-            .andExpect(model().attribute("date", "2024-04-10"))
-            .andExpect(model().attribute(errorName, errorMessage));
+        .perform(
+            MockMvcRequestBuilders.multipart("/gardens/details/plants/form")
+                .file(emptyFile)
+                .param("name", name)
+                .param("count", count)
+                .param("description", description)
+                .param("date", date)
+                .param("gardenId", "1")
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(view().name("plantsFormTemplate"))
+        .andExpect(model().attributeExists("name", "count", "description", "date"))
+        .andExpect(model().attribute("name", name))
+        .andExpect(model().attribute("count", count))
+        .andExpect(model().attribute("description", description))
+        .andExpect(model().attribute("date", LocalDate.parse(date)))
+        .andExpect(model().attribute(errorName, errorMessage));
 
     verify(plantService, never()).addPlant(any(Plant.class));
   }

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en-uk">
-<head>
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <title>Garden Details</title>
     <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
 </head>
 <body>
 
-<nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
+<div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div id="location-error" th:if="${date == null}">Location not found, please update your location to see the weather
 </div>
 <div class="garden-details-container">
@@ -33,7 +33,8 @@
                 <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{addTag}">
                     <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
                            th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
-                           maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus>
+                           maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus
+                           th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
                     <input type="hidden" name="gardenId" th:value="${garden.id}">
                     <datalist id="tagList">
@@ -179,17 +180,19 @@
 
 </div>
 
+<script th:src="@{/javascript/tagAutocomplete.js}"></script>
+
 <script>
     window.onload = function () {
         const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         const d = new Date();
         const day = weekday[d.getDay()];
-        document.getElementById("currentDate").innerHTML = day;
+        document.getElementById("currentDate").innerText = day;
         for(let i = 0; i <= 2 ; i++) {
             let d = new Date();
             d.setDate(d.getDate() + i);
             const day = weekday[d.getDay()];
-            document.getElementById(i.toString()).innerHTML = day;
+            document.getElementById(i.toString()).innerText = day;
         }
     }
 
@@ -202,53 +205,15 @@
     function getDay(date) {
         const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         const day = weekday[date.getDay()];
-        document.getElementById(date).innerHTML = day;
+        document.getElementById(date).innerText = day;
 
     }
     function handleImageClick(plantId) {
         document.getElementById('fileInput_' + plantId).click();
     }
-
     function handleImageChange(plantId) {
         document.getElementById('uploadPlantForm_' + plantId).submit();
     }
-
-    // got from stack overflow: https://stackoverflow.com/questions/30022728/perform-action-when-clicking-html5-datalist-option
-    // it is used to check if the user clicked an option from the autocomplete and if so to submit the form
-    const tagInput = document.getElementById('tag-input');
-    const tagForm = document.getElementById("hidden-tag-form");
-    const dataList = document.getElementById("tagList");
-    let removedOption = "";
-    let keypress = false;
-    tagInput.addEventListener("keydown", (e) => {
-        if(e.key) {
-            keypress = true;
-        }
-    });
-    tagForm.addEventListener('input', (e) => {
-        const inputValue = tagInput.value;
-        const options = dataList.options
-        if (keypress === false) {
-            document.getElementById('hidden-tag-input').value = inputValue;
-            tagForm.submit();
-        }
-        if(inputValue !== removedOption && removedOption !== "") {
-            let newOption = document.createElement("option");
-            newOption.value = removedOption;
-            newOption.text = removedOption;
-            dataList.appendChild(newOption);
-            removedOption = "";
-        }
-        for (let i = 0; i < options.length; i++) {
-            if (options[i].value === inputValue) {
-                removedOption = options[i].value;
-                options[i].remove();
-                break;
-            }
-        }
-
-        keypress = false;
-    });
 
     // const currentDate = new Date();
     // const dateOptions = {
@@ -257,41 +222,7 @@
     //     month: 'long',
     //     year: 'numeric'
     // };
-    // document.getElementById("currentDateDisplay").innerHTML = currentDate.toLocaleString("en-Nz", dateOptions);
-
-    function transformToInput() {
-        document.getElementById('add-tag').style.display = 'none';
-        document.getElementById('tag-input').style.display = 'block';
-        document.getElementById('submit-tag').style.display = 'block';
-        document.getElementById('tag-input').focus();
-    }
-
-    function submitTagOnEnter(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const tagInput = document.getElementById('tag-input').value.trim();
-            if (tagInput) {
-                console.log('Submitting tag:', tagInput);
-                // Set the hidden form inputs
-                document.getElementById('hidden-tag-input').value = tagInput;
-                document.getElementById('hidden-tag-form').submit();
-            } else {
-                console.log('No tag input to submit');
-            }
-        }
-    }
-
-    function submitTag() {
-        const tagInput = document.getElementById('tag-input').value.trim();
-        if (tagInput) {
-            console.log('Submitting tag:', tagInput);
-            // Set the hidden form inputs
-            document.getElementById('hidden-tag-input').value = tagInput;
-            document.getElementById('hidden-tag-form').submit();
-        } else {
-            console.log('No tag input to submit');
-        }
-    }
+    // document.getElementById("currentDateDisplay").innerText = currentDate.toLocaleString("en-Nz", dateOptions);
 
     function closeNotification() {
         document.getElementById('notification').style.display = 'none';
