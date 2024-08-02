@@ -63,8 +63,12 @@
             <div class="card mt-0">
                 <div class="card-title">My Garden’s List</div>
                 <ul class="list-group" style="overflow-y: scroll; height: 460px;">
-                    <li class="list-group-item">Ben’s Garden <br><small>JE Building</small></li>
-                    <li class="list-group-item">Joshua’s Garden <br><small>JE Building</small></li>
+                    <th:block th:each="garden : ${gardens}">
+                        <a class="list-group-item" th:href="@{/gardens/details(gardenId=${garden.id})}">
+                            <p th:text="${garden.name}"></p>
+                            <small th:text="${garden.location}" ></small>
+                        </a>
+                    </th:block>
                 </ul>
             </div>
         </div>
