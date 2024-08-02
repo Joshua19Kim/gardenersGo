@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,10 +94,18 @@ public class MainPageController {
 
         List<Garden> gardens;
         List<Garden> recentGardens;
+        List<Plant> newPlants;
+        List<Gardener> friends;
+
         gardens = gardenService.getGardensByGardenerId(gardener.getId());
         recentGardens = gardenVisitService.findRecentGardensByGardenerId(gardener.getId());
+//        newPlants = newestPlantsService.findNewestPlantsByGardenerId(gardener.getId());
+        friends = relationshipService.getCurrentUserRelationships(gardener.getId());
+
         model.addAttribute("gardener", gardener);
         model.addAttribute("gardens", gardens);
+        model.addAttribute("friends", friends);
+//        model.addAttribute("newestPlants", newPlants);
         model.addAttribute("recentGardens", recentGardens);
         model.addAttribute("requestURI", requestService.getRequestURI(request));
 
