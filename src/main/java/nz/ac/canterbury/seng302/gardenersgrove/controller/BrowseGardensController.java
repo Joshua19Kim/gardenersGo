@@ -75,9 +75,9 @@ public class BrowseGardensController {
                 for(String selectedTag: tags) {
                     allTags.remove(selectedTag);
                 }
+                model.addAttribute("tags", tags);
             }
             model.addAttribute("allTags", allTags);
-            model.addAttribute("tags", tags);
         }
 
         return "browseGardensTemplate";
