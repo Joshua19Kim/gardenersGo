@@ -47,6 +47,9 @@ public class BrowsePublicGardens {
     private String searchTerm;
     private Gardener gardener;
 
+    private List<String> allTags = new ArrayList<>();
+
+
     @Autowired
     private GardenerFormService gardenerFormService;
     private int pageNo = 0;
@@ -68,8 +71,8 @@ public class BrowsePublicGardens {
     }
 
 
-    @Given("I am on the browse gardens page")
-    public void iAmOnTheBrowseGardensPage() throws Exception {
+    @Given("I am on the browse gardens page to search")
+    public void iAmOnTheBrowseGardensPageToSearch() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens"))
                 .andExpect(view().name("browseGardensTemplate"))
                 .andExpect(status().isOk())
@@ -98,4 +101,5 @@ public class BrowsePublicGardens {
         String content = mvcResult.getResponse().getContentAsString();
         Assertions.assertTrue(content.contains("Apple Orchard"), "Garden 'Apple Orchard' not found in search results");
     }
+
 }
