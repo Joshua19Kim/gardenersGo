@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+<html lang="en">
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Create New Plant</title>
     <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
 </head>
 <body>
 
-<nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
+<div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
 <div id="form">
     <h1> Add New Plant </h1>
-    <form id="plantForm" th:action="@{form(gardenId=${garden.id})}" method="post" enctype="multipart/form-data">
+    <form id="plantForm" th:action="@{form(gardenId=${garden.id})}" method="post" enctype="multipart/form-data" novalidate>
         <label for="name"> Name: </label>
         <input type="text" class="form-control" th:value="*{name}" id="name" name="name" maxlength="64" placeholder="Name"
                th:classappend="${nameError} ? 'error' : ''">
@@ -29,16 +30,9 @@
         <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
         <br/>
         <label for="datePlanted"> Date Planted: </label>
-        <input type="date" class="form-control" th:value="*{date}" id="datePlanted" name="date">
-        <span id="dateError" class="smallErrorMessage"></span>
-        <script>
-            document.getElementById( "datePlanted" ).addEventListener( "invalid",
-                function( event ) {
-                    event.preventDefault();
-                    document.getElementById("datePlanted").style.border = "1px solid red";
-                    document.getElementById("dateError").textContent = "Date is not in valid format, DD/MM/YYYY";
-                });
-        </script>
+        <input class="form-control" id="datePlanted" th:name="Date" th:value="*{Date}" type="date" th:classappend="${(DateValid != '' && DateValid != null) ? 'error' : ''}">
+        <p class="smallErrorMessage" id="dateError" th:text="${DateValid}"></p>
+        <input type="hidden" id="isDateInvalid" th:name="isDateInvalid" th:value="false"/>
         <br/>
         <label for="image"> Image: </label>
         <div class="plant-image-container" id="image">
@@ -55,6 +49,18 @@
     </a>
 </div>
 <script>
+    document.getElementById("plantForm").addEventListener("submit", function(event) {
+        const dateInput = document.getElementById("datePlanted");
+        if (!(dateInput.checkValidity())) {
+            console.log("invalid date")
+            event.preventDefault();
+            document.getElementById("isDateInvalid").value = true;
+            document.getElementById("plantForm").submit();
+        } else {
+            console.log("valid date")
+            document.getElementById("isDateInvalid").value = false;
+        }
+    });
     document.getElementById("plantForm").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             var activeElement = document.activeElement;

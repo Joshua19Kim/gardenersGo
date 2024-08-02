@@ -9,11 +9,13 @@ import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.Optional;
 
 @Controller
@@ -26,6 +28,9 @@ public class ForgotPasswordFormController {
     private final EmailUserService emailService;
 
     private final String confirmationMessage = "An email was sent to the address if it was recognised";
+
+    @Value("${server.url}")
+    private String url;
 
     @Autowired
     public ForgotPasswordFormController(GardenerFormService gardenerFormService,
@@ -44,6 +49,7 @@ public class ForgotPasswordFormController {
      */
     @GetMapping("/forgotPassword")
     public String getForgotPasswordForm() {
+        logger.info("Staging URL: " + url);
         logger.info("GET /forgotPassword");
         return "forgotPasswordForm";
     }
@@ -56,7 +62,6 @@ public class ForgotPasswordFormController {
      */
     @PostMapping("/forgotPassword")
     public String sendResetPasswordLink(@RequestParam(name="email") String email,
-                                        @RequestParam(name="url") String url,
                                         Model model) {
         logger.info("POST /forgotPassword");
 
@@ -74,10 +79,8 @@ public class ForgotPasswordFormController {
         if (validEmailError.isEmpty()){
             Optional<Gardener> gardener = gardenerFormService.findByEmail(email);
             if (gardener.isPresent()) {
-                int index = url.lastIndexOf("/");
-                url = url.substring(0,index);
-
                 writeEmail.sendPasswordForgotEmail(gardener.get(), url); // Blocks ***
+                logger.info("Staging URL: " + url);
                 return "forgotPasswordForm"; // Email sent
             }
             return "forgotPasswordForm"; // Email not in DB

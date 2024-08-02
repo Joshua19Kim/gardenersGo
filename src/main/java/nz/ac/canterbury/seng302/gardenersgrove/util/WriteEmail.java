@@ -1,12 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
-import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
-
 
 import java.util.UUID;
 
@@ -21,9 +18,10 @@ public class WriteEmail {
     private TokenService tokenService;
     private final EmailUserService emailService;
 
-    public WriteEmail(EmailUserService emailUserService)
+    public WriteEmail(EmailUserService emailUserService, TokenService tokenService)
     {
         this.emailService = emailUserService;
+        this.tokenService = tokenService;
     }
 
     /**
