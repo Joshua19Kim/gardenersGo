@@ -107,12 +107,20 @@ public class BrowseGardensController {
         }
         List<String> allTags = tagService.getAllTagNames();
         if(allTags.contains(tag)) {
-            tags.add(tag);
+            if(tags.contains(tag)) {  // this checks if the typed in tag is already in the user selected tags
+                String errorMessage = "You have already selected " + tag;
+                redirectAttributes.addFlashAttribute("tag", tag);
+                redirectAttributes.addFlashAttribute("tagValid", errorMessage);
+            } else {
+                tags.add(tag);
+            }
         } else {
+            // if the typed in tag does not exist
             String errorMessage = "No tag matching " + tag;
             redirectAttributes.addFlashAttribute("tag", tag);
             redirectAttributes.addFlashAttribute("tagValid", errorMessage);
         }
+        // removes the tags from the autocomplete
         for(String selectedTag: tags) {
             allTags.remove(selectedTag);
         }
