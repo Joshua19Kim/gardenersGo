@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * Entity class representing a visit of a user to a garden.

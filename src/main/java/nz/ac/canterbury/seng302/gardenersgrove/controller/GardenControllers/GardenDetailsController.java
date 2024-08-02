@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +41,7 @@ public class GardenDetailsController {
     private Gardener gardener;
     private final WeatherService weatherService;
     private final LocationService locationService;
-
+    private final GardenVisitService gardenVisitService;
 
     /**
      * Constructor used to create a new instance of the GardenDetailsController. Autowires a
@@ -53,6 +54,7 @@ public class GardenDetailsController {
      * @param weatherService      the weather service used to retrieve weather information
      * @param tagService          the tag service used to manage garden tags
      * @param locationService     the location service used to retrieve location from API
+     * @param gardenVisitService  the garden visit service used to log visits to gardens
      */
     @Autowired
     public GardenDetailsController(
@@ -61,7 +63,7 @@ public class GardenDetailsController {
             RelationshipService relationshipService,
             RequestService requestService,
             WeatherService weatherService,
-            TagService tagService, LocationService locationService) {
+            TagService tagService, LocationService locationService, GardenVisitService gardenVisitService) {
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
@@ -69,6 +71,7 @@ public class GardenDetailsController {
         this.weatherService = weatherService;
         this.tagService = tagService;
         this.locationService = locationService;
+        this.gardenVisitService = gardenVisitService;
     }
 
     /**
@@ -170,6 +173,8 @@ public class GardenDetailsController {
 
 
                }
+               GardenVisit gardenVisit = new GardenVisit(gardener, garden.get(), LocalDateTime.now());
+               gardenVisitService.addGardenVisit(gardenVisit);
                return "gardenDetailsTemplate";
            } else {
                Gardener gardenOwner = garden.get().getGardener();
@@ -179,6 +184,9 @@ public class GardenDetailsController {
                if (isFriend || garden.get().getIsGardenPublic()) {
                    model.addAttribute("gardener", garden.get().getGardener());
                    model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
+
+                   GardenVisit gardenVisit = new GardenVisit(gardener, garden.get(), LocalDateTime.now());
+                   gardenVisitService.addGardenVisit(gardenVisit);
                    return "unauthorizedGardenDetailsTemplate";
                } else {
                    return "redirect:/gardens";
