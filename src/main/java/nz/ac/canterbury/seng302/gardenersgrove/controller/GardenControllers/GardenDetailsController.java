@@ -360,12 +360,13 @@ public class GardenDetailsController {
                 logger.info("Tag '{}' passes moderation checks", tag);
             } else {
                 String warningMessage = tagService.addBadWordCount(gardener);
+                // save the updated state of the gardener - either increased bad word count or if they are banned
+                gardenerFormService.addGardener(gardener);
                 if (Objects.equals(warningMessage, "BANNED")) {
                     SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
                     logoutHandler.logout(request, response, SecurityContextHolder.getContext().getAuthentication());
                     return "redirect:/login?banned";
                 }
-                gardenerFormService.addGardener(gardener);
                 model.addAttribute("garden", garden);
                 model.addAttribute("tag", tag);
                 model.addAttribute("allTags", tagService.getUniqueTagNames(id));

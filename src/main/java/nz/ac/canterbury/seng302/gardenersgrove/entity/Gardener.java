@@ -55,6 +55,7 @@ public class Gardener {
     @OneToMany(mappedBy = "gardener")
     private List<Garden> gardens;
 
+    @Column(name = "ban_expiry_date")
     private Date banExpiryDate;
 
     /**
@@ -138,15 +139,6 @@ public class Gardener {
 
     public int getBadWordCount() { return badWordCount; }
 
-    public String getSearchResult() {
-        String searchResult;
-        if (lastName == null) {
-            searchResult = firstName + " " + email;
-        } else {
-            searchResult = firstName + " " + lastName + " " + "- " + email;
-        }
-        return searchResult;
-    }
     public void setId(Long id) { this.id = id; }
     public List<Garden> getGardens() { return gardens; }
 
@@ -168,16 +160,6 @@ public class Gardener {
 
     public void setBadWordCount(int badWordCount) {
         this.badWordCount = badWordCount;
-    }
-
-    public String getSearchString() {
-        String gardenerString = firstName;
-        if (getLastName() != null) {
-            gardenerString += " " + lastName;
-        }
-        gardenerString += " - " + email;
-        gardenerString += " id(" + id + ")";
-        return gardenerString;
     }
 
     @Override
@@ -202,8 +184,13 @@ public class Gardener {
         if (banExpiryDate != null && banExpiryDate.after(new Date())) {
             return true;
         } else {
-            banExpiryDate = null;
+            this.banExpiryDate = null;
+            this.badWordCount = 0;
             return false;
         }
+    }
+
+    public Date getBanExpiryDate() {
+        return banExpiryDate;
     }
 }

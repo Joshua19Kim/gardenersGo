@@ -100,5 +100,9 @@ public class WriteEmail {
     }
 
 
-
+    public void sendBanUserEmail(Gardener gardener) {
+        String subject = "!! You have been banned from Gardeners Grove !!";
+        String emailMessage = "You have reached the maximum number of bad words on our web site. Your account has been blocked for one week (7 Calendar days).";
+        emailService.sendEmail(gardener.getEmail(), subject, emailMessage);
+    }
 }
