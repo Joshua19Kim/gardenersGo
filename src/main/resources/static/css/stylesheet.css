@@ -1316,14 +1316,3 @@ form.search-bar::after {
 .modal h2 {
     margin-top: 0;
 }
-.close-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-.close-btn:hover {
-    background-color: #d32f2f;
-}
