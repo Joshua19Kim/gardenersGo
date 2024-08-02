@@ -5,10 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +28,7 @@ public class MainPageController {
     private final GardenerFormService gardenerFormService;
     private final RelationshipService relationshipService;
     private final RequestService requestService;
+    private final GardenVisitService gardenVisitService;
     private Gardener gardener;
 
     /**
@@ -41,17 +39,19 @@ public class MainPageController {
      * @param gardenerFormService the gardener form service used to interact with the database
      * @param relationshipService the relationship service used to manage gardener relationships
      * @param requestService the request service used to manage HTTP requests
+     * @param gardenVisitService the garden visit service used to log visits to gardens
      */
     @Autowired
     public MainPageController(
             GardenService gardenService,
             GardenerFormService gardenerFormService,
             RelationshipService relationshipService,
-            RequestService requestService) {
+            RequestService requestService, GardenVisitService gardenVisitService) {
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
         this.requestService = requestService;
+        this.gardenVisitService = gardenVisitService;
     }
 
     /**
@@ -92,9 +92,12 @@ public class MainPageController {
         gardenerOptional.ifPresent(value -> gardener = value);
 
         List<Garden> gardens;
+        List<Garden> recentGardens;
         gardens = gardenService.getGardensByGardenerId(gardener.getId());
+        recentGardens = gardenVisitService.findRecentGardensByGardenerId(gardener.getId());
         model.addAttribute("gardener", gardener);
         model.addAttribute("gardens", gardens);
+        model.addAttribute("recentGardens", recentGardens);
         model.addAttribute("requestURI", requestService.getRequestURI(request));
 
         return "mainPageTemplate";

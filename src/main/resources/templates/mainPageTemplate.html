@@ -17,9 +17,12 @@
                     <div class="card">
                         <div class="card-title">Recently accessed gardens</div>
                         <ul class="list-group">
-                            <li class="list-group-item">Rinlada’s Garden <br><small>JE Building</small></li>
-                            <li class="list-group-item">Sam’s Garden <br><small>JE Building</small></li>
-                            <li class="list-group-item">Kush’s Garden <br><small>JE Building</small></li>
+                            <li th:each="garden : ${recentGardens}" class="list-group-item p-0">
+                                <a th:href="@{/gardens/details(gardenId=${garden.id})}" class="d-block p-3 text-decoration-none text-dark">
+                                    <span th:text="${garden.name}">Garden Name</span> <br>
+                                    <small th:text="${garden.location}">Location</small>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

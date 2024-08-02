@@ -43,6 +43,8 @@ public class PlantAddFormControllerTest {
   // This is not explicitly used but is necessary for adding gardeners to the repository for testing
   private GardenerFormService gardenerFormService;
 
+  @MockBean private GardenVisitService gardenVisitService;
+
   @MockBean private PlantService plantService;
 
   @MockBean private ImageService imageService;

@@ -48,6 +48,8 @@ public class TagModerationFeature {
     private TagService tagService;
     @Mock
     private LocationService locationService;
+    @Mock
+    private GardenVisitService gardenVisitService;
     private MockMvc mockMvcGardenDetailsController;
     private Garden garden;
     private Tag tag;
@@ -86,7 +88,8 @@ public class TagModerationFeature {
                 requestService,
                 weatherService,
                 tagService,
-                locationService);
+                locationService,
+                gardenVisitService);
 
         mockMvcGardenDetailsController = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
     }
