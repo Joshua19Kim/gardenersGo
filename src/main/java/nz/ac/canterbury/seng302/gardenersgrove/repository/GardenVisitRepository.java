@@ -12,6 +12,6 @@ import java.util.List;
 
 @Repository
 public interface GardenVisitRepository extends CrudRepository<GardenVisit, Long> {
-    @Query("SELECT gv.garden FROM GardenVisit gv WHERE gv.gardener.id = :gardenerId ORDER BY gv.accessTime DESC")
+    @Query("SELECT gv.garden FROM GardenVisit gv WHERE gv.gardener.id = :gardenerId GROUP BY gv.garden ORDER BY MAX(gv.accessTime) DESC")
     List<Garden> findRecentGardensByGardenerId(@Param("gardenerId") Long gardenerId, Pageable pageable);
 }
