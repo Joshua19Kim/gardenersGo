@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unit.util;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantControllers.PlantAddFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PrevWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
@@ -9,8 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
