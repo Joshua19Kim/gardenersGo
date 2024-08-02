@@ -55,13 +55,34 @@ public class TagService {
     return tagRepository.findById(id);
   }
 
+  /**
+   * Get all the tags within the certain garden
+   * @param id garden's id
+   * @return the list of the name of tags in the certain garden
+   */
   public List<String> getTags(Long id) {
     return tagRepository.getTagsByGardenId(id);
   }
 
+  /**
+   * Find a tag with its name and garden
+   * @param name tag name that needs to be searched
+   * @param garden garden that has the tag
+   * @return
+   */
   public Optional<Tag> findTagByNameAndGarden(String name, Garden garden) {
     return tagRepository.findByNameAndGarden(name, garden);
   }
+
+  /**
+   * Delete a specific tag with tag's name and garden Id
+   * @param tagName tag name that needs to be deleted
+   * @param gardenId Garden Id that has the tag that needs to be deleted
+   */
+  public void deleteTagByGardenAndName( String tagName, Long gardenId) {
+    tagRepository.deleteByGardenIdAndName(tagName, gardenId);
+  }
+
 
   /**
    * Gets a list of all unique tags in the system that do not exist in the specified garden
