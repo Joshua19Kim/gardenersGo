@@ -19,8 +19,8 @@ public class PrevWeather {
 
     @JsonProperty("forecast")
     private JsonNode forecast;
-    private List<Float> forecastTemperatures = new ArrayList<Float>();
-    private List<String> forecastImages = new ArrayList<String>();
+    private List<Float> forecastTemperatures = new ArrayList<>();
+    private List<String> forecastImages = new ArrayList<>();
     private List<String> forecastDescriptions = new ArrayList<>();
     private List<Integer> forecastHumidities = new ArrayList<>();
     private List<String> forecastDates = new ArrayList<>();
