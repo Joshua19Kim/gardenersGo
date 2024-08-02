@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
  * Stores the garden, gardener, and access time.
  */
 @Entity
-@Table(name = "recent_gardens")
-public class RecentGardens {
+@Table(name = "garden_visit")
+public class GardenVisit {
 
     /** The unique identifier for the visit to the garden. */
     @Id
@@ -31,7 +31,7 @@ public class RecentGardens {
     private LocalDateTime accessTime;
 
     /** Default constructor required by JPA. */
-    protected RecentGardens() {}
+    protected GardenVisit() {}
 
     /**
      * Constructs a garden visit entry with the given gardener, garden, and access time.
@@ -40,7 +40,7 @@ public class RecentGardens {
      * @param garden The garden that was visited.
      * @param accessTime The timestamp when the garden was visited.
      */
-    public RecentGardens(Gardener gardener, Garden garden, LocalDateTime accessTime) {
+    public GardenVisit(Gardener gardener, Garden garden, LocalDateTime accessTime) {
         this.gardener = gardener;
         this.garden = garden;
         this.accessTime = accessTime;
