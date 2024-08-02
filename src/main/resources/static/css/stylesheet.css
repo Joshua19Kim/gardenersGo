@@ -17,6 +17,8 @@
     --secondary-color: #d1dc97;
     --accent-color: #f8dc30;
     --size-bezel: .5rem;
+    --weather-colour: #99b2e3;
+    --forecast-colour: #8095c7;
 
 }
 
@@ -42,13 +44,26 @@ body {
     text-align: center;
 }
 
+.card-img-top {
+    max-width: 128px;
+}
+.current {
+    background-color: var(--weather-colour)!important;
+
+}
+.forecast {
+    background-color: var(--forecast-colour)!important;
+
+}
+
 .card {
     margin-top: auto; /* Push the card to the center */
     border: 2px solid var(--card-background-color);
     border-radius: 10px;
     padding: 20px;
-    width: 50%;
-    /*max-width: 400px;*/
+    min-height: 400px;
+    max-height: 400px;
+    max-width: 400px;
     background-color: var(--primary-color);
     color: var(--text-color);
     display: flex;
@@ -403,7 +418,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 #tag {
     width: fit-content;
-    background-color: #45a049;
+    background-color: var(--primary-color);
     border-radius: 5px;
     display: flex;
     margin-left: 5px;
@@ -414,7 +429,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 #add-tag {
     width: 22px;
     height: 22px;
-    background-color: #45a049;
+    background-color: var(--primary-color);
     border-radius: 50%;
     display: flex;
     margin-left: 5px;
@@ -430,7 +445,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     display: none;
     width: 22px;
     height: 22px;
-    background-color: #45a049;
+    background-color: var(--primary-color);
     border-radius: 50%;
     margin-left: 5px;
     padding-top: 2px;
@@ -486,6 +501,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+
 }
 
 
@@ -540,30 +556,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     max-height: 600px;
 }
 
-.plant-table {
-    width: 100%;
-    border-collapse: collapse;
-    word-wrap: break-word;
-    white-space: normal;
-}
-
-.plant-table th {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #45a049;
-    background-color: #d9f7d9;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
-
-.plant-table td {
-    padding: 10px;
-    border-bottom: 1px solid #d9f7d9;
-    word-wrap: break-word;
-    white-space: normal;
-    max-width: 200px;
-}
 
 .plant-image-container {
     max-width: 100px;
@@ -594,7 +586,12 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     text-align: center;
     vertical-align: top;
 }
-
+.table-primary td{
+    background-color: var(--background-color);
+}
+.table-primary th {
+    background-color: var(--primary-color);
+}
 
 .plant-image-container .image-button:hover {
     cursor: pointer;
@@ -659,45 +656,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     background-color: #45a049;
 }
 
-.container .garden-details-links .edit-garden-button {
-    background-color: #45a049;
-    color: #fff;
-    border: none;
-    padding: 4px 8px;
-    font-size: 18px;
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer;
-}
 
-.container .garden-details-links .edit-garden-button:hover {
-    background-color: #45a049;
-}
-
-.container .garden-details-links .add-plant-button {
-    background-color: #45a049;
-    color: #fff;
-    border: none;
-    padding: 4px 8px;
-    font-size: 18px;
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer;
-}
-
-.container .garden-details-links .add-tag-button {
-    background-color: #45a049;
-    color: #fff;
-    border: none;
-    padding: 4px 8px;
-    font-size: 18px;
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer;
-    text-decoration: underline; /* for consistency with other links*/
-}
-
-
-.container .garden-details-links .add-plant-button:hover {
-    background-color: #45a049;
-}
 
 
 #gardens_list a:hover {
@@ -724,7 +683,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 .garden-details-container {
     display: flex;
-    flex-direction: row;
     justify-content: space-evenly;
 }
 
@@ -740,33 +698,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     margin-top: 15px;
 }
 
-.future-weather {
-    min-height: 25vh !important;
-}
-
-.future-weather .temperature {
-    font-size: 3vw !important;
-}
-.weather-display-container {
-    min-height: 24vh;
-    width: 100%;
-    margin: 5vh 0;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: 0.3s;
-    border-radius: 50px;
-    background-color: #c6e2f4;
-    padding: 25px 26px 5px;
-
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.weather-display-container:hover {
-    transform: scale(1.03)
-}
-
 .weather-display-row {
-    display: flex;
     flex-direction: column;
 }
 
@@ -784,8 +716,12 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 
 .temperature {
-    font-size: 4vw;
+    font-size: 2vw;
 }
+.list-group{
+    list-style-type: none;
+}
+
 
 body, h2, h3, h4, h5, h6, a {
     font-family: 'Roboto', sans-serif;
@@ -798,7 +734,7 @@ body, h2, h3, h4, h5, h6, a {
     margin: 0;
     padding: 0;
     font-family: sans-serif;
-    scrollbar-color: #45a049 #f9f9f9;
+    scrollbar-color: #8dab6e #e7f0dc;
 }
 
 .buttonDesign {
@@ -1067,16 +1003,12 @@ form.search-bar::after {
 }
 
 .table-header {
-    background: #d9f7d9;
+    background: var(--primary-color);
     width: 100%;
     display: flex;
     font-weight: bold;
 }
 
-/*a {*/
-/*    text-decoration: none;*/
-/*    color: blue;*/
-/*}*/
 
 #form .signup-code legend {
     text-align: center; /* Centered legend */
