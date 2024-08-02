@@ -62,14 +62,14 @@
         <div class="col-md-4">
             <div class="card mt-0">
                 <div class="card-title">My Garden’s List</div>
-                <ul class="list-group" style="overflow-y: scroll; height: 460px;">
+                <div class="list-group" style="overflow-y: scroll; height: 460px;">
                     <th:block th:each="garden : ${gardens}">
                         <a class="list-group-item" th:href="@{/gardens/details(gardenId=${garden.id})}">
                             <p th:text="${garden.name}"></p>
                             <small th:text="${garden.location}" ></small>
                         </a>
                     </th:block>
-                </ul>
+                </div>
             </div>
         </div>
     </div>
