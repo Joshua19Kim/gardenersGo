@@ -5,8 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;import org.springframework.beans.factory.annotation.Autowired;
-
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -20,6 +19,7 @@ import java.util.Optional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -64,5 +64,27 @@ public class DeactivateAccountTempFeature {
     @Then("the system shows the warning message")
     public void the_system_shows_the_warning_message() throws Exception {
         resultActions.andExpect(model().attribute("tagWarning", "You have added an inappropriate tag for the fifth time"));
+    }
+
+    @Given("I have added {int} inappropriate tags")
+    public void i_have_added_inappropriate_tags(int badWordCount) {
+        gardener.setBadWordCount(badWordCount);
+        gardenerFormService.addGardener(gardener);
+        tag = new Tag("Fuck", garden);
+    }
+
+    @When("I add another inappropriate tag")
+    public void i_add_another_inappropriate_tag() throws Exception {
+        resultActions = mockMvc
+                .perform(
+                        (MockMvcRequestBuilders.post("/gardens/addTag")
+                                .param("tag-input", tag.getName())
+                                .param("gardenId", "1")
+                                .with(csrf())));
+    }
+
+    @Then("I am unlogged from the system")
+    public void i_am_unlogged_from_the_system() throws Exception {
+        resultActions.andExpect(redirectedUrl("/login?banned"));
     }
 }

@@ -72,7 +72,7 @@ public class GardenDetailsControllerTest {
         HttpResponse<String> response = Mockito.mock(HttpResponse.class);
         when(response.body()).thenReturn("test");
         when(locationService.sendRequest(Mockito.anyString())).thenReturn(response);
-        when(tagService.addBadWordCount(any(Gardener.class))).thenReturn("BANNED");
+
     }
 
     @Test
@@ -898,6 +898,7 @@ public class GardenDetailsControllerTest {
 
         when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
         when(tagService.addTag(any())).thenReturn(tag);
+        when(tagService.addBadWordCount(any(Gardener.class))).thenReturn("BANNED");
 
         mockMvc
                 .perform(
