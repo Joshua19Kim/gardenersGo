@@ -65,6 +65,12 @@ public class Garden {
   @Column
   private LocalDate lastNotified;
 
+  /**
+   * The date the garden is publicized
+   */
+  @Column
+  private LocalDate creationDate;
+
   /** Default constructor required by JPA. */
   protected Garden() {}
 
@@ -93,6 +99,7 @@ public class Garden {
     plants = new ArrayList<>();
     this.publicGarden = false; // Defaults to private
     this.lastNotified = null; // Defaults to null
+    creationDate = LocalDate.now();
   }
   /**
    * Constructs a garden with the given name, location, size and gardener.
@@ -119,6 +126,7 @@ public class Garden {
     plants = new ArrayList<>();
     this.publicGarden = false; // Defaults to private
     this.lastNotified = null; // Defaults to null
+    creationDate = LocalDate.now();
   }
 
   /**
@@ -334,4 +342,11 @@ public class Garden {
     }
   }
 
+  public LocalDate getCreationDate() {
+    return creationDate;
+  }
+
+  public void setCreationDate(LocalDate creationDate) {
+    this.creationDate = creationDate;
+  }
 }

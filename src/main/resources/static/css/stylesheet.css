@@ -119,14 +119,14 @@ h1 {
     color: var(--button-hover-color);
 }
 
-.alert {
-    background-color: var(--alert-background-color);
-    border-left: 5px solid var(--primary-color);
-    color: var(--text-color);
-    margin-bottom: 15px;
-    padding: 10px;
-    text-align: center;
-}
+/*.alert {*/
+/*    background-color: var(--alert-background-color);*/
+/*    border-left: 5px solid var(--primary-color);*/
+/*    color: var(--text-color);*/
+/*    margin-bottom: 15px;*/
+/*    padding: 10px;*/
+/*    text-align: center;*/
+/*}*/
 
 .logo {
     width: 75px;
@@ -256,6 +256,28 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     transition: 0.3s ease;
 }
 
+.card {
+    background: #8dab6e  !important; ;
+    border-radius: 15px;
+    padding: 15px;
+    /*margin: 10px;*/
+}
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+.list-group-item {
+    background: #d1dc97 !important;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    padding: 10px 15px;
+}
+.list-group-item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
 
 .dropdown {
     position: relative;
@@ -1441,4 +1463,38 @@ form.search-bar::after {
 .create-garden-row > div:last-child {
     margin-right: 0;
 }
+
+.avatar {
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.browse-gardens-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Chat GPT helped with inspiration for the styling*/
+.browse-gardens-card {
+    background-color: #8dab6e;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px;
+}
+
+.browse-gardens-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+body {
+    background-color: #fffdf6;
+}
+
+
 

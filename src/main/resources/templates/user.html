@@ -60,8 +60,7 @@
 
             <label for="DoB"> Date of Birth: </label>
             <span id="DoB" th:text="${DoB}"></span>
-            <input class="form-control" data-cy="DoB" id="DoBEdit"
-                   th:name="DoB" th:value="*{DoB}" type="date" style="display: none;">
+            <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;" th:classappend="${(DoBValid != '' && DoBValid != null) ? 'error' : ''}">
             <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
 
             <script>
@@ -108,6 +107,18 @@
     });
 </script>
 <script>
+    document.getElementById("userForm").addEventListener("submit", function(event) {
+        const dobInput = document.getElementById("DoBEdit");
+        if (!(dobInput.checkValidity())) {
+            console.log("invalid date")
+            event.preventDefault();
+            document.getElementById("isDoBInvalid").value = true;
+            document.getElementById("userForm").submit();
+        } else {
+            console.log("valid date")
+            document.getElementById("isDoBInvalid").value = false;
+        }
+    });
     function handleImageClick() {
         document.getElementById('fileInput').click();
     }

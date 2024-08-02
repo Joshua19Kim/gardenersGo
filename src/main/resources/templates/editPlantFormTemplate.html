@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <title>Edit Plant</title>
-    <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
 </head>
 <body>
 
@@ -57,6 +55,19 @@
     </div>
 </div>
 <script>
+    document.getElementById("editPlantForm").addEventListener("submit", function(event) {
+        const dateInput = document.getElementById("datePlanted");
+        if (!(dateInput.checkValidity())) {
+            console.log("invalid date")
+            event.preventDefault();
+            document.getElementById("isDateInvalid").value = true;
+            document.getElementById("editPlantForm").submit();
+        } else {
+            console.log("valid date")
+            document.getElementById("isDateInvalid").value = false;
+        }
+    });
+
     document.getElementById("editPlantForm").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             var activeElement = document.activeElement;

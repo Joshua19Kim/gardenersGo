@@ -19,10 +19,10 @@
             <div th:if="${param.logout}" class="alert alert-info">
                 <p>You have been logged out.</p>
             </div>
-            <div th:if="${param.signedup}" class="alert alert-success">
+            <div th:if="${param.signedup}" class="alert alert-success" role="alert">
                 <p>Your account has been activated, please log in</p>
             </div>
-            <div th:if="${param.expired}" id="error-message" class="alert alert-danger">
+            <div th:if="${param.expired}" class="alert alert-danger" role="alert">
                 <p>Reset password link has expired.</p>
             </div>
 

@@ -56,7 +56,7 @@ public class LoginController {
         response.setHeader("Expires", "0"); // Proxies
 
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
-            return "redirect:/gardens";
+            return "redirect:/home";
         }
 
         return "loginForm";

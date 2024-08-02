@@ -46,6 +46,7 @@ public class ResetPasswordFormController {
         logger.info("GET /resetPassword");
         // Verifies token has associated user and is not expired
         String result = tokenService.validateLostPasswordToken(token);
+        logger.info(result);
         if (result == null) { // No issue
             Optional<Gardener> tempGardener = tokenService.findGardenerbyToken(token);
             if (tempGardener.isPresent()) {
@@ -55,7 +56,8 @@ public class ResetPasswordFormController {
                 return  "resetPasswordForm";
             }
             return "redirect:/login"; // Gardener / Id not present
-        } else if (result.equals("expired")) {
+        } else if (result.equals("invalidToken")) {
+            logger.info("Token is expired.");
             Optional<LostPasswordToken> expiredToken = tokenService.getTokenFromString(token);
             expiredToken.ifPresent(e -> tokenService.removeToken(e));
             return "redirect:/login?expired"; // Token is expired
