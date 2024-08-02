@@ -179,20 +179,40 @@
         </form>
     </div>
 
-    <div id="warningModal" class="modal">
-        <div class="modal-content">
-            <h2>Oopps!!!</h2>
-            <p id="modalMessage"></p>
-            <button class="close-btn" onclick="closeModal()">Ok! I got it!</button>
+<!--    <div id="warningModal" class="modal">-->
+<!--        <div class="modal-content">-->
+<!--            <h2>Oopps!!!</h2>-->
+<!--            <p id="modalMessage"></p>-->
+<!--            <button class="close-btn" onclick="closeModal()">Ok! I got it!</button>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div class="modal fade" id="warningModal" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="warningModalLabel">Oopps!!!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="closeModal()">Ok! I got it!</button>
+                </div>
+            </div>
         </div>
     </div>
+
 </div>
-
-
 
 <script th:src="@{/javascript/tagAutocomplete.js}"></script>
 
-<script>
+
+
+
+
+<script th:insert="~{fragmentExample/fragments/bootstrap.html}">
 
     window.onload = function () {
         const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -218,18 +238,31 @@
     }
 
 
-    var modal = document.getElementById("warningModal");
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+
+
+    //
+    // var modal = document.getElementById("warningModal");
+    // window.onclick = function(event) {
+    //     if (event.target == modal) {
+    //         modal.style.display = "none";
+    //     }
+    // }
+    // function closeModal() {
+    //     document.getElementById('warningModal').style.display = 'none';
+    // }
+
+    var myModal = new bootstrap.Modal(document.getElementById('warningModal'))
     function closeModal() {
-        document.getElementById('warningModal').style.display = 'none';
+        var myModalEl = document.getElementById('warningModal')
+        var modal = bootstrap.Modal.getInstance(myModalEl)
+        modal.hide()
     }
     function openModal(message) {
-        document.getElementById('modalMessage').textContent = message;
-        document.getElementById('warningModal').style.display = 'block';
+    document.getElementById('modalMessage').textContent = message;
+    myModal.show()
+
+    // document.getElementById('modalMessage').textContent = message;
+    // document.getElementById('warningModal').style.display = 'block';
     }
     document.addEventListener('DOMContentLoaded', function() {
         var tagWarningElement = document.getElementById('tagWarning');
