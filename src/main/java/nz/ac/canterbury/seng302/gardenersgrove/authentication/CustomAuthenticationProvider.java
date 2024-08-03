@@ -72,7 +72,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             long diff = date.getTime() - now.getTime();
             long days = diff / (1000 * 60 * 60 * 24) + 1;
 
-            throw new BadCredentialsException("This account has been banned for " + days + " day(s)");
+            throw new BadCredentialsException("You have been banned for " + days + " day(s)");
         } else {
             // this is required for the gardener to be unbanned
             gardenerFormService.addGardener(u);
