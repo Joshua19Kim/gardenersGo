@@ -74,7 +74,7 @@ public class TagService {
    * Find a tag with its name and garden
    * @param name tag name that needs to be searched
    * @param garden garden that has the tag
-   * @return
+   * @return the tag that matches the name and garden
    */
   public Optional<Tag> findTagByNameAndGarden(String name, Garden garden) {
     return tagRepository.findByNameAndGarden(name, garden);
@@ -94,7 +94,7 @@ public class TagService {
    * Gets a list of all unique tags in the system that do not exist in the specified garden
    *
    * @param id the id of the garden
-   * @return a list of all unique tags in the system that do not exist in the specified garden
+   * @return a set of all unique tags in the system that do not exist in the specified garden
    */
   public Set<String> getUniqueTagNames(Long id) {
     Set<String> uniqueTagNames = new HashSet<>();
@@ -126,7 +126,7 @@ public class TagService {
             //This will enable system sending email in the background asynchronously and return the message asap.
             CompletableFuture.runAsync(() -> writeEmail.sendTagWarningEmail(gardener), executorService);
 
-            return "You have added an inappropriate tag for the fifth time";
+            return "You have added an inappropriate tag for the fifth time. If you add one more, your account will be blocked for one week.";
         } else if (gardener.getBadWordCount() == 6) {
             gardener.banGardener();
             CompletableFuture.runAsync(() -> writeEmail.sendBanUserEmail(gardener), executorService);
