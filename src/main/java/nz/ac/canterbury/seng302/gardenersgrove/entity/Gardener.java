@@ -108,6 +108,11 @@ public class Gardener {
         return encoder.encode(password);
     }
 
+    /**
+     * Compares the given password with the stored password using bcrypt
+     * @param password the password to compare
+     * @return true if the passwords match, false otherwise
+     */
     public boolean comparePassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(password, this.password);
@@ -173,6 +178,9 @@ public class Gardener {
         return gardenerString;
     }
 
+    /**
+     * Bans the gardener for 7 days
+     */
     public void banGardener() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(new Date().getTime());
@@ -180,14 +188,20 @@ public class Gardener {
         this.banExpiryDate = new Date(calendar.getTime().getTime());
     }
 
+
+    /**
+     * @return true if the gardener is banned, false otherwise
+     * if the ban date has expired, the ban is lifted
+     */
     public boolean isBanned() {
-        if (banExpiryDate != null && banExpiryDate.after(new Date())) {
-            return true;
-        } else {
-            this.banExpiryDate = null;
-            this.badWordCount = 0;
-            return false;
-        }
+        if (banExpiryDate != null)
+            if (banExpiryDate.after(new Date())) {
+                return true;
+            } else {
+                this.banExpiryDate = null;
+                this.badWordCount = 0;
+            }
+        return false;
     }
 
     public Date getBanExpiryDate() {
