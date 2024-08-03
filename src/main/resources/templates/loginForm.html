@@ -18,6 +18,10 @@
             <div th:if="${param.expired}" id="error-message" class="alert alert-danger">
                 <p>Reset password link has expired.</p>
             </div>
+            <div th:if="${param.banned}" class="alert alert-danger">
+                <p>You have been banned for 7 days for inappropriate conduct.</p>
+            </div>
+
             <div class="d-flex flex-column align-items-center">
                 <div class="form-group">
                     <input name="username" placeholder="Username" type="text" maxlength="320" class="form-control" th:classappend="${param.error} ? 'is-invalid' : ''" required/>
