@@ -294,7 +294,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     height: auto;
 }
 
-#tag-error-message {
+.tag-error-message {
     color: red;
     text-align: left;
     animation: fadeOut 2s forwards;
@@ -1289,37 +1289,30 @@ form.search-bar::after {
     margin-right: 0;
 }
 
-.avatar {
-    vertical-align: middle;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 10px;
-}
 
-.browse-gardens-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
 
-/* Chat GPT helped with inspiration for the styling*/
-.browse-gardens-card {
-    background-color: #8dab6e;
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
     width: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 10px;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
 }
-
-.browse-gardens-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
 }
-
-body {
-    background-color: #fffdf6;
+.modal h2 {
+    margin-top: 0;
 }
-
-
-

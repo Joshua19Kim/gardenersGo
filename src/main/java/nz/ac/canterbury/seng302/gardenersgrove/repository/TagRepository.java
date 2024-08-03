@@ -2,9 +2,12 @@ package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,4 +44,15 @@ public interface TagRepository extends CrudRepository<Tag, Long> {
    */
   @Query(value = "select tag_name from tag", nativeQuery = true)
   List<String> getAllTagNames();
+
+  /**
+   * Delete a specific tag with tag's name and garden Id, which is in the database
+   * @param tagName tag's name that needs to be deleted
+   * @param gardenId Garden's Id that has the tag that needs to be deleted
+   */
+  @Modifying
+  @Transactional
+  @Query(value = "DELETE FROM tag WHERE tag_name = :tagName AND garden = :gardenId", nativeQuery = true)
+  void deleteByGardenIdAndName(@Param("tagName") String tagName, @Param("gardenId") Long gardenId);
+
 }
