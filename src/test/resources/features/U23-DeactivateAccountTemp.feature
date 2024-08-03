@@ -11,6 +11,7 @@ Feature: As Kaia, I want to make sure that users who repeatedly trying to add in
 
   @U23
   Scenario: #AC2
+    Given I am logged in with email "a@gmail.com" and password "Password1!"
     Given I have added 5 inappropriate tags
     When I add another inappropriate tag
     Then I am unlogged from the system
