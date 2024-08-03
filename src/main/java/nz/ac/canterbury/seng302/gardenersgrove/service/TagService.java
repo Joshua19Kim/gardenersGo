@@ -61,31 +61,52 @@ public class TagService {
         return tagRepository.findById(id);
     }
 
-    public List<String> getTags(Long id) {
-        return tagRepository.getTagsByGardenId(id);
-    }
+  /**
+   * Get all the tags within the certain garden
+   * @param id garden's id
+   * @return the list of the name of tags in the certain garden
+   */
+  public List<String> getTags(Long id) {
+    return tagRepository.getTagsByGardenId(id);
+  }
 
-    public Optional<Tag> findTagByNameAndGarden(String name, Garden garden) {
-        return tagRepository.findByNameAndGarden(name, garden);
-    }
+  /**
+   * Find a tag with its name and garden
+   * @param name tag name that needs to be searched
+   * @param garden garden that has the tag
+   * @return
+   */
+  public Optional<Tag> findTagByNameAndGarden(String name, Garden garden) {
+    return tagRepository.findByNameAndGarden(name, garden);
+  }
 
-    /**
-     * Gets a list of all unique tags in the system that do not exist in the specified garden
-     *
-     * @param id the id of the garden
-     * @return a set of all unique tags in the system that do not exist in the specified garden
-     */
-    public Set<String> getUniqueTagNames(Long id) {
-        Set<String> uniqueTagNames = new HashSet<>();
-        List<Tag> tags = getAllTags();
-        List<String> tagNamesInGarden = getTags(id);
-        for (Tag tag : tags) {
-            if (!tagNamesInGarden.contains(tag.getName())) {
-                uniqueTagNames.add(tag.getName());
-            }
-        }
-        return uniqueTagNames;
+  /**
+   * Delete a specific tag with tag's name and garden Id
+   * @param tagName tag name that needs to be deleted
+   * @param gardenId Garden Id that has the tag that needs to be deleted
+   */
+  public void deleteTagByGardenAndName( String tagName, Long gardenId) {
+    tagRepository.deleteByGardenIdAndName(tagName, gardenId);
+  }
+
+
+  /**
+   * Gets a list of all unique tags in the system that do not exist in the specified garden
+   *
+   * @param id the id of the garden
+   * @return a list of all unique tags in the system that do not exist in the specified garden
+   */
+  public Set<String> getUniqueTagNames(Long id) {
+    Set<String> uniqueTagNames = new HashSet<>();
+    List<Tag> tags = getAllTags();
+    List<String> tagNamesInGarden = getTags(id);
+    for(Tag tag : tags) {
+      if(!tagNamesInGarden.contains(tag.getName())) {
+        uniqueTagNames.add(tag.getName());
+      }
     }
+    return uniqueTagNames;
+  }
 
     /**
      * Check the number of bad words that the user tried to use,
@@ -113,6 +134,16 @@ public class TagService {
         }
         return "Submitted tag fails moderation requirements";
     }
+
+
+
+  /**
+   * Gets all the tag names in the database
+   * @return all the tag names in the database
+   */
+  public List<String> getAllTagNames() {
+    return tagRepository.getAllTagNames();
+  }
 
 
 }

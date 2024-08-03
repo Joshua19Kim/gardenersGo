@@ -9,10 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WordFilter;
-import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Optional;
@@ -31,8 +28,6 @@ public class TagModerationFeature {
     private GardenerFormService gardenerFormService;
     @Autowired
     private GardenService gardenService;
-    @Autowired
-    private WriteEmail writeEmail;
     private Garden garden;
     private Tag tag;
     private Gardener gardener;
@@ -41,7 +36,7 @@ public class TagModerationFeature {
     public void setUp() {
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail("a@gmail.com");
         gardener = gardenerOptional.get();
-        Optional<Garden> gardenOptional = gardenService.getGarden(1);
+        Optional<Garden> gardenOptional = gardenService.getGarden(1L);
         garden = gardenOptional.get();
     }
 
@@ -69,6 +64,7 @@ public class TagModerationFeature {
     @Then("The tag is checked for offensive or inappropriate words")
     public void the_tag_is_checked_for_offensive_or_inappropriate_words() {
         assertEquals(false, WordFilter.doesContainBadWords(tag.getName()));
+        tagService.deleteTagByGardenAndName(tag.getName(), garden.getId());
     }
 
     @Then("the tag is not added to the list of user-defined tags")

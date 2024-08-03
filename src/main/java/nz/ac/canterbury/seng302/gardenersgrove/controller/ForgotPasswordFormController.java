@@ -27,8 +27,6 @@ public class ForgotPasswordFormController {
     private final WriteEmail writeEmail;
     private final EmailUserService emailService;
 
-    private final String confirmationMessage = "An email was sent to the address if it was recognised";
-
     @Value("${server.url}")
     private String url;
 
@@ -72,6 +70,7 @@ public class ForgotPasswordFormController {
         if(validEmailError.isPresent()){
             model.addAttribute("emailError", validEmailError.get());
         } else {
+            String confirmationMessage = "An email was sent to the address if it was recognised";
             model.addAttribute("returnMessage", confirmationMessage);
         }
 

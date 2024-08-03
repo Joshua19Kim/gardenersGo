@@ -706,7 +706,7 @@ public class GardenDetailsControllerTest {
         when(tagService.addBadWordCount(testGardener)).thenAnswer(invocation -> {
             Gardener gardener = invocation.getArgument(0);
             gardener.setBadWordCount(gardener.getBadWordCount() + 1);
-            return "You have added an inappropriate tag for the fifth time";
+            return "You have added an inappropriate tag for the fifth time. If you add one more, your account will be blocked for one week.";
         });
 
         Weather currentWeather = Mockito.mock(Weather.class);
@@ -731,7 +731,7 @@ public class GardenDetailsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("gardenDetailsTemplate"))
                 .andExpect(model().attributeExists("tagWarning"))
-                .andExpect(model().attribute("tagWarning", "You have added an inappropriate tag for the fifth time"));
+                .andExpect(model().attribute("tagWarning", "You have added an inappropriate tag for the fifth time. If you add one more, your account will be blocked for one week."));
 
         verify(tagService).addBadWordCount(testGardener);
         verify(tagService, never()).addTag(any());

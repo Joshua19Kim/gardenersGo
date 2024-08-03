@@ -8,7 +8,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.*;
@@ -135,7 +134,7 @@ public class TagServiceTest {
     @Test
     public void gardenerTriedBadWord_FifthTime_ReturnWarningMessage() {
         int pastBadWordHistory = 5;
-        String expectedMessage = "You have added an inappropriate tag for the fifth time";
+        String expectedMessage = "You have added an inappropriate tag for the fifth time. If you add one more, your account will be blocked for one week.";
 
         Mockito.doNothing().when(writeEmail).sendTagWarningEmail(Mockito.any(Gardener.class));
         when(gardener.getBadWordCount()).thenReturn(pastBadWordHistory);

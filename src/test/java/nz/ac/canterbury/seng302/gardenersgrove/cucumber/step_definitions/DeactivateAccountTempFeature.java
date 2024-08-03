@@ -69,7 +69,7 @@ public class DeactivateAccountTempFeature {
     }
     @Then("the system shows the warning message")
     public void the_system_shows_the_warning_message() throws Exception {
-        resultActions.andExpect(model().attribute("tagWarning", "You have added an inappropriate tag for the fifth time"));
+        resultActions.andExpect(model().attribute("tagWarning", "You have added an inappropriate tag for the fifth time. If you add one more, your account will be blocked for one week."));
     }
 
     @Given("I have added {int} inappropriate tags")
