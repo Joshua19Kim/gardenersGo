@@ -21,8 +21,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.Math.ceil;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = BrowseGardensController.class)
@@ -76,7 +74,7 @@ public class BrowseGardensControllerTest {
     public void BrowseGardensPageRequested_PageNumberAndSizeSpecified_PageReturned() throws Exception {
         int pageNumber = 1;
         int pageSize = 3;
-        List<Integer> expectedPageNumbers = List.of(1,2,3,4,5);
+        List<Integer> expectedPageNumbers = List.of(1,2,3,4);
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Garden> gardenPage = new PageImpl<>(gardens, pageable, gardens.size());
         Mockito.when(gardenService.getGardensPaginated(pageNumber, pageSize)).thenReturn(gardenPage);
