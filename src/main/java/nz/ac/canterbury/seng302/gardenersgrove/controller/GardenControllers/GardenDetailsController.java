@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.NotificationUtil;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -287,6 +289,8 @@ public class GardenDetailsController {
     public String addTag(
             @RequestParam(name = "tag-input") String tag,
             @RequestParam(name = "gardenId") long id,
+            HttpServletRequest request,
+            HttpServletResponse response,
             Model model) throws IOException, URISyntaxException, InterruptedException {
 
         logger.info("POST /addTag");
@@ -356,7 +360,13 @@ public class GardenDetailsController {
                 logger.info("Tag '{}' passes moderation checks", tag);
             } else {
                 String warningMessage = tagService.addBadWordCount(gardener);
+                // save the updated state of the gardener - either increased bad word count or if they are banned
                 gardenerFormService.addGardener(gardener);
+                if (Objects.equals(warningMessage, "BANNED")) {
+                    SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+                    logoutHandler.logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+                    return "redirect:/login?banned";
+                }
                 model.addAttribute("garden", garden);
                 model.addAttribute("tag", tag);
                 model.addAttribute("allTags", tagService.getUniqueTagNames(id));

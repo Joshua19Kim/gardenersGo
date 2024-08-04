@@ -39,6 +39,6 @@ public class MainPageFeature {
     @Then("I am taken by default to the home page")
     public void i_am_taken_by_default_to_the_home_page() throws Exception {
         MvcResult mvcResult = resultActions.andExpect(status().is3xxRedirection()).andReturn();
-        assertEquals(mvcResult.getResponse().getHeader("Location"), "/home");
+        assertEquals("/home", mvcResult.getResponse().getHeader("Location"));
     }
 }
