@@ -19,4 +19,10 @@ public class MockConfigurationSteps {
         Mockito.verify(emailUserService, Mockito.times(1)).sendEmail(anyString(), anyString(), anyString());
         Mockito.doNothing().when(emailUserService).sendEmail(anyString(),anyString(),anyString());
     }
+
+    @Then("I receive an email confirming my account has been blocked for one week")
+    public void send_ban_email() {
+        Mockito.verify(emailUserService, Mockito.times(1)).sendEmail(anyString(), anyString(), anyString());
+        Mockito.doNothing().when(emailUserService).sendEmail(anyString(),anyString(),anyString());
+    }
 }

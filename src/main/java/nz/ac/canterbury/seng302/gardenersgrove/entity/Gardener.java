@@ -7,6 +7,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,6 +54,9 @@ public class Gardener {
     /** The list of gardens belonging to the gardener. */
     @OneToMany(mappedBy = "gardener")
     private List<Garden> gardens;
+
+    @Column(name = "ban_expiry_date")
+    private Date banExpiryDate;
 
     /**
      * JPA required no-args constructor
@@ -103,6 +108,11 @@ public class Gardener {
         return encoder.encode(password);
     }
 
+    /**
+     * Compares the given password with the stored password using bcrypt
+     * @param password the password to compare
+     * @return true if the passwords match, false otherwise
+     */
     public boolean comparePassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(password, this.password);
@@ -134,15 +144,6 @@ public class Gardener {
 
     public int getBadWordCount() { return badWordCount; }
 
-    public String getSearchResult() {
-        String searchResult;
-        if (lastName == null) {
-            searchResult = firstName + " " + email;
-        } else {
-            searchResult = firstName + " " + lastName + " " + "- " + email;
-        }
-        return searchResult;
-    }
     public void setId(Long id) { this.id = id; }
     public List<Garden> getGardens() { return gardens; }
 
@@ -166,16 +167,6 @@ public class Gardener {
         this.badWordCount = badWordCount;
     }
 
-    public String getSearchString() {
-        String gardenerString = firstName;
-        if (getLastName() != null) {
-            gardenerString += " " + lastName;
-        }
-        gardenerString += " - " + email;
-        gardenerString += " id(" + id + ")";
-        return gardenerString;
-    }
-
     @Override
     public String toString() {
         String gardenerString = firstName;
@@ -187,4 +178,33 @@ public class Gardener {
         return gardenerString;
     }
 
+    /**
+     * Bans the gardener for 7 days
+     */
+    public void banGardener() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(new Date().getTime());
+        calendar.add(Calendar.DATE, 7);
+        this.banExpiryDate = new Date(calendar.getTime().getTime());
+    }
+
+
+    /**
+     * @return true if the gardener is banned, false otherwise
+     * if the ban date has expired, the ban is lifted
+     */
+    public boolean isBanned() {
+        if (banExpiryDate != null)
+            if (banExpiryDate.after(new Date())) {
+                return true;
+            } else {
+                this.banExpiryDate = null;
+                this.badWordCount = 0;
+            }
+        return false;
+    }
+
+    public Date getBanExpiryDate() {
+        return banExpiryDate;
+    }
 }
