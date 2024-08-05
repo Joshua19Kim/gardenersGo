@@ -92,4 +92,17 @@ public class WriteEmail {
         String subject = "Forgot password?";
         emailService.sendEmail(email, subject, emailMessage); // *** Blocking
     }
+
+    /**
+     * Send a warning email to gardener's email when gardener(user) has tried to enter the inappropriate words for five times.
+     * @param gardener Gardener to get the email address
+     */
+    public void sendTagWarningEmail (Gardener gardener) {
+        String subject = "!! Warning for bad words !!";
+        String emailMessage = "You have reached the maximum number of bad words on our web site. If you add another inappropriate tag, Your account will be blocked for one week.";
+        emailService.sendEmail(gardener.getEmail(), subject, emailMessage);
+    }
+
+
+
 }

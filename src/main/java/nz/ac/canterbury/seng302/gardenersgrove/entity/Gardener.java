@@ -49,7 +49,6 @@ public class Gardener {
     private List<Authority> userRoles;
     // Create an encoder with strength 16
 
-
     /** The list of gardens belonging to the gardener. */
     @OneToMany(mappedBy = "gardener")
     private List<Garden> gardens;
@@ -163,7 +162,9 @@ public class Gardener {
 
     public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
 
-    public void setBadWordCount(int badWordCount) { this.badWordCount = badWordCount; }
+    public void setBadWordCount(int badWordCount) {
+        this.badWordCount = badWordCount;
+    }
 
     public String getSearchString() {
         String gardenerString = firstName;

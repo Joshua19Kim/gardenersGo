@@ -181,7 +181,7 @@ public class GardenDetailsController {
                Boolean isFriend = relationshipService
                        .getCurrentUserRelationships(gardenOwner.getId())
                        .contains(currentUserOptional.get());
-               if (isFriend || garden.get().getIsGardenPublic()) {
+               if (isFriend) {
                    model.addAttribute("gardener", garden.get().getGardener());
                    model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
 
@@ -363,13 +363,13 @@ public class GardenDetailsController {
                 tagService.addTag(newTag);
                 logger.info("Tag '{}' passes moderation checks", tag);
             } else {
-                gardener.setBadWordCount(gardener.getBadWordCount() + 1); // increase bad word count of gardener
+                String warningMessage = tagService.addBadWordCount(gardener);
                 gardenerFormService.addGardener(gardener);
                 model.addAttribute("garden", garden);
                 model.addAttribute("tag", tag);
                 model.addAttribute("allTags", tagService.getUniqueTagNames(id));
                 model.addAttribute("tags", tagService.getTags(garden.getId()));
-                model.addAttribute("tagValid", "Submitted tag fails moderation requirements");
+                model.addAttribute("tagWarning", warningMessage);
                 return "gardenDetailsTemplate";
             }
         }
