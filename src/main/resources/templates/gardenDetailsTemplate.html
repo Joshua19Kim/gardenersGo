@@ -9,35 +9,37 @@
 
 <div class="garden-details-container">
     <div class="container" style="margin: 0; width: 1200px">
-        <div class="row-cols-12 justify-content-end d-flex align-items-center">
-
-
-            <a th:href="@{../gardens/edit(gardenId=${garden.id})}" class="btn btn-primary m-2" role="button">Edit
+        <div class="row w-100" >
+            <div class="col-6 flex-row d-flex">
+                <h1 class="text-black" ><span th:text="${garden.name}"></span></h1>
+            </div>
+            <div class="col-6 flex-row-reverse d-flex">
+                <a th:href="@{../gardens/edit(gardenId=${garden.id})}" class="btn btn-primary m-2 w-25 h-50" role="button">Edit
                 Garden</a>
-            <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="btn btn-primary m-2"
-               role="button">Add
-                New
-                Plant</a>
-            <div class="public-checkbox-container">
-                <form method="post" th:action="@{../gardens/details(gardenId=${garden.id})}"
-                      id="garden-details-form">
-                    <label for="isGardenPublic" id="public-checkbox-label">Make my garden public</label>
-                    <input class="form-control" data-cy="isGardenPublic" id="isGardenPublic" name="isGardenPublic"
-                           th:id="isGardenPublic" th:name="isGardenPublic" type="checkbox"
-                           onchange="document.getElementById('garden-details-form').submit()"/>
+                <div class="public-checkbox-container">
+                    <form method="post" th:action="@{../gardens/details(gardenId=${garden.id})}" id="garden-details-form">
+                        <label  id="public-checkbox-label">Make my garden public</label>
+                        <input class="form-control" data-cy="isGardenPublic" id="isGardenPublic" name="isGardenPublic"
+                               th:id="isGardenPublic" th:name="isGardenPublic" type="checkbox"
+                               th:checked="${garden.isGardenPublic}" onchange="document.getElementById('garden-details-form').submit()"/>
+                        <input type="hidden" name="gardenId" th:value="${garden.id}"/>
 
-                    <script th:inline="javascript">
-                        // Credit: https://stackoverflow.com/questions/31771821/thymeleaf-how-to-add-conditional-block-in-javascript
-                        let isGardenPublic = [[${garden.isGardenPublic}]];
-                        document.getElementById("isGardenPublic").checked = isGardenPublic;
-                    </script>
+                        <script th:inline="javascript">
+                            // Credit: https://stackoverflow.com/questions/31771821/thymeleaf-how-to-add-conditional-block-in-javascript
+                            let isGardenPublic = [[${garden.isGardenPublic}]];
+                            document.getElementById("isGardenPublic").checked = isGardenPublic;
+                        </script>
 
-                </form>
+                    </form>
+                </div>
+
+
+
             </div>
 
 
         </div>
-        <div class="row">
+        <div class="row w-100">
 
 
             <p><strong>Location:</strong> <span th:text="${garden.getFullLocation()}"></span></p>
@@ -78,12 +80,11 @@
         </div>
 
 
-        <div class="row">
+        <div class="row  w-100 justify-content-center">
             <div class="col-lg">
                 <div id="location-error" th:if="${date == null}">Location not found, please update your location to see
                     the weather
                 </div>
-                <div style="text-align: center;"><h2>Next 3 days:</h2></div>
                 <ul class="list-group list-group-horizontal">
                     <li th:if="${date}">
                         <div class="card current">
@@ -116,7 +117,7 @@
                     </li>
 
 
-                    <li class="future-weather"
+                    <li class="flass="form-control" data-cy="isGardenPublic" id="isGardenPublic" nameuture-weather"
                         th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
                         <div class="card forecast" style="width: 15rem;">
                             <img class="card-img-top" alt="No image available"
@@ -152,8 +153,11 @@
 
         </div>
 
-        <div class="row">
+        <div class="row  w-100">
+            <br/>
             <h4>Plants:</h4>
+            <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="btn btn-primary m-2 w-auto"
+               role="button">Add New Plant</a>
             <div class="plant-list-container" th:if="${not #lists.isEmpty(garden.plants)}">
                 <table class="table table-primary">
                     <thead class="thead-light">
@@ -194,7 +198,7 @@
                         <td>
                             <form method="get" th:action="@{../gardens/details/plants/edit}">
                                 <input th:name="plantId" th:value="${plant.id}" type="hidden"/>
-                                <button class="btn btn-primary" type="submit">Edit</button>
+                                <button class="btn btn-primary" role="button" style="min-width: 70px" type="submit">Edit</button>
                             </form>
                         </td>
                     </tr>
@@ -231,35 +235,12 @@
         }
     }
 
-    function getCurrentDay() {
-        const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        // const day = weekday[date.getDay()];
-
-    }
-
     function getDay(date) {
         const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const day = weekday[date.getDay()];
         document.getElementById(date).innerText = day;
 
     }
-
-    function handleImageClick(plantId) {
-        document.getElementById('fileInput_' + plantId).click();
-    }
-
-    function handleImageChange(plantId) {
-        document.getElementById('uploadPlantForm_' + plantId).submit();
-    }
-
-    // const currentDate = new Date();
-    // const dateOptions = {
-    //     weekday: 'long',
-    //     day: 'numeric',
-    //     month: 'long',
-    //     year: 'numeric'
-    // };
-    // document.getElementById("currentDateDisplay").innerText = currentDate.toLocaleString("en-Nz", dateOptions);
 
     function closeNotification() {
         document.getElementById('notification').style.display = 'none';

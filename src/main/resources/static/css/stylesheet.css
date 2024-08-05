@@ -17,8 +17,8 @@
     --secondary-color: #d1dc97;
     --accent-color: #f8dc30;
     --size-bezel: .5rem;
-    --weather-colour: #99b2e3;
-    --forecast-colour: #8095c7;
+    --weather-colour: #9dc7e1;
+    --forecast-colour: #8fb6ce;
 
 }
 
@@ -397,14 +397,13 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     width: 100%;
     height: 40px;
     border-radius: 25px;
-    border: 1px solid #45a049;
     font-weight: 700;
     box-shadow: 2px 3px 1px #777;
-    background: #d9f7d9;
+    background: var(--button-color);
 }
 
 #form button:hover, #form input[type="submit"]:hover {
-    background: #8af58a;
+    background: var(--button-hover-color);
     cursor: pointer;
 }
 
@@ -445,7 +444,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     display: none;
     width: 22px;
     height: 22px;
-    background-color: var(--primary-color);
+    background-color: var(--button-color);
     border-radius: 50%;
     margin-left: 5px;
     padding-top: 2px;
@@ -461,7 +460,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 #add-tag:hover, #submit-tag:hover {
     cursor: pointer;
-    background-color: #8af58a;
+    background-color: var(--button-hover-color);
 }
 
 #tag-input {
@@ -469,9 +468,9 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     width: 200px;
     padding: 5px;
     margin-left: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--primary-color);
     border-radius: 5px;
-    background-color: #e6ffe6;
+    background-color: var(--input-background-color);
 }
 
 #tag-error-container {
@@ -539,7 +538,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 #public-checkbox-label {
     font-size: 18px;
     margin-bottom: 20px;
-    color: #45a049;
+    color: var(--button-color);
     padding-right: 10px;
     vertical-align: middle;
 }
@@ -644,7 +643,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .button {
-    background-color: #45a049;
+    background-color: var(--button-color);
     color: #fff;
     border: none;
     padding: 8px 16px;
@@ -653,14 +652,14 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .button:hover {
-    background-color: #45a049;
+    background-color: var(--button-hover-color);
 }
 
 
 
 
 #gardens_list a:hover {
-    color: #45a049;
+    color: var(--button-hover-color);
 }
 
 #gardens_list {
@@ -881,7 +880,7 @@ form.search-bar button {
     float: left;
     width: 20%;
     padding: 10px;
-    background: #45a049;
+    background: var(--button-color);
     color: white;
     font-size: 17px;
     border: 1px solid grey;
@@ -890,7 +889,7 @@ form.search-bar button {
 }
 
 form.search-bar button:hover {
-    background: #50cc56;
+    background: var(--button-hover-color);
 }
 
 form.search-bar::after {
@@ -1045,7 +1044,7 @@ form.search-bar::after {
 }
 
 #form .signup input[type='submit']:hover {
-    background: #8af58a;
+    background: var(--button-hover-color);
     cursor: pointer;
 }
 
@@ -1245,7 +1244,7 @@ form.search-bar::after {
     position: fixed;
     bottom: 10px;
     left: 10px;
-    background-color: #45a049;
+    background-color: var(--primary-color);
     color: white;
     padding: 15px;
     margin-bottom: 10px;
