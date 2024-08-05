@@ -390,4 +390,17 @@ public class ValidityCheckerTest {
         Assertions.assertEquals(expectedMessage, actualMessage);
     }
 
+    @ParameterizedTest
+    @CsvSource(value = {
+            "-1: 0",
+            "10000000000000: 0",
+            "dsfgdhdrevs: 0",
+            "5: 5",
+            "-1000000000000: 0"
+    }, delimiter = ':')
+    public void ValidatePageNumberTest(String pageNumber, int expectedNumber) {
+        int actualNumber = ValidityChecker.validatePageNumber(pageNumber);
+        Assertions.assertEquals(expectedNumber, actualNumber);
+    }
+
 }

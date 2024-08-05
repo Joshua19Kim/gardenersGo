@@ -20,6 +20,7 @@ public class GardenLocationAPIFeature {
     private String city;
     private String country;
     private String address;
+
     private ResultActions resultActions;
 
 
