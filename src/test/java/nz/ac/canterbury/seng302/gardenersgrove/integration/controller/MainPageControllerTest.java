@@ -38,6 +38,9 @@ public class MainPageControllerTest {
     private GardenService gardenService;
 
     @MockBean
+    private RequestService requestService;
+
+    @MockBean
     private GardenVisitService gardenVisitService;
 
     @MockBean
