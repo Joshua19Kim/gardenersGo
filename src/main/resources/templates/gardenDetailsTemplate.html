@@ -18,11 +18,10 @@
                 Garden</a>
                 <div class="public-checkbox-container">
                     <form method="post" th:action="@{../gardens/details(gardenId=${garden.id})}" id="garden-details-form">
-                        <label  id="public-checkbox-label">Make my garden public</label>
+                        <label for="isGardenPublic" id="public-checkbox-label">Make my garden public</label>
                         <input class="form-control" data-cy="isGardenPublic" id="isGardenPublic" name="isGardenPublic"
                                th:id="isGardenPublic" th:name="isGardenPublic" type="checkbox"
-                               th:checked="${garden.isGardenPublic}" onchange="document.getElementById('garden-details-form').submit()"/>
-                        <input type="hidden" name="gardenId" th:value="${garden.id}"/>
+                               onchange="document.getElementById('garden-details-form').submit()"/>
 
                         <script th:inline="javascript">
                             // Credit: https://stackoverflow.com/questions/31771821/thymeleaf-how-to-add-conditional-block-in-javascript
@@ -40,7 +39,6 @@
 
         </div>
         <div class="row w-100">
-
 
             <p><strong>Location:</strong> <span th:text="${garden.getFullLocation()}"></span></p>
             <p>
@@ -80,15 +78,16 @@
         </div>
 
 
-        <div class="row  w-100 justify-content-center">
+        <div class="row  w-100">
             <div class="col-lg">
                 <div id="location-error" th:if="${date == null}">Location not found, please update your location to see
                     the weather
                 </div>
-                <ul class="list-group list-group-horizontal">
+                <ul class="list-group list-group-horizontal justify-content-evenly align-items-center d-flex">
                     <li th:if="${date}">
-                        <div class="card current">
+                        <div class="card current   ">
                             <div class="weather-display-row">
+                                <br/>
                                 <p th:text="${date}"></p>
                                 <h3 th:text="${garden.city + ', ' + garden.country}"></h3>
                                 <div class="row">
@@ -108,7 +107,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
-                                        <img alt="No image available" th:src="'https:' + ${weatherImage}"/>
+                                        <img class="w-100" alt="No image available" th:src="'https:' + ${weatherImage}"/>
                                     </div>
                                 </div>
                             </div>
@@ -117,8 +116,7 @@
                     </li>
 
 
-                    <li class="flass="form-control" data-cy="isGardenPublic" id="isGardenPublic" nameuture-weather"
-                        th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
+                    <li class="future-weather weather-display-container" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
                         <div class="card forecast" style="width: 15rem;">
                             <img class="card-img-top" alt="No image available"
                                  th:src="'https:' + ${forecastWeatherImage.get(iter.index)}"/>
