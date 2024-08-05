@@ -75,6 +75,7 @@ public class GardenDetailsControllerTest {
         HttpResponse<String> response = Mockito.mock(HttpResponse.class);
         when(response.body()).thenReturn("test");
         when(locationService.sendRequest(Mockito.anyString())).thenReturn(response);
+
     }
 
     @Test
@@ -885,6 +886,28 @@ public class GardenDetailsControllerTest {
                         MockMvcRequestBuilders.get("/gardens/details").param("gardenId", "2").principal(authentication))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/gardens"));
+    }
+
+    @Test
+    @WithMockUser
+    public void UserEntersSixthBadWord_UserIsBanned_UserIsLoggedOut() throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+        currentUser.setId(1L);
+        currentUser.setBadWordCount(5);
+        gardenerFormService.addGardener(currentUser);
+
+        Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
+        Tag tag = new Tag("My tag", garden);
+
+        when(gardenService.getGarden(anyLong())).thenReturn(Optional.of(garden));
+        when(tagService.addTag(any())).thenReturn(tag);
+        when(tagService.addBadWordCount(any(Gardener.class))).thenReturn("BANNED");
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders.post("/gardens/addTag").param("gardenId", "2").param("tag-input","fuck").with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login?banned"));
     }
 
 }

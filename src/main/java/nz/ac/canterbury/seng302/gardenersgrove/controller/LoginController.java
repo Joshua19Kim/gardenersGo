@@ -9,6 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class LoginController {
      * If not authenticated, renders the login page.
      */
     @GetMapping("/login")
-    public String login(Authentication authentication, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException {
+    public String login(Authentication authentication, HttpServletResponse response, HttpServletRequest request, Model model) throws IOException, URISyntaxException {
         logger.info("GET /");
         logger.info("Authentication: " + authentication);
         logger.info("DB USERNAME: " + System.getenv("DB_USERNAME"));
@@ -48,6 +49,9 @@ public class LoginController {
             if (session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION").toString().contains("Email not verified")) {
                 session.setAttribute("SPRING_SECURITY_LAST_EXCEPTION", new BadCredentialsException(""));
                 return "redirect:/signup";
+            } else if (session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION").toString().contains("You have been banned")) {
+                model.addAttribute("bannedUser", session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION").toString().split(":")[1]);
+                session.setAttribute("SPRING_SECURITY_LAST_EXCEPTION", new BadCredentialsException(""));
             }
         }
         // Prevent caching of the page so that we always reload it when we reach it (mainly for when you use the browser back button)

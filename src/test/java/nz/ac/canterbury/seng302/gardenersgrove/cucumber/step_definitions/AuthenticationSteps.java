@@ -32,12 +32,9 @@ public class AuthenticationSteps {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
-        var auth = new UsernamePasswordAuthenticationToken("a@gmail.com", "Password1!", Collections.emptyList());
+        var auth = new UsernamePasswordAuthenticationToken(email, password, Collections.emptyList());
         var authentication = customAuthProvider.authenticate(auth);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
-
-
-
 
 }
