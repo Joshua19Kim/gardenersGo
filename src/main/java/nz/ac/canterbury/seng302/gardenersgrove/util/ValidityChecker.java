@@ -278,5 +278,29 @@ public class ValidityChecker {
 
     }
 
+    /**
+     * Used to validate that the page number is not negative, an integer and does not go over the max limit
+     * @param pageNumber the page number
+     * @return the page number or default page number of 0
+     */
+    public static int validatePageNumber(String pageNumber) {
+        int pageNo;
+        // the max number of digits allowed for page numbers
+        if(pageNumber.length()> 10)  {
+            pageNo = 0;
+        } else {
+            try {
+                pageNo = Integer.parseInt(pageNumber, 10);
+                if(pageNo < 0) {
+                    pageNo = 0;
+                }
+            } catch (NumberFormatException e) {
+                pageNo = 0;
+            }
+
+        }
+        return pageNo;
+    }
+
 
 }

@@ -1,9 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unit.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,14 +23,20 @@ public class TagServiceTest {
 
     private TagRepository tagRepository;
 
+    private WriteEmail writeEmail;
+
     private Garden garden;
+
+    private Gardener gardener;
 
     private final Long gardenId = 1L;
 
     @BeforeEach
     public void setUp() {
         tagRepository = Mockito.mock(TagRepository.class);
-        tagService = new TagService(tagRepository);
+        writeEmail = Mockito.mock(WriteEmail.class);
+        tagService = new TagService(tagRepository, writeEmail);
+        gardener = Mockito.mock(Gardener.class);
         garden = Mockito.mock(Garden.class);
         garden.setId(gardenId);
     }
@@ -99,6 +107,40 @@ public class TagServiceTest {
         Set<String> expectedUniqueTags = new HashSet<>(Arrays.asList("Herb", "Flower"));
         assertEquals(expectedUniqueTags, uniqueTags);
 
+    }
+
+    @Test
+    public void gardenerTriedBadWord_OneTime_ReturnMessage() {
+        int pastBadWordHistory = 0;
+        String expectedMessage = "Submitted tag fails moderation requirements";
+
+        Mockito.doNothing().when(writeEmail).sendTagWarningEmail(Mockito.any(Gardener.class));
+        when(gardener.getBadWordCount()).thenReturn(pastBadWordHistory);
+        //Try bad word for a tag Once more
+        String errorMessage = tagService.addBadWordCount(gardener);
+        assertEquals(expectedMessage, errorMessage);
+    }
+    @Test
+    public void gardenerTriedBadWord_FourTime_ReturnMessage() {
+        int pastBadWordHistory = 4;
+        String expectedMessage = "Submitted tag fails moderation requirements";
+
+        Mockito.doNothing().when(writeEmail).sendTagWarningEmail(Mockito.any(Gardener.class));
+        when(gardener.getBadWordCount()).thenReturn(pastBadWordHistory);
+        //Try bad word for a tag Once more
+        String errorMessage = tagService.addBadWordCount(gardener);
+        assertEquals(expectedMessage, errorMessage);
+    }
+    @Test
+    public void gardenerTriedBadWord_FifthTime_ReturnWarningMessage() {
+        int pastBadWordHistory = 5;
+        String expectedMessage = "You have added an inappropriate tag for the fifth time. If you add one more, your account will be blocked for one week.";
+
+        Mockito.doNothing().when(writeEmail).sendTagWarningEmail(Mockito.any(Gardener.class));
+        when(gardener.getBadWordCount()).thenReturn(pastBadWordHistory);
+        //Try bad word for a tag Once more
+        String errorMessage = tagService.addBadWordCount(gardener);
+        assertEquals(expectedMessage, errorMessage);
     }
 
 

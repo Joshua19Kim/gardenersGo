@@ -60,8 +60,8 @@
                            th:value="${tag != null ? tag : ''}"
                            th:style="${tag != null} ? 'display: block;' : 'display: none;'"
                            placeholder="Add tag..."
-                           maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus
-                           th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
+                           maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus class="form-control"
+                           th:classappend="${((tagValid != '' && tagValid != null) || (tagWarning != '' && tagWarning != null)) ? 'error' : ''}">
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
                     <input type="hidden" name="gardenId" th:value="${garden.id}">
                     <datalist id="tagList">
@@ -72,7 +72,8 @@
                    onclick="submitTag()">+</a>
             </div>
             <div id="tag-error-container">
-                <p id="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
+                <p class="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
+                <p class="tag-error-message" id="tagWarning" th:value="${tagWarning}" th:utext="${tagWarning}"></p>
             </div>
         </div>
 
@@ -214,11 +215,30 @@
         </div>
     </div>
 
+    <div id="warningModal" class="modal fade" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true" data-bs-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="warningModalLabel">Opps!!!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id = "modalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Ok!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script th:src="@{/javascript/tagAutocomplete.js}"></script>
 
-<script>
+<!-- WE NEED THIS LINE TO RUN BOOTSTRAP MODAL IN JAVASCRIPT -->
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+<script type="module">
+
     window.onload = function () {
         const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const d = new Date();
@@ -236,14 +256,29 @@
         const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const day = weekday[date.getDay()];
         document.getElementById(date).innerText = day;
-
     }
 
     function closeNotification() {
         document.getElementById('notification').style.display = 'none';
     }
 
+    function openModal(message) {
+        let myModal = new bootstrap.Modal(document.getElementById('warningModal'));
+        document.getElementById('modalBody').innerHTML = message;
+        myModal.show();
+
+    }
+        document.addEventListener('DOMContentLoaded', function() {
+            var tagWarningElement = document.getElementById('tagWarning');
+            var tagWarning = tagWarningElement ? tagWarningElement.textContent.trim() : '';
+
+            if (tagWarning === "You have added an inappropriate tag for the fifth time. If you add one more, your account will be blocked for one week.") {
+                openModal(tagWarning);
+            }
+    });
+
 </script>
+
 
 </body>
 </html>

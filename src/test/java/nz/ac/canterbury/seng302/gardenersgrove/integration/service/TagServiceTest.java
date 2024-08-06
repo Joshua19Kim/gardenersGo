@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,8 @@ public class TagServiceTest {
 
     @Mock
     private TagRepository tagRepository;
+    @Mock
+    private WriteEmail writeEmail;
 
     private static Gardener gardener;
 
@@ -44,7 +47,7 @@ public class TagServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        tagService = new TagService(tagRepository);
+        tagService = new TagService(tagRepository, writeEmail);
     }
 
     @Test

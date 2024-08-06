@@ -90,5 +90,16 @@ public class GardenService {
         return gardenRepository.findAllPublicGardens(pageable);
     }
 
+    /**
+     * Gets a page of the specified size and number containing gardens matching the search term
+     * @param pageNo the page number
+     * @param pageSize the page size
+     * @param searchTerm the term to search garden and plant names for
+     * @return a page of garden objects
+     */
+    public Page<Garden> getSearchResultsPaginated(int pageNo, int pageSize, String searchTerm)  {
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("creation_date").descending());
+        return gardenRepository.findGardensBySearchTerm(pageable, searchTerm);
+    }
 }
 
