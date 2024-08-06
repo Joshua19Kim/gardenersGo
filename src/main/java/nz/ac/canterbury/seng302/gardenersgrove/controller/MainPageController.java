@@ -26,6 +26,7 @@ public class MainPageController {
 
     Logger logger = LoggerFactory.getLogger(GardensController.class);
     private final GardenService gardenService;
+    private final PlantService plantService;
     private final GardenerFormService gardenerFormService;
     private final RelationshipService relationshipService;
     private final RequestService requestService;
@@ -45,10 +46,12 @@ public class MainPageController {
     @Autowired
     public MainPageController(
             GardenService gardenService,
+            PlantService plantService,
             GardenerFormService gardenerFormService,
             RelationshipService relationshipService,
             RequestService requestService, GardenVisitService gardenVisitService) {
         this.gardenService = gardenService;
+        this.plantService = plantService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
         this.requestService = requestService;
@@ -99,13 +102,13 @@ public class MainPageController {
 
         gardens = gardenService.getGardensByGardenerId(gardener.getId());
         recentGardens = gardenVisitService.findRecentGardensByGardenerId(gardener.getId());
-//        newPlants = newestPlantsService.findNewestPlantsByGardenerId(gardener.getId());
+        newPlants = plantService.findNewestPlantsByGardenerId(gardener.getId());
         friends = relationshipService.getCurrentUserRelationships(gardener.getId());
 
         model.addAttribute("gardener", gardener);
         model.addAttribute("gardens", gardens);
         model.addAttribute("friends", friends);
-//        model.addAttribute("newestPlants", newPlants);
+        model.addAttribute("newestPlants", newPlants);
         model.addAttribute("recentGardens", recentGardens);
         model.addAttribute("requestURI", requestService.getRequestURI(request));
 

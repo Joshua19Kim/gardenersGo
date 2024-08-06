@@ -142,7 +142,7 @@ public class GardenDetailsController {
                HttpResponse<String> location = locationService.sendRequest(garden.get().getCity() + ", " + garden.get().getCountry());
                Weather currentWeather = null;
                PrevWeather prevWeathers = null;
-               logger.info("LOCATION BODY: " + location.body());
+
 
                if (! location.body().contains("error")) {
                    currentWeather = weatherService.getWeather(garden.get().getCity() + ", " + garden.get().getCountry());

@@ -49,4 +49,6 @@ public class PlantService {
      * @return the plant
      */
     public Optional<Plant> getPlant(Long id) {return plantRepository.findById(id);}
+
+    public List<Plant> findNewestPlantsByGardenerId(Long id) { return plantRepository.findTop3ByGardenGardenerIdOrderByIdDesc(id);}
 }
