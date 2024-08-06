@@ -1,3 +1,203 @@
+/*@import*/
+/*url('https://rsms.me/inter/inter.css');*/
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --button-hover-color: rgb(52, 72, 59);
+    --button-color: rgb(53, 91, 72);
+    --input-background-color: #eef3f7;
+    --card-background-color: #e7f0dc;
+    --alert-background-color: rgb(52, 72, 59);
+    --text-color: #fffdf6;
+    --background-color: #fffdf6;
+    --primary-color: #8dab6e;
+    --secondary-color: #d1dc97;
+    --accent-color: #f8dc30;
+    --size-bezel: .5rem;
+    --weather-colour: #9dc7e1;
+    --forecast-colour: #8fb6ce;
+
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: Arial, sans-serif;
+    height: 100%;
+    margin: 0;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align items to the top */
+    align-items: center;
+    padding-top: 5vh; /* Add some padding at the top */
+}
+
+.header-container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.card-img-top {
+    max-width: 128px;
+}
+.current {
+    background-color: var(--weather-colour)!important;
+    height: 400px;
+    width: 400px;
+    min-width: 100%;
+}
+.forecast {
+    background-color: var(--forecast-colour)!important;
+    height: 400px;
+    width: 200px;
+    min-width: 100%;
+    margin-bottom: 0;
+
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+.title {
+    color: var(--primary-color);
+}
+
+.form-group {
+    position: relative;
+    padding: 15px 0 0;
+}
+
+.form-control {
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 25px;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    padding: 10px 10px;
+    width: 100%;
+    text-align: center;
+}
+
+.form-control::placeholder {
+    color: gray;
+    opacity: 1;
+}
+
+.btn {
+    border: none;
+    border-radius: 25px;
+    padding: 10px 15px;
+    width: 50%;
+    transition: 0.1s ease all;
+}
+
+.btn-primary {
+    background-color: var(--button-color);
+    color: var(--text-color);
+    /*box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2), 0 10px 10px rgba(0, 0, 0, 0.2);*/
+}
+
+.btn-primary:hover {
+    background-color: var(--button-hover-color);
+}
+
+.hr {
+    width: 200%;
+}
+
+.btn-link {
+    color: var(--text-color);
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.btn-link:hover {
+    color: var(--button-hover-color);
+}
+
+/*.alert {*/
+/*    background-color: var(--alert-background-color);*/
+/*    border-left: 5px solid var(--primary-color);*/
+/*    color: var(--text-color);*/
+/*    margin-bottom: 15px;*/
+/*    padding: 10px;*/
+/*    text-align: center;*/
+/*}*/
+
+.logo {
+    width: 75px;
+    border-radius: 100%;
+    height: 75px;
+}
+
+/* Label code from https://codepen.io/lucasyem/pen/ZEEYKdj */
+
+.form-field {
+    &::placeholder {
+        color: transparent;
+    }
+
+    &:placeholder-shown ~ .form-label {
+        cursor: text;
+        top: 25px;
+    }
+}
+
+.form-label {
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    display: block;
+    transition: 0.2s;
+    color: white;
+}
+
+.form-field:focus {
+    ~ .form-label {
+        position: absolute;
+        top: -10px;
+        display: block;
+        transition: 0.2s;
+        color: white;
+    }
+    padding-bottom: 6px;
+}
+/* reset input */
+.form-field{
+    &:required,&:invalid { box-shadow:none; }
+}
+
+#autocomplete-results {
+    align-items: baseline;
+    max-height: 25vh;
+    overflow: scroll;
+}
+
+.autocomplete-item {
+    border: 1px solid white;
+    border-radius: 25px;
+    margin: 5px;
+    padding: 5px;
+    width: 98%;
+    padding-left: 20px;
+}
+
+/*====================================================================================================================*/
+/* Rest of the CSS */
+/*====================================================================================================================*/
+
+
 
 nav {
     background-color: #d9f7d9;
@@ -63,6 +263,33 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     transition: 0.3s ease;
 }
 
+.card {
+    margin-top: auto; /* Push the card to the center */
+    border: 2px solid var(--card-background-color);
+    border-radius: 10px;
+    padding: 20px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+.list-group-item {
+    background: #d1dc97 !important;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    padding: 10px 15px;
+}
+.list-group-item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
 
 .dropdown {
     position: relative;
@@ -88,7 +315,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .dropdown-content a:hover {
-    background-color: #EEFBEE;
+    background-color: var(--primary-color);
 
 }
 
@@ -101,10 +328,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .errorMessage {
-    font-weight: 550;
-    font-style: italic;
-    color: red;
-    margin: 10px 0 10px 0;
+    color: var(--accent-color);
     font-size: smaller;
 }
 
@@ -128,7 +352,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 #form {
     width: 550px;
     margin: 20px auto;
-    background-color: #EEFBEE;
+    background-color: var(--primary-color);
     padding: 20px 50px 40px;
     box-shadow: 1px 4px 10px 1px #777;
     overflow: hidden;
@@ -192,14 +416,13 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     width: 100%;
     height: 40px;
     border-radius: 25px;
-    border: 1px solid #45a049;
     font-weight: 700;
     box-shadow: 2px 3px 1px #777;
-    background: #d9f7d9;
+    background: var(--button-color);
 }
 
 #form button:hover, #form input[type="submit"]:hover {
-    background: #8af58a;
+    background: var(--button-hover-color);
     cursor: pointer;
 }
 
@@ -213,7 +436,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 #tag {
     width: fit-content;
-    background-color: #45a049;
+    background-color: var(--primary-color);
     border-radius: 5px;
     display: flex;
     margin-left: 5px;
@@ -224,7 +447,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 #add-tag {
     width: 22px;
     height: 22px;
-    background-color: #45a049;
+    background-color: var(--primary-color);
     border-radius: 50%;
     display: flex;
     margin-left: 5px;
@@ -240,7 +463,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     display: none;
     width: 22px;
     height: 22px;
-    background-color: #45a049;
+    background-color: var(--button-color);
     border-radius: 50%;
     margin-left: 5px;
     padding-top: 2px;
@@ -256,7 +479,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 #add-tag:hover, #submit-tag:hover {
     cursor: pointer;
-    background-color: #8af58a;
+    background-color: var(--button-hover-color);
 }
 
 #tag-input {
@@ -264,18 +487,18 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     width: 200px;
     padding: 5px;
     margin-left: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--primary-color);
     border-radius: 5px;
-    background-color: #e6ffe6;
+    background-color: var(--input-background-color);
 }
 
 #tag-error-container {
     height: auto;
 }
 
-#tag-error-message {
+.tag-error-message {
     color: red;
-    text-align: center;
+    text-align: left;
     animation: fadeOut 2s forwards;
     animation-delay: 3s;
 }
@@ -296,6 +519,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+
 }
 
 
@@ -304,10 +528,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     max-width: inherit;
     word-wrap: break-word;
     white-space: normal;
-}
-
-.container {
-    position: relative;
 }
 
 .left-details-container {
@@ -337,7 +557,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 #public-checkbox-label {
     font-size: 18px;
     margin-bottom: 20px;
-    color: #45a049;
+    color: var(--button-color);
     padding-right: 10px;
     vertical-align: middle;
 }
@@ -346,6 +566,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     height: 30px;
     width: 30px;
     vertical-align: middle;
+    background-color: var(--button-color);
 }
 
 .plant-list-container {
@@ -354,30 +575,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     max-height: 600px;
 }
 
-.plant-table {
-    width: 100%;
-    border-collapse: collapse;
-    word-wrap: break-word;
-    white-space: normal;
-}
-
-.plant-table th {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #45a049;
-    background-color: #d9f7d9;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
-
-.plant-table td {
-    padding: 10px;
-    border-bottom: 1px solid #d9f7d9;
-    word-wrap: break-word;
-    white-space: normal;
-    max-width: 200px;
-}
 
 .plant-image-container {
     max-width: 100px;
@@ -408,7 +605,12 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     text-align: center;
     vertical-align: top;
 }
-
+.table-primary td{
+    background-color: var(--background-color);
+}
+.table-primary th {
+    background-color: var(--primary-color);
+}
 
 .plant-image-container .image-button:hover {
     cursor: pointer;
@@ -454,14 +656,14 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 .return p {
     font-size: 14px;
     font-style: italic;
-    color: red;
+    color: black;
     display: block;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
 .button {
-    background-color: #45a049;
+    background-color: var(--button-color);
     color: #fff;
     border: none;
     padding: 8px 16px;
@@ -470,58 +672,20 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .button:hover {
-    background-color: #45a049;
-}
-
-.container .garden-details-links .edit-garden-button {
-    background-color: #45a049;
-    color: #fff;
-    border: none;
-    padding: 4px 8px;
-    font-size: 18px;
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer;
-}
-
-.container .garden-details-links .edit-garden-button:hover {
-    background-color: #45a049;
-}
-
-.container .garden-details-links .add-plant-button {
-    background-color: #45a049;
-    color: #fff;
-    border: none;
-    padding: 4px 8px;
-    font-size: 18px;
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer;
-}
-
-.container .garden-details-links .add-tag-button {
-    background-color: #45a049;
-    color: #fff;
-    border: none;
-    padding: 4px 8px;
-    font-size: 18px;
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer;
-    text-decoration: underline; /* for consistency with other links*/
+    background-color: var(--button-hover-color);
 }
 
 
-.container .garden-details-links .add-plant-button:hover {
-    background-color: #45a049;
-}
 
 
 #gardens_list a:hover {
-    color: #45a049;
+    color: var(--button-hover-color);
 }
 
 #gardens_list {
     width: 550px;
     margin: 20px auto;
-    background-color: #EEFBEE;
+    background-color: var(--primary-color);
     padding: 20px 50px 40px;
     box-shadow: 1px 4px 10px 1px #777;
     flex-direction: column;
@@ -538,7 +702,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 .garden-details-container {
     display: flex;
-    flex-direction: row;
     justify-content: space-evenly;
 }
 
@@ -554,33 +717,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     margin-top: 15px;
 }
 
-.future-weather {
-    min-height: 25vh !important;
-}
-
-.future-weather .temperature {
-    font-size: 3vw !important;
-}
-.weather-display-container {
-    min-height: 24vh;
-    width: 100%;
-    margin: 5vh 0;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: 0.3s;
-    border-radius: 50px;
-    background-color: #c6e2f4;
-    padding: 25px 26px 5px;
-
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.weather-display-container:hover {
-    transform: scale(1.03)
-}
-
 .weather-display-row {
-    display: flex;
     flex-direction: column;
 }
 
@@ -598,20 +735,12 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 
 
 .temperature {
-    font-size: 4vw;
+    font-size: 2vw;
+}
+.list-group{
+    list-style-type: none;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    color: #45a049;
-}
 
 body, h2, h3, h4, h5, h6, a {
     font-family: 'Roboto', sans-serif;
@@ -624,7 +753,7 @@ body, h2, h3, h4, h5, h6, a {
     margin: 0;
     padding: 0;
     font-family: sans-serif;
-    scrollbar-color: #45a049 #f9f9f9;
+    scrollbar-color: #8dab6e #e7f0dc;
 }
 
 .buttonDesign {
@@ -719,7 +848,7 @@ body, h2, h3, h4, h5, h6, a {
 }
 
 #form .signup-code {
-    background-color: #d9f7d9; /* Adjusted background color */
+    background-color: var(--primary-color); /* Adjusted background color */
     padding: 20px; /* Adjusted padding */
     border-radius: 10px; /* Adjusted border radius */
     margin-bottom: 20px; /* Added margin bottom */
@@ -771,7 +900,7 @@ form.search-bar button {
     float: left;
     width: 20%;
     padding: 10px;
-    background: #45a049;
+    background: var(--button-color);
     color: white;
     font-size: 17px;
     border: 1px solid grey;
@@ -780,7 +909,7 @@ form.search-bar button {
 }
 
 form.search-bar button:hover {
-    background: #50cc56;
+    background: var(--button-hover-color);
 }
 
 form.search-bar::after {
@@ -846,7 +975,7 @@ form.search-bar::after {
 }
 
 .friend-status {
-    width: 100%;
+    width: 110%;
     display: flex;
     flex-direction: column;
 }
@@ -893,16 +1022,12 @@ form.search-bar::after {
 }
 
 .table-header {
-    background: #d9f7d9;
+    background: var(--primary-color);
     width: 100%;
     display: flex;
     font-weight: bold;
 }
 
-/*a {*/
-/*    text-decoration: none;*/
-/*    color: blue;*/
-/*}*/
 
 #form .signup-code legend {
     text-align: center; /* Centered legend */
@@ -939,7 +1064,7 @@ form.search-bar::after {
 }
 
 #form .signup input[type='submit']:hover {
-    background: #8af58a;
+    background: var(--button-hover-color);
     cursor: pointer;
 }
 
@@ -1076,7 +1201,7 @@ form.search-bar::after {
     position: absolute;
     top: 150px;
     left: 40px;
-    z-index: 1000;
+
 }
 
 .autocomplete-container {
@@ -1139,7 +1264,7 @@ form.search-bar::after {
     position: fixed;
     bottom: 10px;
     left: 10px;
-    background-color: #45a049;
+    background-color: var(--primary-color);
     color: white;
     padding: 15px;
     margin-bottom: 10px;
@@ -1266,5 +1391,80 @@ form.search-bar::after {
 
 .create-garden-row > div:last-child {
     margin-right: 0;
+}
+
+.avatar {
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.no-search-results-found-container {
+    justify-content: center;
+    display: flex;
+    margin-top: 40px;
+    color: grey;
+    font-style: italic;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    margin: 20px auto;
+}
+
+.form-inline {
+    display: flex;
+    align-items: center;
+}
+
+.form-control {
+    margin-right: 10px;
+}
+
+.browse-gardens-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+}
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+}
+.modal h2 {
+    margin-top: 0;
+}
+
+body {
+    background-color: #fffdf6;
+}
+
+table td{
+    vertical-align:top;
+    border:solid 1px #888;
+    padding:10px;
 }
 

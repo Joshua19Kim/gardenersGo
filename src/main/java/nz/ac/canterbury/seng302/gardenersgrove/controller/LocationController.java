@@ -6,9 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.io.IOException;
 import java.net.http.HttpResponse;
+
 import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 
 /**
  * LocationController is the important link between the page has a location autocomplete function and back-end side.
@@ -51,4 +53,5 @@ public class LocationController {
             } else { return response.body();}
         }
     }
+
 }

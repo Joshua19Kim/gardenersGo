@@ -12,11 +12,11 @@ Feature: NF9 - The product must accept all valid characters - including accentua
       | "Müller"     | No message                                                                                |
       | "Frédéric"   | No message                                                                                |
       | "ßimon"      | No message                                                                                |
-      | "1"          | First name cannot be empty and must only include letters, spaces, hyphens or apostrophes  |
-      | "😀"         | First name cannot be empty and must only include letters, spaces, hyphens or apostrophes  |
-      | "$"          | First name cannot be empty and must only include letters, spaces, hyphens or apostrophes  |
-      | "$%^&*()"    | First name cannot be empty and must only include letters, spaces, hyphens or apostrophes  |
-      | "asdf23$"    | First name cannot be empty and must only include letters, spaces, hyphens or apostrophes  |
+      | "1"          | First name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>First name must include at least one letter  |
+      | "😀"         | First name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>First name must include at least one letter  |
+      | "$"          | First name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>First name must include at least one letter  |
+      | "$%^&*()"    | First name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>First name must include at least one letter  |
+      | "asdf23$"    | First name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>  |
       | "ѮѺОуЛфхцчшщ"| No message                                                                                |
       | "你好人"      | No message                                                                                |
       | "مرحبا شخص"  | No message                                                                                |

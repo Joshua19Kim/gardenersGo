@@ -2,10 +2,13 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,5 +79,27 @@ public class GardenService {
 
     }
 
+    /**
+     * Gets a page of the specified size and number
+     * @param pageNo the page number
+     * @param pageSize the page size
+     * @return a page of garden objects
+     */
+    public Page<Garden> getGardensPaginated(int pageNo, int pageSize)  {
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("creation_date").descending());
+        return gardenRepository.findAllPublicGardens(pageable);
+    }
+
+    /**
+     * Gets a page of the specified size and number containing gardens matching the search term
+     * @param pageNo the page number
+     * @param pageSize the page size
+     * @param searchTerm the term to search garden and plant names for
+     * @return a page of garden objects
+     */
+    public Page<Garden> getSearchResultsPaginated(int pageNo, int pageSize, String searchTerm)  {
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("creation_date").descending());
+        return gardenRepository.findGardensBySearchTerm(pageable, searchTerm);
+    }
 }
 

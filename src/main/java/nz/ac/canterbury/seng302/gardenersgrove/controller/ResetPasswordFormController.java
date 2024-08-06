@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
@@ -20,7 +19,7 @@ import java.util.Optional;
 
 @Controller
 public class ResetPasswordFormController {
-    Logger logger = LoggerFactory.getLogger(RegisterController.class);
+    Logger logger = LoggerFactory.getLogger(ResetPasswordFormController.class);
     private final GardenerFormService gardenerFormService;
     private final TokenService tokenService;
     private final WriteEmail writeEmail;
@@ -46,6 +45,7 @@ public class ResetPasswordFormController {
         logger.info("GET /resetPassword");
         // Verifies token has associated user and is not expired
         String result = tokenService.validateLostPasswordToken(token);
+        logger.info(result);
         if (result == null) { // No issue
             Optional<Gardener> tempGardener = tokenService.findGardenerbyToken(token);
             if (tempGardener.isPresent()) {
@@ -55,7 +55,8 @@ public class ResetPasswordFormController {
                 return  "resetPasswordForm";
             }
             return "redirect:/login"; // Gardener / Id not present
-        } else if (result.equals("expired")) {
+        } else if (result.equals("invalidToken")) {
+            logger.info("Token is expired.");
             Optional<LostPasswordToken> expiredToken = tokenService.getTokenFromString(token);
             expiredToken.ifPresent(e -> tokenService.removeToken(e));
             return "redirect:/login?expired"; // Token is expired

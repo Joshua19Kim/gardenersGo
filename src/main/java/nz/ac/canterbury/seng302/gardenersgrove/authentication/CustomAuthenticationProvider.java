@@ -12,6 +12,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 /**
  * Custom Authentication Provider class, to allow for handling authentication in any way we see fit.
  * In this case using our existing {@link nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener}
@@ -61,6 +63,19 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         if ((u.getAuthorities().isEmpty())) {
             throw new BadCredentialsException("Email not verified");
+        }
+
+        if (u.isBanned()) {
+            Date date = u.getBanExpiryDate();
+            Date now = new Date();
+            // calculate how many days until ban is lifted
+            long diff = date.getTime() - now.getTime();
+            long days = diff / (1000 * 60 * 60 * 24) + 1;
+
+            throw new BadCredentialsException("You have been banned for " + days + " day(s)");
+        } else {
+            // this is required for the gardener to be unbanned
+            gardenerFormService.addGardener(u);
         }
         return new UsernamePasswordAuthenticationToken(u.getEmail(), null, u.getAuthorities());
     }

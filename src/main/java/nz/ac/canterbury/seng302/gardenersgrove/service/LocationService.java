@@ -20,13 +20,16 @@ import java.net.http.HttpResponse;
 public class LocationService {
     Logger logger = LoggerFactory.getLogger(LocationService.class);
     private String api_key;
+    private HttpClient client;
 
     /**
      * Constructor of LocationService.
      * @param api_key The credential key for the Location API. It is saved as an environment variable.
      */
     @Autowired
-    public LocationService(@Value("${locationIq.password}") String api_key) {this.api_key = api_key;
+    public LocationService(@Value("${locationIq.password}") String api_key, HttpClient client) {
+        this.api_key = api_key;
+        this.client = client;
     }
 
     /**
@@ -40,13 +43,16 @@ public class LocationService {
         logger.info("SEND Request");
         // According to LocationIq website, the space needs to be filled with "%20"
         String urlQuery = query.replace(" ", "%20");
+        String tag = "&tag=place%3Ahouse";
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://us1.locationiq.com/v1/autocomplete?q=" + urlQuery + "&key=" + this.api_key))
+                .uri(URI.create("https://us1.locationiq.com/v1/autocomplete?q=" + urlQuery + tag + "&key=" + this.api_key))
                 .header("accept", "application/json")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
+
+
         // Needs to be HttpClient type as it goes back to HTML.
-        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        return this.client.send(request, HttpResponse.BodyHandlers.ofString());
 
     }
 }

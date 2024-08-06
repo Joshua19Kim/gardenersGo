@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
-<head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+<html lang="en">
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <title>Signup Code Form</title>
-    <link rel="stylesheet" th:href="@{css/stylesheet.css}">
 </head>
-<body>
 
+<body>
 <div id="form" class="signup">
     <h1>Please enter your signup code</h1>
     <form method="post" th:action="@{/signup}" onsubmit="getCode()">
@@ -15,7 +13,6 @@
         </div>
         <!--        referenced from https://codepen.io/RobertAron/pen/gOLLXLo  -->
         <fieldset class="signup-code">
-            <legend>Signup Code</legend>
             <div style="display: flex;" id="tokens">
                 <label for="signupToken1"></label><input name="signupToken" id="signupToken1" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(1, event)">
                 <label for="signupToken2"></label><input name="signupToken" id="signupToken2" type="text" maxlength="1" class="signup-input" required onkeyup="goToNextInput(2, event)">
@@ -30,12 +27,8 @@
         <input type="hidden"
                th:name="${_csrf.parameterName}"
                th:value="${_csrf.token}" />
-        <div style="display: flex; flex-direction: column">
-            <input type="submit" value="Submit"/>
-        </div>
-        <div class="return">
-            <a th:href="@{login}" class="link">Return to Login</a>
-        </div>
+        <input type="submit" value="Submit"/>
+        <a th:href="@{login}" class="link">Return to Login</a>
     </form>
 </div>
 <script>

@@ -23,16 +23,17 @@ public class TagValidation {
   public Optional<String> validateTag(String tagName) {
     String tagRegex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 _\\-'\"]+$";
     String alphanumericRegex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
-
+    String result = "";
     if (tagName.length() > 25) {
-      return Optional.of("A tag cannot exceed 25 characters");
-    } else if (!tagName.matches(tagRegex)) {
-      return Optional.of("The tag name must only contain alphanumeric characters, spaces, -, _, ', or \"");
-    } else if (!tagName.matches(alphanumericRegex)) {
-      return Optional.of("The tag name must contain at least one alphanumeric character");
-    } else {
+      result += "A tag cannot exceed 25 characters <br/>";
+    } if (!tagName.matches(tagRegex)) {
+      result += "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>";
+    } if (!tagName.matches(alphanumericRegex)) {
+      result += "The tag name must contain at least one alphanumeric character";
+    } if (result.isEmpty()) {
       return Optional.empty();
     }
+    return Optional.of(result);
   }
 
   /**

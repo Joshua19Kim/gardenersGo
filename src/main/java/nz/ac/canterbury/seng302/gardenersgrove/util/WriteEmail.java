@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
-import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
@@ -19,9 +18,10 @@ public class WriteEmail {
     private TokenService tokenService;
     private final EmailUserService emailService;
 
-    public WriteEmail(EmailUserService emailUserService)
+    public WriteEmail(EmailUserService emailUserService, TokenService tokenService)
     {
         this.emailService = emailUserService;
+        this.tokenService = tokenService;
     }
 
     /**
@@ -67,22 +67,14 @@ public class WriteEmail {
 
     }
 
-    /**
-     * Get the url of the current server to create the reset password link
-     * @param request the request object
-     */
-    public String getAppUrl(HttpServletRequest request) {
-        return request.getServerName() + ":" + request.getServerPort();
-    }
-
-    /**
-     *
-     * @param contextPath the path of the server
-     * @param token the token to be sent to the user
-     * @return the content of the email which is the link to reset the users password
-     */
-    public String constructLostPasswordTokenEmail(String contextPath, String token) {
-        String url = contextPath + "/resetPassword?token=" + token;
+        /**
+         *
+         * @param baseURL the path of the server
+         * @param token the token to be sent to the user
+         * @return the content of the email which is the link to reset the users password
+         */
+    public String constructLostPasswordTokenEmail(String baseURL, String token) {
+        String url = baseURL + "/resetPassword?token=" + token;
         return ("Reset Password link:\n" + url +"\nThis link will expire after 10 mins.");
     }
 
@@ -91,13 +83,34 @@ public class WriteEmail {
      * Sends an email with a link that takes user to a form where they can reset their password
      * @param gardener Gardener to get the email address
      */
-    public void sendPasswordForgotEmail(Gardener gardener, HttpServletRequest request) {
+    public void sendPasswordForgotEmail(Gardener gardener, String url) {
         // FROM https://www.baeldung.com/spring-security-registration-i-forgot-my-password
         String token = UUID.randomUUID().toString();
         tokenService.createLostPasswordTokenForGardener(gardener, token);
         String email = gardener.getEmail();
-        String emailMessage = constructLostPasswordTokenEmail(getAppUrl(request), token);
+        String emailMessage = constructLostPasswordTokenEmail(url, token);
         String subject = "Forgot password?";
         emailService.sendEmail(email, subject, emailMessage); // *** Blocking
+    }
+
+    /**
+     * Send a warning email to gardener's email when gardener(user) has tried to enter the inappropriate words for five times.
+     * @param gardener Gardener to get the email address
+     */
+    public void sendTagWarningEmail (Gardener gardener) {
+        String subject = "!! Warning for bad words !!";
+        String emailMessage = "You have reached the maximum number of bad words on our web site. If you add another inappropriate tag, Your account will be blocked for one week.";
+        emailService.sendEmail(gardener.getEmail(), subject, emailMessage);
+    }
+
+
+    /**
+     * Email the gardener to inform them that they have been banned
+     * @param gardener The gardener to send the email to
+     */
+    public void sendBanUserEmail(Gardener gardener) {
+        String subject = "!! You have been banned from Gardeners Grove !!";
+        String emailMessage = "You have reached the maximum number of bad words on our web site. Your account has been blocked for one week (7 Calendar days).";
+        emailService.sendEmail(gardener.getEmail(), subject, emailMessage);
     }
 }

@@ -4,65 +4,52 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenFormController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenEditController;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.AuthorityFormRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.RelationshipRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.ui.Model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.Long.parseLong;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.util.AssertionErrors.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 public class PubliciseGardensFeature {
 
-    @Autowired
-    private AuthorityFormRepository authorityFormRepository;
+    private MockMvc mockGardenFormControllerMvc;
 
-    private MockMvc mockMvc;
+    private MockMvc mockGardenEditControllerMvc;
 
     @MockBean
     private GardenService gardenService;
 
     @MockBean
     private GardenerFormService gardenerFormService;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
 
     @MockBean
     private Authentication authentication;
@@ -79,7 +66,6 @@ public class PubliciseGardensFeature {
     private String testSize;
     private String editTestGardenDescription;
     private Garden testGarden;
-    private  Authentication auth;
     private MvcResult result;
 
     @Before("@U19")
@@ -98,23 +84,23 @@ public class PubliciseGardensFeature {
 
         authentication = Mockito.mock(Authentication.class);
         gardenService = Mockito.mock(GardenService.class);
-        auth = new UsernamePasswordAuthenticationToken("testgardener@gmail.com", "Password1!");
+        Authentication auth = new UsernamePasswordAuthenticationToken("testgardener@gmail.com", "Password1!");
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(auth);
         SecurityContextHolder.setContext(securityContext);
         gardenerFormService = Mockito.mock(GardenerFormService.class);
         when(authentication.getName()).thenReturn("testgardener@gmail.com");
 
-        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService,
-                new RelationshipService(Mockito.mock(RelationshipRepository.class), gardenerFormService),
-                new RequestService(), Mockito.mock(WeatherService.class),
-                new TagService(Mockito.mock(TagRepository.class)));
+        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService);
+        GardenEditController gardenEditController = new GardenEditController(gardenService, gardenerFormService,
+                new RequestService());
 
-        mockMvc = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        mockGardenFormControllerMvc = MockMvcBuilders.standaloneSetup(gardenFormController).build();
+        mockGardenEditControllerMvc = MockMvcBuilders.standaloneSetup(gardenEditController).build();
     }
 
     //AC2,3
-    @Given("I on Create New Garden form")
+    @Given("I am on Create New Garden form")
     public void i_on_create_new_garden_form() {
         List<Authority> userRoles = new ArrayList<>();
         testGardener.setUserRoles(userRoles);
@@ -137,7 +123,7 @@ public class PubliciseGardensFeature {
         testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
         testGarden.setId(testGardenId);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+        mockGardenFormControllerMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", testGardenName)
                         .param("location", testStreetNumberName)
                         .param("suburb", testSuburb)
@@ -156,7 +142,7 @@ public class PubliciseGardensFeature {
         ArgumentCaptor<Garden> gardenCaptor = ArgumentCaptor.forClass(Garden.class);
         verify(gardenService, Mockito.times(1)).addGarden(gardenCaptor.capture());
         List<Garden> addGarden = gardenCaptor.getAllValues();
-        assertEquals(testGardenDescription, addGarden.getFirst().getDescription());
+        assertEquals(testGardenDescription, addGarden.get(0).getDescription());
     }
 
 
@@ -186,7 +172,7 @@ public class PubliciseGardensFeature {
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(testGarden));
         when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
         when(gardenService.getGardensByGardenerId(any())).thenReturn(List.of(testGarden));
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/edit")
+        mockGardenEditControllerMvc.perform(MockMvcRequestBuilders.post("/gardens/edit")
                         .param("name", testGardenName)
                         .param("location", testStreetNumberName)
                         .param("suburb", testSuburb)
@@ -205,7 +191,7 @@ public class PubliciseGardensFeature {
         ArgumentCaptor<Garden> gardenCaptor = ArgumentCaptor.forClass(Garden.class);
         verify(gardenService, Mockito.times(1)).addGarden(gardenCaptor.capture());
         List<Garden> addGarden = gardenCaptor.getAllValues();
-        assertEquals(editTestGardenDescription, addGarden.getFirst().getDescription());
+        assertEquals(editTestGardenDescription, addGarden.get(0).getDescription());
     }
 
 
@@ -215,7 +201,7 @@ public class PubliciseGardensFeature {
         testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
         testGarden.setId(testGardenId);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
-        result = mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+        result = mockGardenFormControllerMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", testGardenName)
                         .param("location", testStreetNumberName)
                         .param("suburb", testSuburb)
@@ -234,8 +220,8 @@ public class PubliciseGardensFeature {
         MockHttpServletRequest request = result.getRequest();
         String descriptionError = (String) request.getAttribute("descriptionError");
         assertTrue(
-                "Garden description must be less than 512 characters".equals(descriptionError) ||
-                        "Description must be 512 characters or less and contain some text".equals(descriptionError));
+                "Garden description must be less than 512 characters <br/>".equals(descriptionError) ||
+                        "Description must be 512 characters or less and contain some text <br/>".equals(descriptionError));
     }
 
     @When("I submit the create form with {string} including bad words for the garden description")
@@ -244,7 +230,7 @@ public class PubliciseGardensFeature {
         testGarden = new Garden(testGardenName, testStreetNumberName, testSuburb, testCity, testCountry, testPostcode, testSize, testGardener, testGardenDescription);
         testGarden.setId(testGardenId);
         when(gardenService.addGarden(any(Garden.class))).thenReturn(testGarden);
-        result = mockMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
+        result = mockGardenFormControllerMvc.perform(MockMvcRequestBuilders.post("/gardens/form")
                         .param("name", testGardenName)
                         .param("location", testStreetNumberName)
                         .param("suburb", testSuburb)
