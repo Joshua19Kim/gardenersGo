@@ -1,65 +1,32 @@
-nav {
+/* Custom Navbar */
+#custom-navbar {
     background-color: rgba(209, 220, 151, 0.8) !important;
     padding: 10px;
     font-family: 'Roboto', sans-serif;
     border-bottom: 2px solid #45a049;
 }
 
-
-nav ul {
-    list-style-type: none;
-    display: flex;
+#custom-navbar .navbar-nav .nav-link {
+    color: #000 !important;
 }
 
-
-nav ul li {
-    text-decoration: none;
-    margin: 0 10px 0 10px;
-    word-wrap: break-word;
-    white-space: normal;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
-
-
-nav ul li form {
-    all: revert;
-}
-
-
-nav ul li a, nav ul li input[type="submit"] {
-    text-decoration: none;
-    max-width: 200px;
-    word-wrap: break-word;
-    white-space: normal;
-    display: inline-block;
-}
-
-/* Took the following code from my year 13 project
- * This code adds the white underline effect on hover
- */
-nav ul li a:after, nav ul li input[type="submit"]:after {
-    bottom: 0;
-    content: "";
-    display: block;
-    height: 2px;
-    left: 50%;
-    position: absolute;
-    background: #fff;
-    transition: width 0.3s ease 0s, left 0.3s ease 0s;
-    width: 0;
-}
-
-nav ul li a:hover:after, nav ul li input[type="submit"]:after {
-    width: 100%;
-    left: 0;
-}
-
-nav ul li a:hover, nav ul li input[type="submit"]:hover {
+#custom-navbar .navbar-nav .nav-link:hover {
     color: #45a049;
-    transition: 0.3s ease;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    background-color: rgba(209, 220, 151, 0.8) !important;
+    border: 1px solid #45a049;
+}
+
+.dropdown-item {
+    color: #000 !important;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(209, 220, 151, 0.5) !important;
+    color: #45a049 !important;
 }
 
 .card {
