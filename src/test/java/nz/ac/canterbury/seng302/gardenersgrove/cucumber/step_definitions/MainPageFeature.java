@@ -86,11 +86,6 @@ public class MainPageFeature {
   public void i_am_taken_by_default_to_the_home_page() throws Exception {
     MvcResult mvcResult = resultActions.andExpect(status().is3xxRedirection()).andReturn();
     assertEquals("/home", mvcResult.getResponse().getHeader("Location"));
-    // Print actual redirection location
-    String actualLocation = mvcResult.getResponse().getHeader("Location");
-    System.out.println("Redirect location: " + actualLocation);
-
-    assertEquals("/home", actualLocation);
   }
 
 
@@ -118,7 +113,7 @@ public class MainPageFeature {
     i_am_a_valid_user();
     garden =
         new Garden("Garden 1", "Location 1", null, "City", "Country", null, "12345", gardener, "");
-    gardenService.addGarden(garden); // Save garden to the database
+    gardenService.addGarden(garden);
   }
 
   @Then("the newest plant widget displays my three newest plants")
