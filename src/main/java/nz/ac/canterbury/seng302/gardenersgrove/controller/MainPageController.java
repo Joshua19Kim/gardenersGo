@@ -16,6 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -110,7 +113,7 @@ public class MainPageController {
         model.addAttribute("recentGardens", recentGardens);
         model.addAttribute("requestURI", requestService.getRequestURI(request));
         model.addAttribute("mainPageLayout", mainPageLayout);
-        model.addAttribute("ordering", "3 2 1");
+        model.addAttribute("ordering", mainPageLayout.getFormat());
 
         return "mainPageTemplate";
     }
@@ -147,6 +150,24 @@ public class MainPageController {
         model.addAttribute("mainPageLayout", mainPageLayout);
 
         return "mainPageEditForm";
+    }
+
+    @PostMapping("/changeLayout")
+    public String changeLayout(@RequestParam("layout") int layout) {
+        logger.info(String.valueOf(layout));
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+        MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
+        String format = switch (layout) {
+            case 1 -> "1 2 3";
+            case 2 -> "2 1 3";
+            case 3 -> "3 1 2";
+            case 4 -> "3 2 1";
+            default -> throw new IllegalArgumentException("Invalid format specified");
+        };
+        mainPageLayout.setFormat(format);
+        mainPageLayoutService.addMainPageLayout(mainPageLayout);
+        return "redirect:/user";
     }
 
 }

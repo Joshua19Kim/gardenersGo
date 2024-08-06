@@ -62,6 +62,10 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     transition: 0.3s ease;
 }
 
+img {
+    width: 100%;
+}
+
 .card {
     background: #8dab6e  !important; ;
     border-radius: 15px;
@@ -968,9 +972,9 @@ form.search-bar::after {
     color: #0073e6;
 }
 
-/* The Modal (background) */
-/* Taken from: https://www.w3schools.com/howto/howto_css_modals.asp*/
-.modal {
+/*!* The Modal (background) *!*/
+/*!* Taken from: https://www.w3schools.com/howto/howto_css_modals.asp*!*/
+.friend-modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 100; /* Sit on top */
@@ -985,7 +989,7 @@ form.search-bar::after {
 }
 
 /* Modal Box */
-.modal .friend-requests, .add-friends, .add-tags {
+.friend-modal .friend-requests, .add-friends, .add-tags {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
@@ -996,7 +1000,7 @@ form.search-bar::after {
     border-radius: 15px;
 }
 
-.modal .confirmation {
+.friend-modal .confirmation {
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;
@@ -1330,10 +1334,10 @@ form.search-bar::after {
 }
 
 
-.modal {
+.friend-modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 999;
     left: 0;
     top: 0;
     width: 100%;
@@ -1341,7 +1345,7 @@ form.search-bar::after {
     overflow: auto;
     background-color: rgba(0,0,0,0.4);
 }
-.modal-content {
+.friend-modal-content {
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;
@@ -1350,6 +1354,15 @@ form.search-bar::after {
     max-width: 500px;
     text-align: center;
 }
-.modal h2 {
+.friend-modal h2 {
     margin-top: 0;
+}
+
+.selectable {
+    border: none; /* No border by default */
+    outline: none;
+}
+
+.selectable.selected {
+    border: 2px solid green; /* Highlight border when selected */
 }

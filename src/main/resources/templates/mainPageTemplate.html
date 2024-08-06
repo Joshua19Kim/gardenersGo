@@ -8,10 +8,7 @@
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
 <div class="container">
-    <div class="row">
-        <a class="btn btn-success" th:href="@{../home/edit}">Edit Page</a>
-    </div>
-    <div class="row">
+    <div class="row" id="widget-container">
         <!-- Recently accessed gardens and Newest Plants -->
         <div class="col d-flex flex-column justify-content-between" id='widget-box'>
             <div class="row" id="widget-small-boxes">
@@ -23,49 +20,33 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-title">Newest Plants</div>
-                        <ul class="list-group">
-                            <li class="list-group-item"><img src="plant-icon.png" alt="Plant Icon"> Sapling <br><small>Fabian’s Garden</small></li>
-                            <li class="list-group-item"><img src="plant-icon.png" alt="Plant Icon"> Rose <br><small>Fabian’s Garden</small></li>
-                            <li class="list-group-item"><img src="plant-icon.png" alt="Plant Icon"> Plant <br><small>Fabian’s Garden</small></li>
-                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" id="widget-wide">
                 <!-- My Friend's List -->
-                <div class="col-md-12" id="widget-wide">
+                <div class="col-md-12">
                     <div class="card">
                         <div class="card-title">My Friend’s List</div>
-                        <div class="d-flex flex-wrap" style="height: 134px;">
-                            <div class="p-2 flex-fill text-center">
-                                <img src="friend-icon.png" alt="Friend Icon"><br>
-                                Jasmine Ong
-                            </div>
-                            <div class="p-2 flex-fill text-center">
-                                <img src="friend-icon.png" alt="Friend Icon"><br>
-                                Arthur Bell
-                            </div>
-                            <div class="p-2 flex-fill text-center">
-                                <img src="friend-icon.png" alt="Friend Icon"><br>
-                                Isaac Steele
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <!-- My Garden's List -->
-        <div class="col-md-4">
+        <div class="col-md-4" id="widget-tall">
             <div th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetTall + 'Widget.html'}"></div>
         </div>
     </div>
 </div>
+
+
 
 <script th:inline="javascript">
     /*<![CDATA[*/
     // Thymeleaf variable injected into JavaScript
     const ordering = /*[[${ordering}]]*/ 'default';
     console.log(ordering);
+
     /*]]>*/
 
     function orderItems(ordering) {
