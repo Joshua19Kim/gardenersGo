@@ -1426,5 +1426,9 @@ body {
     background-color: #fffdf6;
 }
 
-
+table td{
+    vertical-align:top;
+    border:solid 1px #888;
+    padding:10px;
+}
 

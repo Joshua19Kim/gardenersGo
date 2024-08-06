@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <title>Signup Code Form</title>
-    <link rel="stylesheet" th:href="@{css/stylesheet.css}">
 </head>
-<body>
 
+<body>
 <div id="form" class="signup">
     <h1>Please enter your signup code</h1>
     <form method="post" th:action="@{/signup}" onsubmit="getCode()">

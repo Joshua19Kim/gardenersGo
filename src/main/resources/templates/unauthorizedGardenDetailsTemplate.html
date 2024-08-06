@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head th:insert="~{fragmentExample/fragments/bootstrap.html}">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Garden Details</title>
-    <link th:href="@{/css/stylesheet.css}" rel="stylesheet">
 </head>
+
 <body>
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
-<br/>
-<a th:href="@{../gardens(user=${gardener.id})}"
-   th:text="'Back to ' + ${gardener.firstName} + (${gardener.lastName != null ? ' ' + gardener.lastName : ''}) + '\'s Gardens'"
-   class="back-link button"></a>
+
 <div class="container align-items-center" style="width: 1200px">
+    <br/>
+    <a th:href="@{../gardens(user=${gardener.id})}"
+       th:text="'Back to ' + ${gardener.firstName} + (${gardener.lastName != null ? ' ' + gardener.lastName : ''}) + '\'s Gardens'"
+       class="button card"></a>
     <div class="row w-100">
         <h1 class="text-black"><span th:text="${garden.name}"></span></h1>
     </div>

@@ -3,12 +3,13 @@
 <head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <title>Create New Plant</title>
 </head>
+
 <body>
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
-<div class="container">
-    <div class="container card">
+<div class="container mb-5">
+    <div class="container card mb-5">
         <h1> Add New Plant </h1>
         <form id="plantForm" th:action="@{form(gardenId=${garden.id})}" method="post" enctype="multipart/form-data">
             <label for="name"> Name: </label>
@@ -48,10 +49,10 @@
             </div>
             <span th:if="${uploadError}" th:text="${uploadError}" class="smallErrorMessage"></span>
             <br/>
-            <button type="submit">Submit</button>
+            <button class="btn btn-success w-100" type="submit">Submit</button>
         </form>
-        <a th:href="@{../../details(gardenId=${garden.id})}">
-            <button>Cancel</button>
+        <a class="btn btn-secondary w-50 mt-3" th:href="@{../../details(gardenId=${garden.id})}">
+            Cancel
         </a>
     </div>
 </div>

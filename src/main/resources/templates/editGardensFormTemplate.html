@@ -5,11 +5,11 @@
 </head>
 <body>
 
-<nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
-<div class="container">
-    <div class="card">
+<div th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
+<div class="container mb-5">
+    <div class="card w-100 mb-5">
         <h1> Edit Garden </h1>
-        <form id="editGardenForm" th:action="@{edit(gardenId=${garden.id})}" method="post">
+        <form class="w-100" id="editGardenForm" th:action="@{edit(gardenId=${garden.id})}" method="post">
             <div class="create-garden-row">
                 <div>
                     <label for="name"> Name: </label>
@@ -61,13 +61,13 @@
                 <div class="create-garden-row">
                     <div>
                         <label for="suburb">Suburb:</label>
-                        <input type="text" id="suburb" th:name="suburb" th:value="*{suburb}"
+                        <input class="form-control" type="text" id="suburb" th:name="suburb" th:value="*{suburb}"
                                th:classappend="${suburbError} ? 'error' : ''">
                         <span th:if="${suburbError}" th:utext="${suburbError}" class="smallErrorMessage"></span>
                     </div>
                     <div>
                         <label for="city">City:</label>
-                        <input type="text" id="city" th:name="city" th:value="*{city}"
+                        <input class="form-control" type="text" id="city" th:name="city" th:value="*{city}"
                                th:classappend="${cityError} ? 'error' : ''">
                         <span th:if="${cityError}" th:utext="${cityError}" class="smallErrorMessage"></span>
                     </div>
@@ -76,13 +76,13 @@
                 <div class="create-garden-row">
                     <div>
                         <label for="country">Country:</label>
-                        <input type="text" id="country" th:name="country" th:value="*{country}"
+                        <input class="form-control" type="text" id="country" th:name="country" th:value="*{country}"
                                th:classappend="${countryError} ? 'error' : ''">
                         <span th:if="${countryError}" th:utext="${countryError}" class="smallErrorMessage"></span>
                     </div>
                     <div>
                         <label for="postcode">Postcode:</label>
-                        <input type="text" id="postcode" th:name="postcode" th:value="*{postcode}"
+                        <input class="form-control" type="text" id="postcode" th:name="postcode" th:value="*{postcode}"
                                th:classappend="${postcodeError} ? 'error' : ''">
                         <span th:if="${postcodeError}" th:utext="${postcodeError}" class="smallErrorMessage"></span>
                     </div>
@@ -90,10 +90,10 @@
                 <br/>
             </div>
 
-            <button type="submit">Submit</button>
+            <button class="btn btn-success w-100" type="submit">Submit</button>
         </form>
-        <a th:href="@{../gardens/details(gardenId=${garden.id})}">
-            <button>Cancel</button>
+        <a class="btn btn-secondary w-50 mt-3" th:href="@{../gardens/details(gardenId=${garden.id})}">
+            Cancel
         </a>
     </div>
     <script th:src="@{/javascript/locationAutocomplete.js}"></script>
