@@ -66,7 +66,6 @@
             <div class="card mt-0">
                 <div class="card-title">My Garden’s List</div>
                 <div class="list-group" style="overflow-y: scroll; height: 460px;">
-                    <p th:class="${gardens.isEmpty()}? 'alert alert-secondary' : 'd-none'"> No gardens created </p>
                     <th:block th:each="garden : ${gardens}">
                         <a class="list-group-item" th:href="@{/gardens/details(gardenId=${garden.id})}">
                             <p th:text="${garden.name}"></p>
