@@ -52,15 +52,7 @@ public class BrowsePublicGardens {
 
     @Autowired
     private GardenerFormService gardenerFormService;
-    private int pageNo = 0;
-    private int pageSize = 10;
 
-
-
-    @After("@U20")
-    public void tearDown() {
-        gardenRepository.deleteAll();
-    }
 
     @Given("there is a garden with the name {string}")
     public void thereIsAGardenWithTheName(String gardenName) {
