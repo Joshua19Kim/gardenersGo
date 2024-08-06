@@ -113,7 +113,17 @@ public class BrowseGardensController {
             tagCount = 0L;
         } else {
             tagCount = (long) tags.size();
-            model.addAttribute("tags", tags);
+        }
+
+        if(!model.containsAttribute("tags") && !model.containsAttribute("allTags")) {
+            List<String> allTags = tagService.getAllTagNames();
+            if(tags != null) {
+                for(String selectedTag: tags) {
+                    allTags.remove(selectedTag);
+                }
+                model.addAttribute("tags", tags);
+            }
+            model.addAttribute("allTags", allTags);
         }
 
         if (!searchTerm.isEmpty()) {
@@ -132,6 +142,7 @@ public class BrowseGardensController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
+
         return "browseGardensTemplate";
     }
 
@@ -151,6 +162,7 @@ public class BrowseGardensController {
             @RequestParam(name="pageNo", defaultValue = "0") String pageNo,
             @RequestParam(name="tag-input") String tag,
             @RequestParam(name="tags", required = false) List<String> tags,
+            @RequestParam(name="searchTerm", required = false) String searchTerm,
             Model model, RedirectAttributes redirectAttributes
     ) {
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
@@ -179,6 +191,7 @@ public class BrowseGardensController {
 
         redirectAttributes.addFlashAttribute("tags", tags);
         redirectAttributes.addFlashAttribute("allTags", allTags);
+        redirectAttributes.addFlashAttribute("searchTerm", searchTerm);
 
         return "redirect:/browseGardens";
     }

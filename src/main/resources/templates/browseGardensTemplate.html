@@ -41,6 +41,7 @@
             <div th:each="tag : ${tags}">
                 <input type="hidden" name="tags" th:value="${tag}" />
             </div>
+            <input type="hidden" name="searchTerm" th:value="${searchTerm}" />
             <datalist id="tagList">
                 <option th:each="tag : ${allTags}" th:value="${tag}" th:text="${tag}"></option>
             </datalist>
