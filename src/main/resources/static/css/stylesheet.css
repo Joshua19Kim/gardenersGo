@@ -14,20 +14,56 @@
     color: #45a049;
 }
 
+.dropdown-container {
+    position: relative; /* To position the dropdown menu */
+}
+
+/* Dropdown Button */
+.dropbtn {
+    color: #1c1c1a;
+    background-color: rgba(209, 220, 151, 0.8) !important;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    align-items: center; /* Aligns text and arrow vertically */
+}
+
+.dropdown-arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 0.5rem; /* Space between text and arrow */
+    border-left: 0.4em solid transparent;
+    border-right: 0.4em solid transparent;
+    border-top: 0.4em solid #1c1c1a; /* Arrow color */
+}
+
 /* Dropdown Menu */
+.dropdown-menu-wrapper {
+    position: absolute;
+    top: 100%; /* Position it below the button */
+    left: 0; /* Align dropdown menu with the left edge of the button */
+    z-index: 100; /* Ensure it appears above other content */
+}
+
 .dropdown-menu {
     background-color: rgba(209, 220, 151, 0.8) !important;
     border: 1px solid #45a049;
 }
 
-.dropdown-item {
+/* Ensure dropdown item color and hover effects */
+#custom-navbar .dropdown-item {
     color: #000 !important;
 }
 
-.dropdown-item:hover {
+#custom-navbar .dropdown-item:hover {
     background-color: rgba(209, 220, 151, 0.5) !important;
     color: #45a049 !important;
 }
+
+
 
 .card {
     background: #8dab6e  !important; ;
@@ -58,7 +94,6 @@
     z-index: 99;  /* Always show on top of everything */
 }
 
-
 .dropdown-content {
     display: none;
     position: absolute;
@@ -67,7 +102,6 @@
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 100;
 }
-
 
 .dropdown-content a {
     padding: 12px 16px;
@@ -103,15 +137,6 @@
     display: block;
 }
 
-.dropbtn {
-    color: #1c1c1a;
-    background-color: #d9f7d9;
-    padding: 10px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-}
 
 #form {
     width: 550px;

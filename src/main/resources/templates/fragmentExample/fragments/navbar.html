@@ -15,15 +15,15 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <li class="nav-item dropdown" th:href="@{/Gardens}">
+                    <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         My Gardens
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
-                            <li><a class="dropdown-item" th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a></li>
-                        </th:block>
-                    </ul>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
+                        <li><a class="dropdown-item" th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a></li>
+                    </th:block>
+                </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>
@@ -47,6 +47,7 @@
         </div>
     </div>
 </nav>
+
 
 
 
