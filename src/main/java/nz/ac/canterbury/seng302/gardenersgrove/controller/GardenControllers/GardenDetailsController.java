@@ -129,6 +129,7 @@ public class GardenDetailsController {
        if (garden.isPresent()) {
            model.addAttribute("requestURI", requestService.getRequestURI(request));
            model.addAttribute("garden", garden.get());
+           model.addAttribute("isGardenPublic", garden.get().getIsGardenPublic());
            model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
            model.addAttribute("allTags", tagService.getUniqueTagNames(parseLong(gardenId)));
            if (uploadError != null) {
@@ -210,7 +211,6 @@ public class GardenDetailsController {
     @PostMapping("/gardens/details")
     public String submitForm(@RequestParam(name = "isGardenPublic", required = false) boolean isGardenPublic,
                              @RequestParam(name = "gardenId") String gardenId,
-
                              @RequestParam(name = "uploadError", required = false) String uploadError,
                              @RequestParam(name = "errorId", required = false) String errorId,
                              @RequestParam(name = "userId", required = false) String userId,
@@ -238,7 +238,7 @@ public class GardenDetailsController {
 
             String requestUri = requestService.getRequestURI(request);
             model.addAttribute("requestURI", requestUri);
-
+            model.addAttribute("isGardenPublic", garden.get().getIsGardenPublic());
             model.addAttribute("garden", garden.get());
 
             if(uploadError != null) {
@@ -285,6 +285,12 @@ public class GardenDetailsController {
         return "redirect:/gardens/details?gardenId=" + gardenId;
     }
 
+    // todo: Fix this to allow for tagValidation injection
+    //  Also tag validation is not failsafe secure. They should check for positives not negatives
+    //      i.e. validTagError --> validTag.isPresent() and tagInUse --> tagNotInUse.isPresent
+    //      This means if the tagValidation is broken the code will NOT accept tags.
+    //  Also see whether location should check for "error" rather than nullity -- Does post mapping need weather at all?
+    //  Also see if user should be verified as owner
     /**
      * Adds an existing tag to the garden or creates a new tag to add
      *
