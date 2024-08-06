@@ -113,6 +113,7 @@ public class BrowseGardensController {
             tagCount = 0L;
         } else {
             tagCount = (long) tags.size();
+            model.addAttribute("tags", tags);
         }
 
         Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, tags, tagCount);
