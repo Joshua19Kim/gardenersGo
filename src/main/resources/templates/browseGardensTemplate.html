@@ -41,6 +41,7 @@
             <div th:each="tag : ${tags}">
                 <input type="hidden" name="tags" th:value="${tag}" />
             </div>
+            <input type="hidden" name="searchTerm" th:value="${searchTerm}" />
             <datalist id="tagList">
                 <option th:each="tag : ${allTags}" th:value="${tag}" th:text="${tag}"></option>
             </datalist>
@@ -52,7 +53,7 @@
         <p id="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
     </div>
     <div class="row">
-        <div th:each="garden : ${gardensPage.content}" class="col-md-6 mb-4">
+        <div th:each="garden : ${gardenResults != null ? gardenResults : gardensPage.content}" class="col-md-6 mb-4">
             <a th:href="@{gardens/details(gardenId=${garden.id})}" style="text-decoration: none; color: inherit;">
                 <div class="card browse-gardens-card" >
                     <div class="card-body">

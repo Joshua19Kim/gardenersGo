@@ -62,13 +62,25 @@ public class BrowseGardensController {
     public String browseGardens(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
             @RequestParam(name="tags", required = false) List<String> tags,
+            @RequestParam(name="searchTerm", defaultValue = "") String searchTerm,
+            @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
             Model model
     ) {
         if(model.containsAttribute("pageNo")) {
             pageNoString = (String) model.getAttribute("pageNo");
         }
+
+        Long tagCount;
+        if (tags == null) {
+            tagCount = 0L;
+            tags = new ArrayList<>();
+        } else {
+            tagCount = (long) tags.size();
+            model.addAttribute("tags", tags);
+        }
+
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
-        Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
+        Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, tags, tagCount);
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
         if (totalPages > 0) {
@@ -105,6 +117,7 @@ public class BrowseGardensController {
             @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
             @RequestParam(name="searchTerm") String searchTerm,
             @RequestParam(name="tags", required = false) List<String> tags,
+            @ModelAttribute("tags") List<String> flashTags,
             Model model) {
         logger.info("POST /browseGardens");
 
@@ -151,6 +164,7 @@ public class BrowseGardensController {
             @RequestParam(name="pageNo", defaultValue = "0") String pageNo,
             @RequestParam(name="tag-input") String tag,
             @RequestParam(name="tags", required = false) List<String> tags,
+            @RequestParam(name="searchTerm") String searchTerm,
             Model model, RedirectAttributes redirectAttributes
     ) {
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
@@ -179,6 +193,7 @@ public class BrowseGardensController {
 
         redirectAttributes.addFlashAttribute("tags", tags);
         redirectAttributes.addFlashAttribute("allTags", allTags);
+        redirectAttributes.addFlashAttribute("searchTerm", searchTerm);
 
         return "redirect:/browseGardens";
     }
