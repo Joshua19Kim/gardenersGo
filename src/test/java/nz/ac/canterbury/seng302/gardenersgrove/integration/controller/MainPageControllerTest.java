@@ -28,7 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -56,6 +58,7 @@ public class MainPageControllerTest {
     @MockBean
     private GardenVisit gardenVisit;
     private Gardener testGardener;
+    private Garden testGarden;
 
     @BeforeEach
     void setUp() {
@@ -68,6 +71,9 @@ public class MainPageControllerTest {
         testGardener.setId(1L);
         gardenerFormService.addGardener(testGardener);
         when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(testGardener));
+        testGarden = new Garden("Test garden", "99 test address", null,
+                "Christchurch", "New Zealand", null, "9999", testGardener, "");
+
     }
     @AfterEach
     public void tearDown() {
@@ -75,6 +81,96 @@ public class MainPageControllerTest {
         gardenRepository.deleteAll();
         gardenerFormRepository.deleteAll();
     }
+
+    @Test
+    @WithMockUser
+    public void GivenUserHasAGarden_WhenTheyVisitTheHomePage_GardenListShown() throws Exception {
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
+
+        List<Garden> ownedGardens = new ArrayList<>();
+        ownedGardens.add(testGarden);
+        when(gardenService.getGardensByGardenerId(anyLong())).thenReturn(ownedGardens);
+
+        mockMvc
+                .perform((MockMvcRequestBuilders.get("/home")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attributeExists("gardens"))
+                .andExpect(model().attribute("gardens", ownedGardens));
+
+        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(gardenService, times(1)).getGardensByGardenerId(anyLong());
+    }
+
+    @Test
+    @WithMockUser
+    public void GivenUserHasVisitedAGarden_WhenTheyVisitTheHomePage_RecentlyVisitedGardensListShown() throws Exception {
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
+
+        List<Garden> recentlyVisitedGardens = new ArrayList<>();
+        recentlyVisitedGardens.add(testGarden);
+        when(gardenVisitService.findRecentGardensByGardenerId(anyLong())).thenReturn(recentlyVisitedGardens);
+
+        mockMvc
+                .perform((MockMvcRequestBuilders.get("/home")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attributeExists("recentGardens"))
+                .andExpect(model().attribute("recentGardens", recentlyVisitedGardens));
+
+        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(gardenVisitService, times(1)).findRecentGardensByGardenerId(anyLong());
+    }
+
+
+    //    @Test
+//    @WithMockUser
+//    public void GivenUserHasAPlant_WhenTheyVisitTheHomePage_RecentlyAddedPlantsShown() throws Exception {
+//        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
+//
+//        Plant plant = new Plant("test plant", testGarden);
+//        List<Plant> recentlyAddedPlants = new ArrayList<>();
+//        recentlyAddedPlants.add(plant);
+//        // Yet to be added
+////        when(newestPlantsService.findNewestPlantsByGardenerId(anyLong())).thenReturn(recentlyAddedPlants);
+//
+//        mockMvc
+//                .perform((MockMvcRequestBuilders.get("/home")))
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("mainPageTemplate"))
+//                .andExpect(model().attributeExists("newestPlants"))
+//                .andExpect(model().attribute("newestPlants", recentlyAddedPlants));
+//
+//        verify(gardenerFormService, times(1)).findByEmail(anyString());
+////        verify(newestPlantsService, times(1)).findNewestPlantsByGardenerId(anyLong());
+//    }
+
+    @Test
+    @WithMockUser
+    public void GivenUserHasFriends_WhenTheyVisitTheHomePage_FriendsListShown() throws Exception {
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
+
+        Gardener friend = new Gardener("Friend", "Gardener",
+                LocalDate.of(2024, 4, 1), "friendgardener@gmail.com",
+                "Password1!");
+        List<Gardener> friendsList = new ArrayList<>();
+        friendsList.add(friend);
+        when(relationshipService.getCurrentUserRelationships(anyLong())).thenReturn(friendsList);
+
+        mockMvc
+                .perform((MockMvcRequestBuilders.get("/home")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attributeExists("friends"))
+                .andExpect(model().attribute("friends", friendsList));
+
+        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(relationshipService, times(1)).getCurrentUserRelationships(anyLong());
+    }
+
+
+
+
     @Test
     @WithMockUser
     public void MainPageDisplayed_NewUserHasNotVisitedAnyGarden_NoGardenInRecentGardenList() throws Exception {
