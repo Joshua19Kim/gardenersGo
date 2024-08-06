@@ -74,7 +74,33 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
      *
      * @param pageable The pageable specifying relevant information for pagination
      * @param searchTerm the term to search garden and plant names for
+     * @param tags the list of tags to filter gardens by
+     * @param tagCount the number of tags in the search query
      */
-    @Query(value = "SELECT DISTINCT g.* FROM garden g LEFT JOIN plant p ON g.id = p.garden_id WHERE g.public_garden IS TRUE AND (g.name LIKE %:searchTerm% OR p.name LIKE %:searchTerm%)", nativeQuery = true)
-    Page<Garden> findGardensBySearchTerm(Pageable pageable, @Param("searchTerm") String searchTerm);
+    @Query(value = "SELECT DISTINCT g.* FROM garden g " +
+            "LEFT JOIN plant p ON g.id = p.garden_id " +
+            "LEFT JOIN tag t ON g.id = t.garden " +
+            "WHERE g.public_garden IS TRUE " +
+            "AND (g.name LIKE %:searchTerm% OR p.name LIKE %:searchTerm%) " +
+            "AND (:tagCount = 0 OR g.id IN (" +
+            "  SELECT g2.id FROM garden g2 " +
+            "  LEFT JOIN tag t2 ON g2.id = t2.garden " +
+            "  WHERE t2.tag_name IN (:tags) " +
+            "  GROUP BY g2.id " +
+            "  HAVING COUNT(DISTINCT t2.tag_name) = :tagCount" +
+            "))",
+            countQuery = "SELECT COUNT(DISTINCT g.id) FROM garden g " +
+                    "LEFT JOIN plant p ON g.id = p.garden_id " +
+                    "LEFT JOIN tag t ON g.id = t.garden " +
+                    "WHERE g.public_garden IS TRUE " +
+                    "AND (g.name LIKE %:searchTerm% OR p.name LIKE %:searchTerm%) " +
+                    "AND (:tagCount = 0 OR g.id IN (" +
+                    "  SELECT g2.id FROM garden g2 " +
+                    "  LEFT JOIN tag t2 ON g2.id = t2.garden " +
+                    "  WHERE t2.tag_name IN (:tags) " +
+                    "  GROUP BY g2.id " +
+                    "  HAVING COUNT(DISTINCT t2.tag_name) = :tagCount" +
+                    "))",
+            nativeQuery = true)
+    Page<Garden> findGardensBySearchTerm(Pageable pageable, @Param("searchTerm") String searchTerm, @Param("tags") List<String> tags, @Param("tagCount") Long tagCount);
 }

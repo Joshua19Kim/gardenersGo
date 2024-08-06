@@ -104,10 +104,18 @@ public class BrowseGardensController {
             @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
             @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
             @RequestParam(name="searchTerm") String searchTerm,
+            @RequestParam(name="tags", required = false) List<String> tags,
             Model model) {
         logger.info("POST /browseGardens");
 
-        Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm);
+        Long tagCount;
+        if (tags == null) {
+            tagCount = 0L;
+        } else {
+            tagCount = (long) tags.size();
+        }
+
+        Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, tags, tagCount);
         if (gardensPage.getContent().isEmpty()) {
             model.addAttribute("noSearchResults", "No gardens match your search.");
         }
