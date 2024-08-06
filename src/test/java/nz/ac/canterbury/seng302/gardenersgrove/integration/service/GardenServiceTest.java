@@ -20,6 +20,7 @@ import org.springframework.data.repository.query.FluentQuery;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @DataJpaTest
 @Import(GardenService.class)
@@ -264,15 +265,13 @@ public class GardenServiceTest {
         Assertions.assertEquals(Math.ceil((double) totalGardens /pageSize), gardensPage.getTotalPages());
 
         List<Garden> gardensListCopy = new ArrayList<>(gardensPage.getContent());
-        gardensListCopy.sort(new Comparator<Garden>() {
-            @Override
-            public int compare(Garden garden1, Garden garden2) {
-                return garden1.getCreationDate().compareTo(garden2.getCreationDate());
-            }
-        });
+        gardensListCopy.sort(Comparator.comparing(Garden::getCreationDate));
 
-        Assertions.assertEquals(gardensPage.getContent(), gardensListCopy.reversed());
+        List<Garden> reversedGardensList = gardensListCopy.stream()
+                .sorted(Collections.reverseOrder())
+                .collect(Collectors.toList());
 
+        Assertions.assertEquals(gardensPage.getContent(), reversedGardensList);
     }
 
     @Test

@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.MainPageController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,7 @@ public class MainPageControllerTest {
 
     @MockBean
     private RelationshipService relationshipService;
+    @MockBean PlantService plantService;
 
 
     @BeforeEach
@@ -104,27 +106,28 @@ public class MainPageControllerTest {
         verify(gardenVisitService, times(1)).findRecentGardensByGardenerId(anyLong());
     }
 
-//    @Test
-//    @WithMockUser
-//    public void GivenUserHasAPlant_WhenTheyVisitTheHomePage_RecentlyAddedPlantsShown() throws Exception {
-//        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
-//
-//        Plant plant = new Plant("test plant", testGarden);
-//        List<Plant> recentlyAddedPlants = new ArrayList<>();
-//        recentlyAddedPlants.add(plant);
-//        // Yet to be added
-////        when(newestPlantsService.findNewestPlantsByGardenerId(anyLong())).thenReturn(recentlyAddedPlants);
-//
-//        mockMvc
-//                .perform((MockMvcRequestBuilders.get("/home")))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("mainPageTemplate"))
-//                .andExpect(model().attributeExists("newestPlants"))
-//                .andExpect(model().attribute("newestPlants", recentlyAddedPlants));
-//
-//        verify(gardenerFormService, times(1)).findByEmail(anyString());
-////        verify(newestPlantsService, times(1)).findNewestPlantsByGardenerId(anyLong());
-//    }
+    @Test
+    @WithMockUser
+    public void GivenUserHasAPlant_WhenTheyVisitTheHomePage_RecentlyAddedPlantsShown() throws Exception {
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
+
+        Plant plant = new Plant("test plant", testGarden);
+        List<Plant> recentlyAddedPlants = new ArrayList<>();
+        recentlyAddedPlants.add(plant);
+
+        when(plantService.findNewestPlantsByGardenerId(anyLong())).thenReturn(recentlyAddedPlants);
+
+        mockMvc
+                .perform((MockMvcRequestBuilders.get("/home")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attributeExists("newestPlants"))
+                .andExpect(model().attribute("newestPlants", recentlyAddedPlants));
+
+        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(plantService, times(1)).findNewestPlantsByGardenerId(anyLong());
+
+    }
 
     @Test
     @WithMockUser
