@@ -74,11 +74,7 @@ public class BrowseGardensController {
         }
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
         Page<Garden> gardensPage;
-        if(searchTerm.isEmpty()) {
-            gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
-        } else {
-            gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm);
-        }
+        gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, tags, (long) tags.size());
 
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
@@ -129,8 +125,7 @@ public class BrowseGardensController {
             Model model) {
         logger.info("POST /browseGardens");
         setSearchTerm(searchTerm);
-        this.tags = new ArrayList<>();
-        Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm);
+        Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, tags, (long) tags.size());
         if (gardensPage.getContent().isEmpty()) {
             model.addAttribute("noSearchResults", "No gardens match your search.");
         }
