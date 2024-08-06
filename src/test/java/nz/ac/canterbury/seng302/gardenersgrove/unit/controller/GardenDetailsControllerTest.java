@@ -33,6 +33,7 @@ public class GardenDetailsControllerTest {
     private WeatherService mockWeatherService;
     private TagService mockTagService;
     private LocationService mockLocationService;
+    private GardenVisitService mockGardenVisitService;
     private Model mockModel;
     private Gardener mockUser;
     private Gardener mockOwner;
@@ -56,9 +57,11 @@ public class GardenDetailsControllerTest {
         mockWeatherService = Mockito.mock(WeatherService.class);
         mockTagService = Mockito.mock(TagService.class);
         mockLocationService = Mockito.mock(LocationService.class);
+        mockGardenVisitService = Mockito.mock(GardenVisitService.class);
 
         gardenDetailsController = new GardenDetailsController(mockGardenService, mockGardenerFormService,
-                mockRelationshipService, requestService, mockWeatherService, mockTagService, mockLocationService);
+                mockRelationshipService, requestService, mockWeatherService, mockTagService,
+                mockLocationService, mockGardenVisitService);
 
         mockModel = Mockito.mock(Model.class);
 
