@@ -1,11 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
@@ -15,19 +11,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static java.lang.Long.parseLong;
 
 /**
  * Controller class that handles all the logic for the browse gardens page
@@ -71,11 +62,22 @@ public class BrowseGardensController {
         Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+        if(totalPages > 0) {
+            int lowerBound = Math.max(pageNo - 1, 1);
+            int upperBound = Math.min(pageNo + 3, totalPages);
+            List<Integer> pageNumbers = IntStream.rangeClosed(lowerBound, upperBound)
                     .boxed()
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
+
+            long totalItems = gardensPage.getTotalElements();
+            int startIndex = pageSize * pageNo + 1;
+            long endIndex = Math.min((long) pageSize * (pageNo + 1), totalItems);
+            String paginationMessage = "Showing results " + startIndex + " to " + endIndex + " of " + totalItems;
+            model.addAttribute("paginationMessage", paginationMessage);
+        } else {
+            String paginationMessage = "Showing results 0 to 0 of 0";
+            model.addAttribute("paginationMessage", paginationMessage);
         }
         if(!model.containsAttribute("tags") && !model.containsAttribute("allTags")) {
             List<String> allTags = tagService.getAllTagNames();
@@ -94,7 +96,6 @@ public class BrowseGardensController {
     /**
      * Posts a form response with the search term to search for gardens
      * @param pageNo the page number
-     * @param pageSize the page size
      * @param model the model
      *
      * @return the browse gardens html template filled with gardens matching the search term
@@ -102,7 +103,6 @@ public class BrowseGardensController {
     @PostMapping("/browseGardens")
     public String sendSearchTerm(
             @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
-            @RequestParam(name="pageSize", defaultValue = "10") int pageSize,
             @RequestParam(name="searchTerm") String searchTerm,
             Model model) {
         logger.info("POST /browseGardens");
@@ -113,6 +113,7 @@ public class BrowseGardensController {
         }
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
+
         if(totalPages > 0) {
             int lowerBound = Math.max(pageNo - 1, 1);
             int upperBound = Math.min(pageNo + 3, totalPages);
@@ -130,6 +131,7 @@ public class BrowseGardensController {
             String paginationMessage = "Showing results 0 to 0 of 0";
             model.addAttribute("paginationMessage", paginationMessage);
         }
+
         return "browseGardensTemplate";
     }
 
@@ -140,7 +142,6 @@ public class BrowseGardensController {
      * @param pageNo the page number
      * @param tag the tag the user typed in or selected
      * @param tags all the tags the user is filtering by
-     * @param model the model
      * @param redirectAttributes attributes used to add to the model of the url it is redirected to
      * @return redirects to the browse gardens page
      */
@@ -149,7 +150,7 @@ public class BrowseGardensController {
             @RequestParam(name="pageNo", defaultValue = "0") String pageNo,
             @RequestParam(name="tag-input") String tag,
             @RequestParam(name="tags", required = false) List<String> tags,
-            Model model, RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes
     ) {
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         if(tags == null) {

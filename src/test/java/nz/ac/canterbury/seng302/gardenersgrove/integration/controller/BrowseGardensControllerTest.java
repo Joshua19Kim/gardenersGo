@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.lang.Math.ceil;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = BrowseGardensController.class)
@@ -91,11 +91,10 @@ public class BrowseGardensControllerTest {
     @WithMockUser
     public void BrowseGardensPageRequested_PageNumberSpecified_PageReturned() throws Exception {
         int pageNumber = 1;
-        int pageSize = 3;
-        List<Integer> expectedPageNumbers = List.of(1,2,3,4,5);
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Garden> gardenPage = new PageImpl<>(gardens, pageable, gardens.size());
-        Mockito.when(gardenService.getGardensPaginated(pageNumber, pageSize)).thenReturn(gardenPage);
+        List<Integer> expectedPageNumbers = List.of(1,2);
+        Pageable pageable = PageRequest.of(pageNumber, defaultPageSize);
+        Page<Garden> gardenPage = new PageImpl<>(gardens.subList(defaultPageSize, gardens.size()), pageable, gardens.size());
+        Mockito.when(gardenService.getGardensPaginated(pageNumber, defaultPageSize)).thenReturn(gardenPage);
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens")
                         .param("pageNo", String.valueOf(pageNumber)))
                 .andExpect(status().isOk())
@@ -103,6 +102,7 @@ public class BrowseGardensControllerTest {
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
                 .andExpect(view().name("browseGardensTemplate"));
     }
+
 
     @Test
     @WithMockUser
