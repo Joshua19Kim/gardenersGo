@@ -151,5 +151,4 @@ public class MainPageControllerTest {
         verify(gardenerFormService, times(1)).findByEmail(anyString());
         verify(relationshipService, times(1)).getCurrentUserRelationships(anyLong());
     }
-
 }
