@@ -547,6 +547,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     height: 30px;
     width: 30px;
     vertical-align: middle;
+    background-color: var(--button-color);
 }
 
 .plant-list-container {
