@@ -1,10 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
 import io.cucumber.java.After;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
@@ -15,7 +15,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -25,8 +24,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class BrowseGardensByTagFeature {
@@ -59,6 +63,8 @@ public class BrowseGardensByTagFeature {
 
     private String tag;
 
+    private BrowseGardensController browseGardensControllerSpy;
+
     @Given("there is a garden with tags")
     public void there_is_a_garden_with_tags() {
         gardener = gardenerFormService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
@@ -72,6 +78,10 @@ public class BrowseGardensByTagFeature {
         for(String tag: allTags) {
             tagService.addTag(new Tag(tag, garden));
         }
+        browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, tagService));
+        mockMvc = standaloneSetup(browseGardensControllerSpy).build();
+        doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
+        doNothing().when(browseGardensControllerSpy).setTags(anyList());
     }
 
     @After("@U24")

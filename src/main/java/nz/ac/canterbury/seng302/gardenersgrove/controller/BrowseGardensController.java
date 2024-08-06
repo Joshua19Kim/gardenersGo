@@ -47,6 +47,15 @@ public class BrowseGardensController {
         this.tags = new ArrayList<>();
     }
 
+    public void setSearchTerm(String searchTerm) {
+        this.searchTerm = searchTerm;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+
     /**
      * Handles GET request for the browse gardens page. It gets a Page of Garden objects by
      * specifying the page number and page size.
@@ -117,7 +126,7 @@ public class BrowseGardensController {
             @RequestParam(name="searchTerm") String searchTerm,
             Model model) {
         logger.info("POST /browseGardens");
-        this.searchTerm = searchTerm;
+        setSearchTerm(searchTerm);
         this.tags = new ArrayList<>();
         Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm);
         if (gardensPage.getContent().isEmpty()) {
@@ -195,7 +204,7 @@ public class BrowseGardensController {
         for(String selectedTag: tags) {
             allTags.remove(selectedTag);
         }
-        this.tags = tags;
+        setTags(tags);
 
         redirectAttributes.addFlashAttribute("tags", tags);
         redirectAttributes.addFlashAttribute("allTags", allTags);

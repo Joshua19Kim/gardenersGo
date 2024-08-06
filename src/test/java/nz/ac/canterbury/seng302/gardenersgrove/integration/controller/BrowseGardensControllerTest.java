@@ -26,8 +26,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @WebMvcTest(controllers = BrowseGardensController.class)
 public class BrowseGardensControllerTest {
@@ -54,6 +58,9 @@ public class BrowseGardensControllerTest {
 
     private List<String> allTags;
 
+    private BrowseGardensController browseGardensControllerSpy;
+
+
     @BeforeEach
     public void setUp() {
         testGardener = new Gardener("Test", "Gardener",
@@ -69,6 +76,11 @@ public class BrowseGardensControllerTest {
         for (int i = 0; i < 8; i++) {
             allTags.add("tag" + i);
         }
+
+        browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, tagService));
+        mockMvc = standaloneSetup(browseGardensControllerSpy).build();
+        doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
+        doNothing().when(browseGardensControllerSpy).setTags(anyList());
 
     }
 
@@ -251,7 +263,9 @@ public class BrowseGardensControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", matchingGardenPage))
                 .andExpect(view().name("browseGardensTemplate"));
+
     }
+
 
 
 }
