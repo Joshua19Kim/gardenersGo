@@ -115,7 +115,7 @@ tasks.register("unitTestReport", JacocoReport) { // Generate a report for unit t
 
 	reports {
 		// The jacoco coverage report will ge generated in the destination below
-		html.destination file("${layout.buildDirectory}/reports/coverage/test")
+		html.destination file("${buildDir}/reports/coverage/test")
 	}
 }
 tasks.register("integrationTestReport", JacocoReport) { // Generate a report for integration tests
@@ -134,7 +134,7 @@ tasks.register("integrationTestReport", JacocoReport) { // Generate a report for
 
 	reports {
 		// The jacoco coverage report will ge generated in the destination below
-		html.destination file("${layout.buildDirectory}/reports/coverage/integration")
+		html.destination file("${buildDir}/reports/coverage/integration")
 	}
 }
 tasks.register("cucumberTestReport", JacocoReport) { // Generate a report for cucumber tests
@@ -153,7 +153,7 @@ tasks.register("cucumberTestReport", JacocoReport) { // Generate a report for cu
 
 	reports {
 		// The jacoco coverage report will ge generated in the destination below
-		html.destination file("${layout.buildDirectory}/reports/coverage/cucumber")
+		html.destination file("${buildDir}/reports/coverage/cucumber")
 	}
 }
 
@@ -169,7 +169,7 @@ jacocoTestReport { // Generate a report for all generated test data
 		include '**/*.exec'
 	}
 	reports {
-		html.destination file("${layout.buildDirectory}/reports/coverage/overall")
+		html.destination file("${buildDir}/reports/coverage/overall")
 	}
 }
 

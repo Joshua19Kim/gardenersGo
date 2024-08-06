@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.NotificationUtil;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +43,7 @@ public class GardenDetailsController {
     private Gardener gardener;
     private final WeatherService weatherService;
     private final LocationService locationService;
-
+    private final GardenVisitService gardenVisitService;
 
     /**
      * Constructor used to create a new instance of the GardenDetailsController. Autowires a
@@ -53,6 +56,7 @@ public class GardenDetailsController {
      * @param weatherService      the weather service used to retrieve weather information
      * @param tagService          the tag service used to manage garden tags
      * @param locationService     the location service used to retrieve location from API
+     * @param gardenVisitService  the garden visit service used to log visits to gardens
      */
     @Autowired
     public GardenDetailsController(
@@ -61,7 +65,7 @@ public class GardenDetailsController {
             RelationshipService relationshipService,
             RequestService requestService,
             WeatherService weatherService,
-            TagService tagService, LocationService locationService) {
+            TagService tagService, LocationService locationService, GardenVisitService gardenVisitService) {
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
@@ -69,6 +73,7 @@ public class GardenDetailsController {
         this.weatherService = weatherService;
         this.tagService = tagService;
         this.locationService = locationService;
+        this.gardenVisitService = gardenVisitService;
     }
 
     /**
@@ -119,7 +124,7 @@ public class GardenDetailsController {
        if (gardenId == null) {
            return "redirect:/gardens";
        }
-       model.addAttribute("gardenId", gardenId); ////////////////////////////////
+       model.addAttribute("gardenId", gardenId);
        Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
        if (garden.isPresent()) {
            model.addAttribute("requestURI", requestService.getRequestURI(request));
@@ -170,15 +175,20 @@ public class GardenDetailsController {
 
 
                }
+               GardenVisit gardenVisit = new GardenVisit(gardener, garden.get(), LocalDateTime.now());
+               gardenVisitService.addGardenVisit(gardenVisit);
                return "gardenDetailsTemplate";
            } else {
                Gardener gardenOwner = garden.get().getGardener();
                Boolean isFriend = relationshipService
                        .getCurrentUserRelationships(gardenOwner.getId())
                        .contains(currentUserOptional.get());
-               if (isFriend || garden.get().getIsGardenPublic()) {
+               if (isFriend) {
                    model.addAttribute("gardener", garden.get().getGardener());
                    model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
+
+                   GardenVisit gardenVisit = new GardenVisit(gardener, garden.get(), LocalDateTime.now());
+                   gardenVisitService.addGardenVisit(gardenVisit);
                    return "unauthorizedGardenDetailsTemplate";
                } else {
                    return "redirect:/gardens";
@@ -287,6 +297,8 @@ public class GardenDetailsController {
     public String addTag(
             @RequestParam(name = "tag-input") String tag,
             @RequestParam(name = "gardenId") long id,
+            HttpServletRequest request,
+            HttpServletResponse response,
             Model model) throws IOException, URISyntaxException, InterruptedException {
 
         logger.info("POST /addTag");
@@ -355,13 +367,19 @@ public class GardenDetailsController {
                 tagService.addTag(newTag);
                 logger.info("Tag '{}' passes moderation checks", tag);
             } else {
-                gardener.setBadWordCount(gardener.getBadWordCount() + 1); // increase bad word count of gardener
+                String warningMessage = tagService.addBadWordCount(gardener);
+                // save the updated state of the gardener - either increased bad word count or if they are banned
                 gardenerFormService.addGardener(gardener);
+                if (Objects.equals(warningMessage, "BANNED")) {
+                    SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+                    logoutHandler.logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+                    return "redirect:/login?banned";
+                }
                 model.addAttribute("garden", garden);
                 model.addAttribute("tag", tag);
                 model.addAttribute("allTags", tagService.getUniqueTagNames(id));
                 model.addAttribute("tags", tagService.getTags(garden.getId()));
-                model.addAttribute("tagValid", "Submitted tag fails moderation requirements");
+                model.addAttribute("tagWarning", warningMessage);
                 return "gardenDetailsTemplate";
             }
         }
