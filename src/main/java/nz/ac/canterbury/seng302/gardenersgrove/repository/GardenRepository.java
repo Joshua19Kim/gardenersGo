@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -75,6 +74,8 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
      * @param pageable The pageable specifying relevant information for pagination
      * @param searchTerm the term to search garden and plant names for
      */
-    @Query(value = "SELECT DISTINCT g.* FROM garden g LEFT JOIN plant p ON g.id = p.garden_id WHERE g.public_garden IS TRUE AND (g.name LIKE %:searchTerm% OR p.name LIKE %:searchTerm%)", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT g.* FROM garden g LEFT JOIN plant p ON g.id = p.garden_id WHERE g.public_garden IS TRUE AND (g.name LIKE %:searchTerm% OR p.name LIKE %:searchTerm%)",
+            countQuery = "SELECT COUNT(DISTINCT g.id) FROM garden g LEFT JOIN plant p ON g.id = p.garden_id WHERE g.public_garden IS TRUE AND (g.name LIKE %:searchTerm% OR p.name LIKE %:searchTerm%)",
+            nativeQuery = true)
     Page<Garden> findGardensBySearchTerm(Pageable pageable, @Param("searchTerm") String searchTerm);
 }

@@ -33,12 +33,18 @@ public class BrowseGardensController {
 
     private final int pageSize;
 
+    private String searchTerm;
+
+    private List<String> tags;
+
     @Autowired
     public BrowseGardensController(GardenService gardenService, TagService tagService) {
 
         this.gardenService = gardenService;
         this.tagService = tagService;
         this.pageSize = 10;
+        this.searchTerm = "";
+        this.tags = new ArrayList<>();
     }
 
     /**
@@ -52,14 +58,19 @@ public class BrowseGardensController {
     @RequestMapping("/browseGardens")
     public String browseGardens(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
-            @RequestParam(name="tags", required = false) List<String> tags,
             Model model
     ) {
         if(model.containsAttribute("pageNo")) {
             pageNoString = (String) model.getAttribute("pageNo");
         }
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
-        Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
+        Page<Garden> gardensPage;
+        if(searchTerm.isEmpty()) {
+            gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
+        } else {
+            gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm);
+        }
+
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
         if(totalPages > 0) {
@@ -106,7 +117,8 @@ public class BrowseGardensController {
             @RequestParam(name="searchTerm") String searchTerm,
             Model model) {
         logger.info("POST /browseGardens");
-
+        this.searchTerm = searchTerm;
+        this.tags = new ArrayList<>();
         Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm);
         if (gardensPage.getContent().isEmpty()) {
             model.addAttribute("noSearchResults", "No gardens match your search.");
@@ -131,6 +143,14 @@ public class BrowseGardensController {
             String paginationMessage = "Showing results 0 to 0 of 0";
             model.addAttribute("paginationMessage", paginationMessage);
         }
+        List<String> allTags = tagService.getAllTagNames();
+        if(tags != null) {
+            for(String selectedTag: tags) {
+                allTags.remove(selectedTag);
+            }
+            model.addAttribute("tags", tags);
+        }
+        model.addAttribute("allTags", allTags);
 
         return "browseGardensTemplate";
     }
@@ -175,6 +195,7 @@ public class BrowseGardensController {
         for(String selectedTag: tags) {
             allTags.remove(selectedTag);
         }
+        this.tags = tags;
 
         redirectAttributes.addFlashAttribute("tags", tags);
         redirectAttributes.addFlashAttribute("allTags", allTags);
