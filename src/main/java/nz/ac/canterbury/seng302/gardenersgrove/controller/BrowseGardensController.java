@@ -129,10 +129,6 @@ public class BrowseGardensController {
             model.addAttribute("tags", tags);
         }
 
-        if (!searchTerm.isEmpty()) {
-            model.addAttribute("searchTerm", searchTerm);
-        }
-
         Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, tags, tagCount);
         if (gardensPage.getContent().isEmpty()) {
             model.addAttribute("noSearchResults", "No gardens match your search.");
