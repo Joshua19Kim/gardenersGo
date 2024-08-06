@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head th:insert="~{fragmentExample/fragments/bootstrap.html}">
-    <title>Gardens</title>
+    <title>Home</title>
 </head>
 <body>
 
@@ -9,22 +9,15 @@
 
 <div class="container">
     <div class="row">
+        <a class="btn btn-success" th:href="@{../home/edit}">Edit Page</a>
+    </div>
+    <div class="row">
         <!-- Recently accessed gardens and Newest Plants -->
         <div class="col-md-8">
             <div class="row">
                 <!-- Recently accessed gardens -->
                 <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="card-title">Recently accessed gardens</div>
-                        <ul class="list-group">
-                            <li th:each="garden : ${recentGardens}" class="list-group-item p-0">
-                                <a th:href="@{/gardens/details(gardenId=${garden.id})}" class="d-block p-3 text-decoration-none text-dark">
-                                    <span th:text="${garden.name}">Garden Name</span> <br>
-                                    <small th:text="${garden.location}">Location</small>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    <div th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetSmallOne + 'Widget.html'}"></div>
                 </div>
                 <!-- Newest Plants -->
                 <div class="col-md-6 mb-4">
@@ -63,17 +56,7 @@
         </div>
         <!-- My Garden's List -->
         <div class="col-md-4">
-            <div class="card mt-0">
-                <div class="card-title">My Garden’s List</div>
-                <div class="list-group" style="overflow-y: scroll; height: 460px;">
-                    <th:block th:each="garden : ${gardens}">
-                        <a class="list-group-item" th:href="@{/gardens/details(gardenId=${garden.id})}">
-                            <p th:text="${garden.name}"></p>
-                            <small th:text="${garden.location}" ></small>
-                        </a>
-                    </th:block>
-                </div>
-            </div>
+            <div th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetTall + 'Widget.html'}"></div>
         </div>
     </div>
 </div>

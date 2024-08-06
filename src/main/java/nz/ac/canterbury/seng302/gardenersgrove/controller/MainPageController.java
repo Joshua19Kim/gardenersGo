@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class MainPageController {
     private final RelationshipService relationshipService;
     private final RequestService requestService;
     private final GardenVisitService gardenVisitService;
+    private final MainPageLayoutService mainPageLayoutService;
     private Gardener gardener;
 
     /**
@@ -47,12 +49,15 @@ public class MainPageController {
             GardenService gardenService,
             GardenerFormService gardenerFormService,
             RelationshipService relationshipService,
-            RequestService requestService, GardenVisitService gardenVisitService) {
+            RequestService requestService,
+            GardenVisitService gardenVisitService,
+            MainPageLayoutService mainPageLayoutService) {
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
         this.requestService = requestService;
         this.gardenVisitService = gardenVisitService;
+        this.mainPageLayoutService = mainPageLayoutService;
     }
 
     /**
@@ -92,15 +97,11 @@ public class MainPageController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        List<Garden> gardens;
-        List<Garden> recentGardens;
-        List<Plant> newPlants;
-        List<Gardener> friends;
-
-        gardens = gardenService.getGardensByGardenerId(gardener.getId());
-        recentGardens = gardenVisitService.findRecentGardensByGardenerId(gardener.getId());
-//        newPlants = newestPlantsService.findNewestPlantsByGardenerId(gardener.getId());
-        friends = relationshipService.getCurrentUserRelationships(gardener.getId());
+        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+        List<Garden> recentGardens = gardenVisitService.findRecentGardensByGardenerId(gardener.getId());
+//       List<Plant> newPlants = newestPlantsService.findNewestPlantsByGardenerId(gardener.getId());
+        List<Gardener> friends = relationshipService.getCurrentUserRelationships(gardener.getId());
+        MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
 
         model.addAttribute("gardener", gardener);
         model.addAttribute("gardens", gardens);
@@ -108,7 +109,43 @@ public class MainPageController {
 //        model.addAttribute("newestPlants", newPlants);
         model.addAttribute("recentGardens", recentGardens);
         model.addAttribute("requestURI", requestService.getRequestURI(request));
+        model.addAttribute("mainPageLayout", mainPageLayout);
 
         return "mainPageTemplate";
     }
+
+    /**
+     * Handles GET requests to the "/home/edit" URL and returns the main page view template
+     *
+     * @param model the model for passing attributes to the view
+     * @param request the request used to find the current URI
+     * @param response the response used to set headers
+     * @return mainPageEditForm
+     */
+    @GetMapping("/home/edit")
+    public String getMainPageEditForm(
+            Model model,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        logger.info("GET /home/edit");
+        // Prevent caching of the page so that we always reload it when we reach it (mainly for when you
+        // use the browser back button)
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        response.setHeader("Expires", "0"); // Proxies
+
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+
+        MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
+        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+
+        model.addAttribute("gardener", gardener);
+        model.addAttribute("gardens", gardens); // For nav bar
+        model.addAttribute("requestURI", requestService.getRequestURI(request));
+        model.addAttribute("mainPageLayout", mainPageLayout);
+
+        return "mainPageEditForm";
+    }
+
 }

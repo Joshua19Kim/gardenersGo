@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
+    <title>Edit Home</title>
+</head>
+<body>
+
+<div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
+
+<div class="container">
+    <a th:href="@{../home}">
+        <button>Cancel</button>
+    </a>
+    <form id="editGardenForm" th:action="@{edit(userId=${gardener.getId()})}" method="post">
+        <div class="row">
+            <a class="edit-garden-button" type="submit">Confirm Changes</a>
+        </div>
+        <div class="row">
+            <!-- Recently accessed gardens and Newest Plants -->
+            <div class="col-md-8">
+                <div class="row">
+                    <!-- Recently accessed gardens -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            Currently displaying:
+                            <p th:text="${mainPageLayout.widgetSmallOne}"></p>
+                        </div>
+                    </div>
+                    <!-- Newest Plants -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            Currently displaying:
+                            <p th:text="${mainPageLayout.widgetSmallTwo}"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- My Friend's List -->
+                    <div class="col-md-12">
+                        <div class="card">
+                            Currently displaying:
+                            <p th:text="${mainPageLayout.widgetWide}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- My Garden's List -->
+            <div class="col-md-4">
+                <div class="card mt-0">
+                    Currently displaying:
+                    <p id="tallWidgetText" th:text="${mainPageLayout.widgetTall}"></p>
+                    <input id="tallWidget" th:value="${mainPageLayout.widgetTall}" class="d-none">
+
+                    <div class="dropdown">
+                        <button class="dropbtn">My Gardens</button>
+                        <div class="dropdown-content">
+<!--                            <input class="btn" th:text="${mainPageLayout.widgetTall}">-->
+<!--                            <a th:text="${mainPageLayout.widgetTall}"></a>-->
+<!--                            <th:block th:each="widget : ${tallWidgets}">-->
+                                <!-- Iterate over the list of gardens and display them -->
+                                <a id="testDrop" th:text="${mainPageLayout.widgetTall}"></a>
+                                <script>
+                                    document.getElementById("testDrop").addEventListener('click', function () {
+                                        document.getElementById('tallWidget').value = "TEST";
+                                        document.getElementById('tallWidgetText').text = "TEST";
+                                    });
+                                </script>
+<!--                            </th:block>-->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
