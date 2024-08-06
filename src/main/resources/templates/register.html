@@ -1,74 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Gardener's Grove Register</title>
-    <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
+    <title>Please Register</title>
 </head>
+
 <body>
+<div class="container">
+    <div class="header-container text-center">
+        <img src="/images/placeholder.jpg" alt="logo" class="logo"/>
+        <h1 class="title">Gardeners Grove</h1>
+    </div>
+    <div class="card w-50">
+        <h1 class="text-center">Please Register</h1>
+
+        <form method="post" class="container" th:action="@{register}" id="registerForm" >
+            <div th:if="${param.expired}" id="error-message" >
+                <p class="errorMessage">Signup code invalid</p>
+            </div>
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}" />
+
+            <div class="form-group field">
+                <label class="input">
+                    <input name="firstName" placeholder="First Name" type="text" maxlength="255" class="form-control form-field"
+                           th:value="*{firstName}" th:classappend="${(firstNameValid != '' && firstNameValid != null) ? 'is-invalid' : ''}">
+                    <span class="form-label">First Name</span>
+                </label>
+            </div>
+
+            <p class="errorMessage" th:utext="${firstNameValid}" th:value="*{firstNameValid}"></p>
+            <br/>
+
+            <div class="form-group field">
+                <label class="input">
+                    <input id="lastName" name="lastName" placeholder="Last Name" type="text" maxlength="255" class="form-control form-field"
+                       th:value="*{lastName}" th:classappend="${(lastNameValid != '' && lastNameValid != null) ? 'is-invalid' : ''}">
+                    <span class="form-label">Last Name</span>
+                </label>
+            </div>
+
+            <p class="errorMessage" th:utext="${lastNameValid}" th:value="*{lastNameValid}"></p>
+            <br/>
+            <div class="m-3">
+                <label for="isLastNameOptional">I have no surname</label>
+                <input class="form-check-input" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
+                       th:id="isLastNameOptional" th:name="isLastNameOptional" type="checkbox" th:checked="${isLastNameOptional}"/>
+            </div>
+            <script>
+                document.getElementById('isLastNameOptional').onchange = function () {
+                    document.getElementById('lastName').disabled = this.checked;
+                };
+            </script>
+
+            <br/>
+            <div class="form-group field w-50">
+                <label class="input w-100">
+                    <label style="margin-left: 20px;"> Date of Birth </label>
+                    <input id="DoB" class="form-control form-field" th:name="DoB" th:value="*{DoB}" type="date">
+                </label>
+            </div>
+            <p id="DoBInvalid" class="errorMessage" th:utext="${DoBValid}"></p>
+
+            <script>
+                document.getElementById( "DoB" ).addEventListener( "invalid",
+                    function( event ) {
+                        event.preventDefault();
+                        document.getElementById("DoB").style.border = "1px solid red";
+                        document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";
+                    });
+            </script>
+
+            <br/>
+
+            <div class="form-group field">
+                <label class="input">
+                    <input name="email" placeholder="Email" type="text" maxlength="320" class="form-control form-field"
+                        th:value="*{email}" th:classappend="${(emailValid != '' && emailValid != null) ? 'is-invalid' : ''}">
+                    <span class="form-label">Email</span>
+                </label>
+            </div>
 
 
-<div id="form">
-    <h1>Register</h1>
-    <form id="registerForm" method="post" th:action="@{register}" novalidate>
-        <div id="error-message" th:if="${param.expired}">
-            <p class="errorMessage">Signup code invalid</p>
-        </div>
-        <input th:name="${_csrf.parameterName}"
-               th:value="${_csrf.token}"
-               type="hidden"/>
-        <label for="firstName"> First Name: </label>
-        <input autofocus class="form-control" data-cy="firstName" id="firstName" maxlength="255"
-               placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
-               th:classappend="${(firstNameValid != '' && firstNameValid != null) ? 'error' : ''}">
-        <p class="smallErrorMessage" th:utext="${firstNameValid}" th:value="*{firstNameValid}"></p>
-        <br/>
-        <label for="lastName"> Last Name: </label>
-        <input class="form-control" data-cy="lastName" id="lastName" placeholder="Last Name" maxlength="255"
-               th:name="lastName" th:value="*{lastName}" type="text"
-               th:classappend="${(lastNameValid != '' && lastNameValid != null) ? 'error' : ''}">
-        <p class="smallErrorMessage" th:utext="${lastNameValid}" th:value="*{lastNameValid}"></p>
-        <br/>
-        <label for="isLastNameOptional">I have no surname</label>
-        <input class="form-control" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
-               th:id="isLastNameOptional" th:name="isLastNameOptional" type="checkbox" th:checked="${isLastNameOptional}"/>
-        <script>
-            document.getElementById('isLastNameOptional').onchange = function () {
-                document.getElementById('lastName').disabled = this.checked;
-            };
-        </script>
-        <br/>
-        <label for="DoB"> Date of Birth: </label>
-        <input class="form-control" id="DoB" th:name="DoB" th:value="*{DoB}" type="date" th:classappend="${(DoBValid != '' && DoBValid != null) ? 'error' : ''}">
-        <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
-        <input type="hidden" id="isDoBInvalid" th:name="isDoBInvalid" th:value="false"/>
-        <br/>
-        <label for="email"> Email: </label>
-        <input class="form-control" data-cy="email" id="email" placeholder="Email" maxlength="320"
-               th:name="email" th:value="*{email}" type="text"
-               th:classappend="${(emailValid != '' && emailValid != null) ? 'error' : ''}">
-        <p class="smallErrorMessage" th:utext="${emailValid}" th:value="*{emailValid}"></p>
-        <br/>
-        <label for="password"> Password: </label>
-        <input class="form-control" data-cy="password" id="password" maxlength="255" placeholder="Password"
-               th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'error' : ''}" th:name="password"
-               type="password">
-        <br/>
-        <label for="passwordConfirm"> Confirm Password: </label>
-        <input class="form-control" data-cy="passwordConfirm" id="passwordConfirm" maxlength="255" placeholder="Repeat password"
-               th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'error' : ''}" th:name="passwordConfirm"
-               type="password">
-        <p class="smallErrorMessage" th:text="${passwordsMatch}" th:value="*{passwordsMatch}"></p>
-        <p class="smallErrorMessage" th:text="${passwordStrong}" th:value="*{passwordStrong}"></p>
-        <br/>
+            <p class="errorMessage" th:utext="${emailValid}" th:value="*{emailValid}"></p>
+            <br/>
+            <div class="form-group field">
+                <label class="input">
+                    <input name="password" placeholder="Password" type="password" maxlength="255" class="form-control form-field"
+                        th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'is-invalid' : ''}">
+                    <span class="form-label">Password</span>
+                </label>
+            </div>
+
+            <br/>
+
+            <div class="form-group field">
+                <label class="input">
+                    <input name="passwordConfirm" placeholder="Confirm Password" type="password" maxlength="255" class="form-control form-field"
+                           th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'is-invalid' : ''}">
+                    <span class="form-label">Confirm Password</span>
+                </label>
+            </div>
 
 
-        <br/>
-        <div>
-            <input type="submit" value="Register"/>
-            <button id="cancel" onclick="window.location='./'" type="reset">Cancel</button>
-        </div>
-    </form>
+            <p class="errorMessage" th:value="*{passwordsMatch}" th:text="${passwordsMatch}"></p>
+            <p class="errorMessage" th:value="*{passwordStrong}" th:text="${passwordStrong}"></p>
+            <br/>
+
+
+            <br/>
+            <div class="m-0 p-0 d-flex gap-5">
+                <button type="submit" class="btn btn-primary mb-3">Register</button>
+                <button type="reset" class="btn btn-danger mb-3" onclick="window.location='./'">Cancel</button>
+            </div>
+        </form>
+    </div>
 </div>
 <script type="text/javascript">
     document.getElementById("registerForm").addEventListener("submit", function(event) {

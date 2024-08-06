@@ -2,19 +2,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.LocationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RateLimiterService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.io.IOException;
 import java.net.http.HttpResponse;
-import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static java.lang.Long.parseLong;
 
 /**
  * LocationController is the important link between the page has a location autocomplete function and back-end side.
