@@ -690,6 +690,55 @@ body, h2, h3, h4, h5, h6, a {
     opacity: 1;
 }
 
+.main-page-friends-list-item {
+    background: #d1dc97 !important;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 215px;
+    height: 130px;
+    margin: 5px;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.3s ease;
+}
+
+.main-page-avatar {
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.main-page-custom-hover {
+    background-color: transparent;
+}
+.main-page-custom-hover:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+.main-page-friends-container-scroll::-webkit-scrollbar {
+    width: 5px;
+}
+
+.main-page-friends-container-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+.main-page-friend-container {
+    max-height: 280px;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+}
+.alert-transparent {
+    background-color: transparent !important;
+    border: none !important;
+}
+
 
 #profileForm {
     margin: auto;
