@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
@@ -59,7 +61,20 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
     @Query(value = "UPDATE garden SET last_notified = ?2 WHERE id = ?1 ", nativeQuery = true)
     void updateLastNotifiedbyId(Long gardenId, LocalDate date);
 
+    /**
+     * Gets all public gardens paginated
+     *
+     * @param pageable The pageable specifying relevant information for pagination
+     */
     @Query(value= "select * from garden where public_garden is true", nativeQuery = true)
     Page<Garden> findAllPublicGardens(Pageable pageable);
 
+    /**
+     * Gets all public gardens that have a name or plant name matching the search term paginated
+     *
+     * @param pageable The pageable specifying relevant information for pagination
+     * @param searchTerm the term to search garden and plant names for
+     */
+    @Query(value = "SELECT DISTINCT g.* FROM garden g LEFT JOIN plant p ON g.id = p.garden_id WHERE g.public_garden IS TRUE AND (g.name LIKE %:searchTerm% OR p.name LIKE %:searchTerm%)", nativeQuery = true)
+    Page<Garden> findGardensBySearchTerm(Pageable pageable, @Param("searchTerm") String searchTerm);
 }

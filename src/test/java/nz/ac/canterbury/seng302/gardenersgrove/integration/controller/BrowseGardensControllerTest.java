@@ -3,8 +3,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,6 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.lang.Math.ceil;
@@ -38,6 +41,9 @@ public class BrowseGardensControllerTest {
 
     @MockBean
     private TagService tagService;
+
+    @MockBean
+    private PlantService plantService;
 
     private Gardener testGardener;
 
@@ -171,5 +177,81 @@ public class BrowseGardensControllerTest {
                 .andExpect(flash().attribute("tags", existingTags))
                 .andExpect(flash().attribute("pageNo", String.valueOf(pageNo)));
     }
+
+    @Test
+    @WithMockUser
+    public void SearchForGarden_SearchTermDoesNotMatch_NoGardensReturned() throws Exception {
+        String searchTerm = "fjsdfjnelbnflsdnf";
+        int pageNo = 1;
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Garden> emptyGardenPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+
+        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm)).thenReturn(emptyGardenPage);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
+                        .param("pageNo", String.valueOf(pageNo))
+                        .param("pageSize", String.valueOf(pageSize))
+                        .param("searchTerm", searchTerm)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("gardensPage", emptyGardenPage))
+                .andExpect(model().attribute("noSearchResults", "No gardens match your search."))
+                .andExpect(view().name("browseGardensTemplate"));
+    }
+
+
+    @Test
+    @WithMockUser
+    public void SearchForGarden_SearchTermMatches_GardensReturned() throws Exception {
+        String searchTerm = "great success very nice";
+        int pageNo = 1;
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        List<Garden> matchingGardens = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            matchingGardens.add(new Garden("great success very nice" + i, "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, ""));
+        }
+
+        Page<Garden> matchingGardenPage = new PageImpl<>(matchingGardens, pageable, matchingGardens.size());
+        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm)).thenReturn(matchingGardenPage);
+        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
+                        .param("pageNo", String.valueOf(pageNo))
+                        .param("pageSize", String.valueOf(pageSize))
+                        .param("searchTerm", searchTerm)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("gardensPage", matchingGardenPage))
+                .andExpect(view().name("browseGardensTemplate"));
+    }
+
+    @Test
+    @WithMockUser
+    public void SearchForGarden_SearchTermMatchesPlantName_GardenReturned() throws Exception {
+        String searchTerm = "Rose";
+        int pageNo = 1;
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        Garden testGarden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
+        Plant testPlant = new Plant("Rose", testGarden);
+        plantService.addPlant(testPlant);
+
+        List<Garden> matchingGardens = Collections.singletonList(testGarden);
+        Page<Garden> matchingGardenPage = new PageImpl<>(matchingGardens, pageable, matchingGardens.size());
+
+        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm)).thenReturn(matchingGardenPage);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
+                        .param("pageNo", String.valueOf(pageNo))
+                        .param("pageSize", String.valueOf(pageSize))
+                        .param("searchTerm", searchTerm)
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("gardensPage", matchingGardenPage))
+                .andExpect(view().name("browseGardensTemplate"));
+    }
+
 
 }

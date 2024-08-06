@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
-import io.cucumber.java.Before;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
@@ -234,6 +233,11 @@ public class GardenServiceTest {
 
             @Override
             public Page<Garden> findAllPublicGardens(Pageable pageable) {
+                return null;
+            }
+
+            @Override
+            public Page<Garden> findGardensBySearchTerm(Pageable pageable, String searchTerm) {
                 return null;
             }
 
