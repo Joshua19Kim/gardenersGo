@@ -9,6 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -25,12 +28,10 @@ public class ImageService {
 
     private final Logger logger = LoggerFactory.getLogger(ImageService.class);
     private final GardenerFormService gardenerFormService;
-
     private final PlantService plantService;
-    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
-    private final int MAX_SIZE = 10*1024*1024;
-
-    public List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
+    private static final String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
+    private static final int MAX_SIZE = 10*1024*1024;
+    private final List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
 
     @Autowired
     public ImageService(GardenerFormService gardenerFormService, PlantService plantService) {
@@ -58,11 +59,17 @@ public class ImageService {
             if (gardenerOptional.isPresent()) {
                 Gardener gardener = gardenerOptional.get();
                 //NullPointerException shouldn't affect below line as HTML form prevents an empty upload, i.e. file will never be null
+                assert fileName != null;
                 String newFileName = gardener.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
                 Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);
-                logger.info("File location: " + filePath);
 
                 if (checkValidImage(file).isEmpty()) {
+                    File checkFile = new File(filePath.toString());
+                    String canonicalDestinationPath = checkFile.getCanonicalPath();
+
+                    if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
+                        throw new IOException("Entry is outside of the target directory");
+                    }
                     Files.write(filePath, file.getBytes());
                     gardener.setProfilePicture("/uploads/" + newFileName);
                     gardenerFormService.addGardener(gardener);
@@ -95,6 +102,7 @@ public class ImageService {
             Files.createDirectories(Paths.get(UPLOAD_DIRECTORY));
             String fileName = file.getOriginalFilename();
             //NullPointerException shouldn't affect below line as HTML form prevents an empty upload, i.e. file will never be null
+            assert fileName != null;
             String newFileName = "plant_" + plant.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
             Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);
             logger.info("File location: " + filePath);
