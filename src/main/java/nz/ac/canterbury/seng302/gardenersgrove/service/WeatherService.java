@@ -2,6 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.net.*;
+import java.time.LocalDate;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PrevWeather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import org.slf4j.Logger;
@@ -12,16 +15,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URI;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class WeatherService {
@@ -49,16 +42,17 @@ public class WeatherService {
    */
   @Cacheable(value = "currentWeather", key = "#location")
   public Weather getWeather(String location) throws IOException, URISyntaxException {
-    location = location.replace(" ", "-");
-    String uri =
-        FORECAST_WEATHER_URL + "?key=" + api_key + "&q=" + location + "&aqi=no" + "&days=3";
+    location =location.trim().replace(" ", "%20");
+
+    String uri = FORECAST_WEATHER_URL + "?key=" + api_key.trim() + "&q=" + location + "&aqi=no&days=3";
     URL url = new URI(uri).toURL();
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
+    logger.info("searching for location: " + location);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     try {
       Weather weather = objectMapper.readValue(url, Weather.class);
-      logger.info("WEATHER FROM JACKSON: " + weather.getCurrentLocation());
+      logger.info("WEATHER LOCATION FROM JACKSON: " + weather.getCurrentLocation());
       return weather;
     } catch (IOException ex) {
       // this occurs when no weather is found for that location.
@@ -77,7 +71,7 @@ public class WeatherService {
     String uri =
         HISTORY_WEATHER_URL
             + "?key="
-            + api_key
+            + api_key.trim()
             + "&q="
             + location
             + "&aqi=no"

@@ -56,6 +56,7 @@ public class ForgotPasswordControllerTest {
                 .perform(MockMvcRequestBuilders.post("/forgotPassword")
                         .with(csrf())
                         .param("email", "test@test.nz")
+                        .param("url", "http://localhost:8080/forgotPassword")
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("forgotPasswordForm"))
@@ -71,10 +72,11 @@ public class ForgotPasswordControllerTest {
                 .perform(MockMvcRequestBuilders.post("/forgotPassword")
                         .with(csrf())
                         .param("email", "test")
+                        .param("url", "http://localhost:8080/forgotPassword")
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("forgotPasswordForm"))
-                .andExpect(model().attributeExists("returnMessage"))
-                .andExpect(model().attribute("returnMessage","Email address must be in the form 'jane@doe.nz'"));
+                .andExpect(model().attributeExists("emailError"))
+                .andExpect(model().attribute("emailError","Email address must be in the form 'jane@doe.nz'"));
     }
 }

@@ -87,8 +87,7 @@ public class RegisterControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("register"))
                 .andExpect(model().attributeExists("firstNameValid"))
-                .andExpect(model().attribute("firstNameValid", "First name cannot be empty and must only include letters, spaces, " +
-                        "hyphens or apostrophes"));
+                .andExpect(model().attribute("firstNameValid", "First name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>First name must include at least one letter"));
     }
 
     @Test
@@ -107,8 +106,7 @@ public class RegisterControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("register"))
                 .andExpect(model().attributeExists("lastNameValid"))
-                .andExpect(model().attribute("lastNameValid", "Last name cannot be empty and must only include letters, spaces, " +
-                        "hyphens or apostrophes"));
+                .andExpect(model().attribute("lastNameValid", "Last name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>Last name must include at least one letter"));
     }
 
     @Test
@@ -169,7 +167,7 @@ public class RegisterControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("register"))
                 .andExpect(model().attributeExists("DoBValid"))
-                .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account"));
+                .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account <br/>"));
     }
 
     @Test

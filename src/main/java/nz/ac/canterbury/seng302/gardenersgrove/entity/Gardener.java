@@ -7,6 +7,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,16 +41,22 @@ public class Gardener {
     @Column(name = "profile_picture")
     private String profilePicture;
 
+    /** A counter for how many bad words the gardener tries to use */
+    @Column(name = "bad_word_count")
+    private Integer badWordCount;
+
     @Column()
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "gardener_id")
     private List<Authority> userRoles;
     // Create an encoder with strength 16
 
-
     /** The list of gardens belonging to the gardener. */
     @OneToMany(mappedBy = "gardener")
     private List<Garden> gardens;
+
+    @Column(name = "ban_expiry_date")
+    private Date banExpiryDate;
 
     /**
      * JPA required no-args constructor
@@ -71,6 +79,7 @@ public class Gardener {
         this.email = email;
         this.password = hashPasword(password);
         this.profilePicture = "/images/defaultProfilePic.png";
+        this.badWordCount = 0;
         gardens = new ArrayList<>();
     }
 
@@ -99,6 +108,11 @@ public class Gardener {
         return encoder.encode(password);
     }
 
+    /**
+     * Compares the given password with the stored password using bcrypt
+     * @param password the password to compare
+     * @return true if the passwords match, false otherwise
+     */
     public boolean comparePassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(password, this.password);
@@ -128,15 +142,8 @@ public class Gardener {
 
     public String getProfilePicture() { return this.profilePicture; }
 
-    public String getSearchResult() {
-        String searchResult = "";
-        if (lastName == null) {
-            searchResult = firstName + " " + email;
-        } else {
-            searchResult = firstName + " " + lastName + " " + "- " + email;
-        }
-        return searchResult;
-    }
+    public int getBadWordCount() { return badWordCount; }
+
     public void setId(Long id) { this.id = id; }
     public List<Garden> getGardens() { return gardens; }
 
@@ -156,14 +163,8 @@ public class Gardener {
 
     public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
 
-    public String getSearchString() {
-        String gardenerString = firstName;
-        if (getLastName() != null) {
-            gardenerString += " " + lastName;
-        }
-        gardenerString += " - " + email;
-        gardenerString += " id(" + id + ")";
-        return gardenerString;
+    public void setBadWordCount(int badWordCount) {
+        this.badWordCount = badWordCount;
     }
 
     @Override
@@ -177,4 +178,33 @@ public class Gardener {
         return gardenerString;
     }
 
+    /**
+     * Bans the gardener for 7 days
+     */
+    public void banGardener() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(new Date().getTime());
+        calendar.add(Calendar.DATE, 7);
+        this.banExpiryDate = new Date(calendar.getTime().getTime());
+    }
+
+
+    /**
+     * @return true if the gardener is banned, false otherwise
+     * if the ban date has expired, the ban is lifted
+     */
+    public boolean isBanned() {
+        if (banExpiryDate != null)
+            if (banExpiryDate.after(new Date())) {
+                return true;
+            } else {
+                this.banExpiryDate = null;
+                this.badWordCount = 0;
+            }
+        return false;
+    }
+
+    public Date getBanExpiryDate() {
+        return banExpiryDate;
+    }
 }

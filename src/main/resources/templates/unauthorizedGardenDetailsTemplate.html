@@ -1,24 +1,30 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="en">
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <title>Garden Details</title>
-    <link th:href="@{/css/stylesheet.css}" rel="stylesheet">
 </head>
+
 <body>
 
-<nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
-<a th:href="@{../gardens(user=${gardener.id})}"
-   th:text="'Back to ' + ${gardener.firstName} + (${gardener.lastName != null ? ' ' + gardener.lastName : ''}) + '\'s Gardens'"
-   class="back-link button"></a>
-<div class="container">
-    <div class="garden-details">
-        <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
-        <p><strong>Location:</strong> <span th:text="${garden.location}"></span></p>
+<div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
+
+<div class="container align-items-center" style="width: 1200px">
+    <br/>
+    <a th:href="@{../gardens(user=${gardener.id})}"
+       th:text="'Back to ' + ${gardener.firstName} + (${gardener.lastName != null ? ' ' + gardener.lastName : ''}) + '\'s Gardens'"
+       class="button card"></a>
+    <div class="row w-100">
+        <h1 class="text-black"><span th:text="${garden.name}"></span></h1>
+    </div>
+    <div class="row w-100">
+
+        <p><strong>Location:</strong> <span th:text="${garden.getFullLocation()}"></span></p>
         <p>
-            <strong>Size:</strong> <span th:if="${c}" th:text="${garden.size + ' m^2'}"></span>
+            <strong>Size:</strong> <span th:if="${garden.size != null}"
+                                         th:text="${garden.size + ' m&sup2;'}"></span>
         </p>
-        <p>
+        <p><strong>Description:</strong> <span th:text="${garden.description}"></span></p>
+
         <div id="tag-container">
             <strong>Tags:</strong>
             <div th:if="${tags != null}" th:each="tag : ${tags}">
@@ -28,31 +34,37 @@
             </div>
         </div>
     </div>
-    <div th:if="${not #lists.isEmpty(garden.plants)}" class="plant-list-container">
-        <table class="plant-table">
-            <thead>
-            <tr>
-                <th>NAME</th>
-                <th>IMAGE</th>
-                <th>COUNT</th>
-                <th>DESCRIPTION</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="plant: ${garden.plants}">
-                <td th:text="${plant.name}"></td>
-                <td>
-                    <div class="plant-image-container" id="image">
-                        <img th:src="@{${plant.image}}" alt="Plant" th:id="'currentImage_' + ${plant.id}">
-                    </div>
-                </td>
-                <td th:if="${plant.count !=0}" th:text="${plant.count}"></td>
-                <td th:if="${plant.count == 0}"></td>
-                <td th:text="${plant.description}"></td>
-            </tr>
-            </tbody>
-        </table>
+
+    <div class="row  w-100">
+        <br/>
+        <h4>Plants:</h4>
+
+        <div class="plant-list-container" th:if="${not #lists.isEmpty(garden.plants)}">
+            <table class="table table-primary">
+                <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>IMAGE</th>
+                    <th>COUNT</th>
+                    <th>DESCRIPTION</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="plant: ${garden.plants}">
+                    <td th:text="${plant.name}"></td>
+                    <td>
+                        <div class="plant-image-container" id="image">
+                            <img th:src="@{${plant.image}}" alt="Plant" th:id="'currentImage_' + ${plant.id}">
+                        </div>
+                    </td>
+                    <td th:if="${plant.count !=0}" th:text="${plant.count}"></td>
+                    <td th:if="${plant.count == 0}"></td>
+                    <td th:text="${plant.description}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 </body>

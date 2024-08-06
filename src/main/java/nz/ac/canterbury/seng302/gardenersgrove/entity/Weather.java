@@ -1,21 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class Weather {
-    Logger logger = LoggerFactory.getLogger(Weather.class);
     @JsonProperty("location")
     private JsonNode location;
 
@@ -23,9 +17,9 @@ public class Weather {
     private JsonNode current;
     @JsonProperty("forecast")
     private JsonNode forecast;
-    private List<Float> forecastMinTemperatures = new ArrayList<Float>();
-    private List<Float> forecastMaxTemperatures = new ArrayList<Float>();
-    private List<String> forecastImages = new ArrayList<String>();
+    private List<Float> forecastMinTemperatures = new ArrayList<>();
+    private List<Float> forecastMaxTemperatures = new ArrayList<>();
+    private List<String> forecastImages = new ArrayList<>();
     private List<String> forecastDescriptions = new ArrayList<>();
     private List<Integer> forecastHumidities = new ArrayList<>();
     private List<String> forecastDates = new ArrayList<>();
@@ -35,6 +29,7 @@ public class Weather {
     private Float currentTemperature;
     private Integer currentHumidity;
     private String date;
+
 
     public Weather() {
 
@@ -127,7 +122,9 @@ public class Weather {
         return date;
     }
 
+
     public List<String> getForecastDates() {
         return forecastDates;
     }
+
 }
