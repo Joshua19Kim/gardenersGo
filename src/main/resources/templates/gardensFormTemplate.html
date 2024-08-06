@@ -11,7 +11,7 @@
 <div class="container mb-5">
   <div class="container card w-100 mb-5">
     <h1> Create New Garden </h1>
-    <form class="w-100" id="gardenForm" th:action="@{form(redirect=${requestURI})}" method="post">
+    <form class="w-100 d-flex flex-column" id="gardenForm" th:action="@{form(redirect=${requestURI})}" method="post">
       <div class="create-garden-row">
         <div>
           <label for="name"> Name: </label>
@@ -96,9 +96,9 @@
 
       <script th:src="@{/javascript/locationAutocomplete.js}"></script>
 
-      <button class="btn btn-success w-100" type="submit" onclick="checkValidAddress()">Create!</button>
+      <button class="btn btn-success w-25 align-self-center" type="submit" onclick="checkValidAddress()">Create!</button>
     </form>
-    <a th:href="@{${requestURI}}" class="btn btn-secondary w-50 mt-3">
+    <a th:href="@{${requestURI}}" class="btn btn-secondary w-25 mt-3">
       Cancel
     </a>
   </div>

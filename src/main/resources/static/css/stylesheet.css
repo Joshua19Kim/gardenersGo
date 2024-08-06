@@ -268,7 +268,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     border: 2px solid var(--card-background-color);
     border-radius: 10px;
     padding: 20px;
-    width: 50%;
     background-color: var(--primary-color);
     color: var(--text-color);
     display: flex;
