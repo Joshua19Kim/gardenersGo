@@ -14,7 +14,7 @@
                 <h1 class="text-black" ><span th:text="${garden.name}"></span></h1>
             </div>
             <div class="col-6 flex-row-reverse d-flex">
-                <a th:href="@{../gardens/edit(gardenId=${garden.id})}" class="btn btn-primary m-2 w-25 h-50" role="button">Edit
+                <a th:href="@{../gardens/edit(gardenId=${garden.id})}" class="btn btn-primary m-2 mw-50 min-w-25 h-50" role="button">Edit
                 Garden</a>
                 <div class="public-checkbox-container">
                     <form method="post" th:action="@{../gardens/details(gardenId=${garden.id})}" id="garden-details-form">
@@ -77,13 +77,13 @@
 
 
         <div class="row  w-100">
-            <div class="col-lg">
+            <div class="col">
                 <div id="location-error" th:if="${date == null}">Location not found, please update your location to see
                     the weather
                 </div>
                 <ul class="list-group list-group-horizontal justify-content-evenly align-items-center d-flex">
                     <li th:if="${date}">
-                        <div class="card current   ">
+                        <div class="card current">
                             <div class="weather-display-row">
                                 <br/>
                                 <p th:text="${date}"></p>
@@ -105,7 +105,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
-                                        <img class="w-100" alt="No image available" th:src="'https:' + ${weatherImage}"/>
+                                        <img class="m-0" alt="No image available" th:src="'https:' + ${weatherImage}"/>
                                     </div>
                                 </div>
                             </div>
@@ -115,7 +115,7 @@
 
 
                     <li class="future-weather weather-display-container" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
-                        <div class="card forecast" style="width: 15rem;">
+                        <div class="card forecast">
                             <img class="card-img-top" alt="No image available"
                                  th:src="'https:' + ${forecastWeatherImage.get(iter.index)}"/>
 

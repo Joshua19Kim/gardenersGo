@@ -49,25 +49,17 @@ body {
 }
 .current {
     background-color: var(--weather-colour)!important;
-
+    height: 400px;
+    width: 400px;
+    min-width: 100%;
 }
 .forecast {
     background-color: var(--forecast-colour)!important;
+    height: 400px;
+    width: 200px;
+    min-width: 100%;
+    margin-bottom: 0;
 
-}
-
-.card {
-    margin-top: auto; /* Push the card to the center */
-    border: 2px solid var(--card-background-color);
-    border-radius: 10px;
-    padding: 20px;
-    min-height: 400px;
-    max-height: 400px;
-    max-width: 400px;
-    background-color: var(--primary-color);
-    color: var(--text-color);
-    display: flex;
-    align-items: center;
 }
 
 h1 {
@@ -272,11 +264,17 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .card {
-    background: #8dab6e  !important; ;
-    border-radius: 15px;
-    padding: 15px;
-    /*margin: 10px;*/
+    margin-top: auto; /* Push the card to the center */
+    border: 2px solid var(--card-background-color);
+    border-radius: 10px;
+    padding: 20px;
+    width: 50%;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
 }
+
 .card-title {
     font-size: 1.25rem;
     margin-bottom: 1rem;
@@ -1204,7 +1202,7 @@ form.search-bar::after {
     position: absolute;
     top: 150px;
     left: 40px;
-    z-index: 1000;
+
 }
 
 .autocomplete-container {
