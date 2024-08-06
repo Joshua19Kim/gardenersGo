@@ -279,6 +279,10 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     font-size: 1.25rem;
     margin-bottom: 1rem;
 }
+.list-group{
+    width:100%;
+    list-style-type: none;
+}
 .list-group-item {
     background: #d1dc97 !important;
     border: none;
@@ -738,9 +742,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 .temperature {
     font-size: 2vw;
 }
-.list-group{
-    list-style-type: none;
-}
+
 
 
 body, h2, h3, h4, h5, h6, a {
@@ -807,7 +809,7 @@ body, h2, h3, h4, h5, h6, a {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 215px;
+    width: 200px;
     height: 130px;
     margin: 5px;
     text-decoration: none;
@@ -820,7 +822,8 @@ body, h2, h3, h4, h5, h6, a {
     border: 2px solid var(--card-background-color);
     border-radius: 10px;
     padding: 20px;
-    width: 85%;
+    width: 100%;
+    max-width: 53em;
     background-color: var(--primary-color);
     color: var(--text-color);
     display: flex;
@@ -832,30 +835,17 @@ body, h2, h3, h4, h5, h6, a {
     margin-bottom: 1rem;
 }
 
-.main-page-list-group-item {
-    background: #d1dc97 !important;
-    border: none;
-    border-radius: 10px;
-    margin-bottom: 5px;
-    padding: 10px 15px;
-}
-.main-page-list-group-item img {
-    width: 80px;
-    height: 40px;
-    border-radius: 50%;
-}
 .main-page2-card {
     margin-top: auto; /* Push the card to the center */
     border: 2px solid var(--card-background-color);
     border-radius: 10px;
     padding: 20px;
-    width: 80%;
+    width: 100%;
     background-color: var(--primary-color);
     color: var(--text-color);
     display: flex;
     align-items: center;
     flex-direction: column;
-
 }
 
 .main-page2-card-title {

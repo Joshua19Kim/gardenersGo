@@ -19,7 +19,7 @@
                         <div class="main-page2-card-title">Recently accessed gardens</div>
                         <ul class="list-group">
                             <p th:class="${recentGardens.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No recently visited garden </p>
-                            <li th:each="garden : ${recentGardens}" class="list-group-item p-0" style="width:80%;">
+                            <li th:each="garden : ${recentGardens}" class="list-group-item p-0">
                                 <a th:href="@{/gardens/details(gardenId=${garden.id})}"
                                    class="d-block p-3 text-decoration-none text-dark main-page-custom-hover"
                                    style="transition: background-color 0.3s ease;"
@@ -36,9 +36,9 @@
                     <div class="main-page2-card">
                         <div class="main-page2-card-title">Newest Plants</div>
                         <ul class="list-group">
-                            <li class="list-group-item" style="width:80%;"><img src="plant-icon.png" alt="Plant Icon"> Sapling <br><small>Fabian’s Garden</small></li>
-                            <li class="list-group-item" style="width:80%;"><img src="plant-icon.png" alt="Plant Icon"> Rose <br><small>Fabian’s Garden</small></li>
-                            <li class="list-group-item" style="width:80%;"><img src="plant-icon.png" alt="Plant Icon"> Plant <br><small>Fabian’s Garden</small></li>
+                            <li class="list-group-item"><img src="plant-icon.png" alt="Plant Icon"> Sapling <br><small>Fabian’s Garden</small></li>
+                            <li class="list-group-item" ><img src="plant-icon.png" alt="Plant Icon"> Rose <br><small>Fabian’s Garden</small></li>
+                            <li class="list-group-item"><img src="plant-icon.png" alt="Plant Icon"> Plant <br><small>Fabian’s Garden</small></li>
                         </ul>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                                              style="width: 80px; height: 80px; object-fit: cover; margin-top: .3em; margin-bottom: 1em;"
                                              th:src="@{${friend.getProfilePicture()}}" alt="">
                                         <p class="mb-0 text-center" th:text="${friend.firstName} +' ' + (${friend.lastName} ?: '')"
-                                           style="font-size: 0.8em; line-height: 1.2;"></p>
+                                           style="font-size: 0.8em; color: black; line-height: 1.2;"></p>
                                     </a>
                                 </th:block>
                             </div>
