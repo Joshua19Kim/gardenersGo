@@ -10,7 +10,7 @@
         <img src="/images/placeholder.jpg" alt="logo" class="logo"/>
         <h1 class="title">Gardeners Grove</h1>
     </div>
-    <div class="card">
+    <div class="card w-50">
         <h1 class="text-center">Please Register</h1>
 
         <form method="post" class="container" th:action="@{register}" id="registerForm" >
@@ -34,7 +34,7 @@
 
             <div class="form-group field">
                 <label class="input">
-                    <input name="lastName" placeholder="Last Name" type="text" maxlength="255" class="form-control form-field"
+                    <input id="lastName" name="lastName" placeholder="Last Name" type="text" maxlength="255" class="form-control form-field"
                        th:value="*{lastName}" th:classappend="${(lastNameValid != '' && lastNameValid != null) ? 'is-invalid' : ''}">
                     <span class="form-label">Last Name</span>
                 </label>
@@ -57,10 +57,10 @@
             <div class="form-group field w-50">
                 <label class="input w-100">
                     <label style="margin-left: 20px;"> Date of Birth </label>
-                    <input class="form-control form-field" th:name="DoB" th:value="*{DoB}" type="date">
+                    <input id="DoB" class="form-control form-field" th:name="DoB" th:value="*{DoB}" type="date">
                 </label>
             </div>
-            <p class="errorMessage" th:utext="${DoBValid}"></p>
+            <p id="DoBInvalid" class="errorMessage" th:utext="${DoBValid}"></p>
 
             <script>
                 document.getElementById( "DoB" ).addEventListener( "invalid",

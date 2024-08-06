@@ -268,7 +268,6 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
     border: 2px solid var(--card-background-color);
     border-radius: 10px;
     padding: 20px;
-    width: 50%;
     background-color: var(--primary-color);
     color: var(--text-color);
     display: flex;
@@ -320,7 +319,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 }
 
 .dropdown-content a:hover {
-    background-color: #EEFBEE;
+    background-color: var(--primary-color);
 
 }
 
@@ -357,7 +356,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 #form {
     width: 550px;
     margin: 20px auto;
-    background-color: #EEFBEE;
+    background-color: var(--primary-color);
     padding: 20px 50px 40px;
     box-shadow: 1px 4px 10px 1px #777;
     overflow: hidden;
@@ -690,7 +689,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 #gardens_list {
     width: 550px;
     margin: 20px auto;
-    background-color: #EEFBEE;
+    background-color: var(--primary-color);
     padding: 20px 50px 40px;
     box-shadow: 1px 4px 10px 1px #777;
     flex-direction: column;
@@ -936,7 +935,7 @@ body, h2, h3, h4, h5, h6, a {
 }
 
 #form .signup-code {
-    background-color: #d9f7d9; /* Adjusted background color */
+    background-color: var(--primary-color); /* Adjusted background color */
     padding: 20px; /* Adjusted padding */
     border-radius: 10px; /* Adjusted border radius */
     margin-bottom: 20px; /* Added margin bottom */
