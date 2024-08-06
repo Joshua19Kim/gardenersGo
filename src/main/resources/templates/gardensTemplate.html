@@ -5,17 +5,18 @@
 </head>
 <body>
 
-
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
-<div id="gardens_list">
-    <h1 th:text="${gardener.firstName} + (${gardener.lastName != null}? ' ' + ${gardener.lastName} : '') + '\'s Gardens'"></h1>
-    <th:block th:each="garden : ${gardens}">
-        <div id = "garden-names">
-            <a th:text="${garden.name}" th:href="@{/gardens/details(gardenId=${garden.id})}"></a>
-        </div>
+<div class="container">
+    <div class="card">
+        <h1 th:text="${gardener.firstName} + (${gardener.lastName != null}? ' ' + ${gardener.lastName} : '') + '\'s Gardens'"></h1>
+        <th:block th:each="garden : ${gardens}">
+            <div class="container card">
+                <a th:text="${garden.name}" th:href="@{/gardens/details(gardenId=${garden.id})}"></a>
+            </div>
 
-    </th:block>
+        </th:block>
+    </div>
 </div>
 </body>
 </html>
