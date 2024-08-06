@@ -111,7 +111,7 @@
         <li class="page-item">
             <a class="page-link" th:href="@{/browseGardens(pageNo=0)}"
                aria-label="Previous">
-                <span aria-hidden="true">First</span>
+                <span aria-hidden="true">first</span>
             </a>
         </li>
         <ul th:if="${gardensPage.totalPages > 0}" class="pagination"
@@ -120,7 +120,7 @@
         </ul>
         <li class="page-item">
             <a class="page-link" th:href="@{/browseGardens(pageNo=${gardensPage.totalPages - 1})}" aria-label="Next">
-                <span aria-hidden="true">Last</span>
+                <span aria-hidden="true">last</span>
             </a>
         </li>
     </ul>
