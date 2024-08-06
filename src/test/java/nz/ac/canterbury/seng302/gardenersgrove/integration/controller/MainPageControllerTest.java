@@ -122,29 +122,6 @@ public class MainPageControllerTest {
         verify(gardenVisitService, times(1)).findRecentGardensByGardenerId(anyLong());
     }
 
-
-    //    @Test
-//    @WithMockUser
-//    public void GivenUserHasAPlant_WhenTheyVisitTheHomePage_RecentlyAddedPlantsShown() throws Exception {
-//        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
-//
-//        Plant plant = new Plant("test plant", testGarden);
-//        List<Plant> recentlyAddedPlants = new ArrayList<>();
-//        recentlyAddedPlants.add(plant);
-//        // Yet to be added
-////        when(newestPlantsService.findNewestPlantsByGardenerId(anyLong())).thenReturn(recentlyAddedPlants);
-//
-//        mockMvc
-//                .perform((MockMvcRequestBuilders.get("/home")))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("mainPageTemplate"))
-//                .andExpect(model().attributeExists("newestPlants"))
-//                .andExpect(model().attribute("newestPlants", recentlyAddedPlants));
-//
-//        verify(gardenerFormService, times(1)).findByEmail(anyString());
-////        verify(newestPlantsService, times(1)).findNewestPlantsByGardenerId(anyLong());
-//    }
-
     @Test
     @WithMockUser
     public void GivenUserHasFriends_WhenTheyVisitTheHomePage_FriendsListShown() throws Exception {
