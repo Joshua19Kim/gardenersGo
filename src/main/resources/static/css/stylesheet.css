@@ -815,6 +815,54 @@ body, h2, h3, h4, h5, h6, a {
     transition: background-color 0.3s ease;
 }
 
+.main-page-card {
+    margin-top: auto; /* Push the card to the center */
+    border: 2px solid var(--card-background-color);
+    border-radius: 10px;
+    padding: 20px;
+    width: 85%;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+}
+
+.main-page-card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.main-page-list-group-item {
+    background: #d1dc97 !important;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    padding: 10px 15px;
+}
+.main-page-list-group-item img {
+    width: 80px;
+    height: 40px;
+    border-radius: 50%;
+}
+.main-page2-card {
+    margin-top: auto; /* Push the card to the center */
+    border: 2px solid var(--card-background-color);
+    border-radius: 10px;
+    padding: 20px;
+    width: 80%;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+}
+
+.main-page2-card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
 .main-page-avatar {
     vertical-align: middle;
     width: 50px;
