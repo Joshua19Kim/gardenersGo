@@ -110,6 +110,7 @@ public class MainPageController {
         model.addAttribute("recentGardens", recentGardens);
         model.addAttribute("requestURI", requestService.getRequestURI(request));
         model.addAttribute("mainPageLayout", mainPageLayout);
+        model.addAttribute("ordering", "3 2 1");
 
         return "mainPageTemplate";
     }
