@@ -34,7 +34,7 @@
 
             <div class="form-group field">
                 <label class="input">
-                    <input name="lastName" placeholder="Last Name" type="text" maxlength="255" class="form-control form-field"
+                    <input id="lastName" name="lastName" placeholder="Last Name" type="text" maxlength="255" class="form-control form-field"
                        th:value="*{lastName}" th:classappend="${(lastNameValid != '' && lastNameValid != null) ? 'is-invalid' : ''}">
                     <span class="form-label">Last Name</span>
                 </label>
