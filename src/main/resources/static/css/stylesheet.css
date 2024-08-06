@@ -1323,7 +1323,7 @@ form.search-bar::after {
 }
 
 .browse-gardens-container {
-    max-width: 800px;
+    max-width: 1800px;
     margin: 0 auto;
     padding: 0 20px;
 
@@ -1341,6 +1341,12 @@ form.search-bar::after {
     overflow: auto;
     background-color: rgba(0,0,0,0.4);
 }
+
+.browse-gardens-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto;
@@ -1353,3 +1359,12 @@ form.search-bar::after {
 .modal h2 {
     margin-top: 0;
 }
+
+body {
+    background-color: #fffdf6;
+}
+
+
+
+
+
