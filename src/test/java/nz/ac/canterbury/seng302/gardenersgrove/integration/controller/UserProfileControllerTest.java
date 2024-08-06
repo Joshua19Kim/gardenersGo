@@ -152,7 +152,7 @@ public class UserProfileControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
-                .andExpect(model().attribute("DoB", LocalDate.of(2400,1,1)))
+                .andExpect(model().attribute("DoB", LocalDate.of(1980,1,1)))
                 .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account <br/>"));
     }
 
@@ -170,7 +170,7 @@ public class UserProfileControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
-                .andExpect(model().attribute("DoB", LocalDate.of(1700,1,1)))
+                .andExpect(model().attribute("DoB", LocalDate.of(1980,1,1)))
                 .andExpect(model().attribute("DoBValid", "The maximum age allowed is 120 years"));
     }
 

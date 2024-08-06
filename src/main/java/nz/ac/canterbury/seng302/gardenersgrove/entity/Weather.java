@@ -2,10 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -13,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Weather {
-    Logger logger = LoggerFactory.getLogger(Weather.class);
     @JsonProperty("location")
     private JsonNode location;
 
@@ -27,14 +23,12 @@ public class Weather {
     private List<String> forecastDescriptions = new ArrayList<>();
     private List<Integer> forecastHumidities = new ArrayList<>();
     private List<String> forecastDates = new ArrayList<>();
-    private List<DayOfWeek> forecastDays = new ArrayList<>();
     private String currentLocation;
     private String currentWeatherImage;
     private String currentWeatherDescription;
     private Float currentTemperature;
     private Integer currentHumidity;
     private String date;
-//    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 
     public Weather() {
@@ -71,10 +65,8 @@ public class Weather {
     public void setForecast(JsonNode forecast) {
         this.forecast = forecast;
         this.date = LocalDate.parse(forecast.get("forecastday").get(0).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
-//        logger.info("Date string: " + date);
         for (int i = 0; i < 3; i++) {
             this.forecastDates.add(LocalDate.parse(forecast.get("forecastday").get(i).get("date").asText()).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
-//            this.forecastDays.add(LocalDate.parse("2024-07-21").getDayOfWeek());
             this.forecastMinTemperatures.add(forecast.get("forecastday").get(i).get("day").get("mintemp_c").floatValue());
             this.forecastMaxTemperatures.add(forecast.get("forecastday").get(i).get("day").get("maxtemp_c").floatValue());
             this.forecastImages.add(forecast.get("forecastday").get(i).get("day").get("condition").get("icon").asText().replace("64x64", "128x128"));
@@ -130,23 +122,9 @@ public class Weather {
         return date;
     }
 
-//    /**
-//     * gets day of week based on date stored in weather object
-//     *
-//     * @return DayOfWeek Enum where Monday has a numerical value of 1 and Sunday 7
-//     */
-//    public String getDay() {
-//        logger.info("Date string to be parsed: " + date);
-////        logger.info("Day returned: " + LocalDate.parse(date, formatter).getDayOfWeek());
-////        return LocalDate.parse(date, formatter).getDayOfWeek();
-//        return date;
-//    }
 
     public List<String> getForecastDates() {
         return forecastDates;
     }
 
-//    public List<DayOfWeek> getForecastDays() {
-//        return forecastDays;
-//    }
 }

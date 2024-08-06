@@ -119,7 +119,20 @@
     </div>
 </div>
 <script type="text/javascript">
-    document.getElementById("registerForm").addEventListener("keydown", function(event) {
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+        const dobInput = document.getElementById("DoB");
+        if (!(dobInput.checkValidity())) {
+            console.log("invalid date")
+            event.preventDefault();
+            document.getElementById("isDoBInvalid").value = true;
+            document.getElementById("registerForm").submit();
+        } else {
+            console.log("valid date")
+            document.getElementById("isDoBInvalid").value = false;
+        }
+    });
+
+    document.getElementById("registerForm").addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             var activeElement = document.activeElement;
             if (activeElement.id === "passwordConfirm" || activeElement.type === "submit" || activeElement.type === "reset") {

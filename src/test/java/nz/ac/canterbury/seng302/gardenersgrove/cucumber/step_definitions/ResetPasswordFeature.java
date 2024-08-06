@@ -11,6 +11,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
+import org.junit.jupiter.api.Assertions;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -48,6 +49,7 @@ public class ResetPasswordFeature {
     private MockMvc mockMvcForgotPassword;
     private MvcResult mvcResult;
     private String email;
+    private String url;
     private Gardener gardener;
 
     @Before("@U16")
@@ -107,7 +109,8 @@ public class ResetPasswordFeature {
     @When("I submit the invalid email")
     public void i_submit_the_invalid_email() throws Exception {
         mvcResult = mockMvcForgotPassword.perform(MockMvcRequestBuilders.post("/forgotPassword")
-                        .param("email", email))
+                        .param("email", email)
+                .param("url", url))
                 .andReturn();
     }
 
@@ -126,7 +129,7 @@ public class ResetPasswordFeature {
     @When("I submit the valid email that is not known to the system")
     public void i_submit_the_valid_email_that_is_not_known_to_the_system() throws Exception {
         mvcResult = mockMvcForgotPassword.perform(MockMvcRequestBuilders.post("/forgotPassword")
-                        .param("email", email))
+                        .param("email", email).param("url", url))
                 .andReturn();
     }
 
@@ -146,14 +149,33 @@ public class ResetPasswordFeature {
     @When("I submit the email that is known to the system")
     public void i_submit_the_email_that_is_known_to_the_system() throws Exception {
         mvcResult = mockMvcForgotPassword.perform(MockMvcRequestBuilders.post("/forgotPassword")
-                        .param("email", email))
+                        .param("email", email).param("url", url))
                 .andReturn();
     }
 
     @Then("an email is sent to the email address")
     public void an_email_is_sent_to_the_email_address() {
         ArgumentCaptor<Gardener> gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
-        ArgumentCaptor<HttpServletRequest> requestCaptor = ArgumentCaptor.forClass(HttpServletRequest.class);
+        ArgumentCaptor<String> requestCaptor = ArgumentCaptor.forClass(String.class);
         verify(writeEmail, times(1)).sendPasswordForgotEmail(gardenerCaptor.capture(), requestCaptor.capture());
+    }
+
+    @Given("I am on a deployment {string}")
+    public void i_am_on_a_deployment(String baseURL) {
+        url= baseURL;
+    }
+
+
+    @Then("the link in the email contains the URL {string}")
+    public void the_link_in_the_email_contains_the_url(String expectedUrl) {
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        verify(writeEmail, times(1)).sendPasswordForgotEmail(any(Gardener.class), messageCaptor.capture());
+
+        String emailMessage = messageCaptor.getValue();
+        System.out.println("Expected email message: " + expectedUrl);
+        System.out.println("Captured email message: " + emailMessage);
+
+
+        Assertions.assertTrue(emailMessage.contains(expectedUrl));
     }
 }

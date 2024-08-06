@@ -119,6 +119,7 @@ public class GardenDetailsController {
        if (gardenId == null) {
            return "redirect:/gardens";
        }
+       model.addAttribute("gardenId", gardenId); ////////////////////////////////
        Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
        if (garden.isPresent()) {
            model.addAttribute("requestURI", requestService.getRequestURI(request));
@@ -176,7 +177,7 @@ public class GardenDetailsController {
                Boolean isFriend = relationshipService
                        .getCurrentUserRelationships(gardenOwner.getId())
                        .contains(currentUserOptional.get());
-               if (isFriend) {
+               if (isFriend || garden.get().getIsGardenPublic()) {
                    model.addAttribute("gardener", garden.get().getGardener());
                    model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
                    return "unauthorizedGardenDetailsTemplate";
@@ -274,6 +275,12 @@ public class GardenDetailsController {
         return "redirect:/gardens/details?gardenId=" + gardenId;
     }
 
+    // todo: Fix this to allow for tagValidation injection
+    //  Also tag validation is not failsafe secure. They should check for positives not negatives
+    //      i.e. validTagError --> validTag.isPresent() and tagInUse --> tagNotInUse.isPresent
+    //      This means if the tagValidation is broken the code will NOT accept tags.
+    //  Also see whether location should check for "error" rather than nullity -- Does post mapping need weather at all?
+    //  Also see if user should be verified as owner
     /**
      * Adds an existing tag to the garden or creates a new tag to add
      *

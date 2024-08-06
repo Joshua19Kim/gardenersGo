@@ -59,7 +59,7 @@ public class RegistrationEmailFeature {
     public void setUp() {
         // Mocking
         EmailUserService emailUserService = Mockito.mock(EmailUserService.class);
-        WriteEmail writeEmail = new WriteEmail(emailUserService);
+        WriteEmail writeEmail = new WriteEmail(emailUserService, tokenService);
         mockWriteEmail = Mockito.spy(writeEmail);
         gardenerRepository = Mockito.mock(GardenerFormRepository.class);
         tokenService = Mockito.mock(TokenService.class);

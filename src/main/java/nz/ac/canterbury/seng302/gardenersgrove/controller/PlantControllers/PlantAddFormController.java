@@ -104,6 +104,7 @@ public class PlantAddFormController {
      * @param description The description of the plant.
      * @param date The date the plant was planted.
      * @param gardenId The ID of the garden to which the plant belongs.
+     * @param isDateInvalid Indication of existence of a partially inputted date e.g. "10/mm/yyyy"
      * @param model The model for passing data to the view.
      * @return The template for the plant form or redirects to the garden details page.
      */
@@ -112,18 +113,13 @@ public class PlantAddFormController {
             @RequestParam(name = "name") String name,
             @RequestParam(name = "count", required = false) String count,
             @RequestParam(name = "description", required = false) String description,
-            @RequestParam(name = "date", required = false) String date,
+            @RequestParam(name = "date", required = false) LocalDate date,
+            @RequestParam(name = "isDateInvalid", required = false) boolean isDateInvalid,
             @RequestParam(name = "gardenId") String gardenId,
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request,
             Model model) {
         logger.info("/gardens/details/plants/form");
-        String validatedDate = "";
-        if (date != null && !date.trim().isEmpty()) {
-            LocalDate localDate = LocalDate.parse(date);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            validatedDate = localDate.format(formatter);
-        }
 
         Garden garden = gardenService.getGarden(Long.parseLong(gardenId)).get();
         String validatedPlantName = ValidityChecker.validatePlantName(name);
@@ -131,6 +127,13 @@ public class PlantAddFormController {
         String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
 
         boolean isValid = true;
+
+        Optional<String> dateError = Optional.empty();
+        if (isDateInvalid) {
+            dateError = Optional.of("Date is not in valid format, DD/MM/YYYY");
+            isValid = false;
+        }
+        model.addAttribute("DateValid", dateError.orElse(""));
 
         if (!Objects.equals(name, validatedPlantName)) {
             model.addAttribute("nameError", validatedPlantName);
@@ -156,7 +159,7 @@ public class PlantAddFormController {
             Plant plant = new Plant(name, garden);
             boolean countPresent = count != null && !validatedPlantCount.trim().isEmpty();
             boolean descriptionPresent = description != null && !validatedPlantDescription.trim().isEmpty();
-            boolean datePresent = !validatedDate.isEmpty() && !Objects.equals(date.trim(), "");
+            boolean datePresent = date != null;
 
             if (countPresent) {
                 plant.setCount(new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
@@ -165,6 +168,10 @@ public class PlantAddFormController {
                 plant.setDescription(validatedPlantDescription);
             }
             if (datePresent) {
+                String validatedDate = "";
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                validatedDate = date.format(formatter);
+
                 plant.setDatePlanted(validatedDate);
             }
             plantService.addPlant(plant);

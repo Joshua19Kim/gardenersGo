@@ -6,12 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,4 +58,8 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
     @Modifying
     @Query(value = "UPDATE garden SET last_notified = ?2 WHERE id = ?1 ", nativeQuery = true)
     void updateLastNotifiedbyId(Long gardenId, LocalDate date);
+
+    @Query(value= "select * from garden where public_garden is true", nativeQuery = true)
+    Page<Garden> findAllPublicGardens(Pageable pageable);
+
 }
