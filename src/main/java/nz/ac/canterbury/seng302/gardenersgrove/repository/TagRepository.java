@@ -42,7 +42,7 @@ public interface TagRepository extends CrudRepository<Tag, Long> {
    * Gets all the tag names in the database
    * @return all the tag names in the database
    */
-  @Query(value = "select tag_name from tag", nativeQuery = true)
+  @Query(value = "select DISTINCT tag_name from tag", nativeQuery = true)
   List<String> getAllTagNames();
 
   /**
