@@ -8,8 +8,8 @@
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
-<div class="container card">
-    <div style="display: flex; justify-content: space-between">
+<div class="container card mt-5">
+    <div>
         <h1>Manage Friends</h1>
 
         <div class="button-container">
@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="container">
-        <div class="card">
+        <div class="card w-100">
             <span>My Friends</span>
             <div class="table-body">
                 <!-- Iterate over search results -->
@@ -41,8 +41,8 @@
         </div>
 
         <div aria-hidden="true" class="modal" id="remove-friend-modal">
-            <div class="confirmation">
-                <p>Are you sure?</p>
+            <div class="confirmation w-50">
+                <p class="text-dark">Are you sure?</p>
                 <div class="confirmation-container">
                     <form method="post" th:action="@{/removeRelationship}" style="margin-right: 5px;">
                         <input type="hidden"
@@ -57,7 +57,7 @@
         </div>
 
         <div aria-hidden="true" class="modal" id="friend-request-modal">
-            <div class="friend-requests">
+            <div class="friend-requests ">
                 <div class="header">
                     <div class="table-header">
                         <button id="received-btn" onclick="displayRequest('received')">Received</button>
@@ -73,11 +73,11 @@
                             <div class="friend-info">
                                 <img alt="Profile Picture"
                                      th:src="@{${pendingRequest.getProfilePicture()}}">
-                                <p th:text="${pendingRequest.toString()}"></p>
+                                <p class="text-dark" th:text="${pendingRequest.toString()}"></p>
 
                             </div>
                             <div class="friend-info">
-                                <p>Pending</p>
+                                <p class="text-dark">Pending</p>
                             </div>
                             <form style="margin-left:auto;" method="post" th:action="@{/removeRelationship}">
                                 <input type="hidden"
@@ -92,10 +92,10 @@
                             <div class="friend-info">
                             <img alt="Profile Picture"
                                  th:src="@{${declinedRequest.getProfilePicture()}}">
-                            <p th:text="${declinedRequest.toString()}"></p>
+                            <p class="text-dark" th:text="${declinedRequest.toString()}"></p>
                             </div>
                             <div class="friend-info">
-                            <p>Declined</p>
+                            <p class="text-dark">Declined</p>
                             </div>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
                             <div class="friend-info">
                                 <img alt="Profile Picture"
                                      th:src="@{${receivedRequest.getProfilePicture()}}">
-                                <p th:text="${receivedRequest.toString()}"></p>
+                                <p class="text-dark" th:text="${receivedRequest.toString()}"></p>
                             </div>
                             <div class="friend-info">
                                 <form method="post" th:action="@{/manageRequest}" style="margin-right: 5px;">
@@ -157,12 +157,12 @@
                                     <input name="status" value="pending" type="hidden">
                                     <img alt="Profile Picture"
                                          th:src="@{${search.getProfilePicture()}}">
-                                    <p th:text="${search.toString()}"></p>
+                                    <p class="text-dark" th:text="${search.toString()}"></p>
                                 </div>
                                 <button class="invite-friend-req-btn button">Invite Friend</button>
                             </form>
                         </div>
-                        <p id="no-results-match-message"></p>
+                        <p class="text-dark" id="no-results-match-message"></p>
                     </div>
                 </div>
             </div>
