@@ -8,12 +8,12 @@
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
 <div class="container">
-    <div class="row">
+    <div class="row" id='widget-container'>
         <!-- Recently accessed gardens and Newest Plants -->
-        <div class="col-md-8">
-            <div class="row">
+        <div class="col d-flex flex-column justify-content-between" id='widget-box'>
+            <div class="row" id="widget-small-boxes">
                 <!-- Recently accessed gardens -->
-                <div class="col-md-6 mb-4">
+                <div class="col-md-6">
                     <div class="card">
                         <div class="card-title">Recently accessed gardens</div>
                         <ul class="list-group">
@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <!-- Newest Plants -->
-                <div class="col-md-6 mb-4">
+                <div class="col-md-6">
                     <div class="card">
                         <div class="card-title">Newest Plants</div>
                         <ul class="list-group">
@@ -40,7 +40,7 @@
             </div>
             <div class="row">
                 <!-- My Friend's List -->
-                <div class="col-md-12">
+                <div class="col-md-12" id="widget-wide">
                     <div class="card">
                         <div class="card-title">My Friend’s List</div>
                         <div class="d-flex flex-wrap" style="height: 134px;">
@@ -62,7 +62,7 @@
             </div>
         </div>
         <!-- My Garden's List -->
-        <div class="col-md-4">
+        <div class="col-md-4" id='widget-tall' >
             <div class="card mt-0">
                 <div class="card-title">My Garden’s List</div>
                 <div class="list-group" style="overflow-y: scroll; height: 460px;">
@@ -79,5 +79,43 @@
     </div>
 </div>
 
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Thymeleaf variable injected into JavaScript
+    const ordering = /*[[${ordering}]]*/ 'default';
+    console.log(ordering);
+    /*]]>*/
+
+    function orderItems(ordering) {
+
+        const order = ordering.split(' ');
+        console.log(order);
+        let container = document.getElementById('widget-container');
+        let box = document.getElementById('widget-box');
+        const tall = document.getElementById('widget-tall');
+        const wide = document.getElementById('widget-wide');
+        const smallBoxes = document.getElementById('widget-small-boxes')
+
+        container.innerHTML = '';
+        // if the 4th widget (the tall one) is first, move it to the left, otherwise leave it
+        if (order[0] === '3') {
+            container.appendChild(tall);
+            container.appendChild(box);
+        } else {
+            container.appendChild(box);
+            container.appendChild(tall);
+        }
+
+        // if the 3rd widget (the wide one) comes before the two boxes, move it above
+        if (order.indexOf('2') < order.indexOf('1')) {
+            box.appendChild(wide);
+            box.appendChild(smallBoxes);
+        } else {
+            box.appendChild(smallBoxes);
+            box.appendChild(wide);
+        }
+    }
+    orderItems(ordering);
+</script>
 </body>
 </html>

@@ -108,6 +108,7 @@ public class MainPageController {
 //        model.addAttribute("newestPlants", newPlants);
         model.addAttribute("recentGardens", recentGardens);
         model.addAttribute("requestURI", requestService.getRequestURI(request));
+        model.addAttribute("ordering", "3 2 1");
 
         return "mainPageTemplate";
     }
