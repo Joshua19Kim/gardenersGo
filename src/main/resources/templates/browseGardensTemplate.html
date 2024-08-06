@@ -12,7 +12,7 @@
     <div class="row">
         <div th:each="garden : ${gardensPage.content}" th:if="${gardenStat.index < 5}" class="col-md mb-4">
             <a th:href="@{gardens/details(gardenId=${garden.id})}" style="text-decoration: none; color: inherit;">
-                <div class="card browse-gardens-card" >
+                <div class="card browse-gardens-card col-md mb-4">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 text-center">
@@ -40,7 +40,7 @@
     <div class="row">
         <div th:each="garden : ${gardensPage.content}" th:if="${gardenStat.index >= 5 && gardenStat.index < 10}" class="col-md mb-4">
             <a th:href="@{gardens/details(gardenId=${garden.id})}" style="text-decoration: none; color: inherit;">
-                <div class="card browse-gardens-card" >
+                <div class="card browse-gardens-card col-md mb-4" >
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 text-center text-wrap">
@@ -67,29 +67,28 @@
     </div>
 </div>
 
-<!--Note: should use bootstrap here for pagination. this was just used as a proof of work in spike-->
-<div th:if="${gardensPage.totalPages > 0}" class="pagination"
-     th:each="pageNumber : ${pageNumbers}">
-    <a th:href="@{/browseGardens(pageSize=${gardensPage.size}, pageNo=${pageNumber - 1})}"
-       th:text="${pageNumber}"
-       th:class="${pageNumber==gardensPage.number + 1} ? active"></a>
-</div>
-<nav aria-label="Page navigation example">
-    <li class="page-item">
-        <a class="page-link" th:href="@{/browseGardens(pageSize=${gardensPage.size}, pageNo=0)}"
-           aria-label="Previous">
-            <span aria-hidden="true">First</span>
-        </a>
-    </li>
-    <ul th:if="${gardensPage.totalPages > 0}" class="pagination"
-        th:each="pageNumber : ${pageNumbers}">
-        <li class="page-item"><a class="page-link" th:href="@{/browseGardens(pageSize=${gardensPage.size}, pageNo=${pageNumber - 1})}" th:text="${pageNumber}"></a></li>
+
+<div th:if="${gardensPage.totalPages > 0}" class="d-flex justify-content-center" aria-label="Page navigation example ">
+    <ul class = "pagination">
+        <li class="page-item">
+            <a class="page-link" th:href="@{/browseGardens(pageSize=${gardensPage.size}, pageNo=0)}"
+               aria-label="Previous">
+                <span aria-hidden="true">First</span>
+            </a>
+        </li>
+        <ul th:if="${gardensPage.totalPages > 0}" class="pagination"
+            th:each="pageNumber : ${pageNumbers}">
+            <li class="page-item"><a class="page-link" th:href="@{/browseGardens(pageSize=${gardensPage.size}, pageNo=${pageNumber - 1})}" th:text="${pageNumber}"></a></li>
+        </ul>
+        <li class="page-item">
+            <a class="page-link" th:href="@{/browseGardens(pageSize=${gardensPage.size}, pageNo=${gardensPage.totalPages - 1})}" aria-label="Next">
+                <span aria-hidden="true">Last</span>
+            </a>
+        </li>
     </ul>
-    <li class="page-item">
-        <a class="page-link" th:href="@{/browseGardens(pageSize=${gardensPage.size}, pageNo=${gardensPage.totalPages - 1})}" aria-label="Next">
-            <span aria-hidden="true">Last</span>
-        </a>
-    </li>
-</nav>
+</div>
+<div class="d-flex justify-content-center" aria-label="Navigation message">
+    <p th:text="${paginationMessage}"></p>
+</div>
 </body>
 </html>

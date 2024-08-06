@@ -47,13 +47,21 @@ public class BrowseGardensController {
         if(totalPages > 0) {
             int lowerBound = Math.max(pageNo - 1, 1);
             int upperBound = Math.min(pageNo + 3, totalPages);
-            System.out.println(lowerBound);
-            System.out.println(upperBound);
             List<Integer> pageNumbers = IntStream.rangeClosed(lowerBound, upperBound)
                     .boxed()
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
+
+            long totalItems = gardensPage.getTotalElements();
+            int startIndex = pageSize * pageNo + 1;
+            long endIndex = Math.min((long) pageSize * (pageNo + 1), totalItems);
+            String paginationMessage = "Showing results " + startIndex + " to " + endIndex + " of " + totalItems;
+            model.addAttribute("paginationMessage", paginationMessage);
+        } else {
+            String paginationMessage = "Showing results 0 to 0 of 0";
+            model.addAttribute("paginationMessage", paginationMessage);
         }
+
 
         return "browseGardensTemplate";
     }
