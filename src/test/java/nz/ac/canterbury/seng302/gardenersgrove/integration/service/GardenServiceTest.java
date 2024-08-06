@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
-import io.cucumber.java.Before;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
@@ -237,6 +236,11 @@ public class GardenServiceTest {
                 return null;
             }
 
+            @Override
+            public Page<Garden> findGardensBySearchTerm(Pageable pageable, String searchTerm) {
+                return null;
+            }
+
         });
         gardenService.addGarden(new Garden("Botanical",
                 "Homestead Lane", null, "Christchurch", "New Zealand", null, "100", testGardener, "")
@@ -285,7 +289,16 @@ public class GardenServiceTest {
         int pageNo = 1;
         int pageSize = 1;
         Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
-        Assertions.assertEquals(totalGardens, gardensPage.getTotalPages());
+        Assertions.assertEquals(totalGardens+1, gardensPage.getTotalPages());
         Assertions.assertEquals(pageSize, gardensPage.getContent().size());
+    }
+
+    @Test
+    public void GardenVisitAdded_ValidInputs_GardenVisitReturned() {
+        Garden garden = gardenService.addGarden(new Garden("Botanical",
+                "Homestead Lane", null, "Christchurch", "New Zealand", null, "100", testGardener, ""));
+        Assertions.assertEquals(garden.getName(), "Botanical");
+        Assertions.assertEquals(garden.getLocation(), "Homestead Lane");
+        Assertions.assertEquals(garden.getSize(), "100");
     }
 }

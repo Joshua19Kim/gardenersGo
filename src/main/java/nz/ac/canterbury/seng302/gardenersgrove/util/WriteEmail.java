@@ -1,12 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
-import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
-
 
 import java.util.UUID;
 
@@ -21,9 +18,10 @@ public class WriteEmail {
     private TokenService tokenService;
     private final EmailUserService emailService;
 
-    public WriteEmail(EmailUserService emailUserService)
+    public WriteEmail(EmailUserService emailUserService, TokenService tokenService)
     {
         this.emailService = emailUserService;
+        this.tokenService = tokenService;
     }
 
     /**
@@ -93,5 +91,26 @@ public class WriteEmail {
         String emailMessage = constructLostPasswordTokenEmail(url, token);
         String subject = "Forgot password?";
         emailService.sendEmail(email, subject, emailMessage); // *** Blocking
+    }
+
+    /**
+     * Send a warning email to gardener's email when gardener(user) has tried to enter the inappropriate words for five times.
+     * @param gardener Gardener to get the email address
+     */
+    public void sendTagWarningEmail (Gardener gardener) {
+        String subject = "!! Warning for bad words !!";
+        String emailMessage = "You have reached the maximum number of bad words on our web site. If you add another inappropriate tag, Your account will be blocked for one week.";
+        emailService.sendEmail(gardener.getEmail(), subject, emailMessage);
+    }
+
+
+    /**
+     * Email the gardener to inform them that they have been banned
+     * @param gardener The gardener to send the email to
+     */
+    public void sendBanUserEmail(Gardener gardener) {
+        String subject = "!! You have been banned from Gardeners Grove !!";
+        String emailMessage = "You have reached the maximum number of bad words on our web site. Your account has been blocked for one week (7 Calendar days).";
+        emailService.sendEmail(gardener.getEmail(), subject, emailMessage);
     }
 }
