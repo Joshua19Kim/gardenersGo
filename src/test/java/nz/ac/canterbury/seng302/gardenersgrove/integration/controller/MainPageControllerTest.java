@@ -343,7 +343,7 @@ public class MainPageControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("mainPageTemplate"))
                 .andExpect(model().attribute("friends", Matchers.empty()))
-                .andExpect(content().string(containsString("No friends created")));
+                .andExpect(content().string(containsString("No friends added")));
     }
     @Test
     @WithMockUser
