@@ -129,6 +129,9 @@
     </ul>
 </div>
 <div class="d-flex justify-content-center" aria-label="Navigation message">
+    <p th:text="'Page: ' + (${gardensPage.number + 1})"></p>
+</div>
+<div class="d-flex justify-content-center" aria-label="Navigation message">
     <p th:text="${paginationMessage}"></p>
 </div>
 </body>
