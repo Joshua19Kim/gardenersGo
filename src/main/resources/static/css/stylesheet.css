@@ -1,491 +1,507 @@
 /* Custom Navbar */
 #custom-navbar {
     background-color: rgba(209, 220, 151, 0.8) !important;
-/*@import*/
-/*url('https://rsms.me/inter/inter.css');*/
+    }
+    /*@import*/
+    /*url('https://rsms.me/inter/inter.css');*/
 
-* {
-    box-sizing: border-box;
-}
-
-:root {
-    --button-hover-color: rgb(52, 72, 59);
-    --button-color: rgb(53, 91, 72);
-    --input-background-color: #eef3f7;
-    --card-background-color: #e7f0dc;
-    --alert-background-color: rgb(52, 72, 59);
-    --text-color: #fffdf6;
-    --background-color: #fffdf6;
-    --primary-color: #8dab6e;
-    --secondary-color: #d1dc97;
-    --accent-color: #f8dc30;
-    --size-bezel: .5rem;
-    --weather-colour: #9dc7e1;
-    --forecast-colour: #8fb6ce;
-
-}
-
-body {
-    background-color: var(--background-color);
-    color: var(--text-color);
-    font-family: Arial, sans-serif;
-    height: 100%;
-    margin: 0;
-    align-items: center;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* Align items to the top */
-    align-items: center;
-    padding-top: 5vh; /* Add some padding at the top */
-}
-
-.header-container {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.card-img-top {
-    max-width: 128px;
-}
-.current {
-    background-color: var(--weather-colour)!important;
-    height: 400px;
-    width: 400px;
-    min-width: 100%;
-}
-.forecast {
-    background-color: var(--forecast-colour)!important;
-    height: 400px;
-    width: 200px;
-    min-width: 100%;
-    margin-bottom: 0;
-
-}
-
-h1 {
-    margin-bottom: 20px;
-    color: var(--text-color);
-}
-
-.title {
-    color: var(--primary-color);
-}
-
-.form-group {
-    position: relative;
-    padding: 15px 0 0;
-}
-
-.form-control {
-    background-color: var(--secondary-color);
-    border: none;
-    border-radius: 25px;
-    color: var(--text-color);
-    margin-bottom: 15px;
-    padding: 10px 10px;
-    width: 100%;
-    text-align: center;
-}
-
-.form-control::placeholder {
-    color: gray;
-    opacity: 1;
-}
-.garden-form-control {
-    background-color: var(--secondary-color);
-    border: none;
-    border-radius: 25px;
-    color: var(--text-color);
-    margin-bottom: 15px;
-    padding: 10px 10px;
-    width: 100%;
-    text-align: left;
-    --text-color: black;
-}
-
-.garden-form-control::placeholder {
-    color: gray;
-    opacity: 1;
-}
-textarea#description.garden-form-control {
-    height: auto !important;
-    min-height: 80px !important;
-    overflow-y: visible !important;
-    resize: vertical !important;
-}
-
-
-.btn {
-    border: none;
-    border-radius: 25px;
-    padding: 10px 15px;
-    width: 50%;
-    min-width: 100px;
-    transition: 0.1s ease all;
-}
-
-.btn-primary {
-    background-color: var(--button-color);
-    color: var(--text-color);
-    /*box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2), 0 10px 10px rgba(0, 0, 0, 0.2);*/
-}
-
-.btn-primary:hover {
-    background-color: var(--button-hover-color);
-}
-
-.hr {
-    width: 200%;
-}
-
-.btn-link {
-    color: var(--text-color);
-    text-decoration: none;
-    display: block;
-    text-align: center;
-    margin-top: 10px;
-}
-
-.btn-link:hover {
-    color: var(--button-hover-color);
-}
-
-/*.alert {*/
-/*    background-color: var(--alert-background-color);*/
-/*    border-left: 5px solid var(--primary-color);*/
-/*    color: var(--text-color);*/
-/*    margin-bottom: 15px;*/
-/*    padding: 10px;*/
-/*    text-align: center;*/
-/*}*/
-
-.logo {
-    width: 75px;
-    border-radius: 100%;
-    height: 75px;
-}
-
-/* Label code from https://codepen.io/lucasyem/pen/ZEEYKdj */
-
-.form-field {
-    &::placeholder {
-        color: transparent;
+    * {
+        box-sizing: border-box;
     }
 
-    &:placeholder-shown ~ .form-label {
-        cursor: text;
-        top: 25px;
+    :root {
+        --button-hover-color: rgb(52, 72, 59);
+        --button-color: rgb(53, 91, 72);
+        --input-background-color: #eef3f7;
+        --card-background-color: #e7f0dc;
+        --alert-background-color: rgb(52, 72, 59);
+        --text-color: #fffdf6;
+        --background-color: #fffdf6;
+        --primary-color: #8dab6e;
+        --secondary-color: #d1dc97;
+        --accent-color: #f8dc30;
+        --size-bezel: .5rem;
+        --weather-colour: #9dc7e1;
+        --forecast-colour: #8fb6ce;
+
     }
-}
 
-.form-label {
-    position: absolute;
-    top: -10px;
-    left: 20px;
-    display: block;
-    transition: 0.2s;
-    color: white;
-}
+    body {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        font-family: Arial, sans-serif;
+        height: 100%;
+        margin: 0;
+        align-items: center;
+    }
 
-.form-field:focus {
-    ~ .form-label {
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; /* Align items to the top */
+        align-items: center;
+        padding-top: 5vh; /* Add some padding at the top */
+    }
+
+    .header-container {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .card-img-top {
+        max-width: 128px;
+    }
+
+    .current {
+        background-color: var(--weather-colour) !important;
+        height: 400px;
+        width: 400px;
+        min-width: 100%;
+    }
+
+    .forecast {
+        background-color: var(--forecast-colour) !important;
+        height: 400px;
+        width: 200px;
+        min-width: 100%;
+        margin-bottom: 0;
+
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        color: var(--text-color);
+    }
+
+    .title {
+        color: var(--primary-color);
+    }
+
+    .form-group {
+        position: relative;
+        padding: 15px 0 0;
+    }
+
+    .form-control {
+        background-color: var(--secondary-color);
+        border: none;
+        border-radius: 25px;
+        color: var(--text-color);
+        margin-bottom: 15px;
+        padding: 10px 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .form-control::placeholder {
+        color: gray;
+        opacity: 1;
+    }
+
+    .garden-form-control {
+        background-color: var(--secondary-color);
+        border: none;
+        border-radius: 25px;
+        color: var(--text-color);
+        margin-bottom: 15px;
+        padding: 10px 10px;
+        width: 100%;
+        text-align: left;
+        --text-color: black;
+    }
+
+    .garden-form-control::placeholder {
+        color: gray;
+        opacity: 1;
+    }
+
+    textarea#description.garden-form-control {
+        height: auto !important;
+        min-height: 80px !important;
+        overflow-y: visible !important;
+        resize: vertical !important;
+    }
+
+
+    .btn {
+        border: none;
+        border-radius: 25px;
+        padding: 10px 15px;
+        width: 50%;
+        min-width: 100px;
+        transition: 0.1s ease all;
+    }
+
+    .btn-primary {
+        background-color: var(--button-color);
+        color: var(--text-color);
+        /*box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2), 0 10px 10px rgba(0, 0, 0, 0.2);*/
+    }
+
+    .btn-primary:hover {
+        background-color: var(--button-hover-color);
+    }
+
+    .hr {
+        width: 200%;
+    }
+
+    .btn-link {
+        color: var(--text-color);
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .btn-link:hover {
+        color: var(--button-hover-color);
+    }
+
+    /*.alert {*/
+    /*    background-color: var(--alert-background-color);*/
+    /*    border-left: 5px solid var(--primary-color);*/
+    /*    color: var(--text-color);*/
+    /*    margin-bottom: 15px;*/
+    /*    padding: 10px;*/
+    /*    text-align: center;*/
+    /*}*/
+
+    .logo {
+        width: 75px;
+        border-radius: 100%;
+        height: 75px;
+    }
+
+    /* Label code from https://codepen.io/lucasyem/pen/ZEEYKdj */
+
+    .form-field {
+        &::placeholder {
+            color: transparent;
+        }
+
+        &:placeholder-shown ~ .form-label {
+            cursor: text;
+            top: 25px;
+        }
+    }
+
+    .form-label {
         position: absolute;
         top: -10px;
+        left: 20px;
         display: block;
         transition: 0.2s;
         color: white;
     }
-    padding-bottom: 6px;
-}
-/* reset input */
-.form-field{
-    &:required,&:invalid { box-shadow:none; }
-}
 
-#autocomplete-results {
-    align-items: baseline;
-    max-height: 25vh;
-    overflow: scroll;
-}
+    .form-field:focus {
+        ~ .form-label {
+            position: absolute;
+            top: -10px;
+            display: block;
+            transition: 0.2s;
+            color: white;
+        }
 
-.autocomplete-item {
-    border: 1px solid white;
-    border-radius: 25px;
-    margin: 5px;
-    padding: 5px;
-    width: 98%;
-    padding-left: 20px;
-}
+        padding-bottom: 6px;
+    }
 
-/*====================================================================================================================*/
-/* Rest of the CSS */
-/*====================================================================================================================*/
+    /* reset input */
 
+    .form-field {
+        &:required, &:invalid {
+            box-shadow: none;
+        }
+    }
 
+    #autocomplete-results {
+        align-items: baseline;
+        max-height: 25vh;
+        overflow: scroll;
+    }
 
-nav {
-    background-color: #d9f7d9;
-    padding: 10px;
-    font-family: 'Roboto', sans-serif;
-    border-bottom: 2px solid #45a049;
-}
+    .autocomplete-item {
+        border: 1px solid white;
+        border-radius: 25px;
+        margin: 5px;
+        padding: 5px;
+        width: 98%;
+        padding-left: 20px;
+    }
 
-#custom-navbar .navbar-nav .nav-link {
-    color: #000 !important;
-}
-
-#my-gardens {
-    /*border-bottom: 1px solid green;*/
-    /*border-radius: 1px;*/
-    font-weight: bold;
-}
-
-#custom-navbar .navbar-nav .nav-link:hover {
-    color: #45a049;
-}
-
-.dropdown-container {
-    position: relative; /* To position the dropdown menu */
-}
-
-/* Dropdown Button */
-.dropbtn {
-    color: #1c1c1a;
-    background-color: rgba(209, 220, 151, 0.8) !important;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-    display: flex;
-    align-items: center; /* Aligns text and arrow vertically */
-}
-
-.dropdown-arrow {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 0.5rem; /* Space between text and arrow */
-    border-left: 0.4em solid transparent;
-    border-right: 0.4em solid transparent;
-    border-top: 0.4em solid #1c1c1a; /* Arrow color */
-}
-
-/* Dropdown Menu */
-.dropdown-menu-wrapper {
-    position: absolute;
-    top: 100%; /* Position it below the button */
-    left: 0; /* Align dropdown menu with the left edge of the button */
-    z-index: 100; /* Ensure it appears above other content */
-}
-
-.dropdown-menu {
-    background-color: rgba(209, 220, 151, 0.8) !important;
-    border: 1px solid #45a049;
-}
-
-/* Ensure dropdown item color and hover effects */
-#custom-navbar .dropdown-item {
-    color: #000 !important;
-}
-
-#custom-navbar .dropdown-item:hover {
-    background-color: rgba(209, 220, 151, 0.5) !important;
-    color: #45a049 !important;
-}
+    /*====================================================================================================================*/
+    /* Rest of the CSS */
+    /*====================================================================================================================*/
 
 
+    nav {
+        background-color: #d9f7d9;
+        padding: 10px;
+        font-family: 'Roboto', sans-serif;
+        border-bottom: 2px solid #45a049;
+    }
 
-.card {
-    margin-top: auto; /* Push the card to the center */
-    border: 2px solid var(--card-background-color);
-    border-radius: 10px;
-    padding: 20px;
-    background-color: var(--primary-color);
-    color: var(--text-color);
-    display: flex;
-    align-items: center;
-}
+    #custom-navbar .navbar-nav .nav-link {
+        color: #000 !important;
+    }
 
-.card-title {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-}
-.list-group{
-    width:100%;
-    list-style-type: none;
-}
-.list-group-item {
-    background: #d1dc97 !important;
-    border: none;
-    border-radius: 10px;
-    margin-bottom: 5px;
-    padding: 10px 15px;
-}
-.list-group-item img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
+    #my-gardens {
+        /*border-bottom: 1px solid green;*/
+        /*border-radius: 1px;*/
+        font-weight: bold;
+    }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-    z-index: 99;  /* Always show on top of everything */
-}
+    #custom-navbar .navbar-nav .nav-link:hover {
+        color: #45a049;
+    }
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-    z-index: 100;
-}
+    .dropdown-container {
+        position: relative; /* To position the dropdown menu */
+    }
 
-.dropdown-content a {
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
+    /* Dropdown Button */
 
-.dropdown-content a:hover {
-    background-color: var(--primary-color);
+    .dropbtn {
+        color: #1c1c1a;
+        background-color: rgba(209, 220, 151, 0.8) !important;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        font-family: 'Roboto', sans-serif;
+        display: flex;
+        align-items: center; /* Aligns text and arrow vertically */
+    }
 
-}
+    .dropdown-arrow {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-left: 0.5rem; /* Space between text and arrow */
+        border-left: 0.4em solid transparent;
+        border-right: 0.4em solid transparent;
+        border-top: 0.4em solid #1c1c1a; /* Arrow color */
+    }
 
-.dropdown:hover .dropdown-content {
-    display: block;
-}
+    /* Dropdown Menu */
 
-.error {
-    border: 1px solid red !important;
-}
+    .dropdown-menu-wrapper {
+        position: absolute;
+        top: 100%; /* Position it below the button */
+        left: 0; /* Align dropdown menu with the left edge of the button */
+        z-index: 100; /* Ensure it appears above other content */
+    }
 
-.errorMessage {
-    color: var(--accent-color);
-    font-size: smaller;
-}
+    .dropdown-menu {
+        background-color: rgba(209, 220, 151, 0.8) !important;
+        border: 1px solid #45a049;
+    }
 
-.smallErrorMessage {
-    font-size: 14px;
-    font-style: italic;
-    color: red;
-    display: block;
-}
+    /* Ensure dropdown item color and hover effects */
+
+    #custom-navbar .dropdown-item {
+        color: #000 !important;
+    }
+
+    #custom-navbar .dropdown-item:hover {
+        background-color: rgba(209, 220, 151, 0.5) !important;
+        color: #45a049 !important;
+    }
 
 
-#form {
-    width: 550px;
-    margin: 20px auto;
-    background-color: var(--primary-color);
-    padding: 20px 50px 40px;
-    box-shadow: 1px 4px 10px 1px #777;
-    overflow: hidden;
-    border-radius: 10px;
-}
+    .card {
+        margin-top: auto; /* Push the card to the center */
+        border: 2px solid var(--card-background-color);
+        border-radius: 10px;
+        padding: 20px;
+        background-color: var(--primary-color);
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+    }
 
-#form * {
-    box-sizing: border-box;
-}
+    .card-title {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+    }
 
-#form h2 {
-    text-align: center;
-    margin-bottom: 30px;
-}
+    .list-group {
+        width: 100%;
+        list-style-type: none;
+    }
 
-#form input {
-    display: block;
-    height: 32px;
-    padding: 6px 16px;
-    width: 100%;
-    border: none;
-    margin-bottom: 5px;
-    margin-top: 5px;
-}
+    .list-group-item {
+        background: #d1dc97 !important;
+        border: none;
+        border-radius: 10px;
+        margin-bottom: 5px;
+        padding: 10px 15px;
+    }
 
-#form textarea {
-    display: block;
-    min-height: 32px;
-    max-height: 300px;
-    box-sizing: border-box;
-    padding: 6px 16px;
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
-    border: none;
-    margin-bottom: 15px;
-    overflow-y: auto;
-    resize: vertical;
-}
-#form .surnameCheck {
-    display: inline;
-    margin-top: 3px;
-}
-#form .surnameCheck input{
-    width: 50%;
-}
+    .list-group-item img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
 
-#characterCountContainer {
-    font-size: 0.8750em;
-}
+    .dropdown {
+        position: relative;
+        display: inline-block;
+        z-index: 99; /* Always show on top of everything */
+    }
 
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        z-index: 100;
+    }
 
-#form label {
-    font-size: 0.8750em;
-}
+    .dropdown-content a {
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
 
-#form button, #form input[type="submit"] {
-    color: #1c1c1a;
-    display: block;
-    margin: 20px auto 0;
-    width: 100%;
-    height: 40px;
-    border-radius: 25px;
-    font-weight: 700;
-    box-shadow: 2px 3px 1px #777;
-    background: var(--button-color);
-}
+    .dropdown-content a:hover {
+        background-color: var(--primary-color);
 
-#form button:hover, #form input[type="submit"]:hover {
-    background: var(--button-hover-color);
-    cursor: pointer;
-}
+    }
 
-#tag-container {
-    display: flex;
-    width: auto;
-    margin-bottom: 20px;
-    align-items: center;
-}
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .error {
+        border: 1px solid red !important;
+    }
+
+    .errorMessage {
+        color: var(--accent-color);
+        font-size: smaller;
+    }
+
+    .smallErrorMessage {
+        font-size: 14px;
+        font-style: italic;
+        color: red;
+        display: block;
+    }
 
 
-#tag {
-    width: fit-content;
-    background-color: var(--primary-color);
-    border-radius: 5px;
-    display: flex;
-    margin-left: 5px;
-    padding: 5px;
-    color: #ffffff;
-}
+    #form {
+        width: 550px;
+        margin: 20px auto;
+        background-color: var(--primary-color);
+        padding: 20px 50px 40px;
+        box-shadow: 1px 4px 10px 1px #777;
+        overflow: hidden;
+        border-radius: 10px;
+    }
 
-#add-tag {
-    width: 22px;
-    height: 22px;
-    background-color: var(--primary-color);
-    border-radius: 50%;
-    display: flex;
-    margin-left: 5px;
-    padding-left: 6.5px;
-    color: #ffffff;
-    font-weight: bolder;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
+    #form * {
+        box-sizing: border-box;
+    }
+
+    #form h2 {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    #form input {
+        display: block;
+        height: 32px;
+        padding: 6px 16px;
+        width: 100%;
+        border: none;
+        margin-bottom: 5px;
+        margin-top: 5px;
+    }
+
+    #form textarea {
+        display: block;
+        min-height: 32px;
+        max-height: 300px;
+        box-sizing: border-box;
+        padding: 6px 16px;
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+        border: none;
+        margin-bottom: 15px;
+        overflow-y: auto;
+        resize: vertical;
+    }
+
+    #form .surnameCheck {
+        display: inline;
+        margin-top: 3px;
+    }
+
+    #form .surnameCheck input {
+        width: 50%;
+    }
+
+    #characterCountContainer {
+        font-size: 0.8750em;
+    }
+
+
+    #form label {
+        font-size: 0.8750em;
+    }
+
+    #form button, #form input[type="submit"] {
+        color: #1c1c1a;
+        display: block;
+        margin: 20px auto 0;
+        width: 100%;
+        height: 40px;
+        border-radius: 25px;
+        font-weight: 700;
+        box-shadow: 2px 3px 1px #777;
+        background: var(--button-color);
+    }
+
+    #form button:hover, #form input[type="submit"]:hover {
+        background: var(--button-hover-color);
+        cursor: pointer;
+    }
+
+    #tag-container {
+        display: flex;
+        width: auto;
+        margin-bottom: 20px;
+        align-items: center;
+    }
+
+
+    #tag {
+        width: fit-content;
+        background-color: var(--primary-color);
+        border-radius: 5px;
+        display: flex;
+        margin-left: 5px;
+        padding: 5px;
+        color: #ffffff;
+    }
+
+    #add-tag {
+        width: 22px;
+        height: 22px;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        margin-left: 5px;
+        padding-left: 6.5px;
+        color: #ffffff;
+        font-weight: bolder;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
 
 #submit-tag {
     display: none;
@@ -1573,9 +1589,8 @@ body {
     background-color: #fffdf6;
 }
 
-table td{
+table td {
     vertical-align:top;
     border:solid 1px #888;
     padding:10px;
 }
-
