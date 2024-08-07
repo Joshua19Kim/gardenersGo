@@ -50,7 +50,7 @@
                         <div class="card-body">
                             <h5 class="card-title">My Friend's List</h5>
                             <div class="main-page-friends-container-scroll main-page-friend-container">
-                                <p th:class="${friends.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No friends created </p>
+                                <p th:class="${friends.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No friends added </p>
                                 <th:block th:each="friend : ${friends}">
                                     <a class="main-page-friends-list-item main-page-custom-hover"
                                        th:href="@{/user(user=${friend.id})}">

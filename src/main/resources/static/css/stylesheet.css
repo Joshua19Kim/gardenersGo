@@ -91,12 +91,36 @@ h1 {
     color: gray;
     opacity: 1;
 }
+.garden-form-control {
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 25px;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    padding: 10px 10px;
+    width: 100%;
+    text-align: left;
+    --text-color: black;
+}
+
+.garden-form-control::placeholder {
+    color: gray;
+    opacity: 1;
+}
+textarea#description.garden-form-control {
+    height: auto !important;
+    min-height: 80px !important;
+    overflow-y: visible !important;
+    resize: vertical !important;
+}
+
 
 .btn {
     border: none;
     border-radius: 25px;
     padding: 10px 15px;
     width: 50%;
+    min-width: 100px;
     transition: 0.1s ease all;
 }
 
