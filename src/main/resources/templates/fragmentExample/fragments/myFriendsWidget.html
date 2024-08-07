@@ -1,0 +1,20 @@
+<div class="col-md-12">
+    <div class="main-page-card">
+        <div class="card-body">
+            <h5 class="card-title">My Friend's List</h5>
+            <div class="main-page-friends-container-scroll main-page-friend-container">
+                <p th:class="${friends.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No friends added </p>
+                <th:block th:each="friend : ${friends}">
+                    <a class="main-page-friends-list-item main-page-custom-hover"
+                       th:href="@{/user(user=${friend.id})}">
+                        <img class="main-page-avatar rounded-circle"
+                             style="width: 80px; height: 80px; object-fit: cover; margin-top: .3em; margin-bottom: 1em;"
+                             th:src="@{${friend.getProfilePicture()}}" alt="">
+                        <p class="mb-0 text-center" th:text="${friend.firstName} +' ' + (${friend.lastName} ?: '')"
+                           style="font-size: 0.8em; color: black; line-height: 1.2;"></p>
+                    </a>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</div>
