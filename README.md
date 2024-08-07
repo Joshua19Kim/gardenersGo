@@ -64,6 +64,7 @@ email.password=${SJMP}
 locationIq.password=${LOCATIONIQ}
 weather.password=${WEATHER}
 caching.spring.currentWeatherTTL=3600000
+server.url=http://localhost:8080
 ```
 
 - You should now be able to run the application with the green button at the top of IntelliJ
