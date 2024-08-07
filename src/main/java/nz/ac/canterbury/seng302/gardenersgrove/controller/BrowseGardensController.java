@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -94,8 +95,14 @@ public class BrowseGardensController {
     @GetMapping("/browseGardens")
     public String browseGardens(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
+            @RequestParam(name="pageRequest", defaultValue = "hehe") String pageRequest,
             Model model
     ) {
+        if(Objects.equals(pageRequest, "hehe") && !model.containsAttribute("pageRequest")) {
+            setSearchTags(new ArrayList<>());
+            setTags(new ArrayList<>());
+            setSearchTerm("");
+        }
         Long tagCount;
         if (searchTags == null) {
             tagCount = 0L;
@@ -249,6 +256,7 @@ public class BrowseGardensController {
 
         redirectAttributes.addFlashAttribute("tags", tags);
         redirectAttributes.addFlashAttribute("allTags", allTags);
+        redirectAttributes.addFlashAttribute("pageRequest", true);
 
         return "redirect:/browseGardens";
     }

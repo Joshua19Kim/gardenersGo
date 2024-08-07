@@ -1,11 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-
 import nz.ac.canterbury.seng302.gardenersgrove.controller.MainPageController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenVisitRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
@@ -53,6 +53,10 @@ public class MainPageControllerTest {
     private GardenerFormService gardenerFormService;
     @MockBean
     private GardenVisitService gardenVisitService;
+
+    @MockBean
+    PlantService plantService;
+
     @MockBean
     private GardenVisit gardenVisit;
     @MockBean
@@ -123,6 +127,29 @@ public class MainPageControllerTest {
 
         verify(gardenerFormService, times(1)).findByEmail(anyString());
         verify(gardenVisitService, times(1)).findRecentGardensByGardenerId(anyLong());
+    }
+
+    @Test
+    @WithMockUser
+    public void GivenUserHasAPlant_WhenTheyVisitTheHomePage_RecentlyAddedPlantsShown() throws Exception {
+        when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(testGardener));
+
+        Plant plant = new Plant("test plant", testGarden);
+        List<Plant> recentlyAddedPlants = new ArrayList<>();
+        recentlyAddedPlants.add(plant);
+
+        when(plantService.findNewestPlantsByGardenerId(anyLong())).thenReturn(recentlyAddedPlants);
+
+        mockMvc
+                .perform((MockMvcRequestBuilders.get("/home")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attributeExists("newestPlants"))
+                .andExpect(model().attribute("newestPlants", recentlyAddedPlants));
+
+        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(plantService, times(1)).findNewestPlantsByGardenerId(anyLong());
+
     }
 
     @Test
@@ -378,8 +405,5 @@ public class MainPageControllerTest {
                 .andExpect(view().name("mainPageTemplate"))
                 .andExpect(model().attribute("friends",friendList));
     }
-
-
-
 
 }

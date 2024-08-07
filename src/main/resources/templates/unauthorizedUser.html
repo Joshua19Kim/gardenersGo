@@ -16,7 +16,7 @@
             <img th:src="@{${gardener.getProfilePicture()}}" alt="Profile Picture">
         </div>
     </div>
-    <div class="container card">
+    <div class="container card w-50">
         <form id="userForm">
             <label for="firstName"> First Name: </label>
             <span id="firstName" th:text="${gardener.getFirstName()}"></span>
