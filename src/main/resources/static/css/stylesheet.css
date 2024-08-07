@@ -388,7 +388,7 @@ img {
 }
 
 .errorMessage {
-    color: var(--accent-color);
+    color: #b90909;
     font-size: smaller;
 }
 
