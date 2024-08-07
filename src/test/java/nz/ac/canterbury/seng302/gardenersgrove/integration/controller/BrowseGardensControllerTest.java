@@ -26,8 +26,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @WebMvcTest(controllers = BrowseGardensController.class)
 public class BrowseGardensControllerTest {
@@ -54,6 +58,9 @@ public class BrowseGardensControllerTest {
 
     private List<String> allTags;
 
+    private BrowseGardensController browseGardensControllerSpy;
+
+
     @BeforeEach
     public void setUp() {
         testGardener = new Gardener("Test", "Gardener",
@@ -69,6 +76,12 @@ public class BrowseGardensControllerTest {
         for (int i = 0; i < 8; i++) {
             allTags.add("tag" + i);
         }
+
+        browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, tagService));
+        mockMvc = standaloneSetup(browseGardensControllerSpy).build();
+        doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
+        doNothing().when(browseGardensControllerSpy).setTags(anyList());
+        doNothing().when(browseGardensControllerSpy).setSearchTags((anyList()));
 
     }
 
@@ -102,6 +115,7 @@ public class BrowseGardensControllerTest {
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
                 .andExpect(view().name("browseGardensTemplate"));
     }
+
 
     @Test
     @WithMockUser
@@ -186,7 +200,7 @@ public class BrowseGardensControllerTest {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Garden> emptyGardenPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
-        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm)).thenReturn(emptyGardenPage);
+        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(emptyGardenPage);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
                         .param("pageNo", String.valueOf(pageNo))
@@ -214,7 +228,7 @@ public class BrowseGardensControllerTest {
         }
 
         Page<Garden> matchingGardenPage = new PageImpl<>(matchingGardens, pageable, matchingGardens.size());
-        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm)).thenReturn(matchingGardenPage);
+        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(matchingGardenPage);
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
                         .param("pageNo", String.valueOf(pageNo))
                         .param("pageSize", String.valueOf(pageSize))
@@ -240,7 +254,7 @@ public class BrowseGardensControllerTest {
         List<Garden> matchingGardens = Collections.singletonList(testGarden);
         Page<Garden> matchingGardenPage = new PageImpl<>(matchingGardens, pageable, matchingGardens.size());
 
-        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm)).thenReturn(matchingGardenPage);
+        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(matchingGardenPage);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
                         .param("pageNo", String.valueOf(pageNo))
@@ -250,6 +264,7 @@ public class BrowseGardensControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", matchingGardenPage))
                 .andExpect(view().name("browseGardensTemplate"));
+
     }
 
 
