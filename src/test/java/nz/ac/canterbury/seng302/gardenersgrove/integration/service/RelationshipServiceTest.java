@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.RelationshipRepository;
@@ -11,8 +10,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 import java.time.LocalDate;

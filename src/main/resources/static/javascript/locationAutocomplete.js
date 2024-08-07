@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
             results.forEach(result => {
                 const item = document.createElement('div');
                 item.classList.add('autocomplete-item');
+                item.classList.add('text-dark');
                 const address = result.address;
                 const displayParts = [
                     address.house_number + " " + address.road,

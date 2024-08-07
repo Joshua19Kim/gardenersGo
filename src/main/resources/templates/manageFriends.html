@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head th:insert="~{fragmentExample/fragments/bootstrap.html}">
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <title>Manage Friends</title>
-    <link rel="stylesheet" th:href="@{css/stylesheet.css}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 
 <body>
+
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
-<div class="container">
-    <div style="display: flex; justify-content: space-between">
+
+<div class="container card mt-5">
+    <div>
         <h1>Manage Friends</h1>
 
         <div class="button-container">
@@ -22,29 +21,28 @@
             </button>
         </div>
     </div>
-    <div class="friendsContainer">
-        <div class="friendManagement">
-            <div class="friend-status">
-                <span class="table-header">My Friends</span>
-                <div class="table-body">
-                    <!-- Iterate over search results -->
-                    <div class="friend" th:each="friend : ${friends}">
-                        <!-- Display gardener information -->
-                        <img alt="Profile Picture" th:src="@{${friend.getProfilePicture()}}">
-                        <p th:text="${friend.toString()}"></p>
-                        <a th:href="@{/gardens(user=${friend.id})}">View Gardens</a>
-                        <a th:href="@{/user(user=${friend.id})}">View Profile</a>
-                        <button data-target="#remove-friend-modal" data-toggle="modal" id="friend-remove-button"
-                                class="remove-friend-button button"
-                                th:onclick="'displayConfirmRemove(\'' + ${friend.id} + '\');'" type="button">Remove
-                        </button>
-                    </div>
+    <div class="container">
+        <div class="card w-100">
+            <span>My Friends</span>
+            <div class="table-body">
+                <!-- Iterate over search results -->
+                <div class="friend" th:each="friend : ${friends}">
+                    <!-- Display gardener information -->
+                    <img alt="Profile Picture" th:src="@{${friend.getProfilePicture()}}">
+                    <p th:text="${friend.toString()}"></p>
+                    <a th:href="@{/gardens(user=${friend.id})}">View Gardens</a>
+                    <a th:href="@{/user(user=${friend.id})}">View Profile</a>
+                    <button data-target="#remove-friend-modal" data-toggle="modal" id="friend-remove-button"
+                            class="remove-friend-button button"
+                            th:onclick="'displayConfirmRemove(\'' + ${friend.id} + '\');'" type="button">Remove
+                    </button>
                 </div>
             </div>
+        </div>
 
             <div aria-hidden="true" class="friend-modal" id="remove-friend-modal">
-                <div class="confirmation">
-                    <p>Are you sure?</p>
+                <div class="confirmation w-50">
+                    <p class="text-dark">Are you sure?</p>
                     <div class="confirmation-container">
                         <form method="post" th:action="@{/removeRelationship}" style="margin-right: 5px;">
                             <input type="hidden"
@@ -58,7 +56,7 @@
                 </div>
             </div>
 
-            <div aria-hidden="true" class="friend-modal" id="friend-request-modal">
+            <div aria-hidden="true" class="modal" id="friend-request-modal">
                 <div class="friend-requests">
                     <div class="header">
                         <div class="table-header">
@@ -75,64 +73,64 @@
                                 <div class="friend-info">
                                     <img alt="Profile Picture"
                                          th:src="@{${pendingRequest.getProfilePicture()}}">
-                                    <p th:text="${pendingRequest.toString()}"></p>
+                                    <p class="text-dark" th:text="${pendingRequest.toString()}"></p>
 
-                                </div>
-                                <div class="friend-info">
-                                    <p>Pending</p>
-                                </div>
-                                <form style="margin-left:auto;" method="post" th:action="@{/removeRelationship}">
+                            </div>
+                            <div class="friend-info">
+                                <p class="text-dark">Pending</p>
+                            </div>
+                            <form style="margin-left:auto;" method="post" th:action="@{/removeRelationship}">
+                                <input type="hidden"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}"/>
+                                <input name="friendId" th:value="${pendingRequest.getId()}" type="hidden">
+                                <button class="button remove-friend-button">Cancel</button>
+                            </form>
+                        </div>
+                        <div class="friend" th:each="declinedRequest : ${declined}">
+                            <!-- Display gardener information -->
+                            <div class="friend-info">
+                            <img alt="Profile Picture"
+                                 th:src="@{${declinedRequest.getProfilePicture()}}">
+                            <p class="text-dark" th:text="${declinedRequest.toString()}"></p>
+                            </div>
+                            <div class="friend-info">
+                            <p class="text-dark">Declined</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="received-requests">
+                        <!-- Iterate over search results -->
+                        <div class="friend" style="display: flex; justify-content: space-between" th:each="receivedRequest : ${incoming}">
+                            <!-- Display gardener information -->
+                            <div class="friend-info">
+                                <img alt="Profile Picture"
+                                     th:src="@{${receivedRequest.getProfilePicture()}}">
+                                <p class="text-dark" th:text="${receivedRequest.toString()}"></p>
+                            </div>
+                            <div class="friend-info">
+                                <form method="post" th:action="@{/manageRequest}" style="margin-right: 5px;">
                                     <input type="hidden"
                                            th:name="${_csrf.parameterName}"
                                            th:value="${_csrf.token}"/>
-                                    <input name="friendId" th:value="${pendingRequest.getId()}" type="hidden">
-                                    <button class="button remove-friend-button">Cancel</button>
+                                    <input name="friendId" th:value="${receivedRequest.getId()}" type="hidden">
+                                    <input name="status" value="accepted" type="hidden">
+                                    <button class="accept-friend-req-btn button">Accept</button>
                                 </form>
-                            </div>
-                            <div class="friend" th:each="declinedRequest : ${declined}">
-                                <!-- Display gardener information -->
-                                <div class="friend-info">
-                                <img alt="Profile Picture"
-                                     th:src="@{${declinedRequest.getProfilePicture()}}">
-                                <p th:text="${declinedRequest.toString()}"></p>
-                                </div>
-                                <div class="friend-info">
-                                <p>Declined</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="received-requests">
-                            <!-- Iterate over search results -->
-                            <div class="friend" style="display: flex; justify-content: space-between" th:each="receivedRequest : ${incoming}">
-                                <!-- Display gardener information -->
-                                <div class="friend-info">
-                                    <img alt="Profile Picture"
-                                         th:src="@{${receivedRequest.getProfilePicture()}}">
-                                    <p th:text="${receivedRequest.toString()}"></p>
-                                </div>
-                                <div class="friend-info">
-                                    <form method="post" th:action="@{/manageRequest}" style="margin-right: 5px;">
-                                        <input type="hidden"
-                                               th:name="${_csrf.parameterName}"
-                                               th:value="${_csrf.token}"/>
-                                        <input name="friendId" th:value="${receivedRequest.getId()}" type="hidden">
-                                        <input name="status" value="accepted" type="hidden">
-                                        <button class="accept-friend-req-btn button">Accept</button>
-                                    </form>
-                                    <form method="post" th:action="@{/manageRequest}">
-                                        <input type="hidden"
-                                               th:name="${_csrf.parameterName}"
-                                               th:value="${_csrf.token}"/>
-                                        <input name="friendId" th:value="${receivedRequest.getId()}" type="hidden">
-                                        <input name="status" value="declined" type="hidden">
-                                        <button class="decline-friend-req-btn button">Decline</button>
-                                    </form>
-                                </div>
+                                <form method="post" th:action="@{/manageRequest}">
+                                    <input type="hidden"
+                                           th:name="${_csrf.parameterName}"
+                                           th:value="${_csrf.token}"/>
+                                    <input name="friendId" th:value="${receivedRequest.getId()}" type="hidden">
+                                    <input name="status" value="declined" type="hidden">
+                                    <button class="decline-friend-req-btn button">Decline</button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
             <div aria-hidden="true" class="friend-modal" id="add-friend-modal">
                 <div class="add-friends">
@@ -159,19 +157,18 @@
                                         <input name="status" value="pending" type="hidden">
                                         <img alt="Profile Picture"
                                              th:src="@{${search.getProfilePicture()}}">
-                                        <p th:text="${search.toString()}"></p>
+                                        <p class="text-dark" th:text="${search.toString()}"></p>
                                     </div>
                                     <button class="invite-friend-req-btn button">Invite Friend</button>
                                 </form>
                             </div>
-                            <p id="no-results-match-message"></p>
+                            <p class="text-dark" id="no-results-match-message"></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 <script>
 

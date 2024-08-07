@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-uk">
 <head th:insert="~{fragmentExample/fragments/bootstrap.html}">
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Create New Garden</title>
-  <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
 </head>
+
 <body>
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
-<div>
-  <div id="form" class="create-garden">
+
+<div class="container mb-5">
+  <div class="container card w-100 mb-5">
     <h1> Create New Garden </h1>
-    <form id="gardenForm" th:action="@{form(redirect=${requestURI})}" method="post">
+    <form class="w-100 d-flex flex-column" id="gardenForm" th:action="@{form(redirect=${requestURI})}" method="post">
       <div class="create-garden-row">
         <div>
           <label for="name"> Name: </label>
@@ -51,7 +51,7 @@
                    th:classappend="${locationError} ? 'error' : ''"
             >
             <span th:if="${locationError}" th:utext="${locationError}" class="smallErrorMessage"></span>
-            <div class="autocomplete-results" id="autocomplete-results"></div>
+            <div id="autocomplete-results"></div>
           </div>
         </div>
         <br/>
@@ -61,14 +61,14 @@
         <div class="create-garden-row">
           <div>
             <label for="suburb">Suburb:</label>
-            <input type="text" id="suburb" th:name="suburb" th:value="*{suburb}"
+            <input class="form-control" type="text" id="suburb" th:name="suburb" th:value="*{suburb}"
                    th:classappend="${suburbError} ? 'error' : ''">
             <span th:if="${suburbError}" th:utext="${suburbError}" class="smallErrorMessage"></span>
 
           </div>
           <div>
             <label for="city">City:</label>
-            <input type="text" id="city" th:name="city" th:value="*{city}"
+            <input class="form-control" type="text" id="city" th:name="city" th:value="*{city}"
                    th:classappend="${cityError} ? 'error' : ''">
             <span th:if="${cityError}" th:utext="${cityError}" class="smallErrorMessage"></span>
 
@@ -79,14 +79,14 @@
         <div class="create-garden-row">
           <div>
             <label for="country">Country:</label>
-            <input type="text" id="country" th:name="country" th:value="*{country}"
+            <input class="form-control" type="text" id="country" th:name="country" th:value="*{country}"
                    th:classappend="${countryError} ? 'error' : ''">
             <span th:if="${countryError}" th:utext="${countryError}" class="smallErrorMessage"></span>
 
           </div>
           <div>
             <label for="postcode">Postcode:</label>
-            <input type="text" id="postcode" th:name="postcode" th:value="*{postcode}"
+            <input class="form-control" type="text" id="postcode" th:name="postcode" th:value="*{postcode}"
                    th:classappend="${postcodeError} ? 'error' : ''">
             <span th:if="${postcodeError}" th:utext="${postcodeError}" class="smallErrorMessage"></span>
           </div>
@@ -96,10 +96,10 @@
 
       <script th:src="@{/javascript/locationAutocomplete.js}"></script>
 
-      <button type="submit" onclick="checkValidAddress()" class="create-garden-button">Create!</button>
+      <button class="btn btn-success w-25 align-self-center" type="submit" onclick="checkValidAddress()">Create!</button>
     </form>
-    <a th:href="@{${requestURI}}" class="create-garden-cancel-link">
-      <button class="create-garden-cancel">Cancel</button>
+    <a th:href="@{${requestURI}}" class="btn btn-secondary w-25 mt-3">
+      Cancel
     </a>
   </div>
   <script>
