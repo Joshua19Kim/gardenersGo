@@ -155,6 +155,11 @@ public class MainPageController {
         return "mainPageEditForm";
     }
 
+    /**
+     * This endpoint changes and stores the updated homepage layout for a user
+     * @param layout is the layout of the page (i.e. "1 2 3" represents the default layout)
+     * @return a redirect to the user page
+     */
     @PostMapping("/changeLayout")
     public String changeLayout(@RequestParam("layout") int layout) {
         logger.info(String.valueOf(layout));
