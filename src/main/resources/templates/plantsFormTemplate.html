@@ -14,19 +14,19 @@
         <form id="plantForm" th:action="@{form(gardenId=${garden.id})}" method="post" enctype="multipart/form-data">
             <label for="name"> Name: </label>
             <input type="text" class="form-control" th:value="*{name}" id="name" name="name" maxlength="64" placeholder="Name"
-                   th:classappend="${nameError} ? 'error' : ''">
+                   th:classappend="${nameError} ? 'is-invalid' : ''">
             <p th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></p>
             <br/>
             <label for="count"> Plant Count: </label>
             <input type="text" class="form-control" th:value="*{count}" id="count"  name="count" maxlength="12" placeholder="How many?"
-                   th:classappend="${countError} ? 'error' : ''">
+                   th:classappend="${countError} ? 'is-invalid' : ''">
             <span th:if="${countError}" th:text="${countError}" class="smallErrorMessage"></span>
             <br/>
             <label for="description"> Description: </label>
             <br/>
             <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
             <textarea class="form-control" th:value="*{description}" id="description" name="description"  maxlength="512"
-                      th:classappend="${descriptionError} ? 'error' : ''">[[${description}]]</textarea>
+                      th:classappend="${descriptionError} ? 'is-invalid' : ''">[[${description}]]</textarea>
             <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
             <br/>
             <label for="datePlanted"> Date Planted: </label>

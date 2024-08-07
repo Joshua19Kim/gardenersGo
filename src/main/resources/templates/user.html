@@ -66,7 +66,7 @@
 
             <label for="DoB"> Date of Birth: </label>
             <span id="DoB" th:text="${DoB}"></span>
-            <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;" th:classappend="${(DoBValid != '' && DoBValid != null) ? 'error' : ''}">
+            <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;" th:classappend="${(DoBValid != '' && DoBValid != null) ? 'is-invalid' : ''}">
             <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
 
             <script>

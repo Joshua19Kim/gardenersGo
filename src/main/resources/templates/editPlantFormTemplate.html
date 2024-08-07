@@ -12,18 +12,18 @@
         <form id="editPlantForm" th:action="@{edit(plantId=${plant.id})}" method="post" enctype="multipart/form-data">
             <label for="name"> Name: </label>
             <input type="text" class="form-control" id="name" name="name" maxlength="64" th:value="${name != null ? name : plant.name}"
-                   th:classappend="${nameError} ? 'error' : ''">
+                   th:classappend="${nameError} ? 'is-invalid' : ''">
             <p th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></p>
             <br/>
             <label for="count"> Plant Count: </label>
             <input type="text" class="form-control" id="count" name="count" maxlength="12" th:value="${count != null ? count : (plant.count != 0.0 ? plant.count : '')}"
-                   th:classappend="${countError} ? 'error' : ''">
+                   th:classappend="${countError} ? 'is-invalid' : ''">
             <span th:if="${countError}" th:text="${countError}" class="smallErrorMessage"></span>
             <br/>
             <label for="description"> Description: </label>
             <br/>
             <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
-            <textarea class="form-control" id="description" name="description" th:classappend="${descriptionError} ? 'error' : ''" maxlength="512">[[${description != null ? description : plant.description}]]</textarea>
+            <textarea class="form-control" id="description" name="description" th:classappend="${descriptionError} ? 'is-invalid' : ''" maxlength="512">[[${description != null ? description : plant.description}]]</textarea>
 
             <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
             <br/>
