@@ -91,12 +91,36 @@ h1 {
     color: gray;
     opacity: 1;
 }
+.garden-form-control {
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 25px;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    padding: 10px 10px;
+    width: 100%;
+    text-align: left;
+    --text-color: black;
+}
+
+.garden-form-control::placeholder {
+    color: gray;
+    opacity: 1;
+}
+textarea#description.garden-form-control {
+    height: auto !important;
+    min-height: 80px !important;
+    overflow-y: visible !important;
+    resize: vertical !important;
+}
+
 
 .btn {
     border: none;
     border-radius: 25px;
     padding: 10px 15px;
     width: 50%;
+    min-width: 100px;
     transition: 0.1s ease all;
 }
 
@@ -277,6 +301,10 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 .card-title {
     font-size: 1.25rem;
     margin-bottom: 1rem;
+}
+.list-group{
+    width:100%;
+    list-style-type: none;
 }
 .list-group-item {
     background: #d1dc97 !important;
@@ -737,9 +765,7 @@ nav ul li a:hover, nav ul li input[type="submit"]:hover {
 .temperature {
     font-size: 2vw;
 }
-.list-group{
-    list-style-type: none;
-}
+
 
 
 body, h2, h3, h4, h5, h6, a {
@@ -796,6 +822,91 @@ body, h2, h3, h4, h5, h6, a {
 .UserProfilePicContainer .image-button:hover {
     cursor: pointer;
     opacity: 1;
+}
+
+.main-page-friends-list-item {
+    background: #d1dc97 !important;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    height: 130px;
+    margin: 5px;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.3s ease;
+}
+
+.main-page-card {
+    margin-top: auto; /* Push the card to the center */
+    border: 2px solid var(--card-background-color);
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    max-width: 53em;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+}
+
+.main-page-card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.main-page2-card {
+    margin-top: auto; /* Push the card to the center */
+    border: 2px solid var(--card-background-color);
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.main-page2-card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.main-page-avatar {
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.main-page-custom-hover {
+    background-color: transparent;
+}
+.main-page-custom-hover:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+.main-page-friends-container-scroll::-webkit-scrollbar {
+    width: 5px;
+}
+
+.main-page-friends-container-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+.main-page-friend-container {
+    max-height: 280px;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+}
+.alert-transparent {
+    background-color: transparent !important;
+    border: none !important;
 }
 
 
