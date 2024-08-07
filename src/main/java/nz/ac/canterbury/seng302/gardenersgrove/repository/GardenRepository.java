@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -73,7 +74,29 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
      *
      * @param pageable The pageable specifying relevant information for pagination
      * @param searchTerm the term to search garden and plant names for
+     * @param tags the list of tags to filter gardens by
+     * @param tagCount the number of tags in the search query
      */
-    @Query(value = "SELECT DISTINCT g.* FROM garden g LEFT JOIN plant p ON g.id = p.garden_id WHERE g.public_garden IS TRUE AND (g.name LIKE %:searchTerm% OR p.name LIKE %:searchTerm%)", nativeQuery = true)
-    Page<Garden> findGardensBySearchTerm(Pageable pageable, @Param("searchTerm") String searchTerm);
+    @Query(value = "SELECT DISTINCT g.* FROM garden g " +
+            "LEFT JOIN plant p ON g.id = p.garden_id " +
+            "LEFT JOIN tag t ON g.id = t.garden " +
+            "WHERE g.public_garden IS TRUE " +
+            "AND (:searchTerm IS NULL OR :searchTerm = '' OR g.name LIKE %:searchTerm% OR p.name LIKE %:searchTerm%) " +
+            "AND (:tagCount = 0 OR g.id IN (" +
+            "  SELECT g2.id FROM garden g2 " +
+            "  LEFT JOIN tag t2 ON g2.id = t2.garden " +
+            "  WHERE t2.tag_name IN (:tags)" +
+            "))",
+            countQuery = "SELECT COUNT(DISTINCT g.id) FROM garden g " + // This is necessary for the query to work with the Pageable interface
+                    "LEFT JOIN plant p ON g.id = p.garden_id " +
+                    "LEFT JOIN tag t ON g.id = t.garden " +
+                    "WHERE g.public_garden IS TRUE " +
+                    "AND (:searchTerm IS NULL OR :searchTerm = '' OR g.name LIKE %:searchTerm% OR p.name LIKE %:searchTerm%) " +
+                    "AND (:tagCount = 0 OR g.id IN (" +
+                    "  SELECT g2.id FROM garden g2 " +
+                    "  LEFT JOIN tag t2 ON g2.id = t2.garden " +
+                    "  WHERE t2.tag_name IN (:tags) " +
+                    "))",
+            nativeQuery = true)
+    Page<Garden> findGardensBySearchTerm(Pageable pageable, @Param("searchTerm") String searchTerm, @Param("tags") List<String> tags, @Param("tagCount") Long tagCount);
 }

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -332,6 +333,51 @@ public class MainPageControllerTest {
                 .andExpect(model().attribute("recentGardens", recentGardenList));
     }
 
+    @Test
+    @WithMockUser
+    public void MainPageDisplayed_UserHasNoFriends_ShowNoFriendMessageAndReturnEmptyList() throws Exception {
+        List<Gardener> friendList = new ArrayList<>();
+        when(relationshipService.getCurrentUserRelationships(testGardener.getId())).thenReturn(friendList);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/home")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attribute("friends", Matchers.empty()))
+                .andExpect(content().string(containsString("No friends added")));
+    }
+    @Test
+    @WithMockUser
+    public void MainPageDisplayed_UserHasFriends_ShowFriendsOnList() throws Exception {
+        List<Gardener> friendList = new ArrayList<>();
+        Gardener testGardener1 = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
+        friendList.add(testGardener1);
+        Gardener testGardener2 = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
+        friendList.add(testGardener2);
+        Gardener testGardener3 = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
+        friendList.add(testGardener3);
+        Gardener testGardener4 = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
+        friendList.add(testGardener4);
+
+
+        when(relationshipService.getCurrentUserRelationships(testGardener.getId())).thenReturn(friendList);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/home")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attribute("friends",friendList));
+    }
 
 
 

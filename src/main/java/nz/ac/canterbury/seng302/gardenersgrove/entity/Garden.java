@@ -296,6 +296,22 @@ public class Garden {
     this.gardener = gardener;
   }
 
+  @Override
+  public String toString() {
+    return "Garden{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", location='" + location + '\'' +
+            ", suburb='" + suburb + '\'' +
+            ", city='" + city + '\'' +
+            ", country='" + country + '\'' +
+            ", postcode='" + postcode + '\'' +
+            ", size='" + size + '\'' +
+            ", description='" + description + '\'' +
+            ", creationDate=" + creationDate +
+            '}';
+  }
+
   /**
    * Sets the id of the garden
    *
