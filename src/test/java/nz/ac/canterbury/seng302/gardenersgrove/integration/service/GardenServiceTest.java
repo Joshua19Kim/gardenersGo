@@ -237,7 +237,7 @@ public class GardenServiceTest {
             }
 
             @Override
-            public Page<Garden> findGardensBySearchTerm(Pageable pageable, String searchTerm) {
+            public Page<Garden> findGardensBySearchTerm(Pageable pageable, String searchTerm, List<String> tags, Long tagCount) {
                 return null;
             }
 
