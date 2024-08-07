@@ -35,11 +35,20 @@
                 <div class="col-md-6 mb-4">
                     <div class="main-page2-card">
                         <div class="main-page2-card-title">Newest Plants</div>
-                        <ul class="list-group">
-                            <li class="list-group-item"><img src="plant-icon.png" alt="Plant Icon"> Sapling <br><small>Fabian’s Garden</small></li>
-                            <li class="list-group-item" ><img src="plant-icon.png" alt="Plant Icon"> Rose <br><small>Fabian’s Garden</small></li>
-                            <li class="list-group-item"><img src="plant-icon.png" alt="Plant Icon"> Plant <br><small>Fabian’s Garden</small></li>
-                        </ul>
+                        <div class="list-group">
+                            <p th:class="${newestPlants.isEmpty()}? 'alert alert-secondary' : 'd-none'">No plants added</p>
+                            <th:block th:each="plant : ${newestPlants}">
+                                <a class="list-group-item plant-item" th:href="@{/gardens/details(gardenId=${plant.garden.id})}">
+                                    <div class="plant-image">
+                                        <img class="avatar" th:src="@{${plant.image}}" alt="Plant Image"/>
+                                    </div>
+                                    <div class="plant-info">
+                                        <p class="font-weight-bold" th:text="${plant.name}"></p>
+                                        <small th:text="${'Garden: ' + plant.garden.name}"></small>
+                                    </div>
+                                </a>
+                            </th:block>
+                        </div>
                     </div>
                 </div>
             </div>
