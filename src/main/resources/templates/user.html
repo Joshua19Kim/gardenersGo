@@ -8,12 +8,12 @@
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
-<div class="mb-5" id="user_div">
-    <h1>User Profile</h1>
-    <button class="btn btn-success" data-bs-target="#exampleModal" data-bs-toggle="modal" type="button">
-        Edit Layout
-    </button>
+<button class="btn btn-success w-auto m-2" data-bs-target="#exampleModal" data-bs-toggle="modal" type="button">
+    Edit Homepage
+</button>
 
+<div class="mb-5" id="user_div">
+    <h1 class="text-dark">User Profile</h1>
     <div class="UserProfilePicContainer">
         <form th:action="@{user}" method="post" enctype="multipart/form-data" id="uploadImageForm">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -105,7 +105,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Layout</h1>
+                <h1 class="modal-title text-dark" id="exampleModalLabel">Edit Layout</h1>
                 <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
             </div>
             <div class="modal-body d-grid">
@@ -114,12 +114,12 @@
                     <div class="row mb-3">
                         <div class="col">
                             <button class="selectable" onclick="selectOption(this, 1)" type="button">
-                                <img alt="layout1" src="/images/placeholder.jpg">
+                                <img alt="layout1" th:src="@{/images/layout1.png}">
                             </button>
                         </div>
                         <div class="col">
                             <button class="selectable" onclick="selectOption(this, 2)" type="button">
-                                <img alt="layout2" src="/images/placeholder.jpg">
+                                <img alt="layout2" th:src="@{/images/layout2.png}">
                             </button>
                         </div>
                     </div>
@@ -127,23 +127,23 @@
                     <div class="row">
                         <div class="col">
                             <button class="selectable" onclick="selectOption(this, 3)" type="button">
-                                <img alt="layout3" src="/images/placeholder.jpg">
+                                <img alt="layout3" th:src="@{/images/layout3.png}">
                             </button>
                         </div>
                         <div class="col">
                             <button class="selectable" onclick="selectOption(this, 4)" type="button">
-                                <img alt="layout4" src="/images/placeholder.jpg">
+                                <img alt="layout4" th:src="@{/images/layout4.png}">
                             </button>
                         </div>
                     </div>
                 </form>
             </div>
 
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+            <div class="modal-footer d-flex justify-content-around">
                 <button class="btn btn-primary" onclick="document.getElementById('layoutForm').submit()" type="submit">
                     Save changes
                 </button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
             </div>
         </div>
     </div>
