@@ -117,6 +117,10 @@ public class RegisterController {
         model.addAttribute("firstNameValid", firstNameError.orElse(""));
         Optional<String> lastNameError = inputValidator.checkValidName(lastName, "Last", isLastNameOptional);
         model.addAttribute("lastNameValid", lastNameError.orElse(""));
+        if (isLastNameOptional && lastName != null && !lastName.isEmpty() && lastNameError.isEmpty()) {
+            lastNameError = Optional.of("You cannot enter a last name");
+            model.addAttribute("lastNameValid", "You cannot enter a last name");
+        }
 
         Optional<String> DoBError = Optional.empty();
 
@@ -138,7 +142,7 @@ public class RegisterController {
         model.addAttribute("passwordStrong", passwordStrengthError.orElse(""));
 
         if (firstNameError.isEmpty() &&
-                (lastNameError.isEmpty() || isLastNameOptional)  &&
+                (lastNameError.isEmpty())  &&
                 validEmailError.isEmpty() &&
                 emailInUseError.isEmpty() &&
                 passwordMatchError.isEmpty() &&

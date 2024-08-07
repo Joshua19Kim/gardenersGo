@@ -43,6 +43,11 @@ public class MainPageLayout {
 
     public MainPageLayout(Gardener gardener) {
         this.gardener = gardener;
+        this.format = "1 2 3";
+        this.widgetSmallOne = "myGardens";
+        this.widgetSmallTwo = "1";
+        this.widgetWide = "3";
+        this.widgetTall = "recentGardens";
     }
 
     public String getWidgetSmallOne() {
