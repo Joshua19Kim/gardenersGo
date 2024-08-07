@@ -7,7 +7,7 @@
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="container mb-5">
-    <div class="card mb-5">
+    <div class="card mb-5 w-50">
         <h1> Edit Plant </h1>
         <form id="editPlantForm" th:action="@{edit(plantId=${plant.id})}" method="post" enctype="multipart/form-data">
             <label for="name"> Name: </label>
