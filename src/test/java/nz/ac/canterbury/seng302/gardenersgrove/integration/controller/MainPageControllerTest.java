@@ -56,14 +56,9 @@ public class MainPageControllerTest {
     private GardenerFormService gardenerFormService;
     @MockBean
     private GardenVisitService gardenVisitService;
-    @MockBean
-    private GardenerFormService gardenerFormService;
 
-    @MockBean
-    private RelationshipService relationshipService;
     @MockBean PlantService plantService;
 
-    private GardenVisit gardenVisit;
     private Gardener testGardener;
     private Garden testGarden;
 

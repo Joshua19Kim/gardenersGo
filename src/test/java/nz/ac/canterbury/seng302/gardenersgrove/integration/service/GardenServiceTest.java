@@ -267,9 +267,7 @@ public class GardenServiceTest {
         List<Garden> gardensListCopy = new ArrayList<>(gardensPage.getContent());
         gardensListCopy.sort(Comparator.comparing(Garden::getCreationDate));
 
-        List<Garden> reversedGardensList = gardensListCopy.stream()
-                .sorted(Collections.reverseOrder())
-                .collect(Collectors.toList());
+        List<Garden> reversedGardensList = gardensListCopy.reversed();
 
         Assertions.assertEquals(gardensPage.getContent(), reversedGardensList);
     }
