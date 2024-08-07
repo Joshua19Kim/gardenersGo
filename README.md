@@ -6,7 +6,7 @@ edit their profile, create/edit gardens and add plants to them, send friend requ
 add tags to gardens, make gardens public, and view the weather for the garden location. Friends can view each other's 
 profile and garden details. There is also the ability to browse public gardens, including searching for gardens/plants by name and filtering by tags. When you first log in you will be directed to the home page which is composed of some interesting and fun widgets.
 
-The project currently uses ```gradle```, ```Spring Boot```, ```Thymeleaf```, ```WeatherAPI```, ```LocationIQ``` and ```Simple Java Mail```.
+The project currently uses ```gradle```, ```Spring Boot```, ```Thymeleaf```, ```Bootstrap```,```WeatherAPI```, ```LocationIQ``` and ```Simple Java Mail```.
 ```GitLab CI``` is configured to build and run the project but for sprint 2 we request that the project not be 
 evaluated on the online VM.
 
