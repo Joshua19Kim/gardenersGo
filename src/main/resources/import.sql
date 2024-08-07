@@ -124,11 +124,22 @@ ALTER TABLE relationships ADD CONSTRAINT unique_gardener_friend UNIQUE (gardener
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 2, 'accepted');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 10, 'accepted');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 11, 'accepted');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (4, 1, 'pending');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (6, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 4, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 5, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 6, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 7, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 8, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 9, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 14, 'accepted');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 15, 'accepted');
+
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 12, 'pending');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 13, 'pending');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 3, 'declined');
+
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (4, 1, 'pending');
+INSERT INTO relationships (gardener_id, friend_id, status) VALUES (6, 1, 'pending');
+
 
 
 INSERT INTO tag (garden , tag_name) VALUES (1, 'herbs');
