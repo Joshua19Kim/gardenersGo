@@ -13,16 +13,16 @@
             <div class="create-garden-row">
                 <div>
                     <label for="name"> Name: </label>
-                    <input type="text" class="garden-form-control" id="name" maxlength="64" placeholder="Name"
+                    <input type="text" class="form-control" id="name" maxlength="64" placeholder="Name"
                            th:name="name" th:value="*{name}" data-cy="name" autofocus
-                           th:classappend="${nameError} ? 'error' : ''">
+                           th:classappend="${nameError} ? 'is-invalid' : ''">
                     <span th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></span>
                 </div>
                 <div>
                     <label for="size"> Size (m<sup>2</sup>): </label>
-                    <input type="text" class="garden-form-control" id="size" maxlength="12" placeholder=""
+                    <input type="text" class="form-control" id="size" maxlength="12" placeholder=""
                            th:name="size" th:value="*{size}" data-cy="size" autofocus
-                           th:classappend="${sizeError} ? 'error' : ''">
+                           th:classappend="${sizeError} ? 'is-invalid' : ''">
                     <span th:if="${sizeError}" th:utext="${sizeError}" class="smallErrorMessage"></span>
                 </div>
             </div>
@@ -33,9 +33,9 @@
                 <label for="description"> Description:</label>
                 <br/>
                 <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
-                <textarea class="garden-form-control" id="description" maxlength="512" placeholder=""
+                <textarea class="form-control" id="description" maxlength="512" placeholder=""
                        th:name="description" th:value="*{description}" data-cy="description" autofocus
-                       th:classappend="${descriptionError} ? 'error' : ''">[[${description != null ? description : garden.description}]]</textarea>
+                       th:classappend="${descriptionError} ? 'is-invalid' : ''">[[${description != null ? description : garden.description}]]</textarea>
                 <span th:if="${descriptionError}" th:utext="${descriptionError}" class="smallErrorMessage"></span>
             </div>
             <div style="display: flex; margin-top: 40px; justify-content: flex-end;">
@@ -44,9 +44,9 @@
             <div style="display: flex;">
                 <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
                     <label for="location"> Address: </label>
-                    <input class="garden-form-control" type="text" id="location" maxlength="128" placeholder="Start typing your address..."
+                    <input class="form-control" type="text" id="location" maxlength="128" placeholder="Start typing your address..."
                            th:name="location" th:value="*{location}" data-cy="location" autofocus
-                           th:classappend="${locationError} ? 'error' : ''"
+                           th:classappend="${locationError} ? 'is-invalid' : ''"
                     >
                     <span th:if="${locationError}" th:utext="${locationError}" class="smallErrorMessage"></span>
                     <div class="autocomplete-results" id="autocomplete-results"></div>
@@ -61,14 +61,14 @@
                 <div class="create-garden-row">
                     <div>
                         <label for="suburb">Suburb:</label>
-                        <input class="garden-form-control" type="text" id="suburb" th:name="suburb" th:value="*{suburb}"
-                               th:classappend="${suburbError} ? 'error' : ''">
+                        <input class="form-control" type="text" id="suburb" th:name="suburb" th:value="*{suburb}"
+                               th:classappend="${suburbError} ? 'is-invalid' : ''">
                         <span th:if="${suburbError}" th:utext="${suburbError}" class="smallErrorMessage"></span>
                     </div>
                     <div>
                         <label for="city">City:</label>
-                        <input class="garden-form-control" type="text" id="city" th:name="city" th:value="*{city}"
-                               th:classappend="${cityError} ? 'error' : ''">
+                        <input class="form-control" type="text" id="city" th:name="city" th:value="*{city}"
+                               th:classappend="${cityError} ? 'is-invalid' : ''">
                         <span th:if="${cityError}" th:utext="${cityError}" class="smallErrorMessage"></span>
                     </div>
                 </div>
@@ -76,14 +76,14 @@
                 <div class="create-garden-row">
                     <div>
                         <label for="country">Country:</label>
-                        <input class="garden-form-control" type="text" id="country" th:name="country" th:value="*{country}"
-                               th:classappend="${countryError} ? 'error' : ''">
+                        <input class="form-control" type="text" id="country" th:name="country" th:value="*{country}"
+                               th:classappend="${countryError} ? 'is-invalid' : ''">
                         <span th:if="${countryError}" th:utext="${countryError}" class="smallErrorMessage"></span>
                     </div>
                     <div>
                         <label for="postcode">Postcode:</label>
-                        <input class="garden-form-control" type="text" id="postcode" th:name="postcode" th:value="*{postcode}"
-                               th:classappend="${postcodeError} ? 'error' : ''">
+                        <input class="form-control" type="text" id="postcode" th:name="postcode" th:value="*{postcode}"
+                               th:classappend="${postcodeError} ? 'is-invalid' : ''">
                         <span th:if="${postcodeError}" th:utext="${postcodeError}" class="smallErrorMessage"></span>
                     </div>
                 </div>
