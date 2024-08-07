@@ -8,7 +8,7 @@
 </script>
 
 <nav>
-    <a href="/home" style="text-decoration: none; color: inherit;">
+    <a th:href="@{/home}" style="text-decoration: none; color: inherit;">
         <h1 xmlns:sec="http://www.w3.org/1999/xhtml">
             Gardener's Grove
         </h1>
@@ -22,7 +22,7 @@
                 <div class="dropdown-content">
                     <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
                         <!-- Iterate over the list of gardens and display them -->
-                        <a th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a>
+                        <a class="text-dark" th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a>
                     </th:block>
                 </div>
             </div>
