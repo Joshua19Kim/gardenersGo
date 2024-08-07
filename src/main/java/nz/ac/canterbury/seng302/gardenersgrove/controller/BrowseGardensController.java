@@ -42,13 +42,38 @@ public class BrowseGardensController {
 
     private final int pageSize;
 
+
+    private String searchTerm;
+
+    private List<String> tags;
+
+    private List<String> searchTags;
+
+
     @Autowired
     public BrowseGardensController(GardenService gardenService, TagService tagService) {
 
         this.gardenService = gardenService;
         this.tagService = tagService;
         this.pageSize = 10;
+        this.searchTerm = "";
+        this.tags = new ArrayList<>();
+        this.searchTags = new ArrayList<>();
+
     }
+
+    public void setSearchTerm(String searchTerm) {
+        this.searchTerm = searchTerm;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public void setSearchTags(List<String> tags) {
+        this.searchTags = tags;
+    }
+
 
     /**
      * Handles GET request for the browse gardens page. It gets a Page of Garden objects by
@@ -61,22 +86,45 @@ public class BrowseGardensController {
     @RequestMapping("/browseGardens")
     public String browseGardens(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
-            @RequestParam(name="tags", required = false) List<String> tags,
             Model model
     ) {
+        Long tagCount;
+        if (searchTags == null) {
+            tagCount = 0L;
+        } else {
+            tagCount = (long) searchTags.size();
+        }
         if(model.containsAttribute("pageNo")) {
             pageNoString = (String) model.getAttribute("pageNo");
         }
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
-        Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
+        Page<Garden> gardensPage;
+        if((searchTerm == null || searchTerm.isEmpty()) && (searchTags == null || searchTags.isEmpty()) ){
+            gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
+        } else {
+            gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, searchTags, tagCount);
+        }
+
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+        if(totalPages > 0) {
+            int lowerBound = Math.max(pageNo - 1, 1);
+            int upperBound = Math.min(pageNo + 3, totalPages);
+            List<Integer> pageNumbers = IntStream.rangeClosed(lowerBound, upperBound)
                     .boxed()
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
+
+            long totalItems = gardensPage.getTotalElements();
+            int startIndex = pageSize * pageNo + 1;
+            long endIndex = Math.min((long) pageSize * (pageNo + 1), totalItems);
+            String paginationMessage = "Showing results " + startIndex + " to " + endIndex + " of " + totalItems;
+            model.addAttribute("paginationMessage", paginationMessage);
+        } else {
+            String paginationMessage = "Showing results 0 to 0 of 0";
+            model.addAttribute("paginationMessage", paginationMessage);
         }
+
         if(!model.containsAttribute("tags") && !model.containsAttribute("allTags")) {
             List<String> allTags = tagService.getAllTagNames();
             if(tags != null) {
@@ -107,28 +155,18 @@ public class BrowseGardensController {
             @RequestParam(name="tags", required = false) List<String> tags,
             Model model) {
         logger.info("POST /browseGardens");
-
+        setSearchTerm(searchTerm);
+        this.tags = new ArrayList<>();
+        setSearchTags(tags);
         Long tagCount;
         if (tags == null) {
             tagCount = 0L;
         } else {
             tagCount = (long) tags.size();
         }
-
-        if(!model.containsAttribute("tags") && !model.containsAttribute("allTags")) {
-            List<String> allTags = tagService.getAllTagNames();
-            if(tags != null) {
-                for(String selectedTag: tags) {
-                    allTags.remove(selectedTag);
-                }
-                model.addAttribute("tags", tags);
-            }
-            model.addAttribute("allTags", allTags);
-        }
-
-        if (!searchTerm.isEmpty()) {
-            model.addAttribute("searchTerm", searchTerm);
-        }
+        List<String> allTags = tagService.getAllTagNames();
+        model.addAttribute("allTags", allTags);
+        model.addAttribute("tags", this.tags);
 
         Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, tags, tagCount);
         if (gardensPage.getContent().isEmpty()) {
@@ -136,12 +174,24 @@ public class BrowseGardensController {
         }
         model.addAttribute("gardensPage", gardensPage);
         int totalPages = gardensPage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+        if(totalPages > 0) {
+            int lowerBound = Math.max(pageNo - 1, 1);
+            int upperBound = Math.min(pageNo + 3, totalPages);
+            List<Integer> pageNumbers = IntStream.rangeClosed(lowerBound, upperBound)
                     .boxed()
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
+
+            long totalItems = gardensPage.getTotalElements();
+            int startIndex = pageSize * pageNo + 1;
+            long endIndex = Math.min((long) pageSize * (pageNo + 1), totalItems);
+            String paginationMessage = "Showing results " + startIndex + " to " + endIndex + " of " + totalItems;
+            model.addAttribute("paginationMessage", paginationMessage);
+        } else {
+            String paginationMessage = "Showing results 0 to 0 of 0";
+            model.addAttribute("paginationMessage", paginationMessage);
         }
+
 
         return "browseGardensTemplate";
     }
@@ -162,7 +212,6 @@ public class BrowseGardensController {
             @RequestParam(name="pageNo", defaultValue = "0") String pageNo,
             @RequestParam(name="tag-input") String tag,
             @RequestParam(name="tags", required = false) List<String> tags,
-            @RequestParam(name="searchTerm", required = false) String searchTerm,
             Model model, RedirectAttributes redirectAttributes
     ) {
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
@@ -188,10 +237,10 @@ public class BrowseGardensController {
         for(String selectedTag: tags) {
             allTags.remove(selectedTag);
         }
+        setTags(tags);
 
         redirectAttributes.addFlashAttribute("tags", tags);
         redirectAttributes.addFlashAttribute("allTags", allTags);
-        redirectAttributes.addFlashAttribute("searchTerm", searchTerm);
 
         return "redirect:/browseGardens";
     }

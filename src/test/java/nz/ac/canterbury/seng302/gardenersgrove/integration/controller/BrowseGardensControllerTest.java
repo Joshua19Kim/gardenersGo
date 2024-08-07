@@ -81,6 +81,7 @@ public class BrowseGardensControllerTest {
         mockMvc = standaloneSetup(browseGardensControllerSpy).build();
         doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
         doNothing().when(browseGardensControllerSpy).setTags(anyList());
+        doNothing().when(browseGardensControllerSpy).setSearchTags((anyList()));
 
     }
 
@@ -199,7 +200,7 @@ public class BrowseGardensControllerTest {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Garden> emptyGardenPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
-        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm)).thenReturn(emptyGardenPage);
+        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(emptyGardenPage);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
                         .param("pageNo", String.valueOf(pageNo))
@@ -227,7 +228,7 @@ public class BrowseGardensControllerTest {
         }
 
         Page<Garden> matchingGardenPage = new PageImpl<>(matchingGardens, pageable, matchingGardens.size());
-        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm)).thenReturn(matchingGardenPage);
+        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(matchingGardenPage);
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
                         .param("pageNo", String.valueOf(pageNo))
                         .param("pageSize", String.valueOf(pageSize))
@@ -253,7 +254,7 @@ public class BrowseGardensControllerTest {
         List<Garden> matchingGardens = Collections.singletonList(testGarden);
         Page<Garden> matchingGardenPage = new PageImpl<>(matchingGardens, pageable, matchingGardens.size());
 
-        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm)).thenReturn(matchingGardenPage);
+        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(matchingGardenPage);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
                         .param("pageNo", String.valueOf(pageNo))

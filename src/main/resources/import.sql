@@ -139,6 +139,19 @@ INSERT INTO tag (garden , tag_name) VALUES (3, 'berries');
 INSERT INTO tag (garden , tag_name) VALUES (3, 'outdoor');
 INSERT INTO tag (garden , tag_name) VALUES (4, 'indoor');
 INSERT INTO tag (garden , tag_name) VALUES (3, 'flowers');
+INSERT INTO tag (garden , tag_name) VALUES (11, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (21, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (31, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (41, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (14, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (24, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (34, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (44, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (15, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (25, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (35, 'herbs');
+INSERT INTO tag (garden , tag_name) VALUES (45, 'herbs');
+
 
 -- email: a@gmail.com
 -- password: Password1!

@@ -85,9 +85,7 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
             "AND (:tagCount = 0 OR g.id IN (" +
             "  SELECT g2.id FROM garden g2 " +
             "  LEFT JOIN tag t2 ON g2.id = t2.garden " +
-            "  WHERE t2.tag_name IN (:tags) " +
-            "  GROUP BY g2.id " +
-            "  HAVING COUNT(DISTINCT t2.tag_name) = :tagCount" +
+            "  WHERE t2.tag_name IN (:tags)" +
             "))",
             countQuery = "SELECT COUNT(DISTINCT g.id) FROM garden g " + // This is necessary for the query to work with the Pageable interface
                     "LEFT JOIN plant p ON g.id = p.garden_id " +
@@ -98,8 +96,6 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
                     "  SELECT g2.id FROM garden g2 " +
                     "  LEFT JOIN tag t2 ON g2.id = t2.garden " +
                     "  WHERE t2.tag_name IN (:tags) " +
-                    "  GROUP BY g2.id " +
-                    "  HAVING COUNT(DISTINCT t2.tag_name) = :tagCount" +
                     "))",
             nativeQuery = true)
     Page<Garden> findGardensBySearchTerm(Pageable pageable, @Param("searchTerm") String searchTerm, @Param("tags") List<String> tags, @Param("tagCount") Long tagCount);

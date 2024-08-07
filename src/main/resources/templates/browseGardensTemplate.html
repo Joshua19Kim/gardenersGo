@@ -13,6 +13,9 @@
         <form class="form-inline" method="post" th:action="@{/browseGardens}">
             <input class="form-control mr-2 mb-0 mt-0" th:name="searchTerm" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success mt-0" type="submit">Search</button>
+            <div th:each="tag : ${tags}">
+                <input type="hidden" name="tags" th:value="${tag}" />
+            </div>
         </form>
     </div>
     <div class="no-search-results-found-container">

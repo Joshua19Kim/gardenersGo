@@ -73,8 +73,8 @@ public class BrowseGardensByTagFeature {
 
         allTags = new ArrayList<>();
         allTags.add("berries");
-        allTags.add("herbs");
         allTags.add("healthy");
+        allTags.add("herbs");
         for(String tag: allTags) {
             tagService.addTag(new Tag(tag, garden));
         }
