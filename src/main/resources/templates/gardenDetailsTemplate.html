@@ -3,22 +3,49 @@
 <head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <title>Garden Details</title>
 </head>
+
 <body>
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
-<div id="location-error" th:if="${date == null}">Location not found, please update your location to see the weather
-</div>
+
 <div class="garden-details-container">
     <div class="container" style="margin: 0; width: 1200px">
-        <h1 class="garden-details-links">Garden Details</h1>
+        <div class="row w-100" >
+            <div class="col-6 flex-row d-flex">
+                <h1 class="text-black" ><span th:text="${garden.name}"></span></h1>
+            </div>
+            <div class="col-6 flex-row-reverse d-flex">
+                <a th:href="@{../gardens/edit(gardenId=${garden.id})}" class="btn btn-primary m-2 mw-50 min-w-25 h-50" role="button">Edit
+                Garden</a>
+                <div class="public-checkbox-container">
+                    <form method="post" th:action="@{../gardens/details(gardenId=${garden.id})}" id="garden-details-form">
+                        <label id="public-checkbox-label">Make my garden public</label>
+                        <input class="form-check-input" data-cy="isGardenPublic" id="isGardenPublic" name="isGardenPublic" type="checkbox"
+                               onchange="document.getElementById('garden-details-form').submit()"/>
 
-        <div class="left-details-container">
-            <p><strong>Name:</strong> <span th:text="${garden.name}"></span></p>
+                        <script th:inline="javascript">
+                            // Credit: https://stackoverflow.com/questions/31771821/thymeleaf-how-to-add-conditional-block-in-javascript
+                            let isGardenPublic = [[${garden.isGardenPublic}]];
+                            document.getElementById("isGardenPublic").checked = isGardenPublic;
+                        </script>
+                    </form>
+                </div>
+
+
+
+            </div>
+
+
+        </div>
+        <div class="row w-100">
+
             <p><strong>Location:</strong> <span th:text="${garden.getFullLocation()}"></span></p>
             <p>
-                <strong>Size:</strong> <span th:if="${garden.size != null}" th:text="${garden.size + ' m^2'}"></span>
+                <strong>Size:</strong> <span th:if="${garden.size != null}"
+                                             th:text="${garden.size + ' m&sup2;'}"></span>
             </p>
             <p><strong>Description:</strong> <span th:text="${garden.description}"></span></p>
+
             <div id="tag-container">
                 <strong>Tags:</strong>
                 <div th:if="${tags != null}" th:each="tag : ${tags}">
@@ -29,8 +56,10 @@
                 <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
                    onclick="transformToInput()">+</a>
                 <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{addTag}">
-                    <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
-                           th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
+                    <input type="text" id="tag-input" list="tagList" autocomplete="off"
+                           th:value="${tag != null ? tag : ''}"
+                           th:style="${tag != null} ? 'display: block;' : 'display: none;'"
+                           placeholder="Add tag..."
                            maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus class="form-control"
                            th:classappend="${((tagValid != '' && tagValid != null) || (tagWarning != '' && tagWarning != null)) ? 'error' : ''}">
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
@@ -48,133 +77,142 @@
             </div>
         </div>
 
-        <div class="right-details-container">
-            <h1 class="garden-details-links">
-                <a th:href="@{../gardens/edit(gardenId=${garden.id})}" class="edit-garden-button">Edit Garden</a>
-                <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="add-plant-button">Add New
-                    Plant</a>
-            </h1>
-            <div class="public-checkbox-container">
-                <form method="post" th:action="@{../gardens/details(gardenId=${garden.id})}" id="garden-details-form">
-                    <label for="isGardenPublic" id="public-checkbox-label">Make my garden public</label>
-                    <input class="form-control" data-cy="isGardenPublic" id="isGardenPublic" name="isGardenPublic"
-                           th:id="isGardenPublic" th:name="isGardenPublic" type="checkbox"
-                           onchange="document.getElementById('garden-details-form').submit()"/>
 
-                    <script th:inline="javascript">
-                        // Credit: https://stackoverflow.com/questions/31771821/thymeleaf-how-to-add-conditional-block-in-javascript
-                        let isGardenPublic = [[${garden.isGardenPublic}]];
-                        document.getElementById("isGardenPublic").checked = isGardenPublic;
-                    </script>
+        <div class="row  w-100">
+            <div class="col">
+                <div id="location-error" th:if="${date == null}">Location not found, please update your location to see
+                    the weather
+                </div>
+                <ul class="list-group list-group-horizontal justify-content-evenly align-items-center d-flex">
+                    <li th:if="${date}">
+                        <div class="card current">
+                            <div class="weather-display-row">
+                                <br/>
+                                <p th:text="${date}"></p>
+                                <h3 th:text="${garden.city + ', ' + garden.country}"></h3>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <h4 id="currentDate"></h4>
 
-                </form>
+                                        <div class="temperature-container">
+                                            <div class="weather-display-row">
+                                                <div class="temperature-container">
+                                                    <h3 class="temperature" th:text="${temperature}"></h3>
+                                                    <span><sup style="font-weight: bold">&deg;C</sup></span>
+                                                </div>
+
+                                                <p th:text="${weatherDescription}"></p>
+                                                <p th:text="${humidity} + '%' + ' Humidity'"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <img class="m-0" alt="No image available" th:src="'https:' + ${weatherImage}"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+
+                    <li class="future-weather weather-display-container" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
+                        <div class="card forecast">
+                            <img class="card-img-top" alt="No image available"
+                                 th:src="'https:' + ${forecastWeatherImage.get(iter.index)}"/>
+
+                            <div class="weather-display-row">
+                                <p th:text="${forecastDates.get(iter.index)}"></p>
+                                <h4 th:id="${(iter.index)}" onload=getDay()></h4>
+                                <div class="temperature-container">
+                                    <div class="weather-display-row">
+                                        <div class="temperature-container">
+                                            <h5>Low</h5>
+                                            <h4 class="temperature" th:text="${forecastMinTemp}"></h4>
+                                            <span><sup style="font-weight: bold">&deg;C</sup></span>
+                                        </div>
+                                        <div class="temperature-container">
+                                            <h5>High</h5>
+                                            <h4 class="temperature"
+                                                th:text="${forecastMaxTemperature.get(iter.index)}"></h4>
+                                            <span><sup style="font-weight: bold">&deg;C</sup></span>
+                                        </div>
+
+                                        <p th:text="${forecastWeatherDescription.get(iter.index)}"></p>
+                                        <p th:text="${forecastHumidities.get(iter.index)} + '%' + ' Humidity'"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+                </ul>
             </div>
+
         </div>
 
-        <h4>Plants:</h4>
-        <div class="plant-list-container" th:if="${not #lists.isEmpty(garden.plants)}">
-            <table class="plant-table">
-                <thead>
-                <tr>
-                    <th>NAME</th>
-                    <th>IMAGE</th>
-                    <th>COUNT</th>
-                    <th>DESCRIPTION</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="plant: ${garden.plants}">
-                    <td th:text="${plant.name}"></td>
-                    <td>
-                        <div class="plant-image-container" id="image">
-                            <form class="plant-image-container" enctype="multipart/form-data"
-                                  method="post" th:action="@{../gardens/details/plants/image}"
-                                  th:id="'uploadPlantForm_' + ${plant.id}">
+        <div class="row  w-100">
+            <br/>
+            <h4>Plants:</h4>
+            <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="btn btn-primary m-2 w-auto"
+               role="button">Add New Plant</a>
+            <div class="plant-list-container" th:if="${not #lists.isEmpty(garden.plants)}">
+                <table class="table table-primary">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>NAME</th>
+                        <th>IMAGE</th>
+                        <th>COUNT</th>
+                        <th>DESCRIPTION</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="plant: ${garden.plants}">
+                        <td th:text="${plant.name}"></td>
+                        <td>
+                            <div class="plant-image-container" id="image">
+                                <form class="plant-image-container" enctype="multipart/form-data"
+                                      method="post" th:action="@{../gardens/details/plants/image}"
+                                      th:id="'uploadPlantForm_' + ${plant.id}">
+                                    <input th:name="plantId" th:value="${plant.id}" type="hidden"/>
+                                    <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                                    <img alt="Plant" th:id="'currentImage_' + ${plant.id}" th:src="@{${plant.image}}">
+                                    <button class="image-button"
+                                            th:onclick="'handleImageClick(\'' + ${plant.id} + '\');'"
+                                            type="button">+
+                                    </button>
+                                    <input accept="image/*" name="file" style="display: none;"
+                                           th:id="'fileInput_' + ${plant.id}"
+                                           th:onchange="'handleImageChange(\'' + ${plant.id} + '\');'" type="file">
+                                </form>
+                            </div>
+                            <span class="errorMessage" th:if="${uploadError} and ${plant.id} == ${errorId}"
+                                  th:text="${uploadError}"></span>
+                        </td>
+                        <td th:if="${plant.count !=0}" th:text="${plant.count}"></td>
+                        <td th:if="${plant.count == 0}"></td>
+                        <td th:text="${plant.description}"></td>
+                        <td>
+                            <form method="get" th:action="@{../gardens/details/plants/edit}">
                                 <input th:name="plantId" th:value="${plant.id}" type="hidden"/>
-                                <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-                                <img alt="Plant" th:id="'currentImage_' + ${plant.id}" th:src="@{${plant.image}}">
-                                <button class="image-button" th:onclick="'handleImageClick(\'' + ${plant.id} + '\');'"
-                                        type="button">+
-                                </button>
-                                <input accept="image/*" name="file" style="display: none;"
-                                       th:id="'fileInput_' + ${plant.id}"
-                                       th:onchange="'handleImageChange(\'' + ${plant.id} + '\');'" type="file">
+                                <button class="btn btn-primary" role="button" style="min-width: 70px" type="submit">Edit</button>
                             </form>
-                        </div>
-                        <span class="errorMessage" th:if="${uploadError} and ${plant.id} == ${errorId}"
-                              th:text="${uploadError}"></span>
-                    </td>
-                    <td th:if="${plant.count !=0}" th:text="${plant.count}"></td>
-                    <td th:if="${plant.count == 0}"></td>
-                    <td th:text="${plant.description}"></td>
-                    <td>
-                        <form method="get" th:action="@{../gardens/details/plants/edit}">
-                            <input th:name="plantId" th:value="${plant.id}" type="hidden"/>
-                            <button class="button" type="submit">Edit</button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div id="weather-information" th:if="${date}">
-        <div class="weather-display-container">
-            <div class="weather-display-row">
-                <h3 th:text="${garden.city + ', ' + garden.country}"></h3>
-                <h4 id="currentDate"></h4>
-                <p th:text="${date}"></p>
-                <div class="temperature-container">
-                    <div class="weather-display-row">
-                        <div class="temperature-container">
-                            <h3 class="temperature" th:text="${temperature}"></h3>
-                            <span><sup style="font-weight: bold">&deg;C</sup></span>
-                        </div>
-                        <br>
-                        <p th:text="${weatherDescription}"></p>
-                        <p th:text="${humidity} + '%' + ' Humidity'"></p>
-                    </div>
-                    <img alt="No image available" th:src="'https:' + ${weatherImage}"/>
-                </div>
-            </div>
-            <div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div style="text-align: center;"><h2>Next 3 days:</h2></div>
-        <div class="future-weather weather-display-container" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
-            <div class="weather-display-row">
-                <p th:text="${forecastDates.get(iter.index)}"></p>
-                <h4 th:id="${(iter.index)}" onload=getDay()></h4>
-                <div class="temperature-container">
-                    <div class="weather-display-row">
-                        <div class="temperature-container">
-                            <h5>Low</h5>
-                            <h4 class="temperature" th:text="${forecastMinTemp}"></h4>
-                            <span><sup style="font-weight: bold">&deg;C</sup></span>
-                        </div>
-                        <div class="temperature-container">
-                            <h5>High</h5>
-                            <h4 class="temperature" th:text="${forecastMaxTemperature.get(iter.index)}"></h4>
-                            <span><sup style="font-weight: bold">&deg;C</sup></span>
-                        </div>
-                        <br>
-                        <p th:text="${forecastWeatherDescription.get(iter.index)}"></p>
-                        <p th:text="${forecastHumidities.get(iter.index)} + '%' + ' Humidity'"></p>
-                    </div>
-                </div>
-            </div>
-            <img alt="No image available" th:src="'https:' + ${forecastWeatherImage.get(iter.index)}"/>
-            <div>
-            </div>
+
+
+        <div id="notification" class="notification" th:if="${wateringTip}">
+            <p th:text="${wateringTip}"></p>
+            <form id="lastNotifiedForm" method="post" th:action="@{../gardens/details/dismissNotification}">
+                <input th:name="gardenId" th:value="${garden.id}" type="hidden">
+                <button type="submit" onclick="closeNotification()" class="close-button">x</button>
+            </form>
         </div>
-    </div>
-    <div id="notification" class="notification" th:if="${wateringTip}">
-        <p th:text="${wateringTip}"></p>
-        <form id="lastNotifiedForm" method="post" th:action="@{../gardens/details/dismissNotification}">
-            <input th:name="gardenId" th:value="${garden.id}" type="hidden">
-            <button type="submit" onclick="closeNotification()" class="close-button">x</button>
-        </form>
     </div>
 
     <div id="warningModal" class="modal fade" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true" data-bs-backdrop="false">
@@ -200,11 +238,11 @@
 <script type="module">
 
     window.onload = function () {
-        const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const d = new Date();
         const day = weekday[d.getDay()];
         document.getElementById("currentDate").innerText = day;
-        for(let i = 0; i <= 2 ; i++) {
+        for (let i = 0; i <= 2; i++) {
             let d = new Date();
             d.setDate(d.getDate() + i);
             const day = weekday[d.getDay()];
@@ -213,7 +251,7 @@
     }
 
     function getDay(date) {
-        const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const day = weekday[date.getDay()];
         document.getElementById(date).innerText = day;
     }

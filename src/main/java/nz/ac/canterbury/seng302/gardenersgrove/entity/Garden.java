@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /** Represents a garden entity with its name, location, size, and list of plants. */
@@ -295,6 +294,22 @@ public class Garden {
    */
   public void setGardener(Gardener gardener) {
     this.gardener = gardener;
+  }
+
+  @Override
+  public String toString() {
+    return "Garden{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", location='" + location + '\'' +
+            ", suburb='" + suburb + '\'' +
+            ", city='" + city + '\'' +
+            ", country='" + country + '\'' +
+            ", postcode='" + postcode + '\'' +
+            ", size='" + size + '\'' +
+            ", description='" + description + '\'' +
+            ", creationDate=" + creationDate +
+            '}';
   }
 
   /**

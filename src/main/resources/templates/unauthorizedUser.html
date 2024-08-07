@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head th:insert="~{fragmentExample/fragments/bootstrap.html}">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>User Profile</title>
-    <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
 </head>
+
 <body>
+
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
-<div id="user_div">
-    <h1>User Profile</h1>
+
+<div class="mb-5" id="user_div">
+    <h1 class="text-dark">User Profile</h1>
 
     <div class="UserProfilePicContainer">
         <div class="UserProfilePic">
             <img th:src="@{${gardener.getProfilePicture()}}" alt="Profile Picture">
         </div>
     </div>
-    <div id="form">
-    <form id="userForm">
-        <label for="firstName"> First Name: </label>
-        <span id="firstName" th:text="${gardener.getFirstName()}"></span>
-        <br/>
-        <label for="lastName"> Last Name: </label>
-        <span id="lastName" th:text="${gardener.getLastName()}"></span>
-        <br/>
-        <label for="DoB"> Date of Birth: </label>
-        <span id="DoB" th:text="${gardener.getDoB()}"></span>
-        <br/>
-        <label for="email"> Email: </label>
-        <span id="email" th:text="${gardener.getEmail()}"></span>
-    </form>
-</div>
+    <div class="container card">
+        <form id="userForm">
+            <label for="firstName"> First Name: </label>
+            <span id="firstName" th:text="${gardener.getFirstName()}"></span>
+            <br/>
+            <label for="lastName"> Last Name: </label>
+            <span id="lastName" th:text="${gardener.getLastName()}"></span>
+            <br/>
+            <label for="DoB"> Date of Birth: </label>
+            <span id="DoB" th:text="${gardener.getDoB()}"></span>
+            <br/>
+            <label for="email"> Email: </label>
+            <span id="email" th:text="${gardener.getEmail()}"></span>
+        </form>
+    </div>
 </div>
 </body>
 </html>
