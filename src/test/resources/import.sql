@@ -18,5 +18,5 @@ INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN, creation_date) VALUES (1, 'Council Garden','53 Hereford Street', null, 'Christchurch','New Zealand', '8154', '15', true, '2024-12-02');
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN, creation_date) VALUES (2, 'Rosewood Park', '12 Elm Street', 'Rosewood', 'Los Angeles', 'USA', '90001', '10', true, '2024-06-15');
 
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 1, 'recentGardens', 'smol2', 'myGardens', 'wide');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 2, 'recentGardens', 'smol2', 'myGardens', 'wide');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 1, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 2, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
