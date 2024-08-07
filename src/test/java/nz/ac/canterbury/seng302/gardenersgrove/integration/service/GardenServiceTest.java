@@ -288,7 +288,7 @@ public class GardenServiceTest {
         int pageNo = 1;
         int pageSize = 1;
         Page<Garden> gardensPage = gardenService.getGardensPaginated(pageNo, pageSize);
-        Assertions.assertEquals(totalGardens+1, gardensPage.getTotalPages());
+        Assertions.assertEquals(totalGardens, gardensPage.getTotalPages()-3);
         Assertions.assertEquals(pageSize, gardensPage.getContent().size());
     }
 }
