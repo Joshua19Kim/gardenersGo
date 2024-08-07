@@ -176,7 +176,8 @@ public class MainPageController {
     }
 
     @PostMapping("/changeLayout")
-    public String changeLayout(@RequestParam("layout") int layout) {
+    public String changeLayout(@RequestParam("layout") int layout,
+                               @RequestParam("customiseSections") List<String> customiseSections) {
         logger.info(String.valueOf(layout));
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
@@ -189,7 +190,26 @@ public class MainPageController {
             default -> throw new IllegalArgumentException("Invalid format specified");
         };
         mainPageLayout.setFormat(format);
+
+        logger.info(String.valueOf(customiseSections));
+
+        List<Boolean> selectionList = new ArrayList<>();
+        Boolean recentlyAccessedGardens = customiseSections.contains("recentlyAccessedGardens");
+        Boolean newestPlants = customiseSections.contains("newestPlants");
+        Boolean myGardensList = customiseSections.contains("myGardensList");
+        Boolean friendsList = customiseSections.contains("friendsList");
+
+        selectionList.add(recentlyAccessedGardens);
+        selectionList.add(newestPlants);
+        selectionList.add(myGardensList);
+        selectionList.add(friendsList);
+
+        String selectionString = selectionList.stream()
+                .map(b -> b ? "1" : "0")
+                .collect(Collectors.joining(" "));
+        mainPageLayout.setWidgetsEnabled(selectionString);
         mainPageLayoutService.addMainPageLayout(mainPageLayout);
+
         return "redirect:/user";
     }
 

@@ -9,7 +9,7 @@
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
 <div class="container">
-    <div class="row" id="widget-container">
+    <div class="row h-100" id="widget-container">
         <!-- Recently accessed gardens and Newest Plants -->
         <div class="col d-flex flex-column justify-content-between" id='widget-box'>
             <div class="row" id="widget-small-boxes">
@@ -17,23 +17,31 @@
                 <div class="col-md-6 mb-4">
                     <div th:if="${recentlyAccessedGardens != null and recentlyAccessedGardens == true}"
                          th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetSmallOne + 'Widget.html'}"></div>
+                    <div style="height: 100%" th:if="${recentlyAccessedGardens != null and recentlyAccessedGardens == false}" class="main-page2-card">
+                    </div>
                 </div>
                 <!-- Newest Plants -->
                 <div class="col-md-6 mb-4">
                     <div th:if="${newestPlants != null and newestPlants == true}"
                          th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetSmallTwo + 'Widget.html'}"></div>
+                    <div style="height: 100%" th:if="${newestPlants != null and newestPlants == false}" class="main-page2-card">
+                    </div>
                 </div>
             </div>
             <div class="row" id="widget-wide">
                 <!-- My Friend's List -->
                 <div th:if="${friendsList != null and friendsList == true}"
                      th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetWide + 'Widget.html'}"></div>
+                <div style="height: 100%" th:if="${friendsList != null and friendsList == false}" class="main-page-card">
+                </div>
             </div>
         </div>
         <!-- My Garden's List -->
         <div class="col-md-4" id="widget-tall">
             <div th:if="${myGardensList != null and myGardensList == true}"
                  th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetTall + 'Widget.html'}"></div>
+            <div style="height: 100%" th:if="${myGardensList != null and myGardensList == false}" class="main-page2-card mt-0">
+            </div>
         </div>
     </div>
 </div>

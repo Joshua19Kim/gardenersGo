@@ -170,6 +170,7 @@
             <div class="modal-body d-grid">
                 <form id='layoutForm' method="post" th:action="@{changeLayout}">
                     <input type="hidden" value="1" id="layout" th:name="layout">
+                    <input type="hidden" id="layoutCustomiseSections" name="customiseSections">
                     <div class="row mb-3">
                         <div class="col">
                             <button class="selectable" onclick="selectOption(this, 1)" type="button">
@@ -199,7 +200,7 @@
             </div>
 
             <div class="modal-footer d-flex justify-content-around">
-                <button class="btn btn-primary" onclick="document.getElementById('layoutForm').submit()" type="submit">
+                <button class="btn btn-primary" onclick="submitLayoutForm()" type="submit">
                     Save changes
                 </button>
                 <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
@@ -220,6 +221,14 @@
             }
         }
     });
+    function submitLayoutForm() {
+        const checkboxes = document.querySelectorAll('#customiseForm input[type="checkbox"]');
+        const selectedSections = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+        document.getElementById('layoutCustomiseSections').value = selectedSections.join(',');
+        document.getElementById('layoutForm').submit();
+    }
 </script>
 <script>
     document.getElementById("userForm").addEventListener("submit", function(event) {
