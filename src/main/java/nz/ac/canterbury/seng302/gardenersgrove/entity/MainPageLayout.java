@@ -44,10 +44,10 @@ public class MainPageLayout {
     public MainPageLayout(Gardener gardener) {
         this.gardener = gardener;
         this.format = "1 2 3";
-        this.widgetSmallOne = "myGardens";
-        this.widgetSmallTwo = "myPlants";
+        this.widgetSmallOne = "recentGardens";
+        this.widgetSmallTwo = "recentPlants";
         this.widgetWide = "myFriends";
-        this.widgetTall = "recentGardens";
+        this.widgetTall = "myGardens";
     }
 
     public String getWidgetSmallOne() {
