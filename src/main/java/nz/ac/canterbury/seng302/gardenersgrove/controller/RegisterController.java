@@ -75,7 +75,7 @@ public class RegisterController {
         model.addAttribute("email", email);
         model.addAttribute("password", password);
         model.addAttribute("passwordConfirm", passwordConfirm);
-        return "register";
+        return "registerTemplate";
     }
 
     /**
@@ -169,6 +169,6 @@ public class RegisterController {
 
 
         }
-        return "register";
+        return "registerTemplate";
     }
 }

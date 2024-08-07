@@ -95,7 +95,7 @@ public class RegisterNewUserFeature {
         mockMvcRegister
                 .perform(MockMvcRequestBuilders.get("/register/"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("register"));
+                .andExpect(view().name("registerTemplate"));
     }
 
     @Given("I enter the first name {string}")

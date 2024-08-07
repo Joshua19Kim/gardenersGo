@@ -74,7 +74,7 @@ public class RegisterControllerTest {
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
         Mockito.when(request.getSession()).thenReturn(sessionMock);
-        registerFormController.submitForm("Kush", "Desai1", LocalDate.of(2004, 1, 15),"test@gmail.com", "Password1!", "Password1!", true, false, model);
+        registerFormController.submitForm("Kush", "", LocalDate.of(2004, 1, 15),"test@gmail.com", "Password1!", "Password1!", true, false, model);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
     }
 
@@ -103,7 +103,7 @@ public class RegisterControllerTest {
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
         Mockito.when(request.getSession()).thenReturn(sessionMock);
-        registerFormController.submitForm("Kush", "Desai", null,"test@gmail.com", "Password1!", "Password1!", true, false, model);
+        registerFormController.submitForm("Kush", "Desai", null,"test@gmail.com", "Password1!", "Password1!", false, false, model);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
     }
 
