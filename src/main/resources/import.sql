@@ -14,7 +14,7 @@ INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_pictu
 INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test9@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
 INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_picture, bad_word_count) VALUES ('test', 'user', null, 'test10@gmail.com', '$2a$10$5JkvOc65rJFRmpjOIeEOi.lBGL6ttCiV6dYHdMR2Cdlxu8s1cs26O', '/images/defaultProfilePic.png', 0);
 
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('123', 1, 'recentGardens', 'smol2', 'myGardens', 'wide');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 1, 'recentGardens', 'smol2', 'myGardens', 'wide');
 
 INSERT INTO authority (gardener_id, role) VALUES (1, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');

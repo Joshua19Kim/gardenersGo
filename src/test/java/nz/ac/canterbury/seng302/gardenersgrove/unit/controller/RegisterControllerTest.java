@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MainPageLayoutService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,7 @@ public class RegisterControllerTest {
     private Authentication authentication;
     private HttpServletRequest request;
     private HttpSession sessionMock;
+    private MainPageLayoutService mainPageLayoutService;
     private Model model;
 
     @BeforeEach
@@ -36,7 +38,8 @@ public class RegisterControllerTest {
         authenticationManager = Mockito.mock(AuthenticationManager.class);
         TokenService tokenService = Mockito.mock(TokenService.class);
         WriteEmail writeEmail = Mockito.mock(WriteEmail.class);
-        registerFormController = new RegisterController(gardenerFormService, tokenService, writeEmail);
+        mainPageLayoutService = Mockito.mock(MainPageLayoutService.class);
+        registerFormController = new RegisterController(gardenerFormService, tokenService, writeEmail, mainPageLayoutService);
         model = Mockito.mock(Model.class);
         assertTrue(true);
     }

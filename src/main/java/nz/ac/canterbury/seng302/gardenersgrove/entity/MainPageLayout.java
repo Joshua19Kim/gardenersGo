@@ -45,8 +45,8 @@ public class MainPageLayout {
         this.gardener = gardener;
         this.format = "1 2 3";
         this.widgetSmallOne = "myGardens";
-        this.widgetSmallTwo = "1";
-        this.widgetWide = "3";
+        this.widgetSmallTwo = "myPlants";
+        this.widgetWide = "myFriends";
         this.widgetTall = "recentGardens";
     }
 

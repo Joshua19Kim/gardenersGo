@@ -7,3 +7,5 @@ INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_pictu
 INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');
 
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN, creation_date) VALUES (1, 'My First Garden','12 Marquess avenue', null, 'Christchurch','New Zealand', null, '32', true, '2024-12-03');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 1, 'recentGardens', 'smol2', 'myGardens', 'wide');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 2, 'recentGardens', 'smol2', 'myGardens', 'wide');

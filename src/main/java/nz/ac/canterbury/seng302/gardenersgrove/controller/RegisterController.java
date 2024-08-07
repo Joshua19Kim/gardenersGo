@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MainPageLayoutService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.Optional;
-
 /**
  * Controller for user registration
  * Handles the registration form submission and validation
@@ -27,6 +28,7 @@ public class RegisterController {
     private final GardenerFormService gardenerFormService;
     private final TokenService tokenService;
     private final WriteEmail writeEmail;
+    private final MainPageLayoutService mainPageLayoutService;
     Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
     /**
@@ -36,10 +38,11 @@ public class RegisterController {
      * @param writeEmail          - service for writing emails
      */
     @Autowired
-    public RegisterController(GardenerFormService gardenerFormService, TokenService tokenService, WriteEmail writeEmail) {
+    public RegisterController(GardenerFormService gardenerFormService, TokenService tokenService, WriteEmail writeEmail, MainPageLayoutService mainPageLayoutService) {
         this.gardenerFormService = gardenerFormService;
         this.tokenService = tokenService;
         this.writeEmail = writeEmail;
+        this.mainPageLayoutService = mainPageLayoutService;
     }
 
 
@@ -115,9 +118,12 @@ public class RegisterController {
         InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
         Optional<String> firstNameError = inputValidator.checkValidName(firstName, "First", false);
         model.addAttribute("firstNameValid", firstNameError.orElse(""));
-        Optional<String> lastNameError = inputValidator.checkValidName(lastName, "Last", isLastNameOptional);
-        model.addAttribute("lastNameValid", lastNameError.orElse(""));
-        if (isLastNameOptional && lastName != null && !lastName.isEmpty() && lastNameError.isEmpty()) {
+        Optional<String> lastNameError = Optional.empty();
+        if (!isLastNameOptional) {
+            lastNameError = inputValidator.checkValidName(lastName, "Last", false);
+            model.addAttribute("lastNameValid", lastNameError.orElse(""));
+        }
+        else if (lastName != null && !lastName.isEmpty()) {
             lastNameError = Optional.of("You cannot enter a last name");
             model.addAttribute("lastNameValid", "You cannot enter a last name");
         }
@@ -151,6 +157,13 @@ public class RegisterController {
 
             Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password);
             gardenerFormService.addGardener(newGardener);
+            Optional<Gardener> optionalGardner = gardenerFormService.getUserByEmailAndPassword(email, password);
+            Gardener savedGardener = null;
+            if (optionalGardner.isPresent()) {
+                savedGardener = optionalGardner.get();
+            }
+            MainPageLayout mainPageLayout = new MainPageLayout(savedGardener);
+            mainPageLayoutService.addMainPageLayout(mainPageLayout);
             writeEmail.sendSignupEmail(newGardener, tokenService);
             return "redirect:/signup";
 

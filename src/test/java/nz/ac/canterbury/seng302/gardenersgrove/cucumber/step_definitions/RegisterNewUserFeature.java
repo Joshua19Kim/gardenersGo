@@ -8,10 +8,11 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.LoginController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MainPageLayoutService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
-import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -32,12 +33,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 public class RegisterNewUserFeature {
-    @Mock
+    @Autowired
     private GardenerFormService gardenerFormService;
-    @Mock
+    @Autowired
     private TokenService tokenService;
-    @Mock
+    @Autowired
     private WriteEmail writeEmail;
+    @Autowired
+    private MainPageLayoutService mainPageLayoutService;
 
     private MockMvc mockMvcLogin;
     private MockMvc mockMvcRegister;
@@ -62,7 +65,7 @@ public class RegisterNewUserFeature {
         mockMvcLogin = MockMvcBuilders.standaloneSetup(loginController).build();
 
         RegisterController registerController = new RegisterController(
-                gardenerFormService, tokenService, writeEmail);
+                gardenerFormService, tokenService, writeEmail, mainPageLayoutService);
         mockMvcRegister = MockMvcBuilders.standaloneSetup(registerController).build();
 
         gardener = new Gardener("John", "Doe",

@@ -22,7 +22,7 @@ Feature: U1 - As Sarah, I want to register on Gardener’s Grove so that I can u
   Scenario: #AC3
     Given I am on the registration form
     And I enter the first name "John"
-    And I enter the last name "!@#$%^&*"
+    And I enter the last name ""
     And I enter the email address "a@gmail.com"
     And I enter the password "Password1!"
     And I confirm my password as "Password1!"
