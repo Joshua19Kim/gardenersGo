@@ -49,4 +49,11 @@ public class PlantService {
      * @return the plant
      */
     public Optional<Plant> getPlant(Long id) {return plantRepository.findById(id);}
+
+    /**
+     * Gets the three newest plants added by a specific gardener id
+     * @param id the id of the gardener
+     * @return a list of at most the three newest plants
+     */
+    public List<Plant> findNewestPlantsByGardenerId(Long id) { return plantRepository.findTop3ByGardenGardenerIdOrderByIdDesc(id);}
 }

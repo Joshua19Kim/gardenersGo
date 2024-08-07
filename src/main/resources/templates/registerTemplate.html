@@ -7,13 +7,13 @@
 <body>
 <div class="container">
     <div class="header-container text-center">
-        <img src="/images/placeholder.jpg" alt="logo" class="logo"/>
+        <img th:src="@{/images/placeholder.jpg}" alt="logo" class="logo"/>
         <h1 class="title">Gardeners Grove</h1>
     </div>
     <div class="card w-50">
         <h1 class="text-center">Please Register</h1>
 
-        <form method="post" class="container" th:action="@{register}" id="registerForm" >
+        <form method="post" class="container" th:action="@{register}" id="registerForm" novalidate>
             <div th:if="${param.expired}" id="error-message" >
                 <p class="errorMessage">Signup code invalid</p>
             </div>
@@ -61,15 +61,7 @@
                 </label>
             </div>
             <p id="DoBInvalid" class="errorMessage" th:utext="${DoBValid}"></p>
-
-            <script>
-                document.getElementById( "DoB" ).addEventListener( "invalid",
-                    function( event ) {
-                        event.preventDefault();
-                        document.getElementById("DoB").style.border = "1px solid red";
-                        document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";
-                    });
-            </script>
+            <input type="hidden" id="isDoBInvalid" th:name="isDoBInvalid" th:value="false"/>
 
             <br/>
 

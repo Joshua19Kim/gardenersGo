@@ -1,7 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,5 +31,7 @@ public interface PlantRepository extends CrudRepository<Plant, Long> {
      * @return A list of all plants stored in the repository.
      */
     List<Plant> findAll();
+
+    List<Plant> findTop3ByGardenGardenerIdOrderByIdDesc(Long gardenerId);
 }
 
