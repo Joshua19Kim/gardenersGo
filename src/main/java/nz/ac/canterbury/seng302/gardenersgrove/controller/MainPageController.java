@@ -18,7 +18,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.stream.Collectors;
 
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -115,6 +119,25 @@ public class MainPageController {
         model.addAttribute("mainPageLayout", mainPageLayout);
         model.addAttribute("ordering", mainPageLayout.getFormat());
 
+        String widgetsEnabled = mainPageLayout.getWidgetsEnabled();
+
+        String[] values = widgetsEnabled.split(" ");
+        List<Boolean> selectionList = new ArrayList<>();
+
+        for (String value : values) {
+            selectionList.add(value.equals("1"));
+        }
+
+        Boolean recentlyAccessedGardens = selectionList.get(0);
+        Boolean newestPlants = selectionList.get(1);
+        Boolean myGardensList = selectionList.get(2);
+        Boolean friendsList = selectionList.get(3);
+
+        model.addAttribute("recentlyAccessedGardens", recentlyAccessedGardens);
+        model.addAttribute("newestPlants", newestPlants);
+        model.addAttribute("myGardensList", myGardensList);
+        model.addAttribute("friendsList", friendsList);
+
         return "mainPageTemplate";
     }
 
@@ -170,4 +193,31 @@ public class MainPageController {
         return "redirect:/user";
     }
 
+    @PostMapping("/customiseLayout")
+    public String changeLayout(@RequestParam("sections") List<String> sections, RedirectAttributes redirectAttributes) {
+        logger.info(String.valueOf(sections));
+
+        List<Boolean> selectionList = new ArrayList<>();
+        Boolean recentlyAccessedGardens = sections.contains("recentlyAccessedGardens");
+        Boolean newestPlants = sections.contains("newestPlants");
+        Boolean myGardensList = sections.contains("myGardensList");
+        Boolean friendsList = sections.contains("friendsList");
+
+        selectionList.add(recentlyAccessedGardens);
+        selectionList.add(newestPlants);
+        selectionList.add(myGardensList);
+        selectionList.add(friendsList);
+
+        String selectionString = selectionList.stream()
+                .map(b -> b ? "1" : "0")
+                .collect(Collectors.joining(" "));
+
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+        MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
+        mainPageLayout.setWidgetsEnabled(selectionString);
+        mainPageLayoutService.addMainPageLayout(mainPageLayout);
+
+        return "redirect:/user";
+    }
 }
