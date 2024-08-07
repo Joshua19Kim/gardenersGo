@@ -50,6 +50,11 @@ public class BrowseGardensController {
     private List<String> searchTags;
 
 
+    /**
+     * Constructor for the BrowseGardensController that intializes all the properties of the class
+     * @param gardenService used to perform business logic related to gardens
+     * @param tagService used to perform business logic related to tags
+     */
     @Autowired
     public BrowseGardensController(GardenService gardenService, TagService tagService) {
 
@@ -62,14 +67,26 @@ public class BrowseGardensController {
 
     }
 
+    /**
+     * Sets the search term
+     * @param searchTerm stores the current search term so that it can be persistent across requests
+     */
     public void setSearchTerm(String searchTerm) {
         this.searchTerm = searchTerm;
     }
 
+    /**
+     * Sets the tags
+     * @param tags stores the currently selected tags so that it can be persistent across requests
+     */
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
 
+    /**
+     * Sets the search tags
+     * @param tags stores the tags that the user has searched/filtered for so that it is persistent across requests.
+     */
     public void setSearchTags(List<String> tags) {
         this.searchTags = tags;
     }
