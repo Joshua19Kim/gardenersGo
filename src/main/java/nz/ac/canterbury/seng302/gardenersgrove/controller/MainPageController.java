@@ -30,6 +30,7 @@ public class MainPageController {
 
     Logger logger = LoggerFactory.getLogger(GardensController.class);
     private final GardenService gardenService;
+    private final PlantService plantService;
     private final GardenerFormService gardenerFormService;
     private final RelationshipService relationshipService;
     private final RequestService requestService;
@@ -50,12 +51,14 @@ public class MainPageController {
     @Autowired
     public MainPageController(
             GardenService gardenService,
+            PlantService plantService,
             GardenerFormService gardenerFormService,
             RelationshipService relationshipService,
             RequestService requestService,
             GardenVisitService gardenVisitService,
             MainPageLayoutService mainPageLayoutService) {
         this.gardenService = gardenService;
+        this.plantService = plantService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
         this.requestService = requestService;
@@ -102,14 +105,14 @@ public class MainPageController {
 
         List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         List<Garden> recentGardens = gardenVisitService.findRecentGardensByGardenerId(gardener.getId());
-//       List<Plant> newPlants = newestPlantsService.findNewestPlantsByGardenerId(gardener.getId());
+       List<Plant> newPlants = plantService.findNewestPlantsByGardenerId(gardener.getId());
         List<Gardener> friends = relationshipService.getCurrentUserRelationships(gardener.getId());
         MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
 
         model.addAttribute("gardener", gardener);
         model.addAttribute("gardens", gardens);
         model.addAttribute("friends", friends);
-//        model.addAttribute("newestPlants", newPlants);
+        model.addAttribute("newestPlants", newPlants);
         model.addAttribute("recentGardens", recentGardens);
         model.addAttribute("requestURI", requestService.getRequestURI(request));
         model.addAttribute("mainPageLayout", mainPageLayout);

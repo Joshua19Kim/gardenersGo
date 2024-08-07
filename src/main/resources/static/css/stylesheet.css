@@ -333,6 +333,24 @@ img {
     border-radius: 50%;
 }
 
+.plant-item {
+    display: flex;
+    align-items: center;
+}
+
+.plant-image {
+    flex-shrink: 0;
+    margin-right: 15px;
+}
+
+.plant-info {
+    flex-grow: 1;
+}
+
+.plant-info p {
+    margin-bottom: 0;
+}
+
 .dropdown {
     position: relative;
     display: inline-block;
