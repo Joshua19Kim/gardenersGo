@@ -1,5 +1,35 @@
+/* Custom Navbar */
+#custom-navbar {
+    background-color: rgba(209, 220, 151, 0.8) !important;
+}
+
 /*@import*/
 /*url('https://rsms.me/inter/inter.css');*/
+
+/* Took the following code from my year 13 project
+ * This code adds the white underline effect on hover
+ */
+nav ul .nav-item a:after, nav ul .nav-item input[type="submit"]:after {
+    bottom: 0;
+    content: "";
+    display: block;
+    height: 2px;
+    left: 50%;
+    position: relative;
+    background: #fff;
+    transition: width 0.3s ease 0s, left 0.3s ease 0s;
+    width: 0;
+}
+
+nav ul .nav-item a:hover:after, nav ul .nav-item input[type="submit"]:after {
+    width: 100%;
+    left: 0;
+}
+
+nav ul .nav-item a:hover, nav ul .nav-item input[type="submit"]:hover {
+    color: #45a049;
+    transition: 0.3s ease;
+}
 
 * {
     box-sizing: border-box;
@@ -237,62 +267,72 @@ nav {
     border-bottom: 2px solid #45a049;
 }
 
-
-nav ul {
-    list-style-type: none;
-    display: flex;
+#custom-navbar .navbar-nav .nav-link {
+    color: #000 !important;
 }
 
-
-nav ul li {
-    text-decoration: none;
-    margin: 0 10px 0 10px;
-    word-wrap: break-word;
-    white-space: normal;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+#my-gardens {
+    /*border-bottom: 1px solid green;*/
+    /*border-radius: 1px;*/
+    font-weight: bold;
 }
 
-
-nav ul li form {
-    all: revert;
-}
-
-
-nav ul li a, nav ul li input[type="submit"] {
-    text-decoration: none;
-    max-width: 200px;
-    word-wrap: break-word;
-    white-space: normal;
-    display: inline-block;
-}
-
-/* Took the following code from my year 13 project
- * This code adds the white underline effect on hover
- */
-nav ul li a:after, nav ul li input[type="submit"]:after {
-    bottom: 0;
-    content: "";
-    display: block;
-    height: 2px;
-    left: 50%;
-    position: absolute;
-    background: #fff;
-    transition: width 0.3s ease 0s, left 0.3s ease 0s;
-    width: 0;
-}
-
-nav ul li a:hover:after, nav ul li input[type="submit"]:after {
-    width: 100%;
-    left: 0;
-}
-
-nav ul li a:hover, nav ul li input[type="submit"]:hover {
+#custom-navbar .navbar-nav .nav-link:hover {
     color: #45a049;
-    transition: 0.3s ease;
 }
+
+.dropdown-container {
+    position: relative; /* To position the dropdown menu */
+}
+
+/* Dropdown Button */
+
+.dropbtn {
+    color: #1c1c1a;
+    background-color: rgba(209, 220, 151, 0.8) !important;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    align-items: center; /* Aligns text and arrow vertically */
+}
+
+.dropdown-arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 0.5rem; /* Space between text and arrow */
+    border-left: 0.4em solid transparent;
+    border-right: 0.4em solid transparent;
+    border-top: 0.4em solid #1c1c1a; /* Arrow color */
+}
+
+/* Dropdown Menu */
+
+.dropdown-menu-wrapper {
+    position: absolute;
+    top: 100%; /* Position it below the button */
+    left: 0; /* Align dropdown menu with the left edge of the button */
+    z-index: 100; /* Ensure it appears above other content */
+}
+
+.dropdown-menu {
+    background-color: rgba(209, 220, 151, 0.8) !important;
+    border: 1px solid #45a049;
+}
+
+/* Ensure dropdown item color and hover effects */
+
+#custom-navbar .dropdown-item {
+    color: #000 !important;
+}
+
+#custom-navbar .dropdown-item:hover {
+    background-color: rgba(209, 220, 151, 0.5) !important;
+    color: #45a049 !important;
+}
+
 
 img {
     width: 100%;
@@ -333,6 +373,12 @@ img {
     border-radius: 50%;
 }
 
+.dropdown {
+    position: relative;
+    display: inline-block;
+    z-index: 99; /* Always show on top of everything */
+}
+
 .plant-item {
     display: flex;
     align-items: center;
@@ -357,7 +403,6 @@ img {
     z-index: 99; /* Always show on top of everything */
 }
 
-
 .dropdown-content {
     display: none;
     position: absolute;
@@ -366,7 +411,6 @@ img {
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 100;
 }
-
 
 .dropdown-content a {
     padding: 12px 16px;
@@ -392,6 +436,11 @@ img {
     font-size: smaller;
 }
 
+.errorMessage {
+    color: var(--accent-color);
+    font-size: smaller;
+}
+
 .smallErrorMessage {
     font-size: 14px;
     font-style: italic;
@@ -399,15 +448,6 @@ img {
     display: block;
 }
 
-.dropbtn {
-    color: #1c1c1a;
-    background-color: #d9f7d9;
-    padding: 10px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-}
 
 #form {
     width: 550px;
