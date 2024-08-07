@@ -260,13 +260,6 @@ textarea#description.garden-form-control {
 /*====================================================================================================================*/
 
 
-nav {
-    background-color: #d9f7d9;
-    padding: 10px;
-    font-family: 'Roboto', sans-serif;
-    border-bottom: 2px solid #45a049;
-}
-
 #custom-navbar .navbar-nav .nav-link {
     color: #000 !important;
 }
@@ -1063,7 +1056,7 @@ body, h2, h3, h4, h5, h6, a {
     justify-content: center;
     padding: 15px;
     border-radius: 15px;
-    background: #d9f7d9;
+    background: var(--secondary-color);
     width: 100%;
     font-weight: bold;
 }
@@ -1177,7 +1170,7 @@ form.search-bar::after {
 .friend {
     display: flex;
     padding: 10px;
-    border-bottom: 1px solid #d9f7d9;
+    border-bottom: 1px solid var(--secondary-color);
     align-content: center;
     align-items: center;
     width: 100%;
@@ -1246,10 +1239,10 @@ form.search-bar::after {
     width: 100%;
     height: 40px;
     border-radius: 25px;
-    border: 1px solid #45a049;
+    border: 1px solid var(--primary-color);
     font-weight: 700;
     box-shadow: 2px 3px 1px #777;
-    background: #d9f7d9;
+    background: var(--secondary-color);
 }
 
 #form .signup input[type='submit']:hover {
@@ -1332,7 +1325,7 @@ form.search-bar::after {
     display: flex;
     justify-content: space-around;
     background: none;
-    border: 1px solid #d9f7d9;
+    border: 1px solid var(--secondary-color);
     border-radius: 5px;
     margin-right: 15px;
 }

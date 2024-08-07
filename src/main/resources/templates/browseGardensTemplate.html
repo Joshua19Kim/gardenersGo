@@ -112,21 +112,24 @@
 <div th:if="${gardensPage.totalPages > 0}" class="d-flex justify-content-center" aria-label="Page navigation example ">
     <ul class = "pagination">
         <li class="page-item">
-            <a class="page-link" th:href="@{/browseGardens(pageNo=0)}"
+            <a class="page-link" th:href="@{/browseGardens(pageNo=0, pageRequest=true)}"
                aria-label="Previous">
                 <span aria-hidden="true">First</span>
             </a>
         </li>
         <ul th:if="${gardensPage.totalPages > 0}" class="pagination"
             th:each="pageNumber : ${pageNumbers}">
-            <li class="page-item"><a class="page-link" th:href="@{/browseGardens(pageNo=${pageNumber - 1})}" th:text="${pageNumber}"></a></li>
+            <li class="page-item"><a class="page-link" th:href="@{/browseGardens(pageNo=${pageNumber - 1},pageRequest=true)}" th:text="${pageNumber}"></a></li>
         </ul>
         <li class="page-item">
-            <a class="page-link" th:href="@{/browseGardens(pageNo=${gardensPage.totalPages - 1})}" aria-label="Next">
+            <a class="page-link" th:href="@{/browseGardens(pageNo=${gardensPage.totalPages - 1}, pageRequest=true)}" aria-label="Next">
                 <span aria-hidden="true">Last</span>
             </a>
         </li>
     </ul>
+</div>
+<div class="d-flex justify-content-center" aria-label="Navigation message">
+    <p th:text="'Page: ' + (${gardensPage.number + 1})"></p>
 </div>
 <div class="d-flex justify-content-center" aria-label="Navigation message">
     <p th:text="${paginationMessage}"></p>
