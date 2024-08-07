@@ -10,10 +10,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.AuthorityFormRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.AuthorityFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +41,9 @@ public class RegistrationEmailFeature {
 
     @Autowired
     private AuthorityFormRepository authorityFormRepository;
+
+    @Autowired
+    private MainPageLayoutService mainPageLayoutService;
     private TokenService tokenService;
     private WriteEmail mockWriteEmail;
     private String firstName;
@@ -67,7 +67,7 @@ public class RegistrationEmailFeature {
         AuthorityFormService authorityFormService = new AuthorityFormService(authorityFormRepository);
 
         //Setup MOCK_MVC
-        RegisterController registerController = new RegisterController(gardenerFormService, tokenService, mockWriteEmail);
+        RegisterController registerController = new RegisterController(gardenerFormService, tokenService, mockWriteEmail, mainPageLayoutService);
         REGISTER_MOCK_MVC = MockMvcBuilders.standaloneSetup(registerController).build();
 
         SignupCodeFormController signupCodeFormController = new SignupCodeFormController(gardenerFormService, authorityFormService, tokenService);
