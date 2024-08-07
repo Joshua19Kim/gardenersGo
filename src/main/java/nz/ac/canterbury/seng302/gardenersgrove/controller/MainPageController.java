@@ -105,7 +105,7 @@ public class MainPageController {
 
         List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         List<Garden> recentGardens = gardenVisitService.findRecentGardensByGardenerId(gardener.getId());
-       List<Plant> newPlants = plantService.findNewestPlantsByGardenerId(gardener.getId());
+        List<Plant> newPlants = plantService.findNewestPlantsByGardenerId(gardener.getId());
         List<Gardener> friends = relationshipService.getCurrentUserRelationships(gardener.getId());
         MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
 

@@ -7,47 +7,50 @@
     console.log("Cookie: " + document.cookie);
 </script>
 
-<nav>
-    <a th:href="@{/home}" style="text-decoration: none; color: inherit;">
-        <h1 xmlns:sec="http://www.w3.org/1999/xhtml" style="margin-right: 25px">
-            Gardener's Grove
-        </h1>
-    </a>
-    <ul>
-        <li>
-            <div class="dropdown">
-                <a th:href="@{/gardens}">
-                    <button class="dropbtn">My Gardens</button>
-                </a>
-                <div class="dropdown-content">
-                    <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
-                        <!-- Iterate over the list of gardens and display them -->
-                        <a class="text-dark" th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a>
-                    </th:block>
-                </div>
-            </div>
-        </li>
-        <li>
-            <a th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>
-        </li>
-        <li>
-            <a th:href="@{/user}">My Profile</a>
-        </li>
-        <li>
-            <a th:href="@{/manageFriends}">Manage Friends</a>
-        </li>
-        <li>
-            <a th:href="@{/browseGardens}">Browse Gardens</a>
-        </li>
-        <li>
-        <li sec:authorize="isAuthenticated()">
-            <a href="#" onclick="logout(event)">Logout</a>
-            <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
-                <input type="submit" value="Logout"/>
-                <!--                old code below: -->
-                <!--            <form method="POST" th:action="@{logout}">-->
-                <!--                <input type="submit" value="Logout"/>-->
-            </form>
-        </li>
-    </ul>
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary" id="custom-navbar">
+    <div class="container-fluid">
+        <a th:href="@{/home}" style="text-decoration: none; color: inherit; margin-right: 25px;">
+            <h1 xmlns:sec="http://www.w3.org/1999/xhtml">
+                Gardener's Grove
+            </h1>
+        </a>        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item-dropdown dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Gardens
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a id="my-gardens" class="dropdown-item" th:href="@{/gardens}">My Gardens</a></li>
+                        <div class="dropdown-divider"></div>
+                        <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
+                            <li><a class="dropdown-item" th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a></li>
+                        </th:block>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/user}">My Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/manageFriends}">Manage Friends</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/browseGardens}">Browse Gardens</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" href="#" onclick="logout(event)">Logout</a>
+                    <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
+                        <input type="submit" value="Logout"/>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
 </nav>

@@ -406,7 +406,4 @@ public class MainPageControllerTest {
                 .andExpect(model().attribute("friends",friendList));
     }
 
-
-
-
 }
