@@ -1,10 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.MainPageController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.GardenVisit;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenVisitRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
@@ -57,8 +54,15 @@ public class MainPageControllerTest {
     @MockBean
     private GardenVisitService gardenVisitService;
 
-    @MockBean PlantService plantService;
+    @MockBean
+    PlantService plantService;
 
+    @MockBean
+    private GardenVisit gardenVisit;
+    @MockBean
+    private MainPageLayoutService mainPageLayoutService;
+    @MockBean
+    private MainPageLayout mainPageLayout;
     private Gardener testGardener;
     private Garden testGarden;
 
@@ -75,7 +79,8 @@ public class MainPageControllerTest {
         when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(testGardener));
         testGarden = new Garden("Test garden", "99 test address", null,
                 "Christchurch", "New Zealand", null, "9999", testGardener, "");
-
+        mainPageLayout = new MainPageLayout(testGardener);
+        when(mainPageLayoutService.getLayoutByGardenerId(any())).thenReturn(mainPageLayout);
     }
     @AfterEach
     public void tearDown() {

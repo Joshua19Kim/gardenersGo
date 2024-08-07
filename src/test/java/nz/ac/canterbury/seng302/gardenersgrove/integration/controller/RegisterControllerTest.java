@@ -4,6 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.MainPageLayoutService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,8 @@ public class RegisterControllerTest {
     private TokenService tokenService;
     @MockBean
     private WriteEmail mockWriteEmail;
+    @MockBean
+    private MainPageLayoutService mainPageLayoutService;
 
     @Test
     @WithMockUser
@@ -44,7 +47,7 @@ public class RegisterControllerTest {
                 .perform(MockMvcRequestBuilders.get("/register")
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("register"));
+                .andExpect(view().name("registerTemplate"));
     }
 
     @Test
@@ -55,7 +58,7 @@ public class RegisterControllerTest {
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
         Mockito.doNothing().when(mockWriteEmail).sendSignupEmail(Mockito.any(Gardener.class), Mockito.any(TokenService.class));
 
-        RegisterController registerController = new RegisterController(gardenerFormService, tokenService, mockWriteEmail);
+        RegisterController registerController = new RegisterController(gardenerFormService, tokenService, mockWriteEmail, mainPageLayoutService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(registerController).build();
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/register")
@@ -85,7 +88,7 @@ public class RegisterControllerTest {
                         .param("passwordConfirm", "Password1!")
                 )
                 .andExpect(status().isOk())
-                .andExpect(view().name("register"))
+                .andExpect(view().name("registerTemplate"))
                 .andExpect(model().attributeExists("firstNameValid"))
                 .andExpect(model().attribute("firstNameValid", "First name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>First name must include at least one letter"));
     }
@@ -104,18 +107,18 @@ public class RegisterControllerTest {
                         .param("isLastNameOptional", "false")
                 )
                 .andExpect(status().isOk())
-                .andExpect(view().name("register"))
+                .andExpect(view().name("registerTemplate"))
                 .andExpect(model().attributeExists("lastNameValid"))
                 .andExpect(model().attribute("lastNameValid", "Last name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>Last name must include at least one letter"));
     }
 
     @Test
     @WithMockUser
-    void lastNameOptional_invalidLastName_userCreated() throws Exception {
+    void lastNameOptional_invalidLastName_errorShown() throws Exception {
         Authentication authentication = Mockito.mock(Authentication.class);
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
-        RegisterController registerController = new RegisterController(gardenerFormService, tokenService, mockWriteEmail);
+        RegisterController registerController = new RegisterController(gardenerFormService, tokenService, mockWriteEmail, mainPageLayoutService);
         MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(registerController).build();
         MOCK_MVC
                 .perform(MockMvcRequestBuilders.post("/register")
@@ -127,9 +130,9 @@ public class RegisterControllerTest {
                         .param("passwordConfirm", "Password1!")
                         .param("isLastNameOptional", "true")
                 )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/signup"));
-        Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
+                .andExpect(status().isOk())
+                .andExpect(view().name("registerTemplate"))
+                .andExpect(model().attribute("lastNameValid", "You cannot enter a last name"));
     }
 
     @Test
@@ -146,7 +149,7 @@ public class RegisterControllerTest {
                         .param("DoB", LocalDate.of(1000, 1, 1).toString())
                 )
                 .andExpect(status().isOk())
-                .andExpect(view().name("register"))
+                .andExpect(view().name("registerTemplate"))
                 .andExpect(model().attributeExists("DoBValid"))
                 .andExpect(model().attribute("DoBValid", "The maximum age allowed is 120 years"));
     }
@@ -165,7 +168,7 @@ public class RegisterControllerTest {
                         .param("DoB", LocalDate.of(3000, 1, 1).toString())
                 )
                 .andExpect(status().isOk())
-                .andExpect(view().name("register"))
+                .andExpect(view().name("registerTemplate"))
                 .andExpect(model().attributeExists("DoBValid"))
                 .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account <br/>"));
     }
@@ -183,7 +186,7 @@ public class RegisterControllerTest {
                         .param("passwordConfirm", "Password1!")
                 )
                 .andExpect(status().isOk())
-                .andExpect(view().name("register"))
+                .andExpect(view().name("registerTemplate"))
                 .andExpect(model().attributeExists("emailValid"))
                 .andExpect(model().attribute("emailValid", "Email address must be in the form 'jane@doe.nz'"));
     }
@@ -201,7 +204,7 @@ public class RegisterControllerTest {
                         .param("passwordConfirm", "Pass")
                 )
                 .andExpect(status().isOk())
-                .andExpect(view().name("register"))
+                .andExpect(view().name("registerTemplate"))
                 .andExpect(model().attributeExists("passwordStrong"))
                 .andExpect(model().attribute("passwordStrong", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
     }
@@ -219,7 +222,7 @@ public class RegisterControllerTest {
                         .param("passwordConfirm", "Password2@")
                 )
                 .andExpect(status().isOk())
-                .andExpect(view().name("register"))
+                .andExpect(view().name("registerTemplate"))
                 .andExpect(model().attributeExists("passwordsMatch"))
                 .andExpect(model().attribute("passwordsMatch", "Passwords do not match."));
     }

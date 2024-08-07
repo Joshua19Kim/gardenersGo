@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head th:insert="~{fragmentExample/fragments/bootstrap.html}">
-    <title>Gardens</title>
+    <title>Home</title>
 </head>
 
 <body>
@@ -9,90 +9,71 @@
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
 <div class="container">
-    <div class="row">
+    <div class="row" id="widget-container">
         <!-- Recently accessed gardens and Newest Plants -->
-        <div class="col-md-8">
-            <div class="row">
+        <div class="col d-flex flex-column justify-content-between" id='widget-box'>
+            <div class="row" id="widget-small-boxes">
                 <!-- Recently accessed gardens -->
                 <div class="col-md-6 mb-4">
-                    <div class="main-page2-card">
-                        <div class="main-page2-card-title">Recently accessed gardens</div>
-                        <ul class="list-group">
-                            <p th:class="${recentGardens.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No recently visited garden </p>
-                            <li th:each="garden : ${recentGardens}" class="list-group-item p-0">
-                                <a th:href="@{/gardens/details(gardenId=${garden.id})}"
-                                   class="d-block p-3 text-decoration-none text-dark main-page-custom-hover"
-                                   style="transition: background-color 0.3s ease;"
-                                >
-                                    <span th:text="${garden.name}">Garden Name</span> <br>
-                                    <small th:text="${garden.location}">Location</small>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    <div th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetSmallOne + 'Widget.html'}"></div>
                 </div>
                 <!-- Newest Plants -->
                 <div class="col-md-6 mb-4">
-                    <div class="main-page2-card">
-                        <div class="main-page2-card-title">Newest Plants</div>
-                        <div class="list-group">
-                            <p th:class="${newestPlants.isEmpty()}? 'alert alert-secondary' : 'd-none'">No plants added</p>
-                            <th:block th:each="plant : ${newestPlants}">
-                                <a class="list-group-item plant-item" th:href="@{/gardens/details(gardenId=${plant.garden.id})}">
-                                    <div class="plant-image">
-                                        <img class="avatar" th:src="@{${plant.image}}" alt="Plant Image"/>
-                                    </div>
-                                    <div class="plant-info">
-                                        <p class="font-weight-bold" th:text="${plant.name}"></p>
-                                        <small th:text="${'Garden: ' + plant.garden.name}"></small>
-                                    </div>
-                                </a>
-                            </th:block>
-                        </div>
-                    </div>
+                    <div th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetSmallTwo + 'Widget.html'}"></div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" id="widget-wide">
                 <!-- My Friend's List -->
-                <div class="col-md-12">
-                    <div class="main-page-card">
-                        <div class="card-body">
-                            <h5 class="card-title">My Friend's List</h5>
-                            <div class="main-page-friends-container-scroll main-page-friend-container">
-                                <p th:class="${friends.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No friends added </p>
-                                <th:block th:each="friend : ${friends}">
-                                    <a class="main-page-friends-list-item main-page-custom-hover"
-                                       th:href="@{/user(user=${friend.id})}">
-                                        <img class="main-page-avatar rounded-circle"
-                                             style="width: 80px; height: 80px; object-fit: cover; margin-top: .3em; margin-bottom: 1em;"
-                                             th:src="@{${friend.getProfilePicture()}}" alt="">
-                                        <p class="mb-0 text-center" th:text="${friend.firstName} +' ' + (${friend.lastName} ?: '')"
-                                           style="font-size: 0.8em; color: black; line-height: 1.2;"></p>
-                                    </a>
-                                </th:block>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetWide + 'Widget.html'}"></div>
             </div>
         </div>
         <!-- My Garden's List -->
-        <div class="col-md-4">
-            <div class="main-page2-card mt-0">
-                <div class="main-page2-card-title">My Garden’s List</div>
-                <div class="list-group" style="overflow-y: scroll; height: 460px;">
-                    <p th:class="${gardens.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No gardens created </p>
-                    <th:block th:each="garden : ${gardens}">
-                        <a class="list-group-item main-page-custom-hover" style="transition: background-color 0.3s ease;" th:href="@{/gardens/details(gardenId=${garden.id})}">
-                            <p th:text="${garden.name}"></p>
-                            <small th:text="${garden.location}" ></small>
-                        </a>
-                    </th:block>
-                </div>
-            </div>
+        <div class="col-md-4" id="widget-tall">
+            <div th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetTall + 'Widget.html'}"></div>
         </div>
     </div>
 </div>
 
+
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Thymeleaf variable injected into JavaScript
+    const ordering = /*[[${ordering}]]*/ 'default';
+    console.log(ordering);
+
+    /*]]>*/
+
+    function orderItems(ordering) {
+
+        const order = ordering.split(' ');
+        console.log(order);
+        let container = document.getElementById('widget-container');
+        let box = document.getElementById('widget-box');
+        const tall = document.getElementById('widget-tall');
+        const wide = document.getElementById('widget-wide');
+        const smallBoxes = document.getElementById('widget-small-boxes')
+
+        container.innerHTML = '';
+        // if the 4th widget (the tall one) is first, move it to the left, otherwise leave it
+        if (order[0] === '3') {
+            container.appendChild(tall);
+            container.appendChild(box);
+        } else {
+            container.appendChild(box);
+            container.appendChild(tall);
+        }
+
+        // if the 3rd widget (the wide one) comes before the two boxes, move it above
+        if (order.indexOf('2') < order.indexOf('1')) {
+            box.appendChild(wide);
+            box.appendChild(smallBoxes);
+        } else {
+            box.appendChild(smallBoxes);
+            box.appendChild(wide);
+        }
+    }
+    orderItems(ordering);
+</script>
 </body>
 </html>

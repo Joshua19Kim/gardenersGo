@@ -40,40 +40,40 @@
             </div>
         </div>
 
-        <div aria-hidden="true" class="modal" id="remove-friend-modal">
-            <div class="confirmation w-50">
-                <p class="text-dark">Are you sure?</p>
-                <div class="confirmation-container">
-                    <form method="post" th:action="@{/removeRelationship}" style="margin-right: 5px;">
-                        <input type="hidden"
-                               th:name="${_csrf.parameterName}"
-                               th:value="${_csrf.token}"/>
-                        <input id="friendInputId" name="friendId" type="hidden">
-                        <button type=submit  class="decline-friend-req-btn button">Remove</button>
-                    </form>
-                    <button class="cancel button" onclick="displayConfirmRemove()">Cancel</button>
+            <div aria-hidden="true" class="friend-modal" id="remove-friend-modal">
+                <div class="confirmation w-50">
+                    <p class="text-dark">Are you sure?</p>
+                    <div class="confirmation-container">
+                        <form method="post" th:action="@{/removeRelationship}" style="margin-right: 5px;">
+                            <input type="hidden"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}"/>
+                            <input id="friendInputId" name="friendId" type="hidden">
+                            <button type=submit  class="decline-friend-req-btn button">Remove</button>
+                        </form>
+                        <button class="cancel button" onclick="displayConfirmRemove()">Cancel</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div aria-hidden="true" class="modal" id="friend-request-modal">
-            <div class="friend-requests ">
-                <div class="header">
-                    <div class="table-header">
-                        <button id="received-btn" onclick="displayRequest('received')">Received</button>
-                        <button id="sent-btn" onclick="displayRequest('sent')">Sent</button>
+            <div aria-hidden="true" class="friend-modal" id="friend-request-modal">
+                <div class="friend-requests">
+                    <div class="header">
+                        <div class="table-header">
+                            <button id="received-btn" onclick="displayRequest('received')">Received</button>
+                            <button id="sent-btn" onclick="displayRequest('sent')">Sent</button>
+                        </div>
+                        <button class="close" onclick="displayFriendRequests()">&times;</button>
                     </div>
-                    <button class="close" onclick="displayFriendRequests()">&times;</button>
-                </div>
-                <div class="table-body">
-                    <!-- Iterate over search results -->
-                    <div id="sent-requests">
-                        <div class="friend" th:each="pendingRequest : ${pending}">
-                            <!-- Display gardener information -->
-                            <div class="friend-info">
-                                <img alt="Profile Picture"
-                                     th:src="@{${pendingRequest.getProfilePicture()}}">
-                                <p class="text-dark" th:text="${pendingRequest.toString()}"></p>
+                    <div class="table-body">
+                        <!-- Iterate over search results -->
+                        <div id="sent-requests">
+                            <div class="friend" th:each="pendingRequest : ${pending}">
+                                <!-- Display gardener information -->
+                                <div class="friend-info">
+                                    <img alt="Profile Picture"
+                                         th:src="@{${pendingRequest.getProfilePicture()}}">
+                                    <p class="text-dark" th:text="${pendingRequest.toString()}"></p>
 
                             </div>
                             <div class="friend-info">
@@ -132,43 +132,43 @@
             </div>
         </div>
 
-        <div aria-hidden="true" class="modal" id="add-friend-modal">
-            <div class="add-friends">
-                <div class="header">
-                    <button class="close" onclick="displaySearchBar()">&times;</button>
-                    <div class="search-table-header">
-                        <h3>Find Gardeners</h3>
+            <div aria-hidden="true" class="friend-modal" id="add-friend-modal">
+                <div class="add-friends">
+                    <div class="header">
+                        <button class="close" onclick="displaySearchBar()">&times;</button>
+                        <div class="search-table-header">
+                            <h3>Find Gardeners</h3>
+                        </div>
                     </div>
-                </div>
-                <div class="search-table-body">
-                    <!-- https://www.w3schools.com/howto/howto_css_search_button.asp search bar and styling-->
-                    <div class="input-search-bar">
-                        <form class="search-bar">
-                            <input id="search-input" type="text" placeholder="Search...">
-                            <input id="searchPool" name="searchPool" th:value="${searchPool}" type="hidden">
-                            <button id="search-button" type="button" onclick="filterSearch()"><i class="fa fa-search">Submit</i></button>
-                        </form>
-                    </div>
-                    <div id="search-results-container">
-                        <div class="all-non-friends" id="all-non-friends">
-                            <form class="friends-to-request" method="post" th:action="@{/manageRequest}" th:each="search : ${searchPool}">
-                                <div class="picture-and-gardener">
-                                    <input name="friendId" th:value="${search.getId()}" type="hidden">
-                                    <input name="status" value="pending" type="hidden">
-                                    <img alt="Profile Picture"
-                                         th:src="@{${search.getProfilePicture()}}">
-                                    <p class="text-dark" th:text="${search.toString()}"></p>
-                                </div>
-                                <button class="invite-friend-req-btn button">Invite Friend</button>
+                    <div class="search-table-body">
+                        <!-- https://www.w3schools.com/howto/howto_css_search_button.asp search bar and styling-->
+                        <div class="input-search-bar">
+                            <form class="search-bar">
+                                <input id="search-input" type="text" placeholder="Search...">
+                                <input id="searchPool" name="searchPool" th:value="${searchPool}" type="hidden">
+                                <button id="search-button" type="button" onclick="filterSearch()"><i class="fa fa-search">Submit</i></button>
                             </form>
                         </div>
-                        <p class="text-dark" id="no-results-match-message"></p>
+                        <div id="search-results-container">
+                            <div class="all-non-friends" id="all-non-friends">
+                                <form class="friends-to-request" method="post" th:action="@{/manageRequest}" th:each="search : ${searchPool}">
+                                    <div class="picture-and-gardener">
+                                        <input name="friendId" th:value="${search.getId()}" type="hidden">
+                                        <input name="status" value="pending" type="hidden">
+                                        <img alt="Profile Picture"
+                                             th:src="@{${search.getProfilePicture()}}">
+                                        <p class="text-dark" th:text="${search.toString()}"></p>
+                                    </div>
+                                    <button class="invite-friend-req-btn button">Invite Friend</button>
+                                </form>
+                            </div>
+                            <p class="text-dark" id="no-results-match-message"></p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 <script>
 

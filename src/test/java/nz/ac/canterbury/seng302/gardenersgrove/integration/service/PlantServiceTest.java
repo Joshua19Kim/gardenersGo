@@ -1,38 +1,42 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.cucumber.java.bs.A;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.MainPageLayoutRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.access.method.P;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
 @Import(PlantService.class)
 public class PlantServiceTest {
+
+    @Autowired
+    private PlantRepository plantRepository;
+    @Autowired
+    private GardenRepository gardenRepository;
+    @Autowired
+    private GardenerFormRepository gardenerFormRepository;
+    @Autowired
+    private MainPageLayoutRepository mainPageLayoutRepository;
     Gardener testGardener;
     @BeforeEach
     public void setUp() {
-        gardenRepository.deleteAll();
         plantRepository.deleteAll();
+        gardenRepository.deleteAll();
+        mainPageLayoutRepository.deleteAll();
         gardenerFormRepository.deleteAll();
 
         testGardener = new Gardener("Test", "Gardener",
@@ -121,13 +125,6 @@ public class PlantServiceTest {
         });
         plantService.addPlant(new Plant("Flower","2", "Rose", "08/02/2024", garden));
     }
-
-    @Autowired
-    private PlantRepository plantRepository;
-    @Autowired
-    private GardenRepository gardenRepository;
-    @Autowired
-    private GardenerFormRepository gardenerFormRepository;
 
     @Test
     public void PlantAdded_ValidInputs_PlantReturned() {

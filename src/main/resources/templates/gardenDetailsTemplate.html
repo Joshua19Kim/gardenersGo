@@ -264,7 +264,7 @@
 
     function openModal(message) {
         let myModal = new bootstrap.Modal(document.getElementById('warningModal'));
-        document.getElementById('modalBody').innerHTML = message;
+        document.getElementById('modalBody').innerText = message;
         myModal.show();
 
     }
