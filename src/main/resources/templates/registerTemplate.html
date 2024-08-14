@@ -88,7 +88,7 @@
 
             <div class="form-group field">
                 <label class="input">
-                    <input name="passwordConfirm" placeholder="Confirm Password" type="password" maxlength="255" class="form-control form-field"
+                    <input name="passwordConfirm" id="passwordConfirm" placeholder="Confirm Password" type="password" maxlength="255" class="form-control form-field"
                            th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'is-invalid' : ''}">
                     <span class="form-label">Confirm Password</span>
                 </label>
