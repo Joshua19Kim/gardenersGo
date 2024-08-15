@@ -8,8 +8,10 @@
                     <img class="avatar" th:src="@{${plant.image}}" alt="Plant Image"/>
                 </div>
                 <div class="plant-info">
-                    <p class="font-weight-bold" th:text="${plant.name}"></p>
-                    <small th:text="${'Garden: ' + plant.garden.name}"></small>
+                    <p class="font-weight-bold text-dark main-page-custom-hover break-words overflow-wrap-anywhere text-break mb-2" th:text="${plant.name}"
+                       style=" min-width: 0;"
+                    ></p>
+                    <small class="break-words overflow-wrap-anywhere text-break mb-2" style=" min-width: 0;" th:text="${'Garden: ' + plant.garden.name}"></small>
                 </div>
             </a>
         </th:block>
