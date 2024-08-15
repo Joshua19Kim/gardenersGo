@@ -29,7 +29,7 @@
     </div>
 
     <div class="container card w-50">
-        <form th:action="@{user}" method="get" id="userForm">
+        <form th:action="@{user}" method="get" id="userForm" novalidate>
 
             <label for="firstName"> First Name: </label>
             <span id="firstName" th:text="${firstName}"></span>
@@ -54,13 +54,6 @@
                        th:name="isLastNameOptional" type="checkbox" style="display: none;">
             </div>
 
-            <script>
-                document.getElementById('isLastNameOptional').checked = false;
-                document.getElementById('isLastNameOptional').onchange = function () {
-                    document.getElementById('lastNameEdit').disabled = this.checked;
-                };
-            </script>
-
             <p class="smallErrorMessage" th:utext="${lastNameValid}"></p>
             <br/>
 
@@ -68,16 +61,7 @@
             <span id="DoB" th:text="${DoB}"></span>
             <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;" th:classappend="${(DoBValid != '' && DoBValid != null) ? 'is-invalid' : ''}">
             <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
-
-            <script>
-                document.getElementById("DoBEdit").addEventListener("invalid",
-                    function (event) {
-                        event.preventDefault();
-                        console.log("invalid date");
-                        document.getElementById("DoBEdit").style.border = "1px solid red";
-                        document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";
-                    });
-            </script>
+            <input type="hidden" id="isDoBInvalid" th:name="isDoBInvalid" th:value="false"/>
 
             <br/>
             <label for="email"> Email: </label>
@@ -87,6 +71,7 @@
                    th:classappend="${emailValid != '' ? 'is-invalid' : ''}">
             <p class="smallErrorMessage" th:utext="${emailValid}"></p>
             <br/>
+
 
             <div id="editButtonDiv">
                 <button class="btn btn-primary mb-3" type="button" onclick="enableEditing()">Edit</button>
@@ -150,6 +135,24 @@
 </div>
 
 <script type="text/javascript">
+    document.getElementById('isLastNameOptional').checked = false;
+    document.getElementById('isLastNameOptional').onchange = function () {
+        document.getElementById('lastNameEdit').disabled = this.checked;
+    };
+
+    document.getElementById("userForm").addEventListener("submit", function(event) {
+        const dobInput = document.getElementById("DoBEdit");
+        if (!(dobInput.checkValidity())) {
+            console.log("invalid date")
+            event.preventDefault();
+            document.getElementById("isDoBInvalid").value = true;
+            document.getElementById("userForm").submit();
+        } else {
+            console.log("valid date")
+            document.getElementById("isDoBInvalid").value = false;
+        }
+    });
+
     document.getElementById("userForm").addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             var activeElement = document.activeElement;
@@ -160,8 +163,7 @@
             }
         }
     });
-</script>
-<script>
+
     document.getElementById("userForm").addEventListener("submit", function(event) {
         const dobInput = document.getElementById("DoBEdit");
         if (!(dobInput.checkValidity())) {
