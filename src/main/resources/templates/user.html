@@ -56,13 +56,12 @@
             </div>
 
             <script>
-                console.log(document.getElementById("isLastNameOptional").value)
                 document.getElementById('isLastNameOptional').onchange = function () {
                     document.getElementById('lastNameEdit').disabled = this.checked;
                 };
             </script>
 
-            <p class="smallErrorMessage" th:utext="${lastNameValid}"></p>
+            <p class="smallErrorMessage" th:utext="${lastNameValid}" id="lastNameError"></p>
             <br/>
 
             <label for="DoB"> Date of Birth: </label>
@@ -195,7 +194,8 @@
         document.getElementById('isLastNameOptional').style.display = 'inline';
         document.getElementById('isLastNameOptionalLabelEdit').style.display = 'inline';
         let lName = document.getElementById('lastNameEdit');
-        if (lName.value.trim() === "") {
+        let lNameError = document.getElementById("lastNameError")
+        if (lName.value.trim() === "" && lNameError.textContent === "") {
             document.getElementById('isLastNameOptional').checked = true;
             document.getElementById('lastNameEdit').disabled = true;
         }

@@ -189,7 +189,6 @@ public class UserProfileController {
                 return "redirect:/user";
             }
         }
-        System.out.println(model.getAttribute("isLastNameOptional"));
         return "user";
     }
 
