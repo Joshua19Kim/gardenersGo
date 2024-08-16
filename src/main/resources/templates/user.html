@@ -29,7 +29,7 @@
     </div>
 
     <div class="container card w-50">
-        <form th:action="@{user}" method="get" id="userForm" novalidate>
+        <form th:action="@{user}" method="get" id="userForm" class="w-100" novalidate>
 
             <label for="firstName"> First Name: </label>
             <span id="firstName" th:text="${firstName}"></span>
@@ -77,10 +77,10 @@
             <div id="editButtonDiv">
                 <button class="btn btn-primary mb-3" type="button" onclick="enableEditing()">Edit</button>
             </div>
-            <div id="saveCancelButtonDiv" class="m-0 p-0 d-flex gap-5" style="display: none !important;">
-                <button class="btn btn-secondary mb-3" type="button" onclick="window.location='./password'">Update password</button>
-                <input class="btn btn-primary mb-3" type="submit" value="Save"/>
-                <button class="btn btn-danger mb-3" type="button" onclick="disableEditing(); window.location='./user'">Cancel</button>
+            <div id="saveCancelButtonDiv" class="" style="display: none !important;">
+                <button class="btn btn-secondary mb-3 ml-25p" type="button" onclick="window.location='./password'">Update password</button>
+                <input class="btn btn-primary mb-3 ml-25p" type="submit" value="Save"/>
+                <button class="btn btn-danger mb-3 ml-25p" type="button" onclick="disableEditing(); window.location='./user'">Cancel</button>
             </div>
         </form>
     </div>
