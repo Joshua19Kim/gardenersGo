@@ -115,6 +115,7 @@ public class UserProfileControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
+                .andExpect(model().attribute("isLastNameOptional", false))
                 .andExpect(model().attribute("firstName", ""))
                 .andExpect(model().attribute("firstNameValid", "First name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>First name must include at least one letter"));
     }
@@ -134,6 +135,7 @@ public class UserProfileControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
+                .andExpect(model().attribute("isLastNameOptional", false))
                 .andExpect(model().attribute("lastName", "!%ASava"))
                 .andExpect(model().attribute("lastNameValid", "Last name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>Last name must include at least one letter"));
     }
@@ -152,6 +154,7 @@ public class UserProfileControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
+                .andExpect(model().attribute("isLastNameOptional", false))
                 .andExpect(model().attribute("DoB", LocalDate.of(1980,1,1)))
                 .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account <br/>"));
     }
@@ -170,6 +173,7 @@ public class UserProfileControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
+                .andExpect(model().attribute("isLastNameOptional", false))
                 .andExpect(model().attribute("DoB", LocalDate.of(1980,1,1)))
                 .andExpect(model().attribute("DoBValid", "The maximum age allowed is 120 years"));
     }
@@ -188,6 +192,7 @@ public class UserProfileControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
+                .andExpect(model().attribute("isLastNameOptional", false))
                 .andExpect(model().attribute("email", "testEmailgmail.m"))
                 .andExpect(model().attribute("emailValid", "Email address must be in the form 'jane@doe.nz'"));
     }
@@ -491,5 +496,47 @@ public class UserProfileControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/user"));
     }
+
+    @Test
+    @WithMockUser
+    public void EditProfileSubmitted_LastNameEmptyAndUnchecked_LastNameErrorMessage() throws Exception {
+
+        testGardener.setLastName("");
+
+        mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", "testFirstName")
+                        .param("lastName", "")
+                        .param("DoB", "1980-01-01")
+                        .param("email", "testEmail@gmail.com")
+                        .param("isLastNameOptional", "false")
+                        .with(csrf())
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("user"))
+                .andExpect(model().attribute("isLastNameOptional", false))
+                .andExpect(model().attribute("lastName", ""))
+                .andExpect(model().attribute("lastNameValid", "Last name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>Last name must include at least one letter"));
+    }
+
+    @Test
+    @WithMockUser
+    public void EditProfileSubmitted_NoLastNameAndFirstNameError_FirstNameErrorMessage() throws Exception {
+
+        mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .param("firstName", "@@@@@")
+                        .param("DoB", "1980-01-01")
+                        .param("email", "testEmail@gmail.com")
+                        .param("isLastNameOptional", "true")
+                        .with(csrf())
+                )
+                .andExpect(status().isOk())
+                .andExpect(view().name("user"))
+                .andExpect(model().attribute("isLastNameOptional", true))
+                .andExpect(model().attribute("firstName", "@@@@@"))
+                .andExpect(model().attribute("firstNameValid", "First name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>First name must include at least one letter"));
+    }
+
 
 }
