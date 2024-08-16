@@ -180,5 +180,22 @@ INSERT INTO tag (garden , tag_name) VALUES (35, 'herbs');
 INSERT INTO tag (garden , tag_name) VALUES (45, 'herbs');
 
 
+
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+INSERT INTO plant_species(count, name, image_filename) VALUES (4, 'New Plant', '/images/placeholder.jpg');
+
 -- email: a@gmail.com
 -- password: Password1!
