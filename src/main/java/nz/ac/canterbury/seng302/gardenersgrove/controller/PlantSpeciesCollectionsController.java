@@ -39,7 +39,7 @@ public class PlantSpeciesCollectionsController {
     ) {
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
         Page<PlantSpecies> plantSpeciesList = plantSpeciesService.getAllPlantSpeciesPaginated(pageNo, pageSize);
-        logger.info(plantSpeciesList.toString());
+        logger.info("GET /myCollection");
         model.addAttribute("plantSpeciesList", plantSpeciesList);
         int totalPages = plantSpeciesList.getTotalPages();
         if(totalPages > 0) {

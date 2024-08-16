@@ -1,4 +1,5 @@
-<script>
+<script xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml"
+        xmlns:sec="http://www.w3.org/1999/xhtml">
     // JavaScript function to submit the logout form
     function logout(event) {
         event.preventDefault(); // Prevent the link from navigating
@@ -43,6 +44,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/browseGardens}">Browse Gardens</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/myCollection}">My Collection</a>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
                     <a class="nav-link" href="#" onclick="logout(event)">Logout</a>

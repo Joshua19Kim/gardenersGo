@@ -2,7 +2,7 @@
 <html lang="en">
 <head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <meta charset="UTF-8">
-    <title>Browse Gardens</title>
+    <title>My Collection</title>
 </head>
 
 <body>
@@ -12,7 +12,6 @@
 
     <div class="row">
         <div th:each="plantSpecies : ${plantSpeciesList.content}" class="col-md-3 mb-4">
-
             <div class="card collection-gardens-card">
                 <img id="collection-card-img" class="card-img-top" th:src="${plantSpecies.imageFilename}" alt="Plant Species image">
                 <div class="card-collection-body">
