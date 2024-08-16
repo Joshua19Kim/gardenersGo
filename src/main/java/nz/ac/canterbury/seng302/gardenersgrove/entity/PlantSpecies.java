@@ -4,23 +4,33 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
+/**
+ * The Plant species. This is where the bulk of the information on a plant species is stored
+ *
+ * ############################ more to be added once clear what comes from API ####
+ */
 @Entity
 @Table(name = "plant_species")
 public class PlantSpecies {
 
+    /** Unique ID of the plant species*/
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /** the count of the plant species that a user has in their collection*/
     @Column
     private long count;
 
+    /** name of the plant species*/
     @Column
     private String name;
 
+    /** string filepath of the image that is stored for the plant species*/
     @Column
     private String imageFilename;
 
+    /** an instance of the plant species can be used by many gardeners collections*/
     @OneToMany( mappedBy = "plantSpecies")
     private List<ScannedPlant> plants;
 

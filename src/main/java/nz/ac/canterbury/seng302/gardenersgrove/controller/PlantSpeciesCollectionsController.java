@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Controller class for handling HTTP requests for the Collections page
+ */
 @Controller
 public class PlantSpeciesCollectionsController {
 
@@ -25,13 +28,25 @@ public class PlantSpeciesCollectionsController {
 
     private int pageSize;
 
-
+    /**
+     * Constructor to instantiate PlantSpeciesCollectionsController
+     * @param plantSpeciesService the service used to interact with database
+     */
     @Autowired
     public PlantSpeciesCollectionsController(PlantSpeciesService plantSpeciesService) {
         this.plantSpeciesService = plantSpeciesService;
         pageSize = 12;
     }
 
+    /**
+     * Handles GET requests for /myCollection stub and returns the template for
+     * my collections page
+     *
+     * @param pageNoString string representation of the page number used for
+     *                     pagination
+     * @param model used for passing attributes to the view
+     * @return myCollectionTemplate
+     */
     @GetMapping("/myCollection")
     public String getMyCollection(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,

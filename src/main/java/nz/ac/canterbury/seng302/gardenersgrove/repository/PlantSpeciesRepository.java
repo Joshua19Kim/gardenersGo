@@ -11,12 +11,30 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for accessing and managing PlantSpecies entities
+ */
 @Repository
 public interface PlantSpeciesRepository extends JpaRepository<PlantSpecies, Long> {
 
+    /**
+     * Retrieves a plant species by its ID
+     *
+     * @param id of plant species
+     * @return an optional of a plant species
+     */
     Optional<PlantSpecies> findById(long id);
+
+    /**
+     * @return a list of all plant species in the database
+     */
     List<PlantSpecies> findAll();
 
+    /**
+     * returns page of plant species
+     * @param pageable a pageable object used for paginationb
+     * @return a page of plant species
+     */
     Page<PlantSpecies> findAll(Pageable pageable);
 
 
