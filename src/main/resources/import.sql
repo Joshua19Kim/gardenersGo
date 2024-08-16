@@ -56,7 +56,7 @@ INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN, creation_date) VALUES (1, 'Vertical Garden', '888 Wall St', 'Financial District', 'Singapore', 'Singapore', '018989', '20', true, '2021-06-30');
 
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN, creation_date) VALUES (1, 'Fairy Garden', '1515 Whimsical Way', 'Enchanted Forest', 'Dublin', 'Ireland', 'D01 F5P2', '35', true, '2023-10-31');
-INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN, creation_date) VALUES (1, 'Rooftop Haven', '789 Skyline Ave', 'Downtown', 'Chicago', 'USA', '60601', '30', true, '2017-05-10');
+INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN, creation_date) VALUES (1, 'Rooftop Haven', '789 Skyline Ave', 'Downtown', 'Chicago', 'USA', '60601', '30', false, '2017-05-10');
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN, creation_date) VALUES (2, 'Captain''s Victory Garden', '569 Leaman Place', 'Brooklyn Heights', 'New York', 'USA', '11201', '100', true, '2015-07-04');
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN, creation_date) VALUES (2, 'Tropical Paradise', '56 Palm Beach Dr', 'Seaside', 'Miami', 'USA', '33101', '150', true, '2018-01-12');
 INSERT INTO garden (gardener_id, name, location, suburb, city, country, postcode, size, PUBLIC_GARDEN, creation_date) VALUES (2, 'Bamboo Forest', '444 Panda Path', 'Eastside', 'Chengdu', 'China', '610000', '300', true, '2020-02-11');
@@ -154,7 +154,7 @@ INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 9, 'accept
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 10, 'accepted');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 11, 'accepted');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 14, 'accepted');
-INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 15, 'accepted');
+-- INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 15, 'accepted');
 
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 12, 'pending');
 INSERT INTO relationships (gardener_id, friend_id, status) VALUES (1, 13, 'pending');
