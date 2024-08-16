@@ -16,6 +16,8 @@ public class ScannedPlant {
     @Column
     private String name;
 
+    protected ScannedPlant() {}
+
     public Long getId() {
         return id;
     }

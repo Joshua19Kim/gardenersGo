@@ -24,6 +24,14 @@ public class PlantSpecies {
     @OneToMany( mappedBy = "plantSpecies")
     private List<ScannedPlant> plants;
 
+    protected PlantSpecies() {}
+
+    public PlantSpecies(String name, int count, String imageFilename) {
+        this.name = name;
+        this.count = count;
+        this.imageFilename = imageFilename;
+    }
+
     public long getCount() {
         return count;
     }
@@ -56,5 +64,11 @@ public class PlantSpecies {
         this.plants = plants;
     }
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
