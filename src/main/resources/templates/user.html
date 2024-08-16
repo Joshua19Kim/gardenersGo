@@ -34,7 +34,7 @@
             <label for="firstName"> First Name: </label>
             <span id="firstName" th:text="${firstName}"></span>
             <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
-                   placeholder="First Name" required th:name="firstName" th:value="*{firstName}" type="text"
+                   placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
                    style="display: none;"
                    th:classappend="${firstNameValid != '' ? 'is-invalid' : ''}">
             <p class="smallErrorMessage" th:utext="${firstNameValid}"></p>
@@ -44,13 +44,14 @@
             <span id="lastName" th:text="${lastName}"></span>
             <input class="form-control" data-cy="lastName" id="lastNameEdit" placeholder="Last Name" maxlength="255"
                    th:name="lastName" th:value="*{lastName}" type="text" style="display: none"
-                   th:classappend="${lastNameValid != '' ? 'is-invalid' : ''}">
+                   th:classappend="${lastNameValid != '' ? 'is-invalid' : ''}"
+                   th:disabled="${isLastNameOptional}">
             <br/>
 
             <div id="surnameCheck" class="m-3">
                 <label id="isLastNameOptionalLabelEdit" for="isLastNameOptional" style="display: none;">I have no surname:</label>
                 <input class="form-check-input" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
-                       placeholder="Last Name Tick Box Check"
+                       placeholder="Last Name Tick Box Check" th:checked="${isLastNameOptional}"
                        th:name="isLastNameOptional" type="checkbox" style="display: none;">
             </div>
 
@@ -196,7 +197,8 @@
         document.getElementById('isLastNameOptional').style.display = 'inline';
         document.getElementById('isLastNameOptionalLabelEdit').style.display = 'inline';
         let lName = document.getElementById('lastNameEdit');
-        if (lName.value.trim() === "") {
+        let lNameError = document.getElementById("lastNameError")
+        if (lName.value.trim() === "" && lNameError.textContent === "") {
             document.getElementById('isLastNameOptional').checked = true;
             document.getElementById('lastNameEdit').disabled = true;
         }
