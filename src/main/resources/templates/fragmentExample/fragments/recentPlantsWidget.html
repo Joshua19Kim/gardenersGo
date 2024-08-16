@@ -1,7 +1,7 @@
 <div class="main-page2-card">
     <div class="main-page2-card-title">Newest Plants</div>
     <div class="list-group">
-        <p th:class="${newestPlants.isEmpty()}? 'alert alert-secondary' : 'd-none'">No plants added</p>
+        <p th:class="${newestPlants.isEmpty()}? 'alert alert-transparent' : 'd-none'">No plants added</p>
         <th:block th:each="plant : ${newestPlants}">
             <a class="list-group-item plant-item main-page-custom-hover" style="transition: background-color 0.3s ease;" th:href="@{/gardens/details(gardenId=${plant.garden.id})}">
                 <div class="plant-image">
