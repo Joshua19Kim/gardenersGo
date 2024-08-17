@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scan</title>
+</head>
+<body>
+    <form th:action="@{scan}" method="post" enctype="multipart/form-data" >
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Upload</button>
+    </form>
+    <p th:text="${error}"></p>
+</body>
+</html>
