@@ -138,8 +138,8 @@ public class MainPageController {
 
         model.addAttribute("recentlyAccessedGardens", recentlyAccessedGardens);
         model.addAttribute("newestPlantsList", newestPlants);
-        model.addAttribute("myGardensList", myGardensList);
         model.addAttribute("friendsList", friendsList);
+        model.addAttribute("myGardensList", myGardensList);
 
         return "mainPageTemplate";
     }
