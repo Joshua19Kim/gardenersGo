@@ -137,7 +137,7 @@ public class MainPageController {
         Boolean friendsList = selectionList.get(3);
 
         model.addAttribute("recentlyAccessedGardens", recentlyAccessedGardens);
-        model.addAttribute("newestPlants", newestPlants);
+        model.addAttribute("newestPlantsList", newestPlants);
         model.addAttribute("myGardensList", myGardensList);
         model.addAttribute("friendsList", friendsList);
 

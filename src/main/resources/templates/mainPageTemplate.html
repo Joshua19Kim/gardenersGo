@@ -22,9 +22,9 @@
                 </div>
                 <!-- Newest Plants -->
                 <div class="col-md-6 mb-4">
-                    <div th:if="${newestPlants != null and newestPlants == true}"
+                    <div th:if="${newestPlantsList != null and newestPlantsList == true}"
                          th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetSmallTwo + 'Widget.html'}"></div>
-                    <div style="height: 100%" th:if="${newestPlants != null and newestPlants == false}" class="main-page2-card">
+                    <div style="height: 100%" th:if="${newestPlantsList != null and newestPlantsList == false}" class="main-page2-card">
                     </div>
                 </div>
             </div>
