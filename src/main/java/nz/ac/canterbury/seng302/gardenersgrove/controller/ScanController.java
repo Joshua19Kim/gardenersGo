@@ -85,6 +85,10 @@ public class ScanController {
                 model.addAttribute("familyScientificNameAuthorship", identifiedPlant.getFamilyScientificNameAuthorship());
                 model.addAttribute("familyScientificName", identifiedPlant.getFamilyScientificName());
                 model.addAttribute("commonNames", identifiedPlant.getCommonNames());
+                model.addAttribute("gbifId", identifiedPlant.getGbifId());
+                model.addAttribute("powoId", identifiedPlant.getPowoId());
+                model.addAttribute("iucnId", identifiedPlant.getIucnId());
+                model.addAttribute("iucnCategory", identifiedPlant.getIucnCategory());
                 model.addAttribute("imageUrl", identifiedPlant.getImageUrl());
 
                 return "scan";

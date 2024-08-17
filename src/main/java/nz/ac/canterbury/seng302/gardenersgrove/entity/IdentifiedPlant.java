@@ -58,6 +58,18 @@ public class IdentifiedPlant {
     @Column(name = "common_name")
     private List<String> commonNames;
 
+    @Column(name = "gbif_id")
+    private String gbifId;
+
+    @Column(name = "powo_id")
+    private String powoId;
+
+    @Column(name = "iucn_id")
+    private String iucnId;
+
+    @Column(name = "iucn_category")
+    private String iucnCategory;
+
     @Column(name = "image_url")
     private String imageUrl;
 
@@ -92,8 +104,17 @@ public class IdentifiedPlant {
         this.familyScientificNameAuthorship = result.get("species").get("family").get("scientificNameAuthorship").asText();
         this.familyScientificName = result.get("species").get("family").get("scientificName").asText();
         this.commonNames = commonNames;
+        this.gbifId = result.get("gbif").get("id").asText();
+        this.powoId = result.get("powo").get("id").asText();
         this.imageUrl = result.get("images").get(0).get("url").get("o").asText();
         this.uploadedImage = imagePath;
+
+        // These fields appear to only appear in some responses
+        if (result.has("iucn")) {
+            JsonNode iucn = result.get("iucn");
+            this.iucnId = iucn.has("id") ? result.get("iucn").get("id").asText() : null;
+            this.iucnCategory = iucn.has("category") ? result.get("iucn").get("category").asText() : null;
+        }
     }
 
     public Long getId() {
@@ -206,6 +227,38 @@ public class IdentifiedPlant {
 
     public void setCommonNames(List<String> commonNames) {
         this.commonNames = commonNames;
+    }
+
+    public String getGbifId() {
+        return gbifId;
+    }
+
+    public void setGbifId(String gbifId) {
+        this.gbifId = gbifId;
+    }
+
+    public String getPowoId() {
+        return powoId;
+    }
+
+    public void setPowoId(String powoId) {
+        this.powoId = powoId;
+    }
+
+    public String getIucnId() {
+        return iucnId;
+    }
+
+    public void setIucnId(String iucnId) {
+        this.iucnId = iucnId;
+    }
+
+    public String getIucnCategory() {
+        return iucnCategory;
+    }
+
+    public void setIucnCategory(String iucnCategory) {
+        this.iucnCategory = iucnCategory;
     }
 
     public String getImageUrl() {

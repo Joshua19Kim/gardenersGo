@@ -63,6 +63,22 @@
         </ul>
     </div>
 
+    <div th:if="${gbifId}">
+        <p><strong>GBIF ID:</strong> <span th:text="${gbifId}"></span></p>
+    </div>
+
+    <div th:if="${powoId}">
+        <p><strong>POWO ID:</strong> <span th:text="${powoId}"></span></p>
+    </div>
+
+    <div th:if="${iucnId}">
+        <p><strong>IUCN ID:</strong> <span th:text="${iucnId}"></span></p>
+    </div>
+
+    <div th:if="${iucnCategory}">
+        <p><strong>IUCN Category:</strong> <span th:text="${iucnCategory}"></span></p>
+    </div>
+
     <div th:if="${imageUrl}">
         <p><strong>Image:</strong></p>
         <img th:src="${imageUrl}"/>
