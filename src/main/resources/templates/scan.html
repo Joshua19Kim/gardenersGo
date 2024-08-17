@@ -9,6 +9,63 @@
         <input type="file" name="image" accept="image/*" required>
         <button type="submit">Upload</button>
     </form>
+
     <p th:text="${error}"></p>
+
+    <div th:if="${bestMatch}">
+        <p><strong>Best Match:</strong> <span th:text="${bestMatch}"></span></p>
+    </div>
+
+    <div th:if="${score}">
+        <p><strong>Score:</strong> <span th:text="${score}"></span></p>
+    </div>
+
+    <div th:if="${speciesScientificNameWithoutAuthor}">
+        <p><strong>Species (Without Author):</strong> <span th:text="${speciesScientificNameWithoutAuthor}"></span></p>
+    </div>
+
+    <div th:if="${speciesScientificNameAuthorship}">
+        <p><strong>Species (Authorship):</strong> <span th:text="${speciesScientificNameAuthorship}"></span></p>
+    </div>
+
+    <div th:if="${speciesScientificName}">
+        <p><strong>Species (Scientific Name):</strong> <span th:text="${speciesScientificName}"></span></p>
+    </div>
+
+    <div th:if="${genusScientificNameWithoutAuthor}">
+        <p><strong>Genus (Without Author):</strong> <span th:text="${genusScientificNameWithoutAuthor}"></span></p>
+    </div>
+
+    <div th:if="${genusScientificNameAuthorship}">
+        <p><strong>Genus (Authorship):</strong> <span th:text="${genusScientificNameAuthorship}"></span></p>
+    </div>
+
+    <div th:if="${genusScientificName}">
+        <p><strong>Genus (Scientific Name):</strong> <span th:text="${genusScientificName}"></span></p>
+    </div>
+
+    <div th:if="${familyScientificNameWithoutAuthor}">
+        <p><strong>Family (Without Author):</strong> <span th:text="${familyScientificNameWithoutAuthor}"></span></p>
+    </div>
+
+    <div th:if="${familyScientificNameAuthorship}">
+        <p><strong>Family (Authorship):</strong> <span th:text="${familyScientificNameAuthorship}"></span></p>
+    </div>
+
+    <div th:if="${familyScientificName}">
+        <p><strong>Family (Scientific Name):</strong> <span th:text="${familyScientificName}"></span></p>
+    </div>
+
+    <div th:if="${commonNames}">
+        <p><strong>Common Names:</strong></p>
+        <ul>
+            <li th:each="name : ${commonNames}" th:text="${name}"></li>
+        </ul>
+    </div>
+
+    <div th:if="${imageUrl}">
+        <p><strong>Image:</strong></p>
+        <img th:src="${imageUrl}"/>
+    </div>
 </body>
 </html>

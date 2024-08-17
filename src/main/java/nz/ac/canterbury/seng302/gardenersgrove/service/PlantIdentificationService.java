@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
@@ -14,6 +15,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PlantIdentificationService {
@@ -51,7 +54,7 @@ public class PlantIdentificationService {
     private static final String LANGUAGE = "en";
     private static final String MODEL_TYPE = "kt";
 
-    public IdentifiedPlantResponse identifyPlant(MultipartFile image) throws IOException {
+    public IdentifiedPlant identifyPlant(MultipartFile image, Gardener gardener) throws IOException {
         String url = API_URL + PROJECT + buildQueryParameters();
 
         HttpHeaders headers = new HttpHeaders();
@@ -69,22 +72,28 @@ public class PlantIdentificationService {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            saveImageFile(image);
-            return objectMapper.readValue(response.getBody(), IdentifiedPlantResponse.class);
+            String imagePath = saveImageFile(image);
+            IdentifiedPlantResponse identifiedPlantResponse = objectMapper.readValue(response.getBody(), IdentifiedPlantResponse.class);
+            return savePlantIdentificationResult(identifiedPlantResponse, gardener, imagePath);
         } else {
             throw new IOException("Failed to identify plant. API returned status code: " + response.getStatusCode());
         }
     }
 
-    private void saveImageFile(MultipartFile image) throws IOException {
+    private String saveImageFile(MultipartFile image) throws IOException {
         Path directory = Paths.get(IMAGE_DIRECTORY);
         if (!Files.exists(directory)) {
             Files.createDirectories(directory);
         }
 
-        String filePath = IMAGE_DIRECTORY + image.getOriginalFilename();
+        String originalFileName = image.getOriginalFilename();
+        String extension = StringUtils.getFilenameExtension(originalFileName);
+        String newFileName = UUID.randomUUID() + "." + extension;
+
+        String filePath = IMAGE_DIRECTORY + newFileName;
         Path file = Paths.get(filePath);
         Files.write(file, image.getBytes());
+        return "/uploads/" + newFileName;
     }
 
     private String buildQueryParameters() {
@@ -96,7 +105,7 @@ public class PlantIdentificationService {
                 "&type=" + URLEncoder.encode(MODEL_TYPE, StandardCharsets.UTF_8);
     }
 
-    public void savePlantIdentificationResult(IdentifiedPlantResponse identifiedPlantResponse) {
+    public IdentifiedPlant savePlantIdentificationResult(IdentifiedPlantResponse identifiedPlantResponse, Gardener gardener, String imagePath) {
         JsonNode firstResult = identifiedPlantResponse.getResults().get(0);
 
         IdentifiedPlant identifiedPlant = new IdentifiedPlant();
@@ -127,6 +136,9 @@ public class PlantIdentificationService {
         JsonNode firstImage = firstResult.get("images").get(0);
         identifiedPlant.setImageUrl(firstImage.get("url").get("o").asText());
 
-        identifiedPlantRepository.save(identifiedPlant);
+        identifiedPlant.setGardener(gardener);
+        identifiedPlant.setUploadedImage(imagePath);
+
+        return identifiedPlantRepository.save(identifiedPlant);
     }
 }
