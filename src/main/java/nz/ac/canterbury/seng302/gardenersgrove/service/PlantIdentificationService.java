@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantIdentificationResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class PlantIdentificationService {
     private static final String LANGUAGE = "en";
     private static final String MODEL_TYPE = "kt";
 
-    public PlantIdentificationResponse identifyPlant(MultipartFile image) throws IOException {
+    public IdentifiedPlant identifyPlant(MultipartFile image) throws IOException {
         String url = API_URL + PROJECT + buildQueryParameters();
 
         HttpHeaders headers = new HttpHeaders();
@@ -64,7 +64,7 @@ public class PlantIdentificationService {
 
         if (response.getStatusCode().is2xxSuccessful()) {
             saveImageFile(image);
-            return objectMapper.readValue(response.getBody(), PlantIdentificationResponse.class);
+            return objectMapper.readValue(response.getBody(), IdentifiedPlant.class);
         } else {
             throw new IOException("Failed to identify plant. API returned status code: " + response.getStatusCode());
         }

@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantIdentificationResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +27,7 @@ public class ScanController {
     @PostMapping("/scan")
     public String sendScanForm(@RequestParam("image") MultipartFile image, Model model) {
         try {
-            PlantIdentificationResponse response = plantIdentificationService.identifyPlant(image);
+            IdentifiedPlant response = plantIdentificationService.identifyPlant(image);
             model.addAttribute("response", response);
             return "scan";
         } catch (Exception e) {
