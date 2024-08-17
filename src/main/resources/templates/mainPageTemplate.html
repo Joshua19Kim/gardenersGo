@@ -14,34 +14,26 @@
         <div class="col d-flex flex-column justify-content-between" id='widget-box'>
             <div class="row" id="widget-small-boxes">
                 <!-- Recently accessed gardens -->
-                <div class="col-md-6 mb-4" th:classappend="${recentlyAccessedGardens == false} ? 'hidden'">
+                <div class="col-md-6 mb-4" th:classappend="${recentlyAccessedGardens != null and recentlyAccessedGardens == false} ? 'hidden'">
                     <div th:if="${recentlyAccessedGardens != null and recentlyAccessedGardens == true}"
                          th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetSmallOne + 'Widget.html'}"></div>
-                    <div style="height: 100%" th:if="${recentlyAccessedGardens != null and recentlyAccessedGardens == false}" class="main-page2-card">
-                    </div>
                 </div>
                 <!-- Newest Plants -->
-                <div class="col-md-6 mb-4" th:classappend="${newestPlantsList == false} ? 'hidden'">
+                <div class="col-md-6 mb-4" th:classappend="${newestPlantsList != null and newestPlantsList == false} ? 'hidden'">
                     <div th:if="${newestPlantsList != null and newestPlantsList == true}"
                          th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetSmallTwo + 'Widget.html'}"></div>
-                    <div style="height: 100%" th:if="${newestPlantsList != null and newestPlantsList == false}" class="main-page2-card">
-                    </div>
                 </div>
             </div>
-            <div class="row" id="widget-wide" th:classappend="${friendsList == false} ? 'hidden'">
+            <div class="row" id="widget-wide" th:classappend="${friendsList != null and friendsList == false} ? 'hidden'">
                 <!-- My Friend's List -->
                 <div th:if="${friendsList != null and friendsList == true}"
                      th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetWide + 'Widget.html'}"></div>
-                <div style="height: 100%" th:if="${friendsList != null and friendsList == false}" class="main-page-card">
-                </div>
             </div>
         </div>
         <!-- My Garden's List -->
-        <div class="col-md-4" id="widget-tall" th:classappend="${myGardensList == false} ? 'hidden'">
+        <div class="col-md-4" id="widget-tall" th:classappend="${myGardensList != null and myGardensList == false} ? 'hidden'">
             <div th:if="${myGardensList != null and myGardensList == true}"
                  th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetTall + 'Widget.html'}"></div>
-            <div style="height: 100%" th:if="${myGardensList != null and myGardensList == false}" class="main-page2-card mt-0">
-            </div>
         </div>
     </div>
 </div>
