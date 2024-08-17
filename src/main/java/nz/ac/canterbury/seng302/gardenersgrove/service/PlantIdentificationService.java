@@ -28,6 +28,10 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service responsible for handling plant identification through an external API.
+ * It processes plant images, interacts with the API, and saves the identification results in the database.
+ */
 @Service
 public class PlantIdentificationService {
     Logger logger = LoggerFactory.getLogger(PlantIdentificationService.class);
@@ -40,6 +44,12 @@ public class PlantIdentificationService {
     private final RestTemplate restTemplate;
     private final IdentifiedPlantRepository identifiedPlantRepository;
 
+    /**
+     * Constructs a new PlantIdentificationService with the specified API key and repository.
+     *
+     * @param apiKey                    the API key for authenticating with the external plant identification service
+     * @param identifiedPlantRepository the repository for saving identified plants
+     */
     @Autowired
     public PlantIdentificationService(@Value("${plantnet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository) {
         this.apiKey = apiKey;
@@ -54,6 +64,16 @@ public class PlantIdentificationService {
     private static final String LANGUAGE = "en";
     private static final String MODEL_TYPE = "kt";
 
+    /**
+     * Identifies a plant from the provided image using an external API and saves the result in the database.
+     * The result is first stored in an intermediate object containing the JSON data.
+     * Then, a new entity is created to map the response data into and save in the database.
+     *
+     * @param image    the image file of the plant to be identified
+     * @param gardener the gardener who uploaded the image
+     * @return the identified plant entity containing the identification details
+     * @throws IOException if an error occurs during the identification process or saving the image
+     */
     public IdentifiedPlant identifyPlant(MultipartFile image, Gardener gardener) throws IOException {
         String url = API_URL + PROJECT + buildQueryParameters();
 
@@ -80,6 +100,13 @@ public class PlantIdentificationService {
         }
     }
 
+    /**
+     * Saves the uploaded image file to the filesystem with a unique filename.
+     *
+     * @param image the image file to be saved
+     * @return the path to the saved image
+     * @throws IOException if an error occurs while saving the image
+     */
     private String saveImageFile(MultipartFile image) throws IOException {
         Path directory = Paths.get(IMAGE_DIRECTORY);
         if (!Files.exists(directory)) {
@@ -96,6 +123,11 @@ public class PlantIdentificationService {
         return "/uploads/" + newFileName;
     }
 
+    /**
+     * Builds the query parameters for the API request.
+     *
+     * @return a string containing the query parameters
+     */
     private String buildQueryParameters() {
         return "?api-key=" + URLEncoder.encode(apiKey, StandardCharsets.UTF_8) +
                 "&include-related-images=" + INCLUDE_RELATED_IMAGES +
@@ -105,40 +137,22 @@ public class PlantIdentificationService {
                 "&type=" + URLEncoder.encode(MODEL_TYPE, StandardCharsets.UTF_8);
     }
 
+    /**
+     * Maps the response from the plant identification API into a JPA object and saves it in the database.
+     *
+     * @param identifiedPlantResponse the response from the API containing identification details, stored in a Java object
+     * @param gardener                the gardener who uploaded the image
+     * @param imagePath               the path to the uploaded image
+     * @return the saved identified plant entity
+     */
     public IdentifiedPlant savePlantIdentificationResult(IdentifiedPlantResponse identifiedPlantResponse, Gardener gardener, String imagePath) {
         JsonNode firstResult = identifiedPlantResponse.getResults().get(0);
-
-        IdentifiedPlant identifiedPlant = new IdentifiedPlant();
-        identifiedPlant.setBestMatch(identifiedPlantResponse.getBestMatch());
-        identifiedPlant.setScore(firstResult.get("score").asDouble());
-
-        JsonNode speciesNode = firstResult.get("species");
-        identifiedPlant.setSpeciesScientificNameWithoutAuthor(speciesNode.get("scientificNameWithoutAuthor").asText());
-        identifiedPlant.setSpeciesScientificNameAuthorship(speciesNode.get("scientificNameAuthorship").asText());
-        identifiedPlant.setSpeciesScientificName(speciesNode.get("scientificName").asText());
-
-        JsonNode genusNode = speciesNode.get("genus");
-        identifiedPlant.setGenusScientificNameWithoutAuthor(genusNode.get("scientificNameWithoutAuthor").asText());
-        identifiedPlant.setGenusScientificNameAuthorship(genusNode.get("scientificNameAuthorship").asText());
-        identifiedPlant.setGenusScientificName(genusNode.get("scientificName").asText());
-
-        JsonNode familyNode = speciesNode.get("family");
-        identifiedPlant.setFamilyScientificNameWithoutAuthor(familyNode.get("scientificNameWithoutAuthor").asText());
-        identifiedPlant.setFamilyScientificNameAuthorship(familyNode.get("scientificNameAuthorship").asText());
-        identifiedPlant.setFamilyScientificName(familyNode.get("scientificName").asText());
-
+        String bestMatch = identifiedPlantResponse.getBestMatch();
         List<String> commonNames = objectMapper.convertValue(
-                speciesNode.get("commonNames"),
+                firstResult.get("species").get("commonNames"),
                 objectMapper.getTypeFactory().constructCollectionType(List.class, String.class)
         );
-        identifiedPlant.setCommonNames(commonNames);
-
-        JsonNode firstImage = firstResult.get("images").get(0);
-        identifiedPlant.setImageUrl(firstImage.get("url").get("o").asText());
-
-        identifiedPlant.setGardener(gardener);
-        identifiedPlant.setUploadedImage(imagePath);
-
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(bestMatch, firstResult, commonNames, gardener, imagePath);
         return identifiedPlantRepository.save(identifiedPlant);
     }
 }

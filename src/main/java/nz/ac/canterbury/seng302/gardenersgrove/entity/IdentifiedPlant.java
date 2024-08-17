@@ -1,9 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 
 import java.util.List;
 
+/**
+ * Entity representing a plant identified by the system.
+ * It stores details about the plant identification, including scientific names, common names, the associated gardener,
+ * and the images used for identification.
+ */
 @Entity
 public class IdentifiedPlant {
     @Id
@@ -57,6 +63,38 @@ public class IdentifiedPlant {
 
     @Column(name = "uploaded_image")
     private String uploadedImage;
+
+    /**
+     * JPA required no-args constructor
+     */
+    protected IdentifiedPlant() {}
+
+    /**
+     * Constructs an IdentifiedPlant with the specified identification details.
+     *
+     * @param bestMatch                  the best match for the plant identification
+     * @param result                     the JSON node containing the identification results
+     * @param commonNames                the list of common names for the identified plant
+     * @param gardener                   the gardener associated with the identified plant
+     * @param imagePath                  the path to the uploaded image used for identification
+     */
+    public IdentifiedPlant(String bestMatch, JsonNode result, List<String> commonNames, Gardener gardener, String imagePath) {
+        this.gardener = gardener;
+        this.bestMatch = bestMatch;
+        this.score = result.get("score").asDouble();
+        this.speciesScientificNameWithoutAuthor = result.get("species").get("scientificNameWithoutAuthor").asText();
+        this.speciesScientificNameAuthorship = result.get("species").get("scientificNameAuthorship").asText();
+        this.speciesScientificName = result.get("species").get("scientificName").asText();
+        this.genusScientificNameWithoutAuthor = result.get("species").get("genus").get("scientificNameWithoutAuthor").asText();
+        this.genusScientificNameAuthorship = result.get("species").get("genus").get("scientificNameAuthorship").asText();
+        this.genusScientificName = result.get("species").get("genus").get("scientificName").asText();
+        this.familyScientificNameWithoutAuthor = result.get("species").get("family").get("scientificNameWithoutAuthor").asText();
+        this.familyScientificNameAuthorship = result.get("species").get("family").get("scientificNameAuthorship").asText();
+        this.familyScientificName = result.get("species").get("family").get("scientificName").asText();
+        this.commonNames = commonNames;
+        this.imageUrl = result.get("images").get(0).get("url").get("o").asText();
+        this.uploadedImage = imagePath;
+    }
 
     public Long getId() {
         return id;

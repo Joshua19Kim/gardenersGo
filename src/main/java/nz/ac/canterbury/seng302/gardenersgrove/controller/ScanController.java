@@ -16,11 +16,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
+/**
+ * Controller responsible for handling requests related to plant identification.
+ */
 @Controller
 public class ScanController {
     private final PlantIdentificationService plantIdentificationService;
     private final GardenerFormService gardenerFormService;
 
+    /**
+     * Constructs a new ScanController with the services required for sending and storing identified plants.
+     *
+     * @param plantIdentificationService the service for handling plant identification requests and storing identified plants
+     * @param gardenerFormService        the service for retrieving information about the current gardener
+     */
     @Autowired
     public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService) {
         this.plantIdentificationService = plantIdentificationService;
@@ -38,11 +47,25 @@ public class ScanController {
         return gardenerFormService.findByEmail(currentUserEmail);
     }
 
+    /**
+     * Handles GET requests to the /scan endpoint.
+     * Displays the scan form where users can upload an image for plant identification.
+     *
+     * @return the name of the template containing the form for uploading plant images
+     */
     @GetMapping("/scan")
     public String getScanForm() {
         return "scan";
     }
 
+    /**
+     * Handles POST requests to the /scan endpoint.
+     * Processes the uploaded image, identifies the plant, and displays the result of the identification
+     *
+     * @param image the image file uploaded by the user for plant identification
+     * @param model the model to hold attributes for rendering in the view
+     * @return the name of the template to display the identification results or errors
+     */
     @PostMapping("/scan")
     public String sendScanForm(@RequestParam("image") MultipartFile image, Model model) {
         Optional<Gardener> gardener = getGardenerFromAuthentication();
