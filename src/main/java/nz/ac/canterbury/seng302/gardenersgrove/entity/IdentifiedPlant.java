@@ -1,17 +1,60 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.persistence.*;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+import java.util.List;
+
+@Entity
 public class IdentifiedPlant {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @JsonProperty("bestMatch")
+    @Column(name = "best_match")
     private String bestMatch;
 
-    @JsonProperty("results")
-    private JsonNode results;
+    @Column(name = "score")
+    private double score;
+
+    @Column(name = "species_scientific_name_without_author")
+    private String speciesScientificNameWithoutAuthor;
+
+    @Column(name = "species_scientific_name_authorship")
+    private String speciesScientificNameAuthorship;
+
+    @Column(name = "species_scientific_name")
+    private String speciesScientificName;
+
+    @Column(name = "genus_scientific_name_without_author")
+    private String genusScientificNameWithoutAuthor;
+
+    @Column(name = "genus_scientific_name_authorship")
+    private String genusScientificNameAuthorship;
+
+    @Column(name = "genus_scientific_name")
+    private String genusScientificName;
+
+    @Column(name = "family_scientific_name_without_author")
+    private String familyScientificNameWithoutAuthor;
+
+    @Column(name = "family_scientific_name_authorship")
+    private String familyScientificNameAuthorship;
+
+    @Column(name = "family_scientific_name")
+    private String familyScientificName;
+
+    @ElementCollection
+    @CollectionTable(name = "common_names", joinColumns = @JoinColumn(name = "identified_plant_id"))
+    @Column(name = "common_name")
+    private List<String> commonNames;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getBestMatch() {
         return bestMatch;
@@ -21,11 +64,102 @@ public class IdentifiedPlant {
         this.bestMatch = bestMatch;
     }
 
-    public JsonNode getResults() {
-        return results;
+    public double getScore() {
+        return score;
     }
 
-    public void setResults(JsonNode results) {
-        this.results = results;
+    public void setScore(double score) {
+        this.score = score;
     }
+
+    public String getSpeciesScientificNameWithoutAuthor() {
+        return speciesScientificNameWithoutAuthor;
+    }
+
+    public void setSpeciesScientificNameWithoutAuthor(String speciesScientificNameWithoutAuthor) {
+        this.speciesScientificNameWithoutAuthor = speciesScientificNameWithoutAuthor;
+    }
+
+    public String getSpeciesScientificNameAuthorship() {
+        return speciesScientificNameAuthorship;
+    }
+
+    public void setSpeciesScientificNameAuthorship(String speciesScientificNameAuthorship) {
+        this.speciesScientificNameAuthorship = speciesScientificNameAuthorship;
+    }
+
+    public String getSpeciesScientificName() {
+        return speciesScientificName;
+    }
+
+    public void setSpeciesScientificName(String speciesScientificName) {
+        this.speciesScientificName = speciesScientificName;
+    }
+
+    public String getGenusScientificNameWithoutAuthor() {
+        return genusScientificNameWithoutAuthor;
+    }
+
+    public void setGenusScientificNameWithoutAuthor(String genusScientificNameWithoutAuthor) {
+        this.genusScientificNameWithoutAuthor = genusScientificNameWithoutAuthor;
+    }
+
+    public String getGenusScientificNameAuthorship() {
+        return genusScientificNameAuthorship;
+    }
+
+    public void setGenusScientificNameAuthorship(String genusScientificNameAuthorship) {
+        this.genusScientificNameAuthorship = genusScientificNameAuthorship;
+    }
+
+    public String getGenusScientificName() {
+        return genusScientificName;
+    }
+
+    public void setGenusScientificName(String genusScientificName) {
+        this.genusScientificName = genusScientificName;
+    }
+
+    public String getFamilyScientificNameWithoutAuthor() {
+        return familyScientificNameWithoutAuthor;
+    }
+
+    public void setFamilyScientificNameWithoutAuthor(String familyScientificNameWithoutAuthor) {
+        this.familyScientificNameWithoutAuthor = familyScientificNameWithoutAuthor;
+    }
+
+    public String getFamilyScientificNameAuthorship() {
+        return familyScientificNameAuthorship;
+    }
+
+    public void setFamilyScientificNameAuthorship(String familyScientificNameAuthorship) {
+        this.familyScientificNameAuthorship = familyScientificNameAuthorship;
+    }
+
+    public String getFamilyScientificName() {
+        return familyScientificName;
+    }
+
+    public void setFamilyScientificName(String familyScientificName) {
+        this.familyScientificName = familyScientificName;
+    }
+
+    public List<String> getCommonNames() {
+        return commonNames;
+    }
+
+    public void setCommonNames(List<String> commonNames) {
+        this.commonNames = commonNames;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    @Column(name = "image_url")
+    private String imageUrl;
 }

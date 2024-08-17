@@ -1,7 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Service
 public class PlantIdentificationService {
@@ -31,10 +35,12 @@ public class PlantIdentificationService {
     private final String apiKey;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
+    private final IdentifiedPlantRepository identifiedPlantRepository;
 
     @Autowired
-    public PlantIdentificationService(@Value("${plantnet.password}") String apiKey) {
+    public PlantIdentificationService(@Value("${plantnet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository) {
         this.apiKey = apiKey;
+        this.identifiedPlantRepository = identifiedPlantRepository;
         this.objectMapper = new ObjectMapper();
         this.restTemplate = new RestTemplate();
     }
@@ -45,7 +51,7 @@ public class PlantIdentificationService {
     private static final String LANGUAGE = "en";
     private static final String MODEL_TYPE = "kt";
 
-    public IdentifiedPlant identifyPlant(MultipartFile image) throws IOException {
+    public IdentifiedPlantResponse identifyPlant(MultipartFile image) throws IOException {
         String url = API_URL + PROJECT + buildQueryParameters();
 
         HttpHeaders headers = new HttpHeaders();
@@ -64,7 +70,7 @@ public class PlantIdentificationService {
 
         if (response.getStatusCode().is2xxSuccessful()) {
             saveImageFile(image);
-            return objectMapper.readValue(response.getBody(), IdentifiedPlant.class);
+            return objectMapper.readValue(response.getBody(), IdentifiedPlantResponse.class);
         } else {
             throw new IOException("Failed to identify plant. API returned status code: " + response.getStatusCode());
         }
@@ -88,5 +94,39 @@ public class PlantIdentificationService {
                 "&nb-results=" + NB_RESULTS +
                 "&lang=" + URLEncoder.encode(LANGUAGE, StandardCharsets.UTF_8) +
                 "&type=" + URLEncoder.encode(MODEL_TYPE, StandardCharsets.UTF_8);
+    }
+
+    public void savePlantIdentificationResult(IdentifiedPlantResponse identifiedPlantResponse) {
+        JsonNode firstResult = identifiedPlantResponse.getResults().get(0);
+
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant();
+        identifiedPlant.setBestMatch(identifiedPlantResponse.getBestMatch());
+        identifiedPlant.setScore(firstResult.get("score").asDouble());
+
+        JsonNode speciesNode = firstResult.get("species");
+        identifiedPlant.setSpeciesScientificNameWithoutAuthor(speciesNode.get("scientificNameWithoutAuthor").asText());
+        identifiedPlant.setSpeciesScientificNameAuthorship(speciesNode.get("scientificNameAuthorship").asText());
+        identifiedPlant.setSpeciesScientificName(speciesNode.get("scientificName").asText());
+
+        JsonNode genusNode = speciesNode.get("genus");
+        identifiedPlant.setGenusScientificNameWithoutAuthor(genusNode.get("scientificNameWithoutAuthor").asText());
+        identifiedPlant.setGenusScientificNameAuthorship(genusNode.get("scientificNameAuthorship").asText());
+        identifiedPlant.setGenusScientificName(genusNode.get("scientificName").asText());
+
+        JsonNode familyNode = speciesNode.get("family");
+        identifiedPlant.setFamilyScientificNameWithoutAuthor(familyNode.get("scientificNameWithoutAuthor").asText());
+        identifiedPlant.setFamilyScientificNameAuthorship(familyNode.get("scientificNameAuthorship").asText());
+        identifiedPlant.setFamilyScientificName(familyNode.get("scientificName").asText());
+
+        List<String> commonNames = objectMapper.convertValue(
+                speciesNode.get("commonNames"),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, String.class)
+        );
+        identifiedPlant.setCommonNames(commonNames);
+
+        JsonNode firstImage = firstResult.get("images").get(0);
+        identifiedPlant.setImageUrl(firstImage.get("url").get("o").asText());
+
+        identifiedPlantRepository.save(identifiedPlant);
     }
 }
