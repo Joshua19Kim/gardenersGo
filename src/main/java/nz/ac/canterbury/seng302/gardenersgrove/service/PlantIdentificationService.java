@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
@@ -49,6 +50,7 @@ public class PlantIdentificationService {
      * @param apiKey                    the API key for authenticating with the external plant identification service
      * @param identifiedPlantRepository the repository for saving identified plants
      */
+    @Autowired
     public PlantIdentificationService(@Value("${plantnet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository) {
         this.apiKey = apiKey;
         this.identifiedPlantRepository = identifiedPlantRepository;
