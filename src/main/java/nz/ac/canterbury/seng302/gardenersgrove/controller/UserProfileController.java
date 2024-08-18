@@ -223,7 +223,7 @@ public class UserProfileController {
             } else {
                 Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
                 gardenerOptional.ifPresent(value -> gardener = value);
-                List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());;
+                List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
                 model.addAttribute("gardens", gardens);
                 model.addAttribute("requestURI", requestService.getRequestURI(request));
                 model.addAttribute("uploadMessage", uploadMessage.get());

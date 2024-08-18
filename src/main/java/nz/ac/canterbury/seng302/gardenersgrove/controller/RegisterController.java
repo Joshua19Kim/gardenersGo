@@ -83,7 +83,7 @@ public class RegisterController {
      *
      * @param firstName       first name of user
      * @param lastName        last name of user
-     * @param DoB             user's date of birth
+     * @param DoBString       user's date of birth as a string
      * @param email           user's email
      * @param password        user's password
      * @param passwordConfirm user's repeated password
@@ -132,7 +132,7 @@ public class RegisterController {
 
         if (isDoBInvalid) {
             DoBError = Optional.of("Date is not in valid format, DD/MM/YYYY");
-        } else if (DoBString != "") {
+        } else if (DoBString.equals("")) {
             DoBError = inputValidator.checkDoB(DoBString);
         }
         model.addAttribute("DoBValid", DoBError.orElse(""));
@@ -156,7 +156,7 @@ public class RegisterController {
                 passwordStrengthError.isEmpty()) {
 
             LocalDate DoB = null;
-            if (DoBString != "") {
+            if (DoBString.equals("")) {
                 DoB = LocalDate.parse(DoBString);
             }
 

@@ -86,7 +86,7 @@ public class InputValidationUtil {
     /**
      * Verifies that email matches IETF guidelines on acceptable addresses
      * @param email provided by user input
-     * @return true if passes verification
+     * @return string - empty if passes verification
      */
     public Optional<String> checkValidEmail (String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
@@ -113,7 +113,7 @@ public class InputValidationUtil {
     }
 
     /** Verifies that the user is old enough to register (13 years or more)
-     * @param DoB LocalDate object that contains users age
+     * @param DoBString LocalDate object that contains users age
      * @return empty optional if date is valid, otherwise returns Optional error string
      */
     public Optional<String> checkDoB (String DoBString) {
