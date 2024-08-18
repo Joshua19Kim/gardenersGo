@@ -52,6 +52,11 @@ nav ul .nav-item a:hover, nav ul .nav-item input[type="submit"]:hover {
 
 }
 
+.card-collection-body {
+    display: flex;
+    min-width: 100%;
+}
+
 body {
     background-color: var(--background-color);
     color: var(--text-color);
@@ -76,6 +81,10 @@ body {
 
 .card-img-top {
     max-width: 128px;
+}
+
+#collection-card-img {
+    max-width: max-content !important;
 }
 
 .current {
@@ -1620,7 +1629,12 @@ form.search-bar::after {
     max-width: 1800px;
     margin: 0 auto;
     padding: 0 20px;
+}
 
+.collection-container {
+    max-width: 1500px;
+    margin: 50px auto;
+    padding: 0 20px;
 }
 
 
@@ -1640,6 +1654,15 @@ form.search-bar::after {
 .browse-gardens-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.collection-gardens-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.collection-gardens-card {
+    padding: 0 !important;
 }
 
 .friend-modal-content {
