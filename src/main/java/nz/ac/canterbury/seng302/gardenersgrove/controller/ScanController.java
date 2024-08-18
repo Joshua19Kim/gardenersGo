@@ -30,7 +30,6 @@ public class ScanController {
      * @param plantIdentificationService the service for handling plant identification requests and storing identified plants
      * @param gardenerFormService        the service for retrieving information about the current gardener
      */
-    @Autowired
     public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService) {
         this.plantIdentificationService = plantIdentificationService;
         this.gardenerFormService = gardenerFormService;
