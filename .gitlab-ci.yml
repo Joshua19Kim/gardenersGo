@@ -59,7 +59,6 @@ deploy-staging:
     - echo "export SJMP=${SJMP}" >> /home/gitlab-runner/staging/.env
     - echo "export WEATHER=${WEATHER}" >> /home/gitlab-runner/staging/.env
     - echo "export LOCATIONIQ=${LOCATIONIQ}" >> /home/gitlab-runner/staging/.env
-    - echo "export PLANTNET=${PLANTNET}" >> /home/gitlab-runner/staging/.env
     - echo "export DB_URL=${DB_URL_TEST}" >> /home/gitlab-runner/staging/.env
     - sudo systemctl restart staging
   artifacts:
@@ -82,7 +81,6 @@ deploy-production:
     - echo "export SJMP=${SJMP}" >> /home/gitlab-runner/production/.env
     - echo "export WEATHER=${WEATHER}" >> /home/gitlab-runner/production/.env
     - echo "export LOCATIONIQ=${LOCATIONIQ}" >> /home/gitlab-runner/production/.env
-    - echo "export PLANTNET=${PLANTNET}" >> /home/gitlab-runner/production/.env
     - echo "export DB_URL=${DB_URL_PROD}" >> /home/gitlab-runner/production/.env
     - sudo systemctl restart production
   artifacts:
