@@ -121,6 +121,7 @@ public class BrowseGardensController {
             @RequestParam(name="pageRequest", defaultValue = "hehe") String pageRequest,
             Model model
     ) {
+        // this is used to distinguish between a fresh get request and one used to paginate or add tag
         if(Objects.equals(pageRequest, "hehe") && !model.containsAttribute("pageRequest")) {
             setSearchTags(new ArrayList<>());
             setTags(new ArrayList<>());
