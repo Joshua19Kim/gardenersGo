@@ -51,7 +51,7 @@ public class PlantIdentificationService {
      * @param identifiedPlantRepository the repository for saving identified plants
      */
     @Autowired
-    public PlantIdentificationService(@Value("${plantnet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository) {
+    public PlantIdentificationService(@Value("${plantNet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository) {
         this.apiKey = apiKey;
         this.identifiedPlantRepository = identifiedPlantRepository;
         this.objectMapper = new ObjectMapper();
