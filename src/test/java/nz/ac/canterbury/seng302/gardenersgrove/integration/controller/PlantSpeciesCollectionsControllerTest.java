@@ -3,7 +3,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantSpeciesCollectionsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantSpecies;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantSpeciesService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -34,6 +38,12 @@ public class PlantSpeciesCollectionsControllerTest {
 
     @MockBean
     private PlantSpeciesService plantSpeciesService;
+
+    @MockBean
+    private GardenService gardenService;
+
+    @MockBean
+    private GardenerFormService gardenerFormService;
 
     private int defaultPageNumber;
 
@@ -62,11 +72,15 @@ public class PlantSpeciesCollectionsControllerTest {
         Pageable pageable = PageRequest.of(defaultPageNumber, defaultPageSize);
         Page<PlantSpecies> plantSpeciesPage = new PageImpl<>(allPlantSpecies, pageable, totalPlantSpecies);
         Mockito.when(plantSpeciesService.getAllPlantSpeciesPaginated(defaultPageNumber, defaultPageSize)).thenReturn(plantSpeciesPage);
+        Gardener mockedGardener = Mockito.mock(Gardener.class);
+        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
+        Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
         List<Integer> expectedPageNumbers = List.of(1, 2);
         mockMvc.perform(MockMvcRequestBuilders.get("/myCollection"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("plantSpeciesList", plantSpeciesPage))
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
+                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("myCollectionTemplate"));
     }
 
@@ -78,6 +92,9 @@ public class PlantSpeciesCollectionsControllerTest {
         Pageable pageable = PageRequest.of(pageNumber, defaultPageSize);
         Page<PlantSpecies> plantSpeciesPage = new PageImpl<>(allPlantSpecies.subList(defaultPageSize, totalPlantSpecies), pageable, totalPlantSpecies);
         Mockito.when(plantSpeciesService.getAllPlantSpeciesPaginated(pageNumber, defaultPageSize)).thenReturn(plantSpeciesPage);
+        Gardener mockedGardener = Mockito.mock(Gardener.class);
+        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
+        Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
         mockMvc.perform(MockMvcRequestBuilders.get("/myCollection")
                         .param("pageNo", String.valueOf(pageNumber)))
                 .andExpect(status().isOk())
@@ -95,11 +112,15 @@ public class PlantSpeciesCollectionsControllerTest {
         List<PlantSpecies> emptyList = new ArrayList<>();
         Page<PlantSpecies> plantSpeciesPage = new PageImpl<>(emptyList, pageable, emptyList.size());
         Mockito.when(plantSpeciesService.getAllPlantSpeciesPaginated(pageNumber, defaultPageSize)).thenReturn(plantSpeciesPage);
+        Gardener mockedGardener = Mockito.mock(Gardener.class);
+        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
+        Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
         mockMvc.perform(MockMvcRequestBuilders.get("/myCollection")
                         .param("pageNo", String.valueOf(pageNumber)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("plantSpeciesList", plantSpeciesPage))
                 .andExpect(model().attributeDoesNotExist("pageNumbers"))
+                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("myCollectionTemplate"));
     }
 
