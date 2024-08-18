@@ -96,7 +96,7 @@ public class RegisterController {
     @PostMapping("/register")
     public String submitForm(@RequestParam(name="firstName") String firstName,
                              @RequestParam(name="lastName", required = false) String lastName,
-                             @RequestParam(name="DoB", required = false) LocalDate DoB,
+                             @RequestParam(name="DoB", required = false) String DoBString,
                              @RequestParam(name="email") String email,
                              @RequestParam(name="password") String password,
                              @RequestParam(name = "passwordConfirm") String passwordConfirm,
@@ -107,7 +107,7 @@ public class RegisterController {
 
         model.addAttribute("firstName", firstName);
         model.addAttribute("lastName", lastName);
-        model.addAttribute("DoB", DoB);
+        model.addAttribute("DoB", DoBString);
         model.addAttribute("email", email);
         model.addAttribute("password", password);
 
@@ -132,8 +132,8 @@ public class RegisterController {
 
         if (isDoBInvalid) {
             DoBError = Optional.of("Date is not in valid format, DD/MM/YYYY");
-        } else if (DoB != null) {
-            DoBError = inputValidator.checkDoB(DoB);
+        } else if (DoBString != "") {
+            DoBError = inputValidator.checkDoB(DoBString);
         }
         model.addAttribute("DoBValid", DoBError.orElse(""));
 
@@ -154,6 +154,11 @@ public class RegisterController {
                 passwordMatchError.isEmpty() &&
                 DoBError.isEmpty() &&
                 passwordStrengthError.isEmpty()) {
+
+            LocalDate DoB = null;
+            if (DoBString != "") {
+                DoB = LocalDate.parse(DoBString);
+            }
 
             Gardener newGardener = new Gardener(firstName, lastName, DoB, email, password);
             gardenerFormService.addGardener(newGardener);

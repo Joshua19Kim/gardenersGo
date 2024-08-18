@@ -116,8 +116,17 @@ public class InputValidationUtil {
      * @param DoB LocalDate object that contains users age
      * @return empty optional if date is valid, otherwise returns Optional error string
      */
-    public Optional<String> checkDoB (LocalDate DoB) {
+    public Optional<String> checkDoB (String DoBString) {
+        LocalDate DoB;
         String result = "";
+
+        try {
+            DoB = LocalDate.parse(DoBString);
+        } catch (Exception e) {
+            result += "Date is not in valid format, DD/MM/YYYY";
+            return Optional.of(result);
+        }
+
         if (Period.between(DoB, LocalDate.now()).getYears() < 13) {
             result = "You must be 13 years or older to create an account <br/>";
         }

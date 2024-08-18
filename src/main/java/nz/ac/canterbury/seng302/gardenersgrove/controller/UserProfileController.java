@@ -145,7 +145,7 @@ public class UserProfileController {
         if (isDoBInvalid) {
             DoBError = Optional.of("Date is not in valid format, DD/MM/YYYY");
         } else if (DoB != null) {
-            DoBError = inputValidator.checkDoB(DoB);
+            DoBError = inputValidator.checkDoB(DoB.toString());
         }
         model.addAttribute("DoBValid", DoBError.orElse(""));
 
