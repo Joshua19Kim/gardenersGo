@@ -34,6 +34,11 @@ public class PlantSpecies {
     @OneToMany( mappedBy = "plantSpecies")
     private List<ScannedPlant> plants;
 
+    /** The gardener to which the species belongs. */
+    @ManyToOne
+    @JoinColumn(name = "gardener_id")
+    private Gardener gardener;
+
     protected PlantSpecies() {}
 
     public PlantSpecies(String name, int count, String imageFilename) {
