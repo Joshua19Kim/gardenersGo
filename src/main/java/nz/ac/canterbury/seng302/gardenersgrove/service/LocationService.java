@@ -43,7 +43,8 @@ public class LocationService {
         logger.info("SEND Request");
         // According to LocationIq website, the space needs to be filled with "%20"
         String urlQuery = query.replace(" ", "%20");
-        String tag = "&tag=place%3Ahouse";
+        String tag = "&tag=place%3Ahouse,building%3Ahouse,building%3Ayes";
+        logger.info(urlQuery);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://us1.locationiq.com/v1/autocomplete?q=" + urlQuery + tag + "&key=" + this.api_key))
                 .header("accept", "application/json")
