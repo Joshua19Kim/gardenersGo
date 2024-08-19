@@ -44,12 +44,12 @@
             <div style="display: flex;">
                 <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
                     <label for="location"> Address: </label>
-                    <input class="form-control" type="text" id="location" maxlength="128" placeholder="Start typing your address..."
+                    <input class="form-control" type="text" id="location" autocomplete="off" maxlength="128" placeholder="Start typing your address..."
                            th:name="location" th:value="*{location}" data-cy="location" autofocus
                            th:classappend="${locationError} ? 'is-invalid' : ''"
                     >
                     <span th:if="${locationError}" th:utext="${locationError}" class="smallErrorMessage"></span>
-                    <div class="autocomplete-results" id="autocomplete-results"></div>
+                    <div id="autocomplete-results"></div>
                 </div>
                 <br/>
             </div>
