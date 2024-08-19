@@ -1,6 +1,6 @@
-<div class="main-page2-card">
+<div class="main-page2-card" style="height: 100%;">
     <div class="main-page2-card-title">Recently accessed gardens</div>
-    <ul class="list-group">
+    <ul class="list-group" style="overflow-y: scroll; height: 100%;">
         <p th:class="${recentGardens.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No recently visited garden </p>
         <li th:each="garden : ${recentGardens}" class="list-group-item p-0">
             <a th:href="@{/gardens/details(gardenId=${garden.id})}"
