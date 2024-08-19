@@ -229,6 +229,11 @@ public class BrowseGardensController {
             model.addAttribute("paginationMessage", paginationMessage);
         }
 
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+        model.addAttribute("gardens", gardens);
+
 
         return "browseGardensTemplate";
     }
