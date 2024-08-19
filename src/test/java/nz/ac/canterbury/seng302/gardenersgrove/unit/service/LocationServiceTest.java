@@ -35,7 +35,7 @@ public class LocationServiceTest {
         String query = "1600 Amphitheatre Parkway";
         String apiKey = null;
         String urlQuery = query.replace(" ", "%20");
-        String expectedUrl = "https://us1.locationiq.com/v1/autocomplete?q=" + urlQuery + "&tag=place%3Ahouse&key=" + apiKey;
+        String expectedUrl = "https://us1.locationiq.com/v1/autocomplete?q=" + urlQuery + "&tag=place%3Ahouse,building%3Ahouse,building%3Ayes&key=" + apiKey;
         String mockResponseBody = "{\"suggestions\": [\"1600 Amphitheatre Parkway, Mountain View, CA\"]}";
 
         HttpRequest mockRequest = HttpRequest.newBuilder()
