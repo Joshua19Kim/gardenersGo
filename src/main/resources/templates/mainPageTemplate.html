@@ -31,6 +31,19 @@
                 <div style="height: 35vh;" th:if="${friendsList != null and friendsList == true}"
                      th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetWide + 'Widget.html'}"></div>
             </div>
+                <!-- This will appear when user unticked all the widgets -->
+            <div class="row justify-content-center align-items-center" style="height:70vh"
+                 th:if="${(recentlyAccessedGardens == null or recentlyAccessedGardens == false) and
+                  (newestPlantsList == null or newestPlantsList == false) and
+                  (friendsList == null or friendsList == false) and
+                  (myGardensList == null or myGardensList == false)}">
+                <div class="col-md-6 text-center">
+                    <img th:src="@{/images/SunnyFabian.png}" alt="No widgets chosen" class="img-fluid mb-3" style="max-width: 200px;">
+                    <h3>No widgets chosen</h3>
+                    <p>Please select widgets from your settings to customize your main page.</p>
+                </div>
+            </div>
+
         </div>
         <!-- My Garden's List -->
         <div class="col-md-4 h-100" style="height:100%" id="widget-tall" th:classappend="${myGardensList != null and myGardensList == false} ? 'hidden'">
@@ -38,6 +51,7 @@
                  th:insert="${'fragmentExample/fragments/' + mainPageLayout.widgetTall + 'Widget.html'}"></div>
         </div>
     </div>
+
 </div>
 
 

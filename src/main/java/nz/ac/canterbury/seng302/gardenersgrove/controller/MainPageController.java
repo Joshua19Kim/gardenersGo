@@ -222,9 +222,15 @@ public class MainPageController {
     }
 
     @PostMapping("/customiseLayout")
-    public String changeLayout(@RequestParam("sections") List<String> sections, RedirectAttributes redirectAttributes) {
+    public String changeLayout(@RequestParam(name ="sections" , required = false) List<String> sections, RedirectAttributes redirectAttributes) {
         logger.info(String.valueOf(sections));
+        MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
 
+        if (sections == null) {
+            mainPageLayout.setWidgetsEnabled("0 0 0 0");
+            mainPageLayoutService.addMainPageLayout(mainPageLayout);
+            return "redirect:/user";
+        }
         List<Boolean> selectionList = new ArrayList<>();
         Boolean recentlyAccessedGardens = sections.contains("recentlyAccessedGardens");
         Boolean newestPlants = sections.contains("newestPlants");
@@ -236,13 +242,13 @@ public class MainPageController {
         selectionList.add(myGardensList);
         selectionList.add(friendsList);
 
+
         String selectionString = selectionList.stream()
                 .map(b -> b ? "1" : "0")
                 .collect(Collectors.joining(" "));
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
-        MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
         mainPageLayout.setWidgetsEnabled(selectionString);
         mainPageLayoutService.addMainPageLayout(mainPageLayout);
 
