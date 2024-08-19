@@ -29,10 +29,10 @@ public class ImageService {
     private final Logger logger = LoggerFactory.getLogger(ImageService.class);
     private final GardenerFormService gardenerFormService;
     private final PlantService plantService;
-    private static final String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
     private static final int MAX_SIZE = 10*1024*1024;
     private final List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
-
+    private static final String UPLOADS_DIR = "/uploads/";
+    private static final String UPLOAD_DIRECTORY = System.getProperty("user.dir") + UPLOADS_DIR;
     @Autowired
     public ImageService(GardenerFormService gardenerFormService, PlantService plantService) {
         this.gardenerFormService = gardenerFormService;
@@ -71,7 +71,7 @@ public class ImageService {
                         throw new IOException("Entry is outside of the target directory");
                     }
                     Files.write(filePath, file.getBytes());
-                    gardener.setProfilePicture("/uploads/" + newFileName);
+                    gardener.setProfilePicture(UPLOADS_DIR + newFileName);
                     gardenerFormService.addGardener(gardener);
                     return Optional.empty();
                 } else {
@@ -105,10 +105,15 @@ public class ImageService {
             assert fileName != null;
             String newFileName = "plant_" + plant.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
             Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);
-            logger.info("File location: " + filePath);
             if (checkValidImage(file).isEmpty()) {
+                File checkFile = new File(filePath.toString());
+                String canonicalDestinationPath = checkFile.getCanonicalPath();
+
+                if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
+                    throw new IOException("Entry is outside of the target directory");
+                }
                 Files.write(filePath, file.getBytes());
-                plant.setImage("/uploads/" + newFileName);
+                plant.setImage(UPLOADS_DIR + newFileName);
                 plantService.addPlant(plant);
                 return Optional.empty();
             } else {
