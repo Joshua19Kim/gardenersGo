@@ -235,6 +235,7 @@ public class BrowseGardensControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", matchingGardenPage))
+                .andExpect(model().attribute("searchTerm", searchTerm))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -262,6 +263,7 @@ public class BrowseGardensControllerTest {
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", matchingGardenPage))
+                .andExpect(model().attribute("searchTerm", searchTerm))
                 .andExpect(view().name("browseGardensTemplate"));
 
     }
