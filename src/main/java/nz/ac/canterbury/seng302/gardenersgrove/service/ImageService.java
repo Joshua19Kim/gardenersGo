@@ -32,7 +32,7 @@ public class ImageService {
     private static final int MAX_SIZE = 10*1024*1024;
     private final List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
     private static final String UPLOADS_DIR = "/uploads/";
-    private static final String UPLOAD_DIRECTORY = System.getProperty("user.dir") + UPLOADS_DIR;
+    private static final String UPLOAD_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
     @Autowired
     public ImageService(GardenerFormService gardenerFormService, PlantService plantService) {
         this.gardenerFormService = gardenerFormService;
@@ -68,6 +68,8 @@ public class ImageService {
                     String canonicalDestinationPath = checkFile.getCanonicalPath();
 
                     if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
+                        logger.info(canonicalDestinationPath);
+                        logger.info(UPLOAD_DIRECTORY);
                         throw new IOException("Entry is outside of the target directory");
                     }
                     Files.write(filePath, file.getBytes());
