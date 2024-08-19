@@ -120,7 +120,6 @@ public class UserProfileController {
         } else {
             model.addAttribute("firstName", "Not Registered");
         }
-
         if(isLastNameOptional) {
             lastName = null;
         }
@@ -138,8 +137,8 @@ public class UserProfileController {
         if (lastName != null) {
             lastNameError = inputValidator.checkValidName(lastName, "Last", isLastNameOptional);
             model.addAttribute("lastName", lastName);
-            model.addAttribute("isLastNameOptional", isLastNameOptional);
         }
+        model.addAttribute("isLastNameOptional", isLastNameOptional);
         model.addAttribute("lastNameValid", lastNameError.orElse(""));
 
         Optional<String> DoBError = Optional.empty();
