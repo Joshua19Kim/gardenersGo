@@ -341,12 +341,12 @@ public class ValidityCheckerTest {
     @CsvSource(value = {
             "Drury: Drury",
             "12345: Please enter a street number and name without only numerical characters <br/>",
-            "@@#$%^&&**(*: Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes" +
+            "@@#$%^&&**(*: Street number and name must only include letters, numbers, spaces, commas, dots, hyphens, slashes or apostrophes" +
                     " <br/>Street number and name must contain at least one alphanumeric character <br/>",
             "Achieving balance between work and life is essential to an awesome life: " +
                     "Please enter a street number and name less than 60 characters",
             "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: " +
-                    "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes " +
+                    "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens, slashes or apostrophes " +
                     "<br/>Street number and name must contain at least one alphanumeric character <br/>" +
                     "Please enter a street number and name less than 60 characters"
     }, delimiter = ':')

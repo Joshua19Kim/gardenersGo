@@ -209,7 +209,7 @@ public class GardenFormControllerTest {
                 .andExpect(model().attribute("suburbError", "Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Suburb must contain at least one alphanumeric character <br/>"))
                 .andExpect(model().attribute("countryError", "Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Country must contain at least one alphanumeric character <br/>"))
                 .andExpect(model().attribute("postcodeError", "Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Postcode must contain at least one alphanumeric character <br/>"))
-                .andExpect(model().attribute("locationError", "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Street number and name must contain at least one alphanumeric character <br/>"));
+                .andExpect(model().attribute("locationError", "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens, slashes or apostrophes <br/>Street number and name must contain at least one alphanumeric character <br/>"));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
