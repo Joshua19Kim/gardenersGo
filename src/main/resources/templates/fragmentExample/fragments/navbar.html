@@ -1,4 +1,4 @@
-<script xmlns:sec="http://www.w3.org/1999/xhtml">
+<script>
     // JavaScript function to submit the logout form
     function logout(event) {
         event.preventDefault(); // Prevent the link from navigating
@@ -8,52 +8,115 @@
 </script>
 
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary" id="custom-navbar">
-    <div class="container-fluid">
-        <a th:href="@{/home}" style="text-decoration: none; color: inherit; margin-right: 25px;">
-            <h1 xmlns:sec="http://www.w3.org/1999/xhtml">
-                Gardener's Grove
-            </h1>
-        </a>        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item-dropdown dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Gardens
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a id="my-gardens" class="dropdown-item" th:href="@{/gardens}">My Gardens</a></li>
-                        <div class="dropdown-divider"></div>
-                        <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
-                            <li><a class="dropdown-item" th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a></li>
-                        </th:block>
-                    </ul>
-                </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/gardens/form(redirect=${requestURI})}">Create New Garden</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/user}">My Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/manageFriends}">Manage Friends</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/browseGardens}">Browse Gardens</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/myCollection}">My Collection</a>
-                </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link" href="#" onclick="logout(event)">Logout</a>
-                    <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
-                        <input type="submit" value="Logout"/>
-                    </form>
-                </li>
-            </ul>
+<!-- Navbar Section -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary" id="custom-navbar">
+    <div class="container-fluid d-flex flex-column align-items-center">
+        <!-- Title Section -->
+        <div class="my-3">
+            <a th:href="@{/home}" style="text-decoration: none; color: inherit;">
+                <h1 xmlns:sec="http://www.w3.org/1999/xhtml" id="site-header">
+                    Gardener's Go!
+                </h1>
+            </a>
+        </div>
+
+        <!-- Navbar Content Section -->
+        <div class="w-100">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    <!-- Spacer -->
+                    <li class="nav-item flex-grow-1"></li>
+
+                    <li class="nav-item-dropdown dropdown">
+                        <a class="nav-link dropdown-toggle" th:href="@{/gardens}" role="button" data-bs-hover="dropdown" aria-expanded="false">My
+                            Gardens
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/gardens/form(redirect=${requestURI})}">
+                                    <span class="material-symbols-outlined" id="create-garden-icon">add_circle</span>
+                                    Create New Garden
+                                </a>
+                            </li>
+                            <div class="dropdown-divider"></div>
+                            <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
+                                <li><a class="dropdown-item" th:href="@{/gardens/details(gardenId=${garden.id})}" th:text="${garden.name}"></a></li>
+                            </th:block>
+                        </ul>
+                    </li>
+
+                    <!-- Spacer -->
+                    <li class="nav-item flex-grow-1"></li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/browseGardens}">Browse Gardens</a>
+                    </li>
+
+                    <!-- Spacer -->
+                    <li class="nav-item flex-grow-1"></li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" src="/#">Plant Wiki</a> <!-- add in when working th:href="@{/plantWiki}"-->
+                    </li>
+
+                    <!-- Spacer -->
+                    <li class="nav-item flex-grow-1"></li>
+
+                    <!-- Centered Scan Plant Item -->
+                    <li class="nav-item text-center">
+                        <a class="nav-link" src="/#" > <!-- add in when working th:href="@{/scanPlant}"-->
+                            <span class="material-symbols-outlined" id="scan-plant-icon">indeterminate_question_box</span>
+                            Scan Plant
+                        </a>
+                    </li>
+
+                    <!-- Spacer -->
+                    <li class="nav-item flex-grow-1"></li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/myCollection}">My Collection</a>
+                    </li>
+
+                    <!-- Spacer -->
+                    <li class="nav-item flex-grow-1"></li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/manageFriends}">Manage Friends</a>
+                    </li>
+
+                    <!-- Spacer -->
+                    <li class="nav-item flex-grow-1"></li>
+
+                    <li class="nav-item-dropdown dropdown">
+                        <a class="nav-link dropdown-toggle" th:href="@{/user}" role="button" data-bs-hover="dropdown" aria-expanded="false">
+                            <span class="material-symbols-outlined" id="account-circle">
+                                account_circle
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/user}">My Profile</a>
+                            </li>
+                            <div class="dropdown-divider"></div>
+                            <li class="nav-item" sec:authorize="isAuthenticated()">
+                                <a class="nav-link" href="#" onclick="logout(event)">Logout</a>
+                                <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
+                                    <input type="submit" value="Logout"/>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Spacer -->
+                    <li class="nav-item flex-grow-1"></li>
+
+                </ul>
+            </div>
         </div>
     </div>
 </nav>

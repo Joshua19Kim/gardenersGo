@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
@@ -41,6 +43,9 @@ public class BrowseGardensControllerTest {
 
     @MockBean
     private GardenService gardenService;
+
+    @MockBean
+    private GardenerFormService gardenerFormService;
 
     @MockBean
     private TagService tagService;
@@ -77,7 +82,7 @@ public class BrowseGardensControllerTest {
             allTags.add("tag" + i);
         }
 
-        browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, tagService));
+        browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, gardenerFormService, tagService));
         mockMvc = standaloneSetup(browseGardensControllerSpy).build();
         doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
         doNothing().when(browseGardensControllerSpy).setSearchTags((anyList()));
@@ -91,11 +96,15 @@ public class BrowseGardensControllerTest {
         Pageable pageable = PageRequest.of(defaultPageNumber, defaultPageSize);
         Page<Garden> gardenPage = new PageImpl<>(gardens, pageable, gardens.size());
         Mockito.when(gardenService.getGardensPaginated(defaultPageNumber, defaultPageSize)).thenReturn(gardenPage);
+        Gardener mockedGardener = Mockito.mock(Gardener.class);
+        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
+        Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
         List<Integer> expectedPageNumbers = List.of(1, 2);
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
+                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -107,11 +116,15 @@ public class BrowseGardensControllerTest {
         Pageable pageable = PageRequest.of(pageNumber, defaultPageSize);
         Page<Garden> gardenPage = new PageImpl<>(gardens.subList(defaultPageSize, gardens.size()), pageable, gardens.size());
         Mockito.when(gardenService.getGardensPaginated(pageNumber, defaultPageSize)).thenReturn(gardenPage);
+        Gardener mockedGardener = Mockito.mock(Gardener.class);
+        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
+        Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens")
                         .param("pageNo", String.valueOf(pageNumber)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
+                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -124,11 +137,15 @@ public class BrowseGardensControllerTest {
         List<Garden> emptyList = new ArrayList<>();
         Page<Garden> gardenPage = new PageImpl<>(emptyList, pageable, emptyList.size());
         Mockito.when(gardenService.getGardensPaginated(pageNumber, defaultPageSize)).thenReturn(gardenPage);
+        Gardener mockedGardener = Mockito.mock(Gardener.class);
+        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
+        Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens")
                         .param("pageNo", String.valueOf(pageNumber)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attributeDoesNotExist("pageNumbers"))
+                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
