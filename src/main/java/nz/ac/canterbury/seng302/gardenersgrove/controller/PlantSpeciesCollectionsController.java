@@ -46,6 +46,8 @@ public class PlantSpeciesCollectionsController {
     /**
      * Constructor to instantiate PlantSpeciesCollectionsController
      * @param plantSpeciesService the service used to interact with database
+     * @param gardenService used in conjuction with gardener form service to populate navbar
+     * @param gardenerFormService used in conjuction with above to populate navbar
      */
     @Autowired
     public PlantSpeciesCollectionsController(PlantSpeciesService plantSpeciesService, GardenerFormService gardenerFormService, GardenService gardenService) {

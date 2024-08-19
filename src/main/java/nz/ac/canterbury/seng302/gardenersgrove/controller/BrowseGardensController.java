@@ -55,6 +55,7 @@ public class BrowseGardensController {
      * Constructor for the BrowseGardensController that intializes all the properties of the class
      * @param gardenService used to perform business logic related to gardens
      * @param tagService used to perform business logic related to tags
+     * @param gardenerFormService used to get the gardens to populate the navbar
      */
     @Autowired
     public BrowseGardensController(GardenService gardenService, GardenerFormService gardenerFormService, TagService tagService) {
