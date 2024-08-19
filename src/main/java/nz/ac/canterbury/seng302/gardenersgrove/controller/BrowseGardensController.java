@@ -151,6 +151,7 @@ public class BrowseGardensController {
             }
             model.addAttribute("allTags", allTags);
         }
+        model.addAttribute("searchTerm", searchTerm);
 
         return "browseGardensTemplate";
     }
@@ -182,7 +183,8 @@ public class BrowseGardensController {
         }
         List<String> allTags = tagService.getAllTagNames();
         model.addAttribute("allTags", allTags);
-        model.addAttribute("tags", this.tags);
+        model.addAttribute("tags", searchTags);
+        model.addAttribute("searchTerm", searchTerm);
 
         Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, tags, tagCount);
         if (gardensPage.getContent().isEmpty()) {
