@@ -80,7 +80,6 @@ public class BrowseGardensControllerTest {
         browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, tagService));
         mockMvc = standaloneSetup(browseGardensControllerSpy).build();
         doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
-        doNothing().when(browseGardensControllerSpy).setTags(anyList());
         doNothing().when(browseGardensControllerSpy).setSearchTags((anyList()));
 
     }
