@@ -241,6 +241,7 @@
 
 <script type="module">
 
+
     window.onload = function () {
         const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const d = new Date();
@@ -281,6 +282,17 @@
 
 </script>
 
+<script>
+    // do not delete
+    // note: these are being used to open the plant image
+    function handleImageClick(plantId) {
+        document.getElementById('fileInput_' + plantId).click();
+    }
+
+    function handleImageChange(plantId) {
+        document.getElementById('uploadPlantForm_' + plantId).submit();
+    }
+</script>
 
 </body>
 </html>

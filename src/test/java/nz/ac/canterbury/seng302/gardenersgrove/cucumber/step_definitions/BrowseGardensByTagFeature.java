@@ -81,7 +81,6 @@ public class BrowseGardensByTagFeature {
         browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, gardenerFormService, tagService));
         mockMvc = standaloneSetup(browseGardensControllerSpy).build();
         doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
-        doNothing().when(browseGardensControllerSpy).setTags(anyList());
     }
 
     @After("@U24")
