@@ -201,8 +201,13 @@ public class BrowseGardensController {
             setSearchTags(tags);
         }
         List<String> allTags = tagService.getAllTagNames();
+        if(searchTags != null) {
+            for(String selectedTag: searchTags) {
+                allTags.remove(selectedTag);
+            }
+            model.addAttribute("tags", searchTags);
+        }
         model.addAttribute("allTags", allTags);
-        model.addAttribute("tags", searchTags);
         model.addAttribute("searchTerm", searchTerm);
 
         Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, tags, tagCount);
