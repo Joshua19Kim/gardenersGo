@@ -122,6 +122,10 @@ public class MainPageController {
         model.addAttribute("mainPageLayout", mainPageLayout);
         model.addAttribute("ordering", mainPageLayout.getFormat());
 
+        // this returning value is like "1 1 1 1" each number indicates the widgets on main page.
+        // The order is [recentlyAccessedGardens, newestPlantsList, myGardensList, friendsList]
+        // If numbers are all 1, that means there will be all the widgets.
+        // "1 0 0 0" means showing only recentlyAccessedGardens.
         String widgetsEnabled = mainPageLayout.getWidgetsEnabled();
 
         String[] values = widgetsEnabled.split(" ");
