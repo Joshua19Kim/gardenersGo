@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.NavbarService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,9 @@ public class BrowseGardensByTagFeature {
     private GardenService gardenService;
 
     @Autowired
+    private NavbarService navbarService;
+
+    @Autowired
     private TagService tagService;
 
     @Autowired
@@ -78,7 +82,7 @@ public class BrowseGardensByTagFeature {
         for(String tag: allTags) {
             tagService.addTag(new Tag(tag, garden));
         }
-        browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, gardenerFormService, tagService));
+        browseGardensControllerSpy = spy(new BrowseGardensController(navbarService, tagService, gardenService));
         mockMvc = standaloneSetup(browseGardensControllerSpy).build();
         doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
     }

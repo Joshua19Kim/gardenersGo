@@ -4,10 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensControlle
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -51,6 +48,9 @@ public class BrowseGardensControllerTest {
     private TagService tagService;
 
     @MockBean
+    private NavbarService navbarService;
+
+    @MockBean
     private PlantService plantService;
 
     private Gardener testGardener;
@@ -84,7 +84,7 @@ public class BrowseGardensControllerTest {
         Gardener mockedGardener = Mockito.mock(Gardener.class);
         Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
         Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
-        browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, gardenerFormService, tagService));
+        browseGardensControllerSpy = spy(new BrowseGardensController(navbarService, tagService, gardenService));
         mockMvc = standaloneSetup(browseGardensControllerSpy).build();
         doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
         doNothing().when(browseGardensControllerSpy).setSearchTags((anyList()));
@@ -103,7 +103,6 @@ public class BrowseGardensControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
-                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -120,7 +119,6 @@ public class BrowseGardensControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
-                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -138,7 +136,6 @@ public class BrowseGardensControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attributeDoesNotExist("pageNumbers"))
-                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
