@@ -1590,3 +1590,7 @@ table td {
 .selectable.selected {
     border: 2px solid green; /* Highlight border when selected */
 }
+
+.hidden, .hidden * {
+    display: none !important;
+}

@@ -16,21 +16,21 @@ INSERT INTO gardener (first_name, last_name, DoB, email, password, profile_pictu
 
 
 
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 1, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 2, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 3, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 4, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 5, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 6, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 7, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 8, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 9, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 10, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 11, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 12, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 13, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 14, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
-INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide) VALUES ('1 2 3', 15, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 1, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 2, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 3, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 4, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 5, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 6, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 7, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 8, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 9, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 10, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 11, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 12, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 13, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 14, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
+INSERT INTO main_page_layout (format, gardener_id, widget_small_one, widget_small_two, widget_tall, widget_wide, widgets_enabled) VALUES ('1 2 3', 15, 'recentGardens', 'recentPlants', 'myGardens', 'myFriends', '1 1 1 1');
 
 INSERT INTO authority (gardener_id, role) VALUES (1, 'ROLE_USER');
 INSERT INTO authority (gardener_id, role) VALUES (2, 'ROLE_USER');
