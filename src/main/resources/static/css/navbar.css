@@ -64,6 +64,13 @@
     margin: 0 auto;
 }
 
+.custom-dropdown-menu {
+    right: 0;
+    left: auto;
+    transform: translateX(0);
+}
+
+
 
 
 
