@@ -125,21 +125,12 @@ public class MainPageController {
         String widgetsEnabled = mainPageLayout.getWidgetsEnabled();
 
         String[] values = widgetsEnabled.split(" ");
-        List<Boolean> selectionList = new ArrayList<>();
 
-        for (String value : values) {
-            selectionList.add(value.equals("1"));
-        }
+        model.addAttribute("recentlyAccessedGardens", values[0].equals("1"));
+        model.addAttribute("newestPlantsList", values[1].equals("1"));
+        model.addAttribute("myGardensList", values[2].equals("1"));
+        model.addAttribute("friendsList", values[3].equals("1"));
 
-        Boolean recentlyAccessedGardens = selectionList.get(0);
-        Boolean newestPlants = selectionList.get(1);
-        Boolean myGardensList = selectionList.get(2);
-        Boolean friendsList = selectionList.get(3);
-
-        model.addAttribute("recentlyAccessedGardens", recentlyAccessedGardens);
-        model.addAttribute("newestPlantsList", newestPlants);
-        model.addAttribute("friendsList", friendsList);
-        model.addAttribute("myGardensList", myGardensList);
 
         return "mainPageTemplate";
     }
@@ -202,15 +193,11 @@ public class MainPageController {
         logger.info(String.valueOf(customiseSections));
 
         List<Boolean> selectionList = new ArrayList<>();
-        Boolean recentlyAccessedGardens = customiseSections.contains("recentlyAccessedGardens");
-        Boolean newestPlants = customiseSections.contains("newestPlants");
-        Boolean myGardensList = customiseSections.contains("myGardensList");
-        Boolean friendsList = customiseSections.contains("friendsList");
 
-        selectionList.add(recentlyAccessedGardens);
-        selectionList.add(newestPlants);
-        selectionList.add(myGardensList);
-        selectionList.add(friendsList);
+        selectionList.add(customiseSections.contains("recentlyAccessedGardens"));
+        selectionList.add(customiseSections.contains("newestPlants"));
+        selectionList.add(customiseSections.contains("myGardensList"));
+        selectionList.add(customiseSections.contains("friendsList"));
 
         String selectionString = selectionList.stream()
                 .map(b -> b ? "1" : "0")
@@ -232,15 +219,11 @@ public class MainPageController {
             return "redirect:/user";
         }
         List<Boolean> selectionList = new ArrayList<>();
-        Boolean recentlyAccessedGardens = sections.contains("recentlyAccessedGardens");
-        Boolean newestPlants = sections.contains("newestPlants");
-        Boolean myGardensList = sections.contains("myGardensList");
-        Boolean friendsList = sections.contains("friendsList");
 
-        selectionList.add(recentlyAccessedGardens);
-        selectionList.add(newestPlants);
-        selectionList.add(myGardensList);
-        selectionList.add(friendsList);
+        selectionList.add(sections.contains("recentlyAccessedGardens"));
+        selectionList.add(sections.contains("newestPlants"));
+        selectionList.add(sections.contains("myGardensList"));
+        selectionList.add(sections.contains("friendsList"));
 
 
         String selectionString = selectionList.stream()
