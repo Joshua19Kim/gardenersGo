@@ -146,7 +146,7 @@ public class Gardener {
 
     public String getProfilePicture() { return this.profilePicture; }
 
-    public int getBadWordCount() { return badWordCount; }
+    public Integer getBadWordCount() { return this.badWordCount; }
 
     public void setId(Long id) { this.id = id; }
     public List<Garden> getGardens() { return gardens; }
