@@ -1,10 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlantResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,17 +49,34 @@ public class PlantWikiService {
     }
 
 
-    public WikiPlant getPlants(String query) throws IOException, URISyntaxException {
+    public List<WikiPlant> getPlants(String query) throws IOException, URISyntaxException {
         logger.info("SEND Request");
+        query="cornus%20alba";
+        List<WikiPlant> plantResults = new ArrayList<>();
         String uri = PERENUAL_API_URL +"?key="+ this.api_key + "&q=" + query;
         URL url = new URI(uri).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
-            WikiPlant wikiPlant = objectMapper.readValue(url, WikiPlant.class);
-            logger.info("Plant info about: " + wikiPlant.getName());
-            return wikiPlant;
+            WikiPlantResponse wikiPlantResponse = objectMapper.readValue(url, WikiPlantResponse.class);
+            for ( JsonNode plant : wikiPlantResponse.getData()) {
+                 long id = plant.get("id").asLong();
+                 if (id <=3000) {
+                     String name = plant.get("common_name").asText();
+                     List<String> scientificName = objectMapper.convertValue(plant.get("scientific_name"), new TypeReference<List<String>>() {});
+                     List<String> otherNames = objectMapper.convertValue(plant.get("other_name"), new TypeReference<List<String>>() {});
+                     String cycle = plant.get("cycle").asText();
+                     String watering = plant.get("watering").asText();
+                     List<String> sunlight = objectMapper.convertValue(plant.get("sunlight"), new TypeReference<List<String>>() {});
+                     String imagePath = plant.get("default_image").get("original_url").asText();
+
+                     WikiPlant wikiPlant = new WikiPlant(id, name, scientificName, otherNames, cycle, watering, sunlight, imagePath);
+                     plantResults.add(wikiPlant);
+                 }
+
+            }
+            return plantResults;
         } catch (IOException ex) {
             // this occurs when no plant matches the search
             return null;

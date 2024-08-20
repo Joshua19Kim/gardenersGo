@@ -7,31 +7,94 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-@Entity
-@Table(name="wikiPlants")
+import java.util.List;
+
+
 public class WikiPlant {
-    @JsonProperty("data")
-    private JsonNode data;
 
-    @Id
+
+
     private long id;
-    @Column
+
     private String name;
-    @Column(name = "scientific_name")
-    private String scientificName;
 
-    public WikiPlant() {
+    private List<String> scientificName;
+    private List<String> otherNames;
+    private String cycle;
+    private String watering;
+    private List<String> sunlight;
+    private String imagePath;
 
+    public long getId() {
+        return id;
     }
-    public JsonNode getData() {return data;}
 
-    public void setData(JsonNode data) {
-        this.id = data.get("id").asLong();
-        this.name = data.get("common_name").asText();
-        this.scientificName = data.get("scientific_name").asText();
+    public void setId(long id) {
+        this.id = id;
     }
+
+    public WikiPlant(Long id, String name, List<String> scientificName, List<String> otherNames, String cycle, String watering, List<String> sunlight, String imagePath) {
+        this.id = id;
+        this.name = name;
+        this.scientificName = scientificName;
+        this.otherNames = otherNames;
+        this.cycle = cycle;
+        this.watering = watering;
+        this.sunlight = sunlight;
+        this.imagePath = imagePath;
+    }
+
+
 
     public String getName() {return name;}
 
-    public String getScientificName() {return scientificName;}
+    public List<String> getScientificName() {return scientificName;}
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setScientificName(List<String> scientificName) {
+        this.scientificName = scientificName;
+    }
+
+    public List<String> getOtherNames() {
+        return otherNames;
+    }
+
+    public void setOtherNames(List<String> otherNames) {
+        this.otherNames = otherNames;
+    }
+
+    public String getCycle() {
+        return cycle;
+    }
+
+    public void setCycle(String cycle) {
+        this.cycle = cycle;
+    }
+
+    public String getWatering() {
+        return watering;
+    }
+
+    public void setWatering(String watering) {
+        this.watering = watering;
+    }
+
+    public List<String> getSunlight() {
+        return sunlight;
+    }
+
+    public void setSunlight(List<String> sunlight) {
+        this.sunlight = sunlight;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 }

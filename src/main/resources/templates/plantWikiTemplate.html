@@ -19,14 +19,14 @@
         <span th:if="${noSearchResults}" th:text="${noSearchResults}"></span>
     </div>
     <div class="row">
-        <div class="col" style="width: 300px;" th:each="plant : ${resultsPage.content}" th:if="${plantStat.count >0}">
+        <div class="col" style="width: 300px;" th:each="plant : ${resultPlants}">
             <a style="text-decoration: none; color: inherit;" th:href="@{plantWiki}">
                 <div class="card browse-gardens-card col p-0">
-                    <img alt="Plant" class="card-img-top" th:src="@{'/images/placeholder.jpg'}">
+                    <img alt="Plant" class="card-img-top" th:src="${plant.imagePath}">
+<!--                    // image no loading-->
                     <div class="card-body w-100">
-                        <h5 class="card-title">Plant Name</h5>
-                        <p class="card-text">Scientific Name</p>
-                        <a class="btn btn-primary" href="#">Go somewhere</a>
+                        <h5 class="card-title" th:text="${plant.name}"></h5>
+                        <p class="card-text" th:text="${plant.scientificName}"></p>
                     </div>
                 </div>
             </a>
