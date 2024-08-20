@@ -47,6 +47,13 @@ public class PlantSpecies {
         this.imageFilename = imageFilename;
     }
 
+    public PlantSpecies(String name, int count, String imageFilename, Gardener gardener) {
+        this.name = name;
+        this.count = count;
+        this.imageFilename = imageFilename;
+        this.gardener = gardener;
+    }
+
     public long getCount() {
         return count;
     }
@@ -85,5 +92,13 @@ public class PlantSpecies {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Gardener getGardener() {
+        return gardener;
+    }
+
+    public void setGardener(Gardener gardener) {
+        this.gardener = gardener;
     }
 }
