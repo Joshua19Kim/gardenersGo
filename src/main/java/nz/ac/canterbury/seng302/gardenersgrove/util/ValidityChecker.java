@@ -109,11 +109,7 @@ public class ValidityChecker {
             result += "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>";
         }
 
-        if (name == null)  {
-            throw new IllegalArgumentException("Name cannot be empty");
-        }
-
-        if(name.length() > 64) {
+        if(name != null && name.length() > 64) {
             result += "Plant name must be less than 64 characters";
         }
 
