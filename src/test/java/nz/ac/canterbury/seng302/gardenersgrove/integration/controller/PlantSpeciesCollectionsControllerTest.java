@@ -53,9 +53,12 @@ public class PlantSpeciesCollectionsControllerTest {
 
     private List<PlantSpecies> allPlantSpecies;
 
+    private long gardenerId;
+
     @BeforeEach
     public void setUp() {
         totalPlantSpecies = 21;
+        gardenerId = 1L;
         allPlantSpecies = new ArrayList<>();
         defaultPageNumber = 0;
         defaultPageSize = 12;
@@ -64,6 +67,10 @@ public class PlantSpeciesCollectionsControllerTest {
             allPlantSpecies.add(plantSpecies);
             plantSpeciesService.addPlantSpecies(plantSpecies);
         }
+        Gardener mockedGardener = Mockito.mock(Gardener.class);
+        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
+        Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
+        Mockito.when(mockedGardener.getId()).thenReturn(gardenerId);
     }
 
     @Test
@@ -71,10 +78,7 @@ public class PlantSpeciesCollectionsControllerTest {
     public void MyCollectionPageRequested_NoPageNumberSpecified_DefaultPageReturned() throws Exception {
         Pageable pageable = PageRequest.of(defaultPageNumber, defaultPageSize);
         Page<PlantSpecies> plantSpeciesPage = new PageImpl<>(allPlantSpecies, pageable, totalPlantSpecies);
-        Mockito.when(plantSpeciesService.getAllPlantSpeciesPaginated(defaultPageNumber, defaultPageSize)).thenReturn(plantSpeciesPage);
-        Gardener mockedGardener = Mockito.mock(Gardener.class);
-        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
-        Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
+        Mockito.when(plantSpeciesService.getGardenerPlantSpeciesPaginated(defaultPageNumber, defaultPageSize, gardenerId)).thenReturn(plantSpeciesPage);
         List<Integer> expectedPageNumbers = List.of(1, 2);
         mockMvc.perform(MockMvcRequestBuilders.get("/myCollection"))
                 .andExpect(status().isOk())
@@ -91,10 +95,7 @@ public class PlantSpeciesCollectionsControllerTest {
         List<Integer> expectedPageNumbers = List.of(1,2);
         Pageable pageable = PageRequest.of(pageNumber, defaultPageSize);
         Page<PlantSpecies> plantSpeciesPage = new PageImpl<>(allPlantSpecies.subList(defaultPageSize, totalPlantSpecies), pageable, totalPlantSpecies);
-        Mockito.when(plantSpeciesService.getAllPlantSpeciesPaginated(pageNumber, defaultPageSize)).thenReturn(plantSpeciesPage);
-        Gardener mockedGardener = Mockito.mock(Gardener.class);
-        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
-        Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
+        Mockito.when(plantSpeciesService.getGardenerPlantSpeciesPaginated(pageNumber, defaultPageSize, gardenerId)).thenReturn(plantSpeciesPage);
         mockMvc.perform(MockMvcRequestBuilders.get("/myCollection")
                         .param("pageNo", String.valueOf(pageNumber)))
                 .andExpect(status().isOk())
@@ -111,10 +112,7 @@ public class PlantSpeciesCollectionsControllerTest {
         Pageable pageable = PageRequest.of(pageNumber, defaultPageSize);
         List<PlantSpecies> emptyList = new ArrayList<>();
         Page<PlantSpecies> plantSpeciesPage = new PageImpl<>(emptyList, pageable, emptyList.size());
-        Mockito.when(plantSpeciesService.getAllPlantSpeciesPaginated(pageNumber, defaultPageSize)).thenReturn(plantSpeciesPage);
-        Gardener mockedGardener = Mockito.mock(Gardener.class);
-        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
-        Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
+        Mockito.when(plantSpeciesService.getGardenerPlantSpeciesPaginated(pageNumber, defaultPageSize, gardenerId)).thenReturn(plantSpeciesPage);
         mockMvc.perform(MockMvcRequestBuilders.get("/myCollection")
                         .param("pageNo", String.valueOf(pageNumber)))
                 .andExpect(status().isOk())

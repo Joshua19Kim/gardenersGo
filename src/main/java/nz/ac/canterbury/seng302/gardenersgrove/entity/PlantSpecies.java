@@ -34,12 +34,24 @@ public class PlantSpecies {
     @OneToMany( mappedBy = "plantSpecies")
     private List<ScannedPlant> plants;
 
+    /** The gardener to which the species belongs. */
+    @ManyToOne
+    @JoinColumn(name = "gardener_id")
+    private Gardener gardener;
+
     protected PlantSpecies() {}
 
     public PlantSpecies(String name, int count, String imageFilename) {
         this.name = name;
         this.count = count;
         this.imageFilename = imageFilename;
+    }
+
+    public PlantSpecies(String name, int count, String imageFilename, Gardener gardener) {
+        this.name = name;
+        this.count = count;
+        this.imageFilename = imageFilename;
+        this.gardener = gardener;
     }
 
     public long getCount() {
@@ -80,5 +92,13 @@ public class PlantSpecies {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Gardener getGardener() {
+        return gardener;
+    }
+
+    public void setGardener(Gardener gardener) {
+        this.gardener = gardener;
     }
 }
