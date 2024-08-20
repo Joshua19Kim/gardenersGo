@@ -37,5 +37,13 @@ public interface PlantSpeciesRepository extends JpaRepository<PlantSpecies, Long
      */
     Page<PlantSpecies> findAll(Pageable pageable);
 
+    /**
+     * Find the plant species by gardener id with pagination
+     * @param id the id of the gardener
+     * @param pageable object representing pagination
+     * @return the plant species that the gardener has
+     */
+    Page<PlantSpecies> findPlantSpeciesByGardenerId(long id, Pageable pageable);
+
 
 }

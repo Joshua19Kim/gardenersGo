@@ -59,4 +59,16 @@ public class PlantSpeciesService {
         return plantSpeciesRepository.findAll(pageable);
     }
 
+    /**
+     * Gets the plant species that are owned by the gardener in paginated form
+     * @param pageNo the page number
+     * @param pageSize the size of the page
+     * @param gardenerId the id of the gardener
+     * @return the page of plant species
+     */
+    public Page<PlantSpecies> getGardenerPlantSpeciesPaginated(int pageNo, int pageSize, Long gardenerId) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return plantSpeciesRepository.findPlantSpeciesByGardenerId(gardenerId, pageable);
+    }
+
 }

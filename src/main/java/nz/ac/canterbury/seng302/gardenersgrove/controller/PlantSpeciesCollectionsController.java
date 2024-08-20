@@ -84,8 +84,13 @@ public class PlantSpeciesCollectionsController {
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
             Model model
     ) {
+
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+
+
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
-        Page<PlantSpecies> plantSpeciesList = plantSpeciesService.getAllPlantSpeciesPaginated(pageNo, pageSize);
+        Page<PlantSpecies> plantSpeciesList = plantSpeciesService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
         logger.info("GET /myCollection");
         model.addAttribute("plantSpeciesList", plantSpeciesList);
         int totalPages = plantSpeciesList.getTotalPages();
@@ -108,8 +113,6 @@ public class PlantSpeciesCollectionsController {
         }
 
         // need to add to model so that the navbar can populate the dropdown
-        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-        gardenerOptional.ifPresent(value -> gardener = value);
         List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         model.addAttribute("gardens", gardens);
 
