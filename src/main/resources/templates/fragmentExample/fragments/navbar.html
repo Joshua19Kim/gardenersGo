@@ -44,6 +44,9 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/browseGardens}">Browse Gardens</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/plantWiki}">Plant Wiki</a>
+                </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
                     <a class="nav-link" href="#" onclick="logout(event)">Logout</a>
                     <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">

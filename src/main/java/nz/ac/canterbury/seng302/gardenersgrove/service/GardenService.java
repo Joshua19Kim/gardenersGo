@@ -83,6 +83,7 @@ public class GardenService {
      * Gets a page of the specified size and number
      * @param pageNo the page number
      * @param pageSize the page size
+     *
      * @return a page of garden objects
      */
     public Page<Garden> getGardensPaginated(int pageNo, int pageSize)  {
