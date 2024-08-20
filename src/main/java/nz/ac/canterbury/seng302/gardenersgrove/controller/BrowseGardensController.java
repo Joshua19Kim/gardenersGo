@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.NavbarService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
@@ -32,9 +32,8 @@ import java.util.stream.IntStream;
 @Controller
 public class BrowseGardensController {
 
+    private final NavbarService navbarService;
     private final GardenService gardenService;
-
-    private final GardenerFormService gardenerFormService;
 
     private Gardener gardener;
 
@@ -52,15 +51,14 @@ public class BrowseGardensController {
 
     /**
      * Constructor for the BrowseGardensController that intializes all the properties of the class
-     * @param gardenService used to perform business logic related to gardens
+     * @param navbarService used to populate Navbar
      * @param tagService used to perform business logic related to tags
-     * @param gardenerFormService used to get the gardens to populate the navbar
      */
     @Autowired
-    public BrowseGardensController(GardenService gardenService, GardenerFormService gardenerFormService, TagService tagService) {
+    public BrowseGardensController(NavbarService navbarService, TagService tagService, GardenService gardenService) {
 
+        this.navbarService = navbarService;
         this.gardenService = gardenService;
-        this.gardenerFormService = gardenerFormService;
         this.tagService = tagService;
         this.pageSize = 10;
         this.searchTerm = "";
@@ -84,18 +82,6 @@ public class BrowseGardensController {
         this.searchTags = tags;
     }
 
-    /**
-     * Retrieve an optional of a gardener using the current authentication. We will always have to
-     * check whether the gardener was retrieved in the calling method, so the return type was left as
-     * an optional
-     *
-     * @return An optional of the requested gardener
-     */
-    public Optional<Gardener> getGardenerFromAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
-        return gardenerFormService.findByEmail(currentUserEmail);
-    }
 
 
     /**
@@ -166,11 +152,7 @@ public class BrowseGardensController {
         }
         model.addAttribute("searchTerm", searchTerm);
 
-        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-        gardenerOptional.ifPresent(value -> gardener = value);
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-        model.addAttribute("gardens", gardens);
-
+        navbarService.populateNavbar(model);
 
         return "browseGardensTemplate";
     }
@@ -234,11 +216,7 @@ public class BrowseGardensController {
             model.addAttribute("paginationMessage", paginationMessage);
         }
 
-        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-        gardenerOptional.ifPresent(value -> gardener = value);
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-        model.addAttribute("gardens", gardens);
-
+        navbarService.populateNavbar(model);
 
         return "browseGardensTemplate";
     }
