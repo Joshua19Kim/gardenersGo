@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -159,7 +160,7 @@ public class GardenEditControllerTest {
         assertEquals("Christchurch", garden.getCity());
         assertEquals("New Zealand", garden.getCountry());
         assertEquals("8888", garden.getPostcode());
-        assertEquals(null, garden.getSize());
+        assertNull(garden.getSize());
     }
 
     @Test
@@ -192,7 +193,7 @@ public class GardenEditControllerTest {
         assertEquals("Christchurch", garden.getCity());
         assertEquals("New Zealand", garden.getCountry());
         assertEquals("8888", garden.getPostcode());
-        assertEquals(null, garden.getSize());
+        assertNull(garden.getSize());
     }
 
     @Test
@@ -225,7 +226,7 @@ public class GardenEditControllerTest {
         assertEquals("Christchurch", garden.getCity());
         assertEquals("New Zealand", garden.getCountry());
         assertEquals("", garden.getPostcode());
-        assertEquals(null, garden.getSize());
+        assertNull(garden.getSize());
     }
 
     @Test
@@ -381,7 +382,7 @@ public class GardenEditControllerTest {
                 .andExpect(model().attribute("suburbError", "Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Suburb must contain at least one alphanumeric character <br/>"))
                 .andExpect(model().attribute("countryError", "Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Country must contain at least one alphanumeric character <br/>"))
                 .andExpect(model().attribute("postcodeError", "Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Postcode must contain at least one alphanumeric character <br/>Please enter a postcode less than 10 characters"))
-                .andExpect(model().attribute("locationError", "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>Street number and name must contain at least one alphanumeric character <br/>"));
+                .andExpect(model().attribute("locationError", "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens, slashes or apostrophes <br/>Street number and name must contain at least one alphanumeric character <br/>"));
 
         verify(gardenService, never()).addGarden(any(Garden.class));
     }
