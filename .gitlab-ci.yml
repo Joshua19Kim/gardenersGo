@@ -50,7 +50,9 @@ sonarqube-report:
     ./gradlew sonarqube
   artifacts:
     paths:
-      - build/reports/coverage/overall
+      - build/reports/coverage/cucumber
+      - build/reports/coverage/integration
+      - build/reports/coverage/test
 
 # builds all branches, except dev and main
 branch-build:
