@@ -187,5 +187,16 @@ sonarqube {
 		property "sonar.sourceEncoding", "UTF-8"
 		property "sonar.host.url", "https://sonarqube.csse.canterbury.ac.nz"
 		property "sonar.login", "$System.env.SONARQUBE_TOKEN"
+
+		if(System.env.CI_MERGE_REQUEST_IID == null || System.env.CI_MERGE_REQUEST_IID.trim().isEmpty()) {
+			property "sonar.branch.name", "$System.env.CI_COMMIT_REF_NAME"
+		}
+		else {
+			property "sonar.pullrequest.key", "$System.env.CI_MERGE_REQUEST_IID"
+			property "sonar.pullrequest.branch", "$System.env.CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+			property "sonar.pullrequest.base", "$System.env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+
+		}
+
 	}
 }
