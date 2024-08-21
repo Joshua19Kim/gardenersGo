@@ -68,6 +68,7 @@ public class SecurityConfiguration {
                                 AntPathRequestMatcher.antMatcher("/login"),
                                 AntPathRequestMatcher.antMatcher("/register"),
                                 AntPathRequestMatcher.antMatcher("/forgotPassword"),
+                                AntPathRequestMatcher.antMatcher("/identifyPlant"),
                                 AntPathRequestMatcher.antMatcher("/resetPassword"),
                                 AntPathRequestMatcher.antMatcher("/signup"))
                         .permitAll())

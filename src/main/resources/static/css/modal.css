@@ -1,0 +1,24 @@
+#scanningModal .modal-content {
+    background-color: var(--background-color);
+}
+
+#scanningAttribution {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.identified-plant-image {
+    max-width: 300px;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.cancel-button {
+    background-color: var(--button-cancel-colour);
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+    background-color: var(--button-cancel-hover-colour);
+}
