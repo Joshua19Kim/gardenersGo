@@ -48,6 +48,9 @@ sonarqube-report:
   stage: sonarqube
   script:
     ./gradlew sonarqube
+  artifacts:
+    paths:
+      - build/reports/coverage
 
 # builds all branches, except dev and main
 branch-build:
