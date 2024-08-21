@@ -194,8 +194,6 @@ public class MainPageController {
         };
         mainPageLayout.setFormat(format);
 
-        logger.info(String.valueOf(customiseSections));
-
         List<Boolean> selectionList = new ArrayList<>();
 
         selectionList.add(customiseSections.contains("recentlyAccessedGardens"));
@@ -214,7 +212,6 @@ public class MainPageController {
 
     @PostMapping("/customiseLayout")
     public String changeLayout(@RequestParam(name ="sections" , required = false) List<String> sections, RedirectAttributes redirectAttributes) {
-        logger.info(String.valueOf(sections));
         MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
 
         if (sections == null) {

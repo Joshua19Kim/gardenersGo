@@ -68,8 +68,6 @@ public class ImageService {
                     String canonicalDestinationPath = checkFile.getCanonicalPath();
 
                     if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
-                        logger.info(canonicalDestinationPath);
-                        logger.info(UPLOAD_DIRECTORY);
                         throw new IOException("Entry is outside of the target directory");
                     }
                     Files.write(filePath, file.getBytes());
