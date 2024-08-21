@@ -42,7 +42,7 @@ public class PlantWikiService {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public PlantWikiService(@Value("${plant.key}") String api_key, ObjectMapper objectMapper) {
+    public PlantWikiService(@Value("${plantWiki.key}") String api_key, ObjectMapper objectMapper) {
         this.api_key = api_key;
         this.objectMapper = objectMapper;
 
@@ -51,7 +51,6 @@ public class PlantWikiService {
 
     public List<WikiPlant> getPlants(String query) throws IOException, URISyntaxException {
         logger.info("SEND Request");
-        query="cornus%20alba";
         List<WikiPlant> plantResults = new ArrayList<>();
         String uri = PERENUAL_API_URL +"?key="+ this.api_key + "&q=" + query;
         URL url = new URI(uri).toURL();
@@ -64,6 +63,7 @@ public class PlantWikiService {
                  long id = plant.get("id").asLong();
                  if (id <=3000) {
                      String name = plant.get("common_name").asText();
+//                     Referenced ChatGPT to convert the JsonNode to a list
                      List<String> scientificName = objectMapper.convertValue(plant.get("scientific_name"), new TypeReference<List<String>>() {});
                      List<String> otherNames = objectMapper.convertValue(plant.get("other_name"), new TypeReference<List<String>>() {});
                      String cycle = plant.get("cycle").asText();
