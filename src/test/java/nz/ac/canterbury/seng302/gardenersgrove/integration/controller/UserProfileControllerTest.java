@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.hamcrest.Matchers;
@@ -50,7 +51,11 @@ public class UserProfileControllerTest {
     @MockBean
     private RelationshipService relationshipService;
     @MockBean
+    private MainPageLayoutService mainPageLayoutService;
+    @MockBean
     private RequestService requestService;
+    @MockBean
+    private MainPageLayout mainPageLayout;
 
 
     @BeforeEach
@@ -70,6 +75,9 @@ public class UserProfileControllerTest {
         testGardener.setId(1L);
         gardenerFormService.addGardener(testGardener);
         when(gardenerFormService.findByEmail("testEmail@gmail.com")).thenReturn(Optional.of(testGardener));
+        when(mainPageLayoutService.getLayoutByGardenerId(any())).thenReturn(mainPageLayout);
+        when(mainPageLayout.getWidgetsEnabled()).thenReturn("1 1 1 1");
+
 
     }
 

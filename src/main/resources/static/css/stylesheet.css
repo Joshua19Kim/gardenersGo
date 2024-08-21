@@ -1,36 +1,3 @@
-/* Custom Navbar */
-#custom-navbar {
-    background-color: rgba(209, 220, 151, 0.8) !important;
-}
-
-/*@import*/
-/*url('https://rsms.me/inter/inter.css');*/
-
-/* Took the following code from my year 13 project
- * This code adds the white underline effect on hover
- */
-nav ul .nav-item a:after, nav ul .nav-item input[type="submit"]:after {
-    bottom: 0;
-    content: "";
-    display: block;
-    height: 2px;
-    left: 50%;
-    position: relative;
-    background: #fff;
-    transition: width 0.3s ease 0s, left 0.3s ease 0s;
-    width: 0;
-}
-
-nav ul .nav-item a:hover:after, nav ul .nav-item input[type="submit"]:after {
-    width: 100%;
-    left: 0;
-}
-
-nav ul .nav-item a:hover, nav ul .nav-item input[type="submit"]:hover {
-    color: #45a049;
-    transition: 0.3s ease;
-}
-
 * {
     box-sizing: border-box;
 }
@@ -50,6 +17,11 @@ nav ul .nav-item a:hover, nav ul .nav-item input[type="submit"]:hover {
     --weather-colour: #9dc7e1;
     --forecast-colour: #8fb6ce;
 
+}
+
+.card-collection-body {
+    display: flex;
+    min-width: 100%;
 }
 
 body {
@@ -76,6 +48,10 @@ body {
 
 .card-img-top {
     max-width: 128px;
+}
+
+#collection-card-img {
+    max-width: max-content !important;
 }
 
 .current {
@@ -184,14 +160,6 @@ textarea#description.garden-form-control {
     color: var(--button-hover-color);
 }
 
-/*.alert {*/
-/*    background-color: var(--alert-background-color);*/
-/*    border-left: 5px solid var(--primary-color);*/
-/*    color: var(--text-color);*/
-/*    margin-bottom: 15px;*/
-/*    padding: 10px;*/
-/*    text-align: center;*/
-/*}*/
 
 .logo {
     width: 75px;
@@ -259,31 +227,7 @@ textarea#description.garden-form-control {
     margin-left: 25%;
 }
 
-/*====================================================================================================================*/
-/* Rest of the CSS */
-/*====================================================================================================================*/
-
-
-#custom-navbar .navbar-nav .nav-link {
-    color: #000 !important;
-}
-
-#my-gardens {
-    /*border-bottom: 1px solid green;*/
-    /*border-radius: 1px;*/
-    font-weight: bold;
-}
-
-#custom-navbar .navbar-nav .nav-link:hover {
-    color: #45a049;
-}
-
-.dropdown-container {
-    position: relative; /* To position the dropdown menu */
-}
-
 /* Dropdown Button */
-
 .dropbtn {
     color: #1c1c1a;
     background-color: rgba(209, 220, 151, 0.8) !important;
@@ -294,42 +238,6 @@ textarea#description.garden-form-control {
     display: flex;
     align-items: center; /* Aligns text and arrow vertically */
 }
-
-.dropdown-arrow {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 0.5rem; /* Space between text and arrow */
-    border-left: 0.4em solid transparent;
-    border-right: 0.4em solid transparent;
-    border-top: 0.4em solid #1c1c1a; /* Arrow color */
-}
-
-/* Dropdown Menu */
-
-.dropdown-menu-wrapper {
-    position: absolute;
-    top: 100%; /* Position it below the button */
-    left: 0; /* Align dropdown menu with the left edge of the button */
-    z-index: 100; /* Ensure it appears above other content */
-}
-
-.dropdown-menu {
-    background-color: rgba(209, 220, 151, 0.8) !important;
-    border: 1px solid #45a049;
-}
-
-/* Ensure dropdown item color and hover effects */
-
-#custom-navbar .dropdown-item {
-    color: #000 !important;
-}
-
-#custom-navbar .dropdown-item:hover {
-    background-color: rgba(209, 220, 151, 0.5) !important;
-    color: #45a049 !important;
-}
-
 
 img {
     width: 100%;
@@ -370,11 +278,12 @@ img {
     border-radius: 50%;
 }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-    z-index: 99; /* Always show on top of everything */
-}
+
+/*.dropdown {*/
+/*    position: relative;*/
+/*    display: inline-block;*/
+/*    z-index: 99; !* Always show on top of everything *!*/
+/*}*/
 
 .plant-item {
     display: flex;
@@ -394,11 +303,6 @@ img {
     margin-bottom: 0;
 }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-    z-index: 99; /* Always show on top of everything */
-}
 
 .dropdown-content {
     display: none;
@@ -418,10 +322,6 @@ img {
 .dropdown-content a:hover {
     background-color: var(--primary-color);
 
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
 }
 
 .error {
@@ -1624,7 +1524,12 @@ form.search-bar::after {
     max-width: 1800px;
     margin: 0 auto;
     padding: 0 20px;
+}
 
+.collection-container {
+    max-width: 1500px;
+    margin: 50px auto;
+    padding: 0 20px;
 }
 
 
@@ -1644,6 +1549,15 @@ form.search-bar::after {
 .browse-gardens-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.collection-gardens-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.collection-gardens-card {
+    padding: 0 !important;
 }
 
 .friend-modal-content {
@@ -1678,4 +1592,8 @@ table td {
 
 .selectable.selected {
     border: 2px solid green; /* Highlight border when selected */
+}
+
+.hidden, .hidden * {
+    display: none !important;
 }
