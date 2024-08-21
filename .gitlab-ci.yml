@@ -48,9 +48,9 @@ integration-cucumber:
 generate-reports:
   stage: verification
   dependencies:
-    - cucumber
-    - integration
-    - unit
+    - integration-cucumber
+    - integration-tests
+    - junit
   script:
     ./gradlew jacocoTestReport
   artifacts:
