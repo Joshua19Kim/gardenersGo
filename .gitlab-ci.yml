@@ -2,6 +2,7 @@ stages:
   - tagChecking
   - build
   - test
+  - verification
   - sonarqube
   - deploy
 
@@ -24,42 +25,42 @@ junit:
   stage: test
   script:
     - ./gradlew test
-    - ls ./build/jacoco
   artifacts:
     paths:
-      - build/jacoco/test-report.xml
-#      - build/reports/coverage/test
+      - build/jacoco/test.exec
 
 integration-tests:
   stage: test
   script:
     - ./gradlew integration
-    - - ls ./build/jacoco
   artifacts:
     paths:
-      - build/jacoco/test-report.xml
-#      - build/reports/coverage/integration
+      - build/jacoco/integration.exec
 
 integration-cucumber:
   stage: test
   script:
     - ./gradlew cucumber
-    - - ls ./build/jacoco
   artifacts:
     paths:
-      - build/jacoco/test-report.xml
-#      - build/reports/coverage/cucumber
+      - build/jacoco/cucumber.exec
+
+generate-reports:
+  stage: verification
+  dependencies:
+    - integration-cucumber
+    - integration-tests
+    - junit
+  script:
+    ./gradlew jacocoTestReport
+  artifacts:
+    paths:
+      - build/jacoco/*
 
 sonarqube-report:
   stage: sonarqube
   script:
     ./gradlew sonarqube
-  artifacts:
-    paths:
-      - build/jacoco/test-report.xml
-      - build/reports/coverage/cucumber
-      - build/reports/coverage/integration
-      - build/reports/coverage/test
 
 # builds all branches, except dev and main
 branch-build:
