@@ -30,7 +30,6 @@ public class PlantWikiController {
 
     private final PlantWikiService plantWikiService;
     
-    
     @Autowired
     public PlantWikiController(PlantWikiService plantWikiService) {
         this.plantWikiService = plantWikiService;
@@ -53,6 +52,10 @@ public class PlantWikiController {
         logger.info("POST /plantWiki");
         List<WikiPlant> resultPlants = plantWikiService.getPlants(searchTerm);
         model.addAttribute("resultPlants", resultPlants);
+        String errorMessage = "No plants were found";
+        if(resultPlants.isEmpty()) {
+            model.addAttribute("errorMessage", errorMessage);
+        }
         model.addAttribute("searchTerm", searchTerm);
         return "plantWikiTemplate";
     }

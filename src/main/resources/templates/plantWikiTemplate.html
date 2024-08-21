@@ -16,7 +16,7 @@
         </form>
     </div>
     <div class="no-search-results-found-container">
-        <span th:if="${noSearchResults}" th:text="${noSearchResults}"></span>
+        <span th:if="${errorMessage}" th:text="${errorMessage}"></span>
     </div>
     <div class="plant-wiki-container">
         <div class="row">
