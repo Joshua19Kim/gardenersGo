@@ -73,7 +73,7 @@ public class SecurityConfiguration {
                         .permitAll())
                 .headers(headers -> headers
                         .contentSecurityPolicy(csp -> csp
-                                .policyDirectives("default-src 'self'; img-src 'self' data: https://cdn.weatherapi.com https://perenual.com/storage/species_image/; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'")
+                                .policyDirectives("default-src 'self'; img-src 'self' data: https://cdn.weatherapi.com https://perenual.com/storage/species_image/ https://bs.plantnet.org; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'")
                         )
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))

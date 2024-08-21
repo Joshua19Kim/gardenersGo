@@ -61,6 +61,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 item.classList.add('autocomplete-item');
                 item.classList.add('text-dark');
                 const address = result.address;
+                if(address.house_number === undefined) {
+                    address.house_number = "";
+                }
                 const displayParts = [
                     address.house_number + " " + address.road,
                     address.suburb,
