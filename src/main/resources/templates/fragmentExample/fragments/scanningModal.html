@@ -108,14 +108,20 @@
                         document.getElementById('saveButton').style.display = 'none';
                     } else {
                         var resultHtml = `
-                            <div><strong>Plant Name:</strong> ${data.bestMatch || 'No record'}</div>
-<!--                            <div><strong>Score:</strong> ${data.score || 'No record'}</div>-->
-                            <div><strong>Common Names:</strong> ${data.commonNames && data.commonNames.length > 0 ? data.commonNames.join(', ') : 'No record'}</div>
-                            <div><strong>GBIF* ID:</strong> ${data.gbifId || 'No record'}</div>
-                            <div><strong>Image:</strong><br>${data.imageUrl ? `<img src="${data.imageUrl}"
+                            <div>
+                                <div><strong>Plant Name:</strong> ${data.bestMatch || 'No record'}</div>
+    <!--                            <div><strong>Score:</strong> ${data.score || 'No record'}</div>-->
+                                <div><strong>Common Names:</strong> ${data.commonNames && data.commonNames.length > 0 ? data.commonNames.join(', ') : 'No record'}</div>
+                                <div><strong>GBIF* ID:</strong> ${data.gbifId || 'No record'}</div>
+                            </div>
+                            <div>
+                                <div><strong>Image:</strong><br>${data.imageUrl ? `<img src="${data.imageUrl}"
                                     class="img-fluid"
-                                    style="max-width: 300px; max-height: 300px; object-fit: contain;">`
-                                    : 'No image available'}</div>
+                                    style="max-width: 150px; max-height: 150px; object-fit: contain;">`
+                                    : 'No image available'}
+                                </div>
+                            </div>
+
                         `;
                         document.getElementById('resultContainer').innerHTML = resultHtml;
                         document.getElementById('resultContainer').style.display = 'block';
