@@ -71,6 +71,7 @@ tasks.named('test') {
 }
 
 tasks.register("integration", Test) {
+	group 'verification'
 	useJUnitPlatform()
 	filter{
 		includeTestsMatching "nz.ac.canterbury.seng302.gardenersgrove.integration.*"
@@ -84,9 +85,12 @@ tasks.register("integration", Test) {
 }
 
 tasks.register("cucumber", Test) {
+	group 'verification'
 	testLogging.showStandardStreams = true
+	systemProperty "spring.config.additional-location", "classpath:/application.properties"
 	useJUnitPlatform()
 	filter {
+		// Ensure this lines up with the package your cucumber tests are located in
 		includeTestsMatching "nz.ac.canterbury.seng302.gardenersgrove.cucumber.*"
 	}
 	testLogging {
@@ -98,6 +102,23 @@ tasks.register("cucumber", Test) {
 	finalizedBy "cucumberTestReport"
 }
 
+jacocoTestReport { // Generate a report for all generated test data
+	onlyIf { // Allow the report to be skipped when -PskipTestReport is passed via commandline
+		return !project.hasProperty('skipTestReport')
+	}
+
+	mustRunAfter test, integration, cucumber
+
+	executionData fileTree(project.rootDir) {
+		include '**/*.exec'
+	}
+	reports {
+		xml.required = true
+		xml.destination file("${buildDir}/jacoco/test-report.xml")
+		csv.required = false
+		html.destination file("${buildDir}/reports/coverage/overall")
+	}
+}
 
 tasks.register("unitTestReport", JacocoReport) { // Generate a report for unit tests
 	group = 'verification'
@@ -110,14 +131,17 @@ tasks.register("unitTestReport", JacocoReport) { // Generate a report for unit t
 
 	executionData project.tasks.test
 
-	sourceDirectories.setFrom(project.files(project.sourceSets.main.allSource.srcDirs))
-	classDirectories.setFrom(project.sourceSets.main.output)
+	sourceDirectories = project.files(project.sourceSets.main.allSource.srcDirs)
+	classDirectories = project.sourceSets.main.output
 
 	reports {
 		// The jacoco coverage report will ge generated in the destination below
 		html.destination file("${buildDir}/reports/coverage/test")
+		xml.required = true
+		xml.destination file("${buildDir}/reports/coverage/test.xml")
 	}
 }
+
 tasks.register("integrationTestReport", JacocoReport) { // Generate a report for integration tests
 	group = 'verification'
 
@@ -129,14 +153,17 @@ tasks.register("integrationTestReport", JacocoReport) { // Generate a report for
 
 	executionData project.tasks.integration
 
-	sourceDirectories.setFrom(project.files(project.sourceSets.main.allSource.srcDirs))
-	classDirectories.setFrom(project.sourceSets.main.output)
+	sourceDirectories = project.files(project.sourceSets.main.allSource.srcDirs)
+	classDirectories = project.sourceSets.main.output
 
 	reports {
 		// The jacoco coverage report will ge generated in the destination below
 		html.destination file("${buildDir}/reports/coverage/integration")
+		xml.required = true
+		xml.destination file("${buildDir}/reports/coverage/integration.xml")
 	}
 }
+
 tasks.register("cucumberTestReport", JacocoReport) { // Generate a report for cucumber tests
 	group = 'verification'
 
@@ -148,37 +175,21 @@ tasks.register("cucumberTestReport", JacocoReport) { // Generate a report for cu
 
 	executionData project.tasks.cucumber
 
-	sourceDirectories.setFrom(project.files(project.sourceSets.main.allSource.srcDirs))
-	classDirectories.setFrom(project.sourceSets.main.output)
+	sourceDirectories = project.files(project.sourceSets.main.allSource.srcDirs)
+	classDirectories = project.sourceSets.main.output
 
 	reports {
 		// The jacoco coverage report will ge generated in the destination below
 		html.destination file("${buildDir}/reports/coverage/cucumber")
+		xml.required = true
+		xml.destination file("${buildDir}/reports/coverage/cucumber.xml")
 	}
 }
 
-// Selects what reports Jacoco generates and where to put them
-jacocoTestReport { // Generate a report for all generated test data
-	onlyIf { // Allow the report to be skipped when -PskipTestReport is passed via commandline
-		return !project.hasProperty('skipTestReport')
-	}
+tasks.named("unitTestReport").configure { finalizedBy 'jacocoTestReport' }
+tasks.named("integrationTestReport").configure { finalizedBy 'jacocoTestReport' }
+tasks.named("cucumberTestReport").configure { finalizedBy 'jacocoTestReport' }
 
-	mustRunAfter test, integration, cucumber
-
-	executionData fileTree(project.rootDir) {
-		include '**/*.exec'
-	}
-	reports {
-		html.destination file("${buildDir}/reports/coverage/overall")
-	}
-}
-
-
-// Ensure jacocoTestReport is ran after each specific test report.
-// The 'overall' coverage will then include each of the test tasks ran.
-tasks.named("unitTestReport").configure { finalizedBy "jacocoTestReport" }
-tasks.named("integrationTestReport").configure { finalizedBy "jacocoTestReport" }
-tasks.named("cucumberTestReport").configure { finalizedBy "jacocoTestReport" }
 
 sonarqube {
 	properties {
@@ -187,5 +198,16 @@ sonarqube {
 		property "sonar.sourceEncoding", "UTF-8"
 		property "sonar.host.url", "https://sonarqube.csse.canterbury.ac.nz"
 		property "sonar.login", "$System.env.SONARQUBE_TOKEN"
+
+		if(System.env.CI_MERGE_REQUEST_IID == null || System.env.CI_MERGE_REQUEST_IID.trim().isEmpty()) {
+			property "sonar.branch.name", "$System.env.CI_COMMIT_REF_NAME"
+		}
+		else {
+			property "sonar.pullrequest.key", "$System.env.CI_MERGE_REQUEST_IID"
+			property "sonar.pullrequest.branch", "$System.env.CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+			property "sonar.pullrequest.base", "$System.env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+
+		}
+
 	}
 }
