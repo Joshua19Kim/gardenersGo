@@ -39,6 +39,10 @@ public class MainPageLayout {
     @Column()
     private String format;
 
+    /** What widgets are enabled given as a string of four 1s and 0s (true/false) */
+    @Column()
+    private String widgetsEnabled;
+
     protected MainPageLayout() {}
 
     public MainPageLayout(Gardener gardener) {
@@ -48,6 +52,7 @@ public class MainPageLayout {
         this.widgetSmallTwo = "recentPlants";
         this.widgetWide = "myFriends";
         this.widgetTall = "myGardens";
+        this.widgetsEnabled = "1 1 1 1";
     }
 
     public String getWidgetSmallOne() {
@@ -88,6 +93,14 @@ public class MainPageLayout {
 
     public void setFormat(String selection) {
         this.format = selection;
+    }
+
+    public String getWidgetsEnabled() {
+        return widgetsEnabled;
+    }
+
+    public void setWidgetsEnabled(String widgetsEnabled) {
+        this.widgetsEnabled = widgetsEnabled;
     }
 
 }

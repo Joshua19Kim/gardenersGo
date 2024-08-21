@@ -33,3 +33,17 @@ Feature: U25 - As Liam, I want to have a main page for the application so that I
     And I have three friends and visited three different gardens in the past
     Then I am taken by default to the home page
     And I can see the recently accessed gardens and friends on the list
+
+
+  @U25
+  Scenario Outline: #AC3 - User can tick(untick) widgets to show/hide
+    Given I am a valid user
+    When I unticked <listName> on customise main page modal to hide the widget on the main page
+    Then I cannot see <listName> List on the main page
+    Examples:
+      | listName                |
+      | "recentlyAccessedGardens" |
+      | "newestPlantsList"        |
+      | "friendsList"             |
+      | "myGardensList"           |
+
