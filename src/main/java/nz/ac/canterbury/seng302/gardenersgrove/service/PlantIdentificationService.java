@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -119,6 +120,15 @@ public class PlantIdentificationService {
 
         String filePath = IMAGE_DIRECTORY + newFileName;
         Path file = Paths.get(filePath);
+
+        // The following code checks to make sure the user has not messed with the file path
+        File checkFile = new File(filePath);
+        String canonicalDestinationPath = checkFile.getCanonicalPath();
+        if (!canonicalDestinationPath.startsWith(IMAGE_DIRECTORY)) {
+            throw new IOException("Entry is outside of the target directory");
+        }
+
+        // If everything is all good, then create the file
         Files.write(file, image.getBytes());
         return "/uploads/" + newFileName;
     }
