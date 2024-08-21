@@ -154,6 +154,7 @@ tasks.register("cucumberTestReport", JacocoReport) { // Generate a report for cu
 	reports {
 		// The jacoco coverage report will ge generated in the destination below
 		html.destination file("${buildDir}/reports/coverage/cucumber")
+
 	}
 }
 

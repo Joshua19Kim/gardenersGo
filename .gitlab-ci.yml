@@ -16,16 +16,25 @@ junit:
   stage: test
   script:
     - ./gradlew test
+  artifacts:
+    paths:
+      - build/reports/coverage/test
 
 integration-tests:
   stage: test
   script:
     - ./gradlew integration
+  artifacts:
+    paths:
+      - build/reports/coverage/integration
 
 integration-cucumber:
   stage: test
   script:
     - ./gradlew cucumber
+  artifacts:
+    paths:
+      - build/reports/coverage/cucumber
 
 sonarqube-report:
   stage: sonarqube
