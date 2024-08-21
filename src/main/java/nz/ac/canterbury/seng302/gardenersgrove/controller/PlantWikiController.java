@@ -29,26 +29,14 @@ public class PlantWikiController {
     Logger logger = LoggerFactory.getLogger(PlantWikiController.class);
 
     private final PlantWikiService plantWikiService;
-
-
-    private String searchTerm;
     
     
     @Autowired
     public PlantWikiController(PlantWikiService plantWikiService) {
         this.plantWikiService = plantWikiService;
-        this.searchTerm = "";
     }
 
-    /**
-     * Sets the search term
-     * @param searchTerm stores the current search term so that it can be persistent across requests
-     */
-    public void setSearchTerm(String searchTerm) {
-        this.searchTerm = searchTerm;
-    }
 
-    
     @GetMapping("/plantWiki")
     public String plantWiki(
             Model model
@@ -56,6 +44,16 @@ public class PlantWikiController {
         logger.info("GET /plantWiki");
         List<WikiPlant> resultPlants = plantWikiService.getPlants("");
         model.addAttribute("resultPlants",resultPlants);
+        return "plantWikiTemplate";
+    }
+
+    @PostMapping("/plantWiki")
+    public String plantWikiSearch(@RequestParam("searchTerm") String searchTerm, Model model) throws IOException, URISyntaxException {
+
+        logger.info("POST /plantWiki");
+        List<WikiPlant> resultPlants = plantWikiService.getPlants(searchTerm);
+        model.addAttribute("resultPlants", resultPlants);
+        model.addAttribute("searchTerm", searchTerm);
         return "plantWikiTemplate";
     }
 

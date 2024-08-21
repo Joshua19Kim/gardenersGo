@@ -1529,6 +1529,12 @@ form.search-bar::after {
     padding: 0 20px;
 }
 
+.collection-container {
+    max-width: 1800px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
 
 .friend-modal {
     display: none;
