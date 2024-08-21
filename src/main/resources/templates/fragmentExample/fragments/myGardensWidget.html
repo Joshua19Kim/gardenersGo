@@ -1,10 +1,11 @@
-<div class="col">
-    <div class="main-page2-card mt-0">
+<div class="col" style="height: 100%;">
+    <div class="main-page2-card mt-0" style="height: 70vh;">
         <div class="main-page2-card-title">My Garden’s List</div>
-        <div class="list-group" style="overflow-y: scroll; height: 460px;">
+        <div class="list-group" style="overflow-y: scroll; height: 100%;">
             <p th:class="${gardens.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No gardens created </p>
             <th:block th:each="garden : ${gardens}">
-                <a class="list-group-item main-page-custom-hover" style="transition: background-color 0.3s ease;" th:href="@{/gardens/details(gardenId=${garden.id})}">
+                <a class="list-group-item main-page-custom-hover text-dark main-page-custom-hover break-words overflow-wrap-anywhere text-break mb-2"
+                   style="transition: background-color 0.3s ease; min-width: 0;" th:href="@{/gardens/details(gardenId=${garden.id})}">
                     <p th:text="${garden.name}"></p>
                     <small th:text="${garden.location}" ></small>
                 </a>

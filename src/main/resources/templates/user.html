@@ -8,7 +8,7 @@
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
-<button class="btn btn-success w-auto m-2" data-bs-target="#exampleModal" data-bs-toggle="modal" type="button">
+<button class="btn btn-primary w-auto m-2" data-bs-target="#customiseHomepageModal" data-bs-toggle="modal" type="button">
     Edit Homepage
 </button>
 
@@ -34,7 +34,7 @@
             <label for="firstName"> First Name: </label>
             <span id="firstName" th:text="${firstName}"></span>
             <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
-                   placeholder="First Name" required th:name="firstName" th:value="*{firstName}" type="text"
+                   placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
                    style="display: none;"
                    th:classappend="${firstNameValid != '' ? 'is-invalid' : ''}">
             <p class="smallErrorMessage" th:utext="${firstNameValid}"></p>
@@ -44,24 +44,24 @@
             <span id="lastName" th:text="${lastName}"></span>
             <input class="form-control" data-cy="lastName" id="lastNameEdit" placeholder="Last Name" maxlength="255"
                    th:name="lastName" th:value="*{lastName}" type="text" style="display: none"
-                   th:classappend="${lastNameValid != '' ? 'is-invalid' : ''}">
+                   th:classappend="${lastNameValid != '' ? 'is-invalid' : ''}"
+                   th:disabled="${isLastNameOptional}">
             <br/>
 
             <div id="surnameCheck" class="m-3">
                 <label id="isLastNameOptionalLabelEdit" for="isLastNameOptional" style="display: none;">I have no surname:</label>
                 <input class="form-check-input" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
-                       placeholder="Last Name Tick Box Check"
+                       placeholder="Last Name Tick Box Check" th:checked="${isLastNameOptional}"
                        th:name="isLastNameOptional" type="checkbox" style="display: none;">
             </div>
 
             <script>
-                document.getElementById('isLastNameOptional').checked = false;
                 document.getElementById('isLastNameOptional').onchange = function () {
                     document.getElementById('lastNameEdit').disabled = this.checked;
                 };
             </script>
 
-            <p class="smallErrorMessage" th:utext="${lastNameValid}"></p>
+            <p class="smallErrorMessage" th:utext="${lastNameValid}" id="lastNameError"></p>
             <br/>
 
             <label for="DoB"> Date of Birth: </label>
@@ -100,7 +100,61 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Customise Modal -->
+<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="customiseHomepageModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title text-dark">Customise</h1>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body d-grid">
+                <form method="post" th:action="@{customiseLayout}" id="customiseForm">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="friendsList" name="sections" value="friendsList"
+                               th:checked="${friendsList != null and friendsList == true}">
+                        <label class="form-check-label" for="friendsList">
+                            My Friend's List
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="recentlyAccessedGardens" name="sections" value="recentlyAccessedGardens"
+                               th:checked="${recentlyAccessedGardens != null and recentlyAccessedGardens == true}">
+                        <label class="form-check-label" for="recentlyAccessedGardens">
+                            Recently Accessed Gardens
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="newestPlants" name="sections" value="newestPlants"
+                               th:checked="${newestPlants != null and newestPlants == true}">
+                        <label class="form-check-label" for="newestPlants">
+                            Newest Plants
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="myGardensList" name="sections" value="myGardensList"
+                               th:checked="${myGardensList != null and myGardensList == true}">
+                        <label class="form-check-label" for="myGardensList">
+                            My Garden's List
+                        </label>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer d-flex justify-content-around">
+                <!-- Update this button to trigger the opening of the "Change Layout" modal -->
+                <button class="btn btn-secondary" type="button" data-bs-target="#exampleModal" data-bs-toggle="modal" data-bs-dismiss="modal">
+                    Change Layout
+                </button>
+                <button class="btn btn-primary" onclick="document.getElementById('customiseForm').submit()" type="submit">
+                    Save changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Layout Modal -->
 <div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="exampleModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -111,6 +165,7 @@
             <div class="modal-body d-grid">
                 <form id='layoutForm' method="post" th:action="@{changeLayout}">
                     <input type="hidden" value="1" id="layout" th:name="layout">
+                    <input type="hidden" id="layoutCustomiseSections" name="customiseSections">
                     <div class="row mb-3">
                         <div class="col">
                             <button class="selectable" onclick="selectOption(this, 1)" type="button">
@@ -140,7 +195,7 @@
             </div>
 
             <div class="modal-footer d-flex justify-content-around">
-                <button class="btn btn-primary" onclick="document.getElementById('layoutForm').submit()" type="submit">
+                <button class="btn btn-primary" onclick="submitLayoutForm()" type="submit">
                     Save changes
                 </button>
                 <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
@@ -148,6 +203,7 @@
         </div>
     </div>
 </div>
+
 
 <script type="text/javascript">
     document.getElementById("userForm").addEventListener("keydown", function (event) {
@@ -160,6 +216,14 @@
             }
         }
     });
+    function submitLayoutForm() {
+        const checkboxes = document.querySelectorAll('#customiseForm input[type="checkbox"]');
+        const selectedSections = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+        document.getElementById('layoutCustomiseSections').value = selectedSections.join(',');
+        document.getElementById('layoutForm').submit();
+    }
 </script>
 <script>
     document.getElementById("userForm").addEventListener("submit", function(event) {
@@ -194,7 +258,8 @@
         document.getElementById('isLastNameOptional').style.display = 'inline';
         document.getElementById('isLastNameOptionalLabelEdit').style.display = 'inline';
         let lName = document.getElementById('lastNameEdit');
-        if (lName.value.trim() === "") {
+        let lNameError = document.getElementById("lastNameError")
+        if (lName.value.trim() === "" && lNameError.textContent === "") {
             document.getElementById('isLastNameOptional').checked = true;
             document.getElementById('lastNameEdit').disabled = true;
         }

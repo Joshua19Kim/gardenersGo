@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +39,7 @@ public class UserProfileController {
     private final GardenerFormService gardenerFormService;
     private final RequestService requestService;
     private final WriteEmail writeEmail;
+    private final MainPageLayoutService mainPageLayoutService;
     private Gardener gardener;
 
     @Autowired
@@ -47,11 +51,12 @@ public class UserProfileController {
     private boolean isFileNotAdded;
 
     @Autowired
-    public UserProfileController(GardenerFormService gardenerFormService, GardenService gardenService, WriteEmail writeEmail, RequestService requestService) {
+    public UserProfileController(GardenerFormService gardenerFormService, GardenService gardenService, WriteEmail writeEmail, RequestService requestService, MainPageLayoutService mainPageLayoutService) {
         this.gardenerFormService = gardenerFormService;
         this.gardenService = gardenService;
         this.writeEmail = writeEmail;
         this.requestService = requestService;
+        this.mainPageLayoutService = mainPageLayoutService;
     }
 
     /**
@@ -120,7 +125,6 @@ public class UserProfileController {
         } else {
             model.addAttribute("firstName", "Not Registered");
         }
-
         if(isLastNameOptional) {
             lastName = null;
         }
@@ -138,8 +142,8 @@ public class UserProfileController {
         if (lastName != null) {
             lastNameError = inputValidator.checkValidName(lastName, "Last", isLastNameOptional);
             model.addAttribute("lastName", lastName);
-            model.addAttribute("isLastNameOptional", isLastNameOptional);
         }
+        model.addAttribute("isLastNameOptional", isLastNameOptional);
         model.addAttribute("lastNameValid", lastNameError.orElse(""));
 
         Optional<String> DoBError = Optional.empty();
@@ -190,6 +194,27 @@ public class UserProfileController {
                 return "redirect:/user";
             }
         }
+
+        MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
+        String widgetsEnabled = mainPageLayout.getWidgetsEnabled();
+
+        String[] values = widgetsEnabled.split(" ");
+        List<Boolean> selectionList = new ArrayList<>();
+
+        for (String value : values) {
+            selectionList.add(value.equals("1"));
+        }
+
+        Boolean recentlyAccessedGardens = selectionList.get(0);
+        Boolean newestPlants = selectionList.get(1);
+        Boolean myGardensList = selectionList.get(2);
+        Boolean friendsList = selectionList.get(3);
+
+        model.addAttribute("recentlyAccessedGardens", recentlyAccessedGardens);
+        model.addAttribute("newestPlants", newestPlants);
+        model.addAttribute("myGardensList", myGardensList);
+        model.addAttribute("friendsList", friendsList);
+
         return "user";
     }
 

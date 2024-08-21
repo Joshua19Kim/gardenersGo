@@ -73,6 +73,7 @@ public class SecurityConfiguration {
                         .permitAll())
                 .headers(headers -> headers
                         .contentSecurityPolicy(csp -> csp
+                                // If you change this, you will need to ask for permission to add it to the VM as well
                                 .policyDirectives(
                                         "default-src 'self'; " +
                                         "img-src 'self' data: https://cdn.weatherapi.com; " +

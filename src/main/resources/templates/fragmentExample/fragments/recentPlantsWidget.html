@@ -1,15 +1,19 @@
-<div class="main-page2-card">
+<div class="main-page2-card" style="height: 100%;">
     <div class="main-page2-card-title">Newest Plants</div>
-    <div class="list-group">
-        <p th:class="${newestPlants.isEmpty()}? 'alert alert-secondary' : 'd-none'">No plants added</p>
+    <div class="list-group" style="overflow-y: scroll; height: 100%;">
+        <p th:class="${newestPlants.isEmpty()}? 'alert alert-transparent' : 'd-none'">No plants added</p>
         <th:block th:each="plant : ${newestPlants}">
             <a class="list-group-item plant-item main-page-custom-hover" style="transition: background-color 0.3s ease;" th:href="@{/gardens/details(gardenId=${plant.garden.id})}">
                 <div class="plant-image">
-                    <img class="avatar" th:src="@{${plant.image}}" alt="Plant Image"/>
+                    <img class="avatar" th:src="@{${plant.image}}"
+                         onerror="this.onerror=null; this.src='./images/placeholder.jpg';"
+                         alt="Plant Image"/>
                 </div>
                 <div class="plant-info">
-                    <p class="font-weight-bold" th:text="${plant.name}"></p>
-                    <small th:text="${'Garden: ' + plant.garden.name}"></small>
+                    <p class="font-weight-bold text-dark main-page-custom-hover break-words overflow-wrap-anywhere text-break mb-2" th:text="${plant.name}"
+                       style=" min-width: 0;"
+                    ></p>
+                    <small class="break-words overflow-wrap-anywhere text-break mb-2" style=" min-width: 0;" th:text="${'Garden: ' + plant.garden.name}"></small>
                 </div>
             </a>
         </th:block>
