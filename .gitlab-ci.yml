@@ -28,25 +28,27 @@ junit:
   artifacts:
     paths:
       - build/jacoco/test-report.xml
-      - build/reports/coverage/test
+#      - build/reports/coverage/test
 
 integration-tests:
   stage: test
   script:
     - ./gradlew integration
+    - - ls ./build/jacoco
   artifacts:
     paths:
       - build/jacoco/test-report.xml
-      - build/reports/coverage/integration
+#      - build/reports/coverage/integration
 
 integration-cucumber:
   stage: test
   script:
     - ./gradlew cucumber
+    - - ls ./build/jacoco
   artifacts:
     paths:
       - build/jacoco/test-report.xml
-      - build/reports/coverage/cucumber
+#      - build/reports/coverage/cucumber
 
 sonarqube-report:
   stage: sonarqube
