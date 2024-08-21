@@ -28,7 +28,7 @@ public class PlantWikiServiceTest {
     @InjectMocks
     private PlantWikiService plantWikiService;
 
-    @Value("${plant.key}")
+    @Value("${plantWiki.key}")
     private String apiKey;
     @BeforeEach
     void setUp() {
