@@ -69,7 +69,9 @@ public class PlantWikiService {
                      String cycle = plant.get("cycle").asText();
                      String watering = plant.get("watering").asText();
                      List<String> sunlight = objectMapper.convertValue(plant.get("sunlight"), new TypeReference<List<String>>() {});
-                     String imagePath = plant.get("default_image").get("original_url").asText();
+                     String imagePath ="";
+                     if (plant.get("default_image").has("original_url")) {
+                         imagePath = plant.get("default_image").get("original_url").asText();}
 
                      WikiPlant wikiPlant = new WikiPlant(id, name, scientificName, otherNames, cycle, watering, sunlight, imagePath);
                      plantResults.add(wikiPlant);
