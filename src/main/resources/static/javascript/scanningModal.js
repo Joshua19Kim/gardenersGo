@@ -1,5 +1,6 @@
 const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
 const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+const identifyButton = document.getElementById('identifyButton');
 const resultContainer = document.getElementById('resultContainer');
 const errorContainer= document.getElementById('errorContainer');
 const imageInput= document.getElementById('imageInput');
@@ -41,12 +42,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             reader.readAsDataURL(file);
         } else {
-            document.getElementById('imagePreview').src = defaultImageSrc;
-            document.getElementById('fileName').value = '';
+            imagePreview.src = defaultImageSrc;
+            fileName.value = '';
         }
     });
 
-    document.getElementById('identifyButton').addEventListener('click', function(event) {
+    //This is what happens when you click identify button
+    identifyButton.addEventListener('click', function(event) {
         event.preventDefault();
         var formData = new FormData(document.getElementById('scanForm'));
 
@@ -119,6 +121,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+//User got the plant identified and clicks save button for myCollection
 saveToCollectionButton.addEventListener('click', function() {
     if (identifiedPlantData) {
         fetch('/saveIdentifiedPlant', {
@@ -149,6 +153,8 @@ saveToCollectionButton.addEventListener('click', function() {
         alert('No plant data to save. Please identify a plant first.');
     }
 });
+
+//button directs user to myCollection page
 goToCollectionButton.addEventListener('click', function() {
     var modal = bootstrap.Modal.getInstance(successModal);
     modal.hide();
