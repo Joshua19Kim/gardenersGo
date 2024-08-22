@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +30,20 @@ public class ScanController {
     private final Logger logger = LoggerFactory.getLogger(ScanController.class);
     private final PlantIdentificationService plantIdentificationService;
     private final GardenerFormService gardenerFormService;
+    private final ImageService imageService;
 
     /**
      * Constructs a new ScanController with the services required for sending and storing identified plants.
      *
      * @param plantIdentificationService the service for handling plant identification requests and storing identified plants
      * @param gardenerFormService        the service for retrieving information about the current gardener
+     * @param imageService               the service for checking image validation
      */
     @Autowired
-    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService) {
+    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService) {
         this.plantIdentificationService = plantIdentificationService;
         this.gardenerFormService = gardenerFormService;
+        this.imageService = imageService;
     }
 
     /**
@@ -58,10 +62,23 @@ public class ScanController {
     @ResponseBody
     public ResponseEntity<?> identifyPlant(@RequestParam("image") MultipartFile image) {
         logger.info("this is test!!!!!" + image.toString());
-
         Optional<Gardener> gardener = getGardenerFromAuthentication();
+        Map<String, String> errorResponse = new HashMap<>();
+
+        if (image.isEmpty()) {
+            errorResponse.put("error", "Please add an image to identify.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        } else {
+            Optional<String> uploadMessage = imageService.checkValidImage(image);
+            if (uploadMessage.isPresent()) {
+                errorResponse.put("error", uploadMessage.get());
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+        }
+
         if (gardener.isPresent()) {
             try {
+
                 IdentifiedPlant identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
 
                 Map<String, Object> response = new HashMap<>();
@@ -73,12 +90,10 @@ public class ScanController {
 
                 return ResponseEntity.ok(response);
             } catch (Exception e) {
-                Map<String, String> errorResponse = new HashMap<>();
                 errorResponse.put("error", e.getMessage());
                 return ResponseEntity.badRequest().body(errorResponse);
             }
         } else {
-            Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "User not authenticated");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }

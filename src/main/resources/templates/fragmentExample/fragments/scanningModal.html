@@ -20,9 +20,10 @@
                              src="./images/defaultScanningImage.png"
                              class="img-fluid" style="max-width: 200px; max-height: 200px; object-fit: contain;">
                     </div>
-                    <div class="mb-3">
-                        <input type="file" class="form-control" id="imageInput" name="image" accept="image/*" required>
+                    <div class="mb-3 text-center">
+                        <input type="file" id="imageInput" name="image" accept="image/*" required>
                     </div>
+                    <div class="text-center warningMessageContainer mb-2" id="errorContainer" style="display: none;"></div>
                 </form>
                 <div class="d-flex justify-content-around mb-2">
                     <button id="identifyButton" class="btn btn-primary" type="button">Identify</button>
@@ -35,7 +36,6 @@
                     <div id="identifiedImage"></div>
                 </div>
 
-                <div id="errorContainer" style="display: none;"></div>
                 <div class="d-flex flex-column align-items-center justify-content-center py-1">
                     <button id="saveButton" class="btn btn-primary mb-2" type="button" style="display:none;">Save in my collection</button>
                     <button class="btn cancel-button text-white" data-bs-dismiss="modal" type="button">Close</button>
@@ -115,7 +115,7 @@
                                 <div><strong>GBIF* ID:</strong> ${data.gbifId || 'No record'}</div>
                             </div>
                             <div>
-                                <div><strong>Image:</strong><br>${data.imageUrl ? `<img src="${data.imageUrl}"
+                                <div><strong>Sample Image:</strong><br>${data.imageUrl ? `<img src="${data.imageUrl}"
                                     class="img-fluid"
                                     style="max-width: 150px; max-height: 150px; object-fit: contain;">`
                                     : 'No image available'}
