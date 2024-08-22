@@ -4,21 +4,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlantResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -26,16 +17,15 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service clas for interacting with the Perenual API
+ */
 @Service
 public class PlantWikiService {
 
-    Logger logger = LoggerFactory.getLogger(PlantWikiService.class);
     private String api_key;
 
     private String PERENUAL_API_URL = "https://perenual.com/api/species-list";
@@ -48,9 +38,16 @@ public class PlantWikiService {
 
     }
 
-
+    /**
+     * Queries the Perenual API for plants matching the given query string.
+     * The method sends a GET request to the API, parses the response, and converts it into a list of WikiPlant objects.
+     *
+     * @param query The search query for the plant.
+     * @return A list of WikiPlant objects that match the query.
+     * @throws IOException        If there is an error reading the response from the API.
+     * @throws URISyntaxException If the constructed URI is invalid.
+     */
     public List<WikiPlant> getPlants(String query) throws IOException, URISyntaxException {
-        logger.info("SEND Request");
         List<WikiPlant> plantResults = new ArrayList<>();
         String uri = PERENUAL_API_URL +"?key="+ this.api_key + "&q=" + query;
         URL url = new URI(uri).toURL();

@@ -1,18 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 import java.util.List;
 
-
+/**
+ *  Entity class representing a plant retrieved from the Perenual API.
+ */
 public class WikiPlant {
-
-
 
     private long id;
 
@@ -25,13 +19,7 @@ public class WikiPlant {
     private List<String> sunlight;
     private String imagePath;
 
-    public long getId() {
-        return id;
-    }
 
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public WikiPlant(Long id, String name, List<String> scientificName, List<String> otherNames, String cycle, String watering, List<String> sunlight, String imagePath) {
         this.id = id;
@@ -44,7 +32,13 @@ public class WikiPlant {
         this.imagePath = imagePath;
     }
 
+    public long getId() {
+        return id;
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getName() {return name;}
 
