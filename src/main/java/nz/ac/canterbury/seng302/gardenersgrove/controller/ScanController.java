@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +32,8 @@ public class ScanController {
     private final PlantIdentificationService plantIdentificationService;
     private final GardenerFormService gardenerFormService;
     private final ImageService imageService;
-
+    private final Map<String, String> errorResponse;
+    private final Map<String, Object> response;
     /**
      * Constructs a new ScanController with the services required for sending and storing identified plants.
      *
@@ -44,6 +46,9 @@ public class ScanController {
         this.plantIdentificationService = plantIdentificationService;
         this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
+        errorResponse = new HashMap<>();
+        response = new HashMap<>();
+
     }
 
     /**
@@ -63,7 +68,6 @@ public class ScanController {
     public ResponseEntity<?> identifyPlant(@RequestParam("image") MultipartFile image) {
         logger.info("POST /identifyPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
-        Map<String, String> errorResponse = new HashMap<>();
 
         if (image.isEmpty()) {
             errorResponse.put("error", "Please add an image to identify.");
@@ -80,7 +84,6 @@ public class ScanController {
             try {
                 IdentifiedPlant identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
 
-                Map<String, Object> response = new HashMap<>();
                 response.put("bestMatch", identifiedPlant.getBestMatch());
                 response.put("score", identifiedPlant.getScore());
                 response.put("commonNames", identifiedPlant.getCommonNames());
@@ -101,6 +104,32 @@ public class ScanController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
+
+    @PostMapping("/saveIdentifiedPlant")
+    @ResponseBody
+    public ResponseEntity<?> saveIdentifiedPlant(@RequestBody Map<String, Object> plantData) {
+        logger.info("POST /saveIdentifiedPlant");
+        Optional<Gardener> gardener = getGardenerFromAuthentication();
+
+        if (gardener.isPresent()) {
+            try {
+                //Now we need to save plantData into server
+                // example of plantData is : {score=0.48718, bestMatch=Helianthus giganteus L., commonNames=[Giant sunflower, Indian-potato, Tall sunflower], imageUrl=https://bs.plantnet.org/image/o/585a093e0130b80791fef3ff4fb49c43c94d47af, gbifId=3119240}
+                logger.info(plantData.toString());
+                response.put("message", "Plant saved successfully");
+                return ResponseEntity.ok(response);
+            } catch (Exception e) {
+                errorResponse.put("error", "Failed to save the identified plant: " + e.getMessage());
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+        } else {
+            errorResponse.put("error", "User not authenticated");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+    }
+
+
+
 
 //    /**
 //     * Handles POST requests to the /scan endpoint.
