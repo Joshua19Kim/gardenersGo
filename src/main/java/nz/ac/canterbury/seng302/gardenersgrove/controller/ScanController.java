@@ -86,18 +86,6 @@ public class ScanController {
         }
     }
 
-//
-//    /**
-//     * Handles GET requests to the /scan endpoint.
-//     * Displays the scan form where users can upload an image for plant identification.
-//     *
-//     * @return the name of the template containing the form for uploading plant images
-//     */
-//    @GetMapping("/scan")
-//    public String getScanForm() {
-//        return "scan";
-//    }
-//
 //    /**
 //     * Handles POST requests to the /scan endpoint.
 //     * Processes the uploaded image, identifies the plant, and displays the result of the identification
