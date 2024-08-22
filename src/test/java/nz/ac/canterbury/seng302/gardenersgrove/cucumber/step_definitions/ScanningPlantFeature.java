@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.ScanController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockMultipartFile;
@@ -36,7 +37,8 @@ public class ScanningPlantFeature {
     private MockMvc mockScanControllerMvc;
     private Gardener testGardener;
     private Authentication authentication;
-    private  GardenerFormService gardenerFormService;
+    private GardenerFormService gardenerFormService;
+    private ImageService imageService;
     private PlantIdentificationService plantIdentificationService;
 
     private MockMultipartFile genericImage;
@@ -61,7 +63,7 @@ public class ScanningPlantFeature {
 //                new RequestService());
         plantIdentificationService = Mockito.mock(PlantIdentificationService.class);
         gardenerFormService = Mockito.mock(GardenerFormService.class);
-        ScanController scanController = new ScanController(plantIdentificationService, gardenerFormService);
+        ScanController scanController = new ScanController(plantIdentificationService, gardenerFormService, imageService);
 
         mockScanControllerMvc = MockMvcBuilders.standaloneSetup(scanController).build();
 //        mockGardenEditControllerMvc = MockMvcBuilders.standaloneSetup(gardenEditController).build();
