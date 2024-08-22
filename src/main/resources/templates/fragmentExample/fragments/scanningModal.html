@@ -11,17 +11,18 @@
             </div>
 
             <div class="modal-body d-grid">
-                <form id="scanForm" enctype="multipart/form-data">
-                    <div class="d-flex justify-content-end mb-2">
-                        <small>Powered by Pl@ntNet</small>
-                    </div>
-                    <div id="imagePreviewContainer" class="text-center mb-3">
+                <form class="mt-2" id="scanForm" enctype="multipart/form-data">
+                    <div id="imagePreviewContainer" class="text-center mb-2">
                         <img id="imagePreview"
                              src="./images/defaultScanningImage.png"
                              class="img-fluid" style="max-width: 200px; max-height: 200px; object-fit: contain;">
                     </div>
-                    <div class="mb-3 text-center">
-                        <input type="file" id="imageInput" name="image" accept="image/*" required>
+                    <div class="mb-5 text-center">
+                        <div id="fileName" class="mt-2"></div>
+                        <label for="imageInput" class="btn image-button">
+                            Upload plant image..
+                            <input type="file" id="imageInput" name="image" accept="image/*" required class="d-none">
+                        </label>
                     </div>
                     <div class="text-center warningMessageContainer mb-2" id="errorContainer" style="display: none;"></div>
                 </form>
@@ -30,15 +31,30 @@
                 </div>
                 <div id="resultContainer" style="display: none;">
                     <div id="name"></div>
-<!--                    <div id="score"></div>-->
+                    <div id="score"></div>
                     <div id="commonNames"></div>
                     <div id="gbifId"></div>
                     <div id="identifiedImage"></div>
                 </div>
 
                 <div class="d-flex flex-column align-items-center justify-content-center py-1">
-                    <button id="saveButton" class="btn btn-primary mb-2" type="button" style="display:none;">Save in my collection</button>
+                    <button id="saveButton" class="btn btn-primary mt-2 mb-2" type="button" style="display:none;">Save in my collection</button>
                     <button class="btn cancel-button text-white" data-bs-dismiss="modal" type="button">Close</button>
+                </div>
+
+                <div class="d-grid mt-3 mb-2">
+                    <div id="gbifInfo" class="row justify-content-end" style="display: none">
+                        <small class="col-12 text-end">*GBIF: The Global Biodiversity Information Facility</small>
+                    </div>
+                    <div class="row justify-content-end">
+                        <div class="col-6">
+                            <img src="./images/apiLogo/powered-by-plantnet-light.png"
+                                 class="img-fluid" style="max-width: 500px; object-fit: contain;">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <span class="extra-small">The image-based plant species identification service used, is based on the Pl@ntNet recognition API, regularly updated and accessible through the site https://my.plantnet.org/</span>
+                    </div>
                 </div>
             </div>
 
@@ -60,10 +76,13 @@
             document.getElementById('imageInput').value = '';
             document.getElementById('imagePreview').src = defaultImageSrc;
             document.getElementById('saveButton').style.display = 'none';
+            document.getElementById('fileName').value = '';
+            document.getElementById('gbifInfo').style.display = 'none';
         })
         // this is to show image preview when a file is selected
         document.getElementById('imageInput').addEventListener('change', function(event) {
             var file = event.target.files[0];
+            document.getElementById('fileName').textContent = file.name;
             if (file) {
                 var reader = new FileReader();
 
@@ -78,12 +97,14 @@
             }
         });
 
+
         document.getElementById('identifyButton').addEventListener('click', function(event) {
             event.preventDefault();
             var formData = new FormData(document.getElementById('scanForm'));
 
             document.getElementById('resultContainer').innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
             document.getElementById('resultContainer').style.display = 'block';
+            document.getElementById('gbifInfo').style.display = 'block';
             document.getElementById('errorContainer').style.display = 'none';
             document.getElementById('saveButton').style.display = 'none';
 
@@ -106,19 +127,26 @@
                         document.getElementById('errorContainer').style.display = 'block';
                         document.getElementById('resultContainer').style.display = 'none';
                         document.getElementById('saveButton').style.display = 'none';
+                        document.getElementById('gbifInfo').style.display = 'none';
+
                     } else {
                         var resultHtml = `
-                            <div>
-                                <div><strong>Plant Name:</strong> ${data.bestMatch || 'No record'}</div>
-    <!--                            <div><strong>Score:</strong> ${data.score || 'No record'}</div>-->
-                                <div><strong>Common Names:</strong> ${data.commonNames && data.commonNames.length > 0 ? data.commonNames.join(', ') : 'No record'}</div>
-                                <div><strong>GBIF* ID:</strong> ${data.gbifId || 'No record'}</div>
-                            </div>
-                            <div>
-                                <div><strong>Sample Image:</strong><br>${data.imageUrl ? `<img src="${data.imageUrl}"
-                                    class="img-fluid"
-                                    style="max-width: 150px; max-height: 150px; object-fit: contain;">`
-                                    : 'No image available'}
+                            <div class="d-flex gap-4 p-3">
+                                <div class="flex-shrink-0">
+                                    <strong>Sample Image:</strong>
+                                    <br>${data.imageUrl ? `<img src="${data.imageUrl}"
+                                        class="img-fluid"
+                                        style="max-width: 200px; max-height: 200px; object-fit: contain;">`
+                                        : 'No image available'}
+                                </div>
+                                <div class="d-flex flex-column gap-3 mt-3">
+                                    <div class="d-flex flex-column gap-1">
+                                        <strong>Plant Name:</strong>
+                                        <div>${data.bestMatch || 'No record'}</div>
+                                    </div>
+                                    <div><strong>Score:</strong> ${data.score + " / 1" || 'No record'}</div>
+                                    <div><strong>Common Names:</strong> ${data.commonNames && data.commonNames.length > 0 ? data.commonNames.join(', ') : 'No record'}</div>
+                                    <div><strong>*GBIF ID:</strong> ${data.gbifId || 'No record'}</div>
                                 </div>
                             </div>
 
@@ -127,6 +155,8 @@
                         document.getElementById('resultContainer').style.display = 'block';
                         document.getElementById('errorContainer').style.display = 'none';
                         document.getElementById('saveButton').style.display = 'block';
+                        document.getElementById('gbifInfo').style.display = 'block';
+
 
                     }
                 })
@@ -135,6 +165,8 @@
                     document.getElementById('errorContainer').style.display = 'block';
                     document.getElementById('resultContainer').style.display = 'none';
                     document.getElementById('saveButton').style.display = 'none';
+                    document.getElementById('gbifInfo').style.display = 'none';
+
                 });
         });
     });
