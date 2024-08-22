@@ -24,7 +24,7 @@
 }
 
 .image-button {
-    background-color: var(--secondary-color); /* Change this to your desired color */
+    background-color: var(--secondary-color);
     padding: 5px 8px;
     border: none;
     border-radius: 20px;
@@ -34,11 +34,11 @@
 }
 
 .image-button:hover {
-    background-color: var(--primary-color); /* Darker shade for hover effect */
+    background-color: var(--primary-color);
 }
 
 .image-button:active {
-    background-color: var(--primary-color); /* Even darker shade for active (click) effect */
+    background-color: var(--primary-color);
 }
 
 
@@ -46,3 +46,19 @@
     font-size: 0.6em;
     line-height: 1;
 }
+
+
+.detail-button {
+    background-color: var(--secondary-color);
+    padding: 5px 8px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.detail-button:hover {
+    background-color: var(--primary-color);
+}
+

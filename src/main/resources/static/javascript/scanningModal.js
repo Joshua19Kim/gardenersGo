@@ -11,6 +11,11 @@ const gbifInfo= document.getElementById('gbifInfo');
 
 let identifiedPlantData = null;
 var goToCollectionButton = document.getElementById('goToCollectionButton');
+
+function openGbifDetails(gbifId) {
+    window.open(`https://www.gbif.org/species/${gbifId}`, '_blank');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     var scanningModal = document.getElementById('scanningModal');
     var defaultImageSrc = './images/defaultScanningImage.png';
@@ -28,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         gbifInfo.style.display = 'none';
     })
     // this is to show image preview when a file is selected
-    document.getElementById('imageInput').addEventListener('change', function(event) {
+    imageInput.addEventListener('change', function(event) {
         var file = event.target.files[0];
         fileName.textContent = file.name;
         fileName.style.display = 'block';
@@ -80,24 +85,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
                 } else {
+                    //Store the identified plant to pass to the back-end later if user wants to save.
                     identifiedPlantData = data
                     var resultHtml = `
-                            <div class="d-flex gap-4 p-3">
+                            <div class="d-flex flex-column flex-md-row gap-4 p-3">
                                 <div class="flex-shrink-0">
                                     <strong>Sample Image:</strong>
                                     <br>${data.imageUrl ? `<img src="${data.imageUrl}"
                                         class="img-fluid"
                                         style="max-width: 200px; max-height: 200px; object-fit: contain;">`
-                        : 'No image available'}
+                                                : 'No image available'}
                                 </div>
-                                <div class="d-flex flex-column gap-3 mt-3">
-                                    <div class="d-flex flex-column gap-1">
-                                        <strong>Plant Name:</strong>
-                                        <div>${data.bestMatch || 'No record'}</div>
+                                <div class="flex-grow-1 overflow-auto">
+                                    <div class="d-flex flex-column gap-3">
+                                        <div>
+                                            <strong>Plant Name:</strong>
+                                            <div class="text-break">${data.bestMatch || 'No record'}</div>
+                                        </div>
+                                        <div><strong>Score:</strong> ${data.score + " / 1" || 'No record'}</div>
+                                        <div>
+                                            <strong>Common Names:</strong> 
+                                            <div class="text-break">${data.commonNames && data.commonNames.length > 0 ? data.commonNames.join(', ') : 'No record'}</div>
+                                        </div>
+                                        <div class="d-flex align-items-center flex-wrap">
+                                            <strong>*GBIF ID:</strong>
+                                            <span class="ms-1 text-break">${data.gbifId || 'No record'}</span>
+                                            <button onclick="openGbifDetails('${data.gbifId}')" class="detail-button btn btn-sm btn-outline-secondary ms-2 py-0 px-1" style="font-size: 0.75rem;">
+                                                See details
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div><strong>Score:</strong> ${data.score + " / 1" || 'No record'}</div>
-                                    <div><strong>Common Names:</strong> ${data.commonNames && data.commonNames.length > 0 ? data.commonNames.join(', ') : 'No record'}</div>
-                                    <div><strong>*GBIF ID:</strong> ${data.gbifId || 'No record'}</div>
                                 </div>
                             </div>
                         `;
