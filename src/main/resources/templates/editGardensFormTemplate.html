@@ -9,6 +9,8 @@
 <div class="container mb-5">
     <div class="card w-50 mb-5">
         <h1> Edit Garden </h1>
+        <label class="fst-italic">* Required</label>
+        <br/>
         <form class="w-100" id="editGardenForm" th:action="@{edit(gardenId=${garden.id})}" method="post">
             <div class="create-garden-row">
                 <div>
