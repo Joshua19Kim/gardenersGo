@@ -61,7 +61,7 @@ public class ScanController {
     @PostMapping("/identifyPlant")
     @ResponseBody
     public ResponseEntity<?> identifyPlant(@RequestParam("image") MultipartFile image) {
-        logger.info("this is test!!!!!" + image.toString());
+        logger.info("POST /identifyPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
         Map<String, String> errorResponse = new HashMap<>();
 
@@ -78,7 +78,6 @@ public class ScanController {
 
         if (gardener.isPresent()) {
             try {
-
                 IdentifiedPlant identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
 
                 Map<String, Object> response = new HashMap<>();
@@ -90,7 +89,11 @@ public class ScanController {
 
                 return ResponseEntity.ok(response);
             } catch (Exception e) {
-                errorResponse.put("error", e.getMessage());
+                if (e.getMessage().contains("Species not found")) {
+                    errorResponse.put("error", "Sorry, we could not identify your image. Try with a different image.");
+                } else {
+                    errorResponse.put("error", e.getMessage());
+                }
                 return ResponseEntity.badRequest().body(errorResponse);
             }
         } else {
