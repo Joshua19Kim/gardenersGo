@@ -38,7 +38,7 @@ public class PlantIdentificationService {
     Logger logger = LoggerFactory.getLogger(PlantIdentificationService.class);
     private static final String PROJECT = "all";
     private static final String API_URL = "https://my-api.plantnet.org/v2/identify/";
-    private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
+    private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "\\uploads\\";
 
     private final String apiKey;
     private final ObjectMapper objectMapper;
@@ -124,6 +124,8 @@ public class PlantIdentificationService {
         // The following code checks to make sure the user has not messed with the file path
         File checkFile = new File(filePath);
         String canonicalDestinationPath = checkFile.getCanonicalPath();
+        System.out.println(canonicalDestinationPath);
+        System.out.println(IMAGE_DIRECTORY);
         if (!canonicalDestinationPath.startsWith(IMAGE_DIRECTORY)) {
             throw new IOException("Entry is outside of the target directory");
         }
