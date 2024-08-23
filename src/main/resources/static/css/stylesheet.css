@@ -223,6 +223,9 @@ textarea#description.garden-form-control {
     padding-left: 20px;
 }
 
+.ml-25p {
+    margin-left: 25%;
+}
 
 /* Dropdown Button */
 .dropbtn {
