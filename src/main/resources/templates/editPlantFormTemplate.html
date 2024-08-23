@@ -9,8 +9,10 @@
 <div class="container mb-5">
     <div class="card mb-5 w-50">
         <h1> Edit Plant </h1>
+        <label class="fst-italic">* Required</label>
+        <br/>
         <form id="editPlantForm" th:action="@{edit(plantId=${plant.id})}" method="post" enctype="multipart/form-data">
-            <label for="name"> Name: </label>
+            <label for="name"> *Name: </label>
             <input type="text" class="form-control" id="name" name="name" maxlength="64" th:value="${name != null ? name : plant.name}"
                    th:classappend="${nameError} ? 'is-invalid' : ''">
             <p th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></p>

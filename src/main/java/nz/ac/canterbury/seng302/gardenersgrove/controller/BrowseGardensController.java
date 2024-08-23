@@ -1,13 +1,17 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -28,16 +33,19 @@ import java.util.stream.IntStream;
 public class BrowseGardensController {
 
     private final GardenService gardenService;
+
+    private final GardenerFormService gardenerFormService;
+
+    private Gardener gardener;
+
     Logger logger = LoggerFactory.getLogger(BrowseGardensController.class);
 
     private final TagService tagService;
 
     private final int pageSize;
 
-
     private String searchTerm;
 
-    private List<String> tags;
 
     private List<String> searchTags;
 
@@ -46,15 +54,16 @@ public class BrowseGardensController {
      * Constructor for the BrowseGardensController that intializes all the properties of the class
      * @param gardenService used to perform business logic related to gardens
      * @param tagService used to perform business logic related to tags
+     * @param gardenerFormService used to get the gardens to populate the navbar
      */
     @Autowired
-    public BrowseGardensController(GardenService gardenService, TagService tagService) {
+    public BrowseGardensController(GardenService gardenService, GardenerFormService gardenerFormService, TagService tagService) {
 
         this.gardenService = gardenService;
+        this.gardenerFormService = gardenerFormService;
         this.tagService = tagService;
         this.pageSize = 10;
         this.searchTerm = "";
-        this.tags = new ArrayList<>();
         this.searchTags = new ArrayList<>();
 
     }
@@ -68,19 +77,24 @@ public class BrowseGardensController {
     }
 
     /**
-     * Sets the tags
-     * @param tags stores the currently selected tags so that it can be persistent across requests
-     */
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-
-    /**
      * Sets the search tags
      * @param tags stores the tags that the user has searched/filtered for so that it is persistent across requests.
      */
     public void setSearchTags(List<String> tags) {
         this.searchTags = tags;
+    }
+
+    /**
+     * Retrieve an optional of a gardener using the current authentication. We will always have to
+     * check whether the gardener was retrieved in the calling method, so the return type was left as
+     * an optional
+     *
+     * @return An optional of the requested gardener
+     */
+    public Optional<Gardener> getGardenerFromAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+        return gardenerFormService.findByEmail(currentUserEmail);
     }
 
 
@@ -98,9 +112,9 @@ public class BrowseGardensController {
             @RequestParam(name="pageRequest", defaultValue = "hehe") String pageRequest,
             Model model
     ) {
+        // this is used to distinguish between a fresh get request and one used to paginate or add tag
         if(Objects.equals(pageRequest, "hehe") && !model.containsAttribute("pageRequest")) {
             setSearchTags(new ArrayList<>());
-            setTags(new ArrayList<>());
             setSearchTerm("");
         }
         Long tagCount;
@@ -142,14 +156,21 @@ public class BrowseGardensController {
 
         if(!model.containsAttribute("tags") && !model.containsAttribute("allTags")) {
             List<String> allTags = tagService.getAllTagNames();
-            if(tags != null) {
-                for(String selectedTag: tags) {
+            if(searchTags != null) {
+                for(String selectedTag: searchTags) {
                     allTags.remove(selectedTag);
                 }
-                model.addAttribute("tags", tags);
+                model.addAttribute("tags", searchTags);
             }
             model.addAttribute("allTags", allTags);
         }
+        model.addAttribute("searchTerm", searchTerm);
+
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+        model.addAttribute("gardens", gardens);
+
 
         return "browseGardensTemplate";
     }
@@ -171,17 +192,23 @@ public class BrowseGardensController {
             Model model) {
         logger.info("POST /browseGardens");
         setSearchTerm(searchTerm);
-        this.tags = new ArrayList<>();
-        setSearchTags(tags);
         Long tagCount;
         if (tags == null) {
             tagCount = 0L;
+            setSearchTags(new ArrayList<>());
         } else {
             tagCount = (long) tags.size();
+            setSearchTags(tags);
         }
         List<String> allTags = tagService.getAllTagNames();
+        if(searchTags != null) {
+            for(String selectedTag: searchTags) {
+                allTags.remove(selectedTag);
+            }
+            model.addAttribute("tags", searchTags);
+        }
         model.addAttribute("allTags", allTags);
-        model.addAttribute("tags", this.tags);
+        model.addAttribute("searchTerm", searchTerm);
 
         Page<Garden> gardensPage = gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, tags, tagCount);
         if (gardensPage.getContent().isEmpty()) {
@@ -206,6 +233,11 @@ public class BrowseGardensController {
             String paginationMessage = "Showing results 0 to 0 of 0";
             model.addAttribute("paginationMessage", paginationMessage);
         }
+
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+        model.addAttribute("gardens", gardens);
 
 
         return "browseGardensTemplate";
@@ -252,7 +284,6 @@ public class BrowseGardensController {
         for(String selectedTag: tags) {
             allTags.remove(selectedTag);
         }
-        setTags(tags);
 
         redirectAttributes.addFlashAttribute("tags", tags);
         redirectAttributes.addFlashAttribute("allTags", allTags);
