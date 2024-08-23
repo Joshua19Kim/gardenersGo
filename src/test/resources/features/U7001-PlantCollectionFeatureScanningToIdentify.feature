@@ -9,8 +9,8 @@ Feature: U7001 - As Jackie Wei, I want to scan plants using the app to identify 
 
     @U7001
     Scenario: #AC3 - Cannot identify plant from scan
-        Given I have a bad image of a plant
-        When I upload the image of the plant
+        Given I have an image of a plant
+        When I upload the image of the plant which cant be identified
         Then I should be informed that no species was identified
 
     @U7001

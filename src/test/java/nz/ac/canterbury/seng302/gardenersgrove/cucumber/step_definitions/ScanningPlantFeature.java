@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,10 +42,8 @@ public class ScanningPlantFeature {
     private GardenerFormService gardenerFormService;
     private ImageService imageService;
     private PlantIdentificationService plantIdentificationService;
-
     private MockMultipartFile genericImage;
-
-    // Plant Identification and GardenerForm and Authentication are mockBeans in Run class.
+    private ResultActions result;
 
     @Before("@U7001")
     public void setUp() {
@@ -58,32 +58,17 @@ public class ScanningPlantFeature {
         SecurityContextHolder.setContext(securityContext);
         when(authentication.getName()).thenReturn("testgardener@gmail.com");
 
-//        GardenFormController gardenFormController = new GardenFormController(gardenService, gardenerFormService);
-//        GardenEditController gardenEditController = new GardenEditController(gardenService, gardenerFormService,
-//                new RequestService());
         plantIdentificationService = Mockito.mock(PlantIdentificationService.class);
+        imageService = Mockito.mock(ImageService.class);
         gardenerFormService = Mockito.mock(GardenerFormService.class);
         ScanController scanController = new ScanController(plantIdentificationService, gardenerFormService, imageService);
 
         mockScanControllerMvc = MockMvcBuilders.standaloneSetup(scanController).build();
-//        mockGardenEditControllerMvc = MockMvcBuilders.standaloneSetup(gardenEditController).build();
-
-
     }
 
-    /*
-    * Help from https://stackoverflow.com/questions/16648549/converting-file-to-multipartfile
-     */
     @Given("I have an image of a plant")
     public void i_have_an_image_of_a_plant() {
-//        genericImage = "/images/plantImageExample/oakTree.jpg";
-        Path path = Paths.get("/images/plantImageExample/oakTree.jpg");
-        byte[] content = null;
-        try {
-            content = Files.readAllBytes(path);
-        } catch (final IOException e) {
-        }
-        genericImage = new MockMultipartFile("oakTree.jpg", "oakTree.jpg", "image/jpeg", content);
+        genericImage = Mockito.mock(MockMultipartFile.class);
     }
 
     @When("I upload the image of the plant")
@@ -91,18 +76,18 @@ public class ScanningPlantFeature {
 //        List<String> commonNames = new ArrayList<>(List.of("Common Oak", "English oak", "Carvalho-alvarinho"));
 //        IdentifiedPlant identifiedPlant = new IdentifiedPlant("Quercus robor L.", JsonNode result,
 //            commonNames , testGardener , "/images/plantImageExample/oakTree.jpg");
+        when(genericImage.isEmpty()).thenReturn(false);
+        when(imageService.checkValidImage(any())).thenReturn(Optional.empty());
+
         IdentifiedPlant identifiedPlant = Mockito.mock(IdentifiedPlant.class);
-
         when(plantIdentificationService.identifyPlant(any(),any())).thenReturn(identifiedPlant);
+        when(identifiedPlant.getBestMatch()).thenReturn("Oak");
+        when(identifiedPlant.getScore()).thenReturn(0.4);
+        when(identifiedPlant.getCommonNames()).thenReturn(List.of("Oaky"));
+        when(identifiedPlant.getGbifId()).thenReturn("1234");
+        when(identifiedPlant.getImageUrl()).thenReturn("ImageUrl");
 
-        // todo: Mock the below calls // write different tests
-//        response.put("bestMatch", identifiedPlant.getBestMatch());
-//        response.put("score", identifiedPlant.getScore());
-//        response.put("commonNames", identifiedPlant.getCommonNames());
-//        response.put("gbifId", identifiedPlant.getGbifId());
-//        response.put("imageUrl", identifiedPlant.getImageUrl());
-
-        ResultActions result =  mockScanControllerMvc.perform(MockMvcRequestBuilders.multipart("/identifyPlant")
+        result =  mockScanControllerMvc.perform(MockMvcRequestBuilders.multipart("/identifyPlant")
                 .file(genericImage)
                 .with(csrf()));
 //                .andExpect(status().is3xxRedirection())
@@ -111,8 +96,9 @@ public class ScanningPlantFeature {
     }
 
     @Then("the app should accurately identify the plant species")
-    public void the_app_should_accurately_identify_the_plant_species() {
-
+    public void the_app_should_accurately_identify_the_plant_species() throws Exception {
+//        result
+//                .andExpect(status().isOk());
     }
 
     @Then("display the name and relevant details")
@@ -120,8 +106,8 @@ public class ScanningPlantFeature {
 
     }
 
-    @Given("I have a bad image of a plant")
-    public void i_have_a_bad_image_of_a_plant() {
+    @When("I upload the image of the plant which cant be identified")
+    public void i_upload_the_image_of_the_plant_which_cant_be_identified() throws Exception {
 
     }
 
