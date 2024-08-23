@@ -1,14 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensController;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantSpeciesCollectionsController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantSpeciesService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

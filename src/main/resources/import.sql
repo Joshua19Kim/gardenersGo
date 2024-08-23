@@ -189,24 +189,5 @@ INSERT INTO tag (garden , tag_name) VALUES (45, 'herbs');
 
 
 
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (4, 'Apple', '/images/placeholder.jpg', 1);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (5, 'Berries', '/images/placeholder.jpg', 1);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (7, 'Potato', '/images/placeholder.jpg', 1);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (2, 'Lavender', '/images/placeholder.jpg', 1);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (3, 'Lily', '/images/placeholder.jpg', 1);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (1, 'Poppy', '/images/placeholder.jpg', 1);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (5, 'Cherry', '/images/placeholder.jpg', 1);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (6, 'Tomato', '/images/placeholder.jpg', 2);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (2, 'Avocado', '/images/placeholder.jpg', 2);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (3, 'Feijoa', '/images/placeholder.jpg', 2);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (1, 'Lemon', '/images/placeholder.jpg', 2);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (4, 'Orange', '/images/placeholder.jpg', 2);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (5, 'Grapefruit', '/images/placeholder.jpg', 3);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (4, 'Banana', '/images/placeholder.jpg', 3);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (4, 'Rose', '/images/placeholder.jpg', 3);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (2, 'Daisy', '/images/placeholder.jpg', 3);
-INSERT INTO plant_species(count, name, image_filename, gardener_id) VALUES (1, 'Daffodil', '/images/placeholder.jpg', 4);
-
-
 -- email: a@gmail.com
 -- password: Password1!

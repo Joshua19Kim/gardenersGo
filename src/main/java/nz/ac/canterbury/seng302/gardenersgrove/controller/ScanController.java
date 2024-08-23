@@ -76,19 +76,11 @@ public class ScanController {
                 model.addAttribute("bestMatch", identifiedPlant.getBestMatch());
                 model.addAttribute("score", identifiedPlant.getScore());
                 model.addAttribute("speciesScientificNameWithoutAuthor", identifiedPlant.getSpeciesScientificNameWithoutAuthor());
-                model.addAttribute("speciesScientificNameAuthorship", identifiedPlant.getSpeciesScientificNameAuthorship());
-                model.addAttribute("speciesScientificName", identifiedPlant.getSpeciesScientificName());
-                model.addAttribute("genusScientificNameWithoutAuthor", identifiedPlant.getGenusScientificNameWithoutAuthor());
-                model.addAttribute("genusScientificNameAuthorship", identifiedPlant.getGenusScientificNameAuthorship());
-                model.addAttribute("genusScientificName", identifiedPlant.getGenusScientificName());
                 model.addAttribute("familyScientificNameWithoutAuthor", identifiedPlant.getFamilyScientificNameWithoutAuthor());
-                model.addAttribute("familyScientificNameAuthorship", identifiedPlant.getFamilyScientificNameAuthorship());
-                model.addAttribute("familyScientificName", identifiedPlant.getFamilyScientificName());
+
                 model.addAttribute("commonNames", identifiedPlant.getCommonNames());
                 model.addAttribute("gbifId", identifiedPlant.getGbifId());
-                model.addAttribute("powoId", identifiedPlant.getPowoId());
-                model.addAttribute("iucnId", identifiedPlant.getIucnId());
-                model.addAttribute("iucnCategory", identifiedPlant.getIucnCategory());
+
                 model.addAttribute("imageUrl", identifiedPlant.getImageUrl());
 
                 return "scan";

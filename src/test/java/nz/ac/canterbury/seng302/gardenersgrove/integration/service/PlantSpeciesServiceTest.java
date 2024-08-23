@@ -1,9 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantSpecies;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantSpeciesRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantSpeciesService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
