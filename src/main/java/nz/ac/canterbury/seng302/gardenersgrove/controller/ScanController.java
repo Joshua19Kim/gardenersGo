@@ -63,6 +63,17 @@ public class ScanController {
     }
 
 
+    /**
+     * Handles POST requests to the /identifyPlant endpoint.
+     * Processes the uploaded image, identifies the plant, and displays the result of the identification
+     *
+     * @param image the image file uploaded by the user for plant identification
+     * @return ResponseEntity<?> with one of the following:
+     *         - ResponseEntity.ok() with a Map containing identification details if successful
+     *         - ResponseEntity.badRequest() with an error message if the image is empty or invalid
+     *         - ResponseEntity.badRequest() with an error message if plant identification fails
+     *         - ResponseEntity.status(HttpStatus.UNAUTHORIZED) if the user is not authenticated
+     */
     @PostMapping("/identifyPlant")
     @ResponseBody
     public ResponseEntity<?> identifyPlant(@RequestParam("image") MultipartFile image) {
@@ -105,6 +116,15 @@ public class ScanController {
         }
     }
 
+    /**
+     * Handles POST requests to the /saveIdentifiedPlant endpoint.
+     * Process the data of the identified plant
+     * @param plantData The data of the identified plant
+     * @return ResponseEntity<?> with one of the following:
+     *         - ResponseEntity.ok() with a success message if the plant data is saved successfully
+     *         - ResponseEntity.badRequest() with an error message if saving the plant data fails
+     *         - ResponseEntity.status(HttpStatus.UNAUTHORIZED) if the user is not authenticated
+     */
     @PostMapping("/saveIdentifiedPlant")
     @ResponseBody
     public ResponseEntity<?> saveIdentifiedPlant(@RequestBody Map<String, Object> plantData) {

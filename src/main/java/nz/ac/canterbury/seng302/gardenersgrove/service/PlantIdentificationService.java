@@ -158,11 +158,15 @@ public class PlantIdentificationService {
     public IdentifiedPlant savePlantIdentificationResult(IdentifiedPlantResponse identifiedPlantResponse, Gardener gardener, String imagePath) {
         JsonNode firstResult = identifiedPlantResponse.getResults().get(0);
         String bestMatch = identifiedPlantResponse.getBestMatch();
+        Double score = firstResult.get("score").asDouble();
         List<String> commonNames = objectMapper.convertValue(
                 firstResult.get("species").get("commonNames"),
                 objectMapper.getTypeFactory().constructCollectionType(List.class, String.class)
         );
-        IdentifiedPlant identifiedPlant = new IdentifiedPlant(bestMatch, firstResult, commonNames, gardener, imagePath);
+        String gbifId = firstResult.get("gbif").get("id").asText();
+        String imageUrl = firstResult.get("images").get(0).get("url").get("o").asText();
+
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(bestMatch, score, commonNames, gbifId, imageUrl, imagePath, gardener);
         return identifiedPlantRepository.save(identifiedPlant);
     }
 }
