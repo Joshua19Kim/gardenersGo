@@ -69,10 +69,7 @@
 
                     <!-- Centered Scan Plant Item -->
                     <li class="nav-item text-center">
-                        <a class="nav-link" src="/#" > <!-- add in when working th:href="@{/scanPlant}"-->
-<!--                            <span class="material-symbols-outlined" id="scan-plant-icon">indeterminate_question_box</span>-->
-                            <!--                        add back in when font spike is done-->
-
+                        <a class="nav-link modal-link" data-bs-target="#scanningModal" data-bs-toggle="modal" style="cursor: pointer;">
                             Scan Plant
                         </a>
                     </li>
@@ -123,3 +120,5 @@
         </div>
     </div>
 </nav>
+
+<div th:insert="~{modal/scanningModal.html}"></div>
