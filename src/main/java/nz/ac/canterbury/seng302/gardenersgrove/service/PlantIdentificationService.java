@@ -124,8 +124,6 @@ public class PlantIdentificationService {
         // The following code checks to make sure the user has not messed with the file path
         File checkFile = new File(filePath);
         String canonicalDestinationPath = checkFile.getCanonicalPath();
-        System.out.println(canonicalDestinationPath);
-        System.out.println(IMAGE_DIRECTORY);
         if (!canonicalDestinationPath.startsWith(IMAGE_DIRECTORY)) {
             throw new IOException("Entry is outside of the target directory");
         }

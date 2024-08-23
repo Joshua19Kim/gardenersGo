@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -48,8 +50,38 @@ public class IdentifiedPlant {
 
     @Column(name = "uploaded_image")
     private String uploadedImage;
+
     @Column(name = "date_uploaded")
-    private Date dateUploaded;
+    private String dateUploaded;
+
+    /**
+     * Name of the plant.
+     */
+    @Column(length=64)
+    private String name;
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Description of the plant.
+     */
+    @Column(length=512)
+    private String description;
 
     /**
      * JPA required no-args constructor
@@ -75,9 +107,12 @@ public class IdentifiedPlant {
         this.gbifId = result.get("gbif").get("id").asText();
         this.imageUrl = result.get("images").get(0).get("url").get("o").asText();
         this.uploadedImage = imagePath;
-        this.dateUploaded = new Date();
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        this.dateUploaded = currentDate.format(formatter);
 
     }
+
 
     public Long getId() {
         return id;
@@ -159,5 +194,12 @@ public class IdentifiedPlant {
 
     public void setUploadedImage(String uploadedImage) {
         this.uploadedImage = uploadedImage;
+    }
+    public String getDateUploaded() {
+        return dateUploaded;
+    }
+
+    public void setDateUploaded(String dateUploaded) {
+        this.dateUploaded = dateUploaded;
     }
 }
