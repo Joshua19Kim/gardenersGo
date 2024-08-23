@@ -11,20 +11,20 @@
 <div class="collection-container">
 
     <div class="row">
-        <div th:each="plantSpecies : ${plantSpeciesList.content}" class="col-md-3 mb-4">
+        <div th:each="identifiedPlant : ${collectionsList.content}" class="col-md-3 mb-4">
             <div class="card collection-gardens-card">
-                <img id="collection-card-img" class="card-img-top" th:src="${plantSpecies.imageFilename}" alt="Plant Species image">
+                <img id="collection-card-img" class="card-img-top" th:src="${identifiedPlant.uploadedImage}" alt="Plant Species image">
                 <div class="card-collection-body">
                     <div class="card-body">
-                        <h5 style="color: #fffdf6" class="card-title" th:text="${plantSpecies.name}"></h5>
-                        <p style="color: #fffdf6" class="card-text" th:text="'Count: ' + ${plantSpecies.count}"></p>
+                        <h5 style="color: #fffdf6" class="card-title" th:text="${identifiedPlant.name}"></h5>
+                        <p style="color: #fffdf6" class="card-text" th:text="'Scientific Name: ' + ${identifiedPlant.speciesScientificNameWithoutAuthor}"></p>
                     </div>
                 </div>
              </div>
         </div>
     </div>
 </div>
-<div th:if="${plantSpeciesList.totalPages > 0}" class="d-flex justify-content-center" aria-label="Page navigation example ">
+<div th:if="${collectionsList.totalPages > 0}" class="d-flex justify-content-center" aria-label="Page navigation example ">
     <ul class = "pagination">
         <li class="page-item">
             <a class="page-link" th:href="@{/myCollection(pageNo=0)}"
@@ -32,19 +32,19 @@
                 <span aria-hidden="true">First</span>
             </a>
         </li>
-        <ul th:if="${plantSpeciesList.totalPages > 0}" class="pagination"
+        <ul th:if="${collectionsList.totalPages > 0}" class="pagination"
             th:each="pageNumber : ${pageNumbers}">
             <li class="page-item"><a class="page-link" th:href="@{/myCollection(pageNo=${pageNumber - 1})}" th:text="${pageNumber}"></a></li>
         </ul>
         <li class="page-item">
-            <a class="page-link" th:href="@{/myCollection(pageNo=${plantSpeciesList.totalPages - 1})}" aria-label="Next">
+            <a class="page-link" th:href="@{/myCollection(pageNo=${collectionsList.totalPages - 1})}" aria-label="Next">
                 <span aria-hidden="true">Last</span>
             </a>
         </li>
     </ul>
 </div>
 <div class="d-flex justify-content-center" aria-label="Navigation message">
-    <p th:text="'Page: ' + (${plantSpeciesList.number + 1})"></p>
+    <p th:text="'Page: ' + (${collectionsList.number + 1})"></p>
 </div>
 <div class="d-flex justify-content-center" aria-label="Navigation message">
     <p th:text="${paginationMessage}"></p>

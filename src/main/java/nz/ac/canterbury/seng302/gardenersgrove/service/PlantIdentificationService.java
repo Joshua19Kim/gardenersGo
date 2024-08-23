@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -38,7 +41,7 @@ public class PlantIdentificationService {
     Logger logger = LoggerFactory.getLogger(PlantIdentificationService.class);
     private static final String PROJECT = "all";
     private static final String API_URL = "https://my-api.plantnet.org/v2/identify/";
-    private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "\\uploads\\";
+    private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
 
     private final String apiKey;
     private final ObjectMapper objectMapper;
@@ -165,4 +168,30 @@ public class PlantIdentificationService {
         IdentifiedPlant identifiedPlant = new IdentifiedPlant(bestMatch, firstResult, commonNames, gardener, imagePath);
         return identifiedPlantRepository.save(identifiedPlant);
     }
+
+    /**
+     * Retrieves a page of IdentifiedPlants from the repository
+     * Used for pagination on the collection page
+     *
+     * @param pageNo the page number that you want to see
+     * @param pageSize the number of elements on a page of IdentifiedPlants
+     * @return a page of IdentifiedPlants
+     */
+    public Page<IdentifiedPlant> getAllIdentifiedPlantsPaginated(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return identifiedPlantRepository.findAll(pageable);
+    }
+
+    /**
+     * Gets the IdentifiedPlants that are owned by the gardener in paginated form
+     * @param pageNo the page number
+     * @param pageSize the size of the page
+     * @param gardenerId the id of the gardener
+     * @return the page of IdentifiedPlants
+     */
+    public Page<IdentifiedPlant> getGardenerIdentifiedPlantsPaginated(int pageNo, int pageSize, Long gardenerId) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return identifiedPlantRepository.findPlantSpeciesByGardenerId(gardenerId, pageable);
+    }
+
 }
