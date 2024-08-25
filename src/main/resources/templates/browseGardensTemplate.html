@@ -61,6 +61,9 @@
                             </div>
                             <div style="display: flex; justify-content: center; margin-top: 13px;">
                                 <p style="color: #fffdf6" class="card-text" th:text="${garden.creationDate}"></p>
+                                <form method="post" th:action="@{/follow}">
+                                    <button name="gardenToFollow" th:value="${garden.id}">Follow</button>
+                                </form>
                             </div>
                         </div>
                         <div class="row mt-auto">

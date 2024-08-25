@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FollowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
@@ -36,6 +38,8 @@ public class BrowseGardensController {
 
     private final GardenerFormService gardenerFormService;
 
+    private final FollowerService followerService;
+
     private Gardener gardener;
 
     Logger logger = LoggerFactory.getLogger(BrowseGardensController.class);
@@ -57,11 +61,12 @@ public class BrowseGardensController {
      * @param gardenerFormService used to get the gardens to populate the navbar
      */
     @Autowired
-    public BrowseGardensController(GardenService gardenService, GardenerFormService gardenerFormService, TagService tagService) {
+    public BrowseGardensController(GardenService gardenService, GardenerFormService gardenerFormService, TagService tagService, FollowerService followerService) {
 
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.tagService = tagService;
+        this.followerService = followerService;
         this.pageSize = 10;
         this.searchTerm = "";
         this.searchTags = new ArrayList<>();
@@ -117,7 +122,7 @@ public class BrowseGardensController {
             setSearchTags(new ArrayList<>());
             setSearchTerm("");
         }
-        Long tagCount;
+        long tagCount;
         if (searchTags == null) {
             tagCount = 0L;
         } else {
@@ -192,7 +197,7 @@ public class BrowseGardensController {
             Model model) {
         logger.info("POST /browseGardens");
         setSearchTerm(searchTerm);
-        Long tagCount;
+        long tagCount;
         if (tags == null) {
             tagCount = 0L;
             setSearchTags(new ArrayList<>());
@@ -250,7 +255,6 @@ public class BrowseGardensController {
      * @param pageNo the page number
      * @param tag the tag the user typed in or selected
      * @param tags all the tags the user is filtering by
-     * @param model the model
      * @param redirectAttributes attributes used to add to the model of the url it is redirected to
      * @return redirects to the browse gardens page
      */
@@ -259,7 +263,7 @@ public class BrowseGardensController {
             @RequestParam(name="pageNo", defaultValue = "0") String pageNo,
             @RequestParam(name="tag-input") String tag,
             @RequestParam(name="tags", required = false) List<String> tags,
-            Model model, RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes
     ) {
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         if(tags == null) {
@@ -289,6 +293,31 @@ public class BrowseGardensController {
         redirectAttributes.addFlashAttribute("allTags", allTags);
         redirectAttributes.addFlashAttribute("pageRequest", true);
 
+        return "redirect:/browseGardens";
+    }
+
+    /**
+     * Post method for users to follow a public garden
+     * @param pageNo to keep user on the same page
+     * @param tags to keep the search terms
+     * @param gardenToFollow the garden the user wants to follow
+     * @param redirectAttributes attributes used to add to the model of the url it is redirected to
+     * @return redirect to browseGardens get method
+     */
+    @PostMapping("/follow")
+    public String followUser(@RequestParam(name="pageNo", defaultValue = "0") String pageNo,
+                             @RequestParam(name="tags", required = false) List<String> tags,
+                             @RequestParam(name="gardenToFollow") Long gardenToFollow,
+                             RedirectAttributes redirectAttributes) {
+        Optional<Gardener> gardener = getGardenerFromAuthentication();
+        if (gardener.isPresent()) {
+            Long gardenerId = gardener.get().getId();
+            Follower follower = new Follower(gardenerId, gardenToFollow);
+            followerService.addfollower(follower);
+        }
+        redirectAttributes.addFlashAttribute("tags", tags);
+        redirectAttributes.addFlashAttribute("pageNo", pageNo);
+        redirectAttributes.addFlashAttribute("pageRequest", true);
         return "redirect:/browseGardens";
     }
 }
