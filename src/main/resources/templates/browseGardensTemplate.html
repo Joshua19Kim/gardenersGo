@@ -61,7 +61,7 @@
                             </div>
                             <div style="display: flex; justify-content: center; margin-top: 13px;">
                                 <p style="color: #fffdf6" class="card-text" th:text="${garden.creationDate}"></p>
-                                <form method="post" th:action="@{/follow}">
+                                <form method="post" th:action="@{/follow(pageNo=${gardensPage.number},pageRequest=true)}">
                                     <button name="gardenToFollow" th:value="${garden.id}">Follow</button>
                                 </form>
                             </div>

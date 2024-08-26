@@ -115,8 +115,8 @@ public class BrowseGardensController {
     public String browseGardens(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
             @RequestParam(name="pageRequest", defaultValue = "hehe") String pageRequest,
-            Model model
-    ) {
+            Model model)
+    {
         // this is used to distinguish between a fresh get request and one used to paginate or add tag
         if(Objects.equals(pageRequest, "hehe") && !model.containsAttribute("pageRequest")) {
             setSearchTags(new ArrayList<>());
@@ -299,14 +299,12 @@ public class BrowseGardensController {
     /**
      * Post method for users to follow a public garden
      * @param pageNo to keep user on the same page
-     * @param tags to keep the search terms
      * @param gardenToFollow the garden the user wants to follow
      * @param redirectAttributes attributes used to add to the model of the url it is redirected to
      * @return redirect to browseGardens get method
      */
     @PostMapping("/follow")
-    public String followUser(@RequestParam(name="pageNo", defaultValue = "0") String pageNo,
-                             @RequestParam(name="tags", required = false) List<String> tags,
+    public String followUser(@RequestParam(name="pageNo") String pageNo,
                              @RequestParam(name="gardenToFollow") Long gardenToFollow,
                              RedirectAttributes redirectAttributes) {
         Optional<Gardener> gardener = getGardenerFromAuthentication();
@@ -315,7 +313,6 @@ public class BrowseGardensController {
             Follower follower = new Follower(gardenerId, gardenToFollow);
             followerService.addfollower(follower);
         }
-        redirectAttributes.addFlashAttribute("tags", tags);
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
         return "redirect:/browseGardens";
