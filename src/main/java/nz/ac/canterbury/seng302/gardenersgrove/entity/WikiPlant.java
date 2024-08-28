@@ -1,18 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 import java.util.List;
 
-
+/**
+ * This class stores all the information received from the API for a plant that will appear in the wiki.
+ */
 public class WikiPlant {
-
-
 
     private long id;
 
