@@ -23,6 +23,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service clas for interacting with the Perenual API
+ */
 @Service
 public class PlantWikiService {
 
@@ -39,10 +42,18 @@ public class PlantWikiService {
 
     }
 
+    /**
+     * Queries the Perenual API for plants matching the given query string.
+     * The method sends a GET request to the API, parses the response, and converts it into a list of WikiPlant objects.
+     *
+     * @param query The search query for the plant.
+     * @return A list of WikiPlant objects that match the query.
+     * @throws IOException        If there is an error reading the response from the API.
+     * @throws URISyntaxException If the constructed URI is invalid.
+     */
 
     @Cacheable(value = "plantInformation", key = "#query")
     public List<WikiPlant> getPlants(String query) throws IOException, URISyntaxException {
-        logger.info("SEND Request");
         List<WikiPlant> plantResults = new ArrayList<>();
         query = query.replace(" ", "%20");
         String uri = PERENUAL_API_URL +"?key="+ this.api_key + "&q=" + query;

@@ -4,7 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import java.util.List;
 
 /**
- * This class stores all the information received from the API for a plant that will appear in the wiki.
+ *  Entity class representing a plant retrieved from the Perenual API.
  */
 public class WikiPlant {
 
@@ -19,13 +19,7 @@ public class WikiPlant {
     private List<String> sunlight;
     private String imagePath;
 
-    public long getId() {
-        return id;
-    }
 
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public WikiPlant(Long id, String name, List<String> scientificName, List<String> otherNames, String cycle, String watering, List<String> sunlight, String imagePath) {
         this.id = id;
@@ -38,7 +32,13 @@ public class WikiPlant {
         this.imagePath = imagePath;
     }
 
+    public long getId() {
+        return id;
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getName() {return name;}
 
