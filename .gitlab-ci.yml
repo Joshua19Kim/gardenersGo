@@ -2,8 +2,17 @@ stages:
   - tagChecking
   - build
   - test
+  - verification
   - sonarqube
   - deploy
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_TAG'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
 
 tag-checker:
   stage: tagChecking
@@ -16,16 +25,37 @@ junit:
   stage: test
   script:
     - ./gradlew test
+  artifacts:
+    paths:
+      - build/jacoco/test.exec
 
 integration-tests:
   stage: test
   script:
     - ./gradlew integration
+  artifacts:
+    paths:
+      - build/jacoco/integration.exec
 
 integration-cucumber:
   stage: test
   script:
     - ./gradlew cucumber
+  artifacts:
+    paths:
+      - build/jacoco/cucumber.exec
+
+generate-reports:
+  stage: verification
+  dependencies:
+    - integration-cucumber
+    - integration-tests
+    - junit
+  script:
+    ./gradlew jacocoTestReport
+  artifacts:
+    paths:
+      - build/jacoco/*
 
 sonarqube-report:
   stage: sonarqube
@@ -44,6 +74,8 @@ branch-build:
     - tags
     - main
     - dev
+
+
 
 deploy-staging:
   stage: deploy

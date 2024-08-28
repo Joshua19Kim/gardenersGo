@@ -75,8 +75,15 @@ h1 {
     color: var(--text-color);
 }
 
+.nav-title h1 {
+    margin-bottom: 20px;
+    color: var(--text-color);
+    font-family: 'Matemasie', sans-serif;
+}
+
 .title {
     color: var(--primary-color);
+    font-family: 'Matemasie', sans-serif;
 }
 
 .form-group {
@@ -223,6 +230,9 @@ textarea#description.garden-form-control {
     padding-left: 20px;
 }
 
+.ml-25p {
+    margin-left: 25%;
+}
 
 /* Dropdown Button */
 .dropbtn {
