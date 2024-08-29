@@ -31,7 +31,5 @@ import org.springframework.test.context.ContextConfiguration;
 @MockBean(LocationService.class)
 @MockBean(EmailUserService.class)
 @MockBean(PlantIdentificationService.class)
-
-@MockBean(GardenerFormService.class)
 public class RunCucumberTest {
 }

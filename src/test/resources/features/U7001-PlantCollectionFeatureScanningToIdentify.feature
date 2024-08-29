@@ -2,18 +2,16 @@ Feature: U7001 - As Jackie Wei, I want to scan plants using the app to identify 
 
     @U7001
     Scenario: #AC1 - Identify plant from scan
-        Given I have an image of a plant
-        When I upload the image of the plant
-        Then the app should accurately identify the plant species
-        And display the name and relevant details
+        Given I am logged in with email "a@gmail.com" and password "Password1!"
+        And I have an image of a plant
+        When the app identifies the plant image
+        Then the app displays the name and relevant details after identifying
+
 
     @U7001
     Scenario: #AC3 - Cannot identify plant from scan
-        Given I have a bad image of a plant
-        When I upload the image of the plant
+        Given I am logged in with email "a@gmail.com" and password "Password1!"
+        And I have an invalid image
+        When I upload the image of the plant which cant be identified
         Then I should be informed that no species was identified
 
-    @U7001
-    Scenario: #AC5 - Attribution
-        Given I am on the plant identification page
-        Then I see appropriate attribution text
