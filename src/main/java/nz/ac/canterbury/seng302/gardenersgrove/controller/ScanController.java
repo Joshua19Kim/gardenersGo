@@ -95,17 +95,23 @@ public class ScanController {
         if (gardener.isPresent()) {
             try {
                 IdentifiedPlant identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
+                if (identifiedPlant.getScore() >= 0.3) {
+                    response.put("bestMatch", identifiedPlant.getBestMatch());
+                    response.put("score", identifiedPlant.getScore());
+                    response.put("commonNames", identifiedPlant.getCommonNames());
+                    response.put("gbifId", identifiedPlant.getGbifId());
+                    response.put("imageUrl", identifiedPlant.getImageUrl());
 
-                response.put("bestMatch", identifiedPlant.getBestMatch());
-                response.put("score", identifiedPlant.getScore());
-                response.put("commonNames", identifiedPlant.getCommonNames());
-                response.put("gbifId", identifiedPlant.getGbifId());
-                response.put("imageUrl", identifiedPlant.getImageUrl());
+                    return ResponseEntity.ok(response);
+                } else {
+                    errorResponse.put("error", "Please ensure the plant is taking up most of the frame and the photo is not blurry.");
+                    return ResponseEntity.badRequest().body(errorResponse);
+                }
 
-                return ResponseEntity.ok(response);
+
             } catch (Exception e) {
                 if (e.getMessage().contains("Species not found")) {
-                    errorResponse.put("error", "Sorry, we could not identify your image. Try with a different image.");
+                    errorResponse.put("error", "There is no matching plant with your image. Please try with a different image of the plant.");
                 } else {
                     errorResponse.put("error", e.getMessage());
                 }

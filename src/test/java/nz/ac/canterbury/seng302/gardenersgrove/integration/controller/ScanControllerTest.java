@@ -131,7 +131,7 @@ public class ScanControllerTest {
                         .file(imageFile)
                         .with(csrf()))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Sorry, we could not identify your image. Try with a different image."));
+                .andExpect(jsonPath("$.error").value("There is no matching plant with your image. Please try with a different image of the plant."));
 
 }
 

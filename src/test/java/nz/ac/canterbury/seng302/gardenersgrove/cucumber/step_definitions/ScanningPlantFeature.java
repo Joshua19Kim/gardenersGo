@@ -3,16 +3,17 @@ package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Optional;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -21,10 +22,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ScanningPlantFeature {
     @Autowired
     private MockMvc mockMvc;
-    private ResultActions resultActions;
     @Autowired
     private GardenerFormService gardenerFormService;
     private MockMultipartFile imageFile;
+    private String errorMessage;
 
     @Before("@U7001")
     public void setUp() {
@@ -56,33 +57,39 @@ public class ScanningPlantFeature {
                 .andExpect(jsonPath("$.gbifId").value("5414641"))
                 .andExpect(jsonPath("$.imageUrl").value("https://example.com/sunflower.jpg"));
     }
-
-
-
-    @Given("I uploaded an invalid image")
-    public void i_uploaded_an_invalid_image() {
-        // Invalid file
+    @Given("I uploaded an blurry image")
+    public void i_uploaded_an_blurry_image() {
+        byte[] imageContent = new byte[]{(byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xE0};
         imageFile = new MockMultipartFile(
                 "image",
-                "image.text",
-                "plain/text",
-                "Hello World!".getBytes()
+                "test_image.jpg",
+                "image/jpeg",
+                imageContent
         );
+        errorMessage = "Please ensure the plant is taking up most of the frame and the photo is not blurry.";
     }
 
-    @When("the app cannot identify the image")
-    public void the_app_cannot_identify_the_image() throws Exception {
-        // Invalid file
-        resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/identifyPlant")
-                        .file(imageFile)
-                        .with(csrf()));
+
+    @Given("I uploaded an non_plant image")
+    public void i_uploaded_an_non_plant_image() {
+        byte[] imageContent = new byte[]{(byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xE0};
+        imageFile = new MockMultipartFile(
+                "image",
+                "test_image.jpg",
+                "image/jpeg",
+                imageContent
+        );
+        errorMessage = "There is no matching plant with your image. Please try with a different image of the plant.";
     }
+
+
 
     @Then("I should be informed that the app failed to identify plant")
     public void i_should_be_informed_that_the_app_failed_to_identify_plant() throws Exception {
-        String errorMessage = "Image must be of type png, jpg or svg";
-
-        resultActions.andExpect(status().isBadRequest())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/identifyPlant")
+                        .file(imageFile)
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(errorMessage));
     }
 

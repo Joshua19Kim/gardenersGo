@@ -7,10 +7,10 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -61,6 +61,39 @@ public class MockConfigurationSteps {
                 any(Gardener.class)))
                 .thenReturn(testIdentifiedPlant);
     }
+    @When("the app identifies the image with very low score")
+    public void the_app_identifies_the_image_with_very_low_score() throws IOException {
+        gardenerOptional = gardenerFormService.findByEmail("a@gmail.com");
+        gardener = gardenerOptional.get();
+        IdentifiedPlant testIdentifiedPlant = new IdentifiedPlant(
+                "Helianthus annuus",
+                0.29,
+                List.of("Sunflower", "Rose"),
+                "5414641",
+                "https://example.com/sunflower.jpg",
+                "https://example.com/sunflower.jpg"
+                ,gardener
+        );
+        when(plantIdentificationService.identifyPlant(
+                any(MultipartFile.class),
+                any(Gardener.class)))
+                .thenReturn(testIdentifiedPlant);
+    }
 
+    @When("the app cannot identify the image")
+    public void the_app_cannot_identify_the_image() throws Exception {
+        byte[] imageContent = new byte[]{(byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xE0};
+        MockMultipartFile imageService = new MockMultipartFile(
+                "image",
+                "test_image.jpg",
+                "image/jpeg",
+                imageContent
+        );
+        when(plantIdentificationService.identifyPlant(
+                any(MultipartFile.class),
+                any(Gardener.class))).thenThrow(new IOException("Species not found"));
+
+
+    }
 
 }
