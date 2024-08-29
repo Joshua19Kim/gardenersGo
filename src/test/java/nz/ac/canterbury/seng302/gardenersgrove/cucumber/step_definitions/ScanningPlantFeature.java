@@ -4,36 +4,15 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.ScanController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
-import org.mockito.Mockito;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import javax.xml.transform.Result;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,16 +21,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ScanningPlantFeature {
     @Autowired
     private MockMvc mockMvc;
+    private ResultActions resultActions;
     @Autowired
     private GardenerFormService gardenerFormService;
     private MockMultipartFile imageFile;
-    private Gardener gardener;
-    private ResultActions resultActions;
 
     @Before("@U7001")
     public void setUp() {
         Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail("a@gmail.com");
-        gardener = gardenerOptional.get();
     }
 
     @Given("I have an image of a plant")
@@ -69,7 +46,8 @@ public class ScanningPlantFeature {
     @Then("the app displays the name and relevant details after identifying")
     public void the_app_displays_the_name_and_relevant_details_after_identifying() throws Exception {
         // Mock testIdentifiedPlant(contains mock plant details) has been defined in MockConfigurationSteps
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/identifyPlant")
+        mockMvc
+                .perform(MockMvcRequestBuilders.multipart("/identifyPlant")
                         .file(imageFile)
                         .with(csrf()))
                 .andExpect(status().isOk())
@@ -81,26 +59,31 @@ public class ScanningPlantFeature {
 
 
 
-
-
-    @When("I upload the image of the plant which cant be identified")
-    public void i_upload_the_image_of_the_plant_which_cant_be_identified() throws Exception {
-
+    @Given("I uploaded an invalid image")
+    public void i_uploaded_an_invalid_image() {
+        // Invalid file
+        imageFile = new MockMultipartFile(
+                "image",
+                "image.text",
+                "plain/text",
+                "Hello World!".getBytes()
+        );
     }
 
-    @Then("I should be informed that no species was identified")
-    public void i_should_be_informed_that_no_species_was_identified() {
-
+    @When("the app cannot identify the image")
+    public void the_app_cannot_identify_the_image() throws Exception {
+        // Invalid file
+        resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/identifyPlant")
+                        .file(imageFile)
+                        .with(csrf()));
     }
 
-    @Given("I am on the plant identification page")
-    public void i_am_on_the_plant_identification_page() {
+    @Then("I should be informed that the app failed to identify plant")
+    public void i_should_be_informed_that_the_app_failed_to_identify_plant() throws Exception {
+        String errorMessage = "Image must be of type png, jpg or svg";
 
-    }
-
-    @Then("I see appropriate attribution text")
-    public void i_see_appropriate_attribution_text() {
-
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(errorMessage));
     }
 
 }

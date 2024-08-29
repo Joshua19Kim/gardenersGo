@@ -11,7 +11,7 @@ Feature: U7001 - As Jackie Wei, I want to scan plants using the app to identify 
     @U7001
     Scenario: #AC3 - Cannot identify plant from scan
         Given I am logged in with email "a@gmail.com" and password "Password1!"
-        And I have an invalid image
-        When I upload the image of the plant which cant be identified
-        Then I should be informed that no species was identified
+        And I uploaded an invalid image
+        When the app cannot identify the image
+        Then I should be informed that the app failed to identify plant
 

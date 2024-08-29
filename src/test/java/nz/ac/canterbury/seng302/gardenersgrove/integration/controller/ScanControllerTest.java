@@ -118,7 +118,7 @@ public class ScanControllerTest {
         imageFile = new MockMultipartFile(
                 "image",
                 "test_image.image",
-                "image/",
+                "image/jpeg",
                 imageContent
         );
         when(plantIdentificationService.identifyPlant(
@@ -147,8 +147,7 @@ public class ScanControllerTest {
                 "plain/text",
                 "Hello World!".getBytes()
         );
-        String uploadMessage = "Image must be of type png, jpg or svg";
-        when(imageService.checkValidImage(imageFile)).thenReturn(Optional.of(uploadMessage));
+        when(imageService.checkValidImage(imageFile)).thenReturn(Optional.of(errorMessage));
         this.mockMvc
                 .perform(MockMvcRequestBuilders.multipart("/identifyPlant")
                         .file(imageFile)

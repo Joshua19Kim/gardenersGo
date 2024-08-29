@@ -140,7 +140,7 @@ public class ScanController {
                 String imageUrl = (String) plantData.get("imageUrl");
                 String gbifId = (String) plantData.get("gbifId");
 
-                // to show the details are coming correctly!!!!!!
+
                 logger.info("Score: " + score);
                 logger.info("Best Match: " + bestMatch);
                 logger.info("Common Names: " + commonNames);
