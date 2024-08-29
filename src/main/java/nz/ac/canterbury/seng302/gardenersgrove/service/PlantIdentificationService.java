@@ -46,7 +46,6 @@ public class PlantIdentificationService {
     private final String apiKey;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
-    private final IdentifiedPlantRepository identifiedPlantRepository;
 
     /**
      * Constructs a new PlantIdentificationService with the specified API key and repository.
@@ -57,7 +56,6 @@ public class PlantIdentificationService {
     @Autowired
     public PlantIdentificationService(@Value("${plantNet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository) {
         this.apiKey = apiKey;
-        this.identifiedPlantRepository = identifiedPlantRepository;
         this.objectMapper = new ObjectMapper();
         this.restTemplate = new RestTemplate();
     }

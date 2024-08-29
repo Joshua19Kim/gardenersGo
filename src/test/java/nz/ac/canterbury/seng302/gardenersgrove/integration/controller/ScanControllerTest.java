@@ -40,12 +40,11 @@ public class ScanControllerTest {
     private PlantIdentificationService plantIdentificationService;
     @MockBean
     private ImageService imageService;
-    private Gardener testGardener;
     private MockMultipartFile imageFile;
 
     @BeforeEach
     void setUp() throws IOException {
-        testGardener = new Gardener("Test", "Gardener",
+        Gardener testGardener = new Gardener("Test", "Gardener",
                 LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
                 "Password1!");
         Mockito.reset(gardenerFormService);
@@ -62,7 +61,7 @@ public class ScanControllerTest {
                 "5414641",
                 "https://example.com/sunflower.jpg",
                 "https://example.com/sunflower.jpg"
-                ,testGardener
+                , testGardener
         );
         when(plantIdentificationService.identifyPlant(
                 Mockito.any(MultipartFile.class),
@@ -73,7 +72,7 @@ public class ScanControllerTest {
 
     @Test
     @WithMockUser
-    public void OnScanningModal_userHasNotUploadedImageAndClickedIdentifyButton_ShowErrorMessage() throws Exception {
+    void OnScanningModal_userHasNotUploadedImageAndClickedIdentifyButton_ShowErrorMessage() throws Exception {
         String errorMessage = "Please add an image to identify.";
         // No image
         imageFile = new MockMultipartFile("image", "", "application/octet-stream", (new byte[0]));
@@ -87,7 +86,7 @@ public class ScanControllerTest {
     }
     @Test
     @WithMockUser
-    public void OnScanningModal_userHasPutValidImageAndClickedIdentifyButton_ShowResponseFromAPI() throws Exception {
+    void OnScanningModal_userHasPutValidImageAndClickedIdentifyButton_ShowResponseFromAPI() throws Exception {
         // mock image content
         byte[] imageContent = new byte[]{(byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xE0};
 
@@ -111,14 +110,14 @@ public class ScanControllerTest {
 
     @Test
     @WithMockUser
-    public void OnScanningModal_userHasPutNotPlantImageAndClickedIdentifyButton_ShowErrorMessage() throws Exception {
+    void OnScanningModal_userHasPutNotPlantImageAndClickedIdentifyButton_ShowErrorMessage() throws Exception {
         // mock image content
         byte[] imageContent = new byte[]{(byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xE0};
 
         imageFile = new MockMultipartFile(
                 "image",
                 "test_image.image",
-                "image/",
+                "image/jpeg",
                 imageContent
         );
         when(plantIdentificationService.identifyPlant(
@@ -131,14 +130,14 @@ public class ScanControllerTest {
                         .file(imageFile)
                         .with(csrf()))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Sorry, we could not identify your image. Try with a different image."));
+                .andExpect(jsonPath("$.error").value("There is no matching plant with your image. Please try with a different image of the plant."));
 
 }
 
 
     @Test
     @WithMockUser
-    public void OnScanningModal_userHasPutInvalidImageAndClickedIdentifyButton_ShowErrorMessage() throws Exception {
+    void OnScanningModal_userHasPutInvalidImageAndClickedIdentifyButton_ShowErrorMessage() throws Exception {
         String errorMessage = "Image must be of type png, jpg or svg";
         // Invalid file
         imageFile = new MockMultipartFile(
@@ -147,8 +146,7 @@ public class ScanControllerTest {
                 "plain/text",
                 "Hello World!".getBytes()
         );
-        String uploadMessage = "Image must be of type png, jpg or svg";
-        when(imageService.checkValidImage(imageFile)).thenReturn(Optional.of(uploadMessage));
+        when(imageService.checkValidImage(imageFile)).thenReturn(Optional.of(errorMessage));
         this.mockMvc
                 .perform(MockMvcRequestBuilders.multipart("/identifyPlant")
                         .file(imageFile)

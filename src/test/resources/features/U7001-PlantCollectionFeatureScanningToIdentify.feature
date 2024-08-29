@@ -9,9 +9,15 @@ Feature: U7001 - As Jackie Wei, I want to scan plants using the app to identify 
 
 
     @U7001
-    Scenario: #AC3 - Cannot identify plant from scan
+    Scenario: #AC3 - Identify plant with very low score
         Given I am logged in with email "a@gmail.com" and password "Password1!"
-        And I have an invalid image
-        When I upload the image of the plant which cant be identified
-        Then I should be informed that no species was identified
+        And I uploaded an blurry image
+        When the app identifies the image with very low score
+        Then I should be informed that the app failed to identify plant
 
+    @U7001
+    Scenario: #AC4 - Cannot identify plant because no similar plants in API data
+        Given I am logged in with email "a@gmail.com" and password "Password1!"
+        And I uploaded an non_plant image
+        When the app cannot identify the image
+        Then I should be informed that the app failed to identify plant

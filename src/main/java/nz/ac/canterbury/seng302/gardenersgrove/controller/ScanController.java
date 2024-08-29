@@ -37,6 +37,7 @@ public class ScanController {
     private final Map<String, Object> response;
     private IdentifiedPlant identifiedPlant;
 
+    private final String errorKey = "error";
     /**
      * Constructs a new ScanController with the services required for sending and storing identified plants.
      *
@@ -84,12 +85,12 @@ public class ScanController {
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
         if (image.isEmpty()) {
-            errorResponse.put("error", "Please add an image to identify.");
+            errorResponse.put(errorKey, "Please add an image to identify.");
             return ResponseEntity.badRequest().body(errorResponse);
         } else {
             Optional<String> uploadMessage = imageService.checkValidImage(image);
             if (uploadMessage.isPresent()) {
-                errorResponse.put("error", uploadMessage.get());
+                errorResponse.put(errorKey, uploadMessage.get());
                 return ResponseEntity.badRequest().body(errorResponse);
             }
         }
@@ -97,24 +98,32 @@ public class ScanController {
         if (gardener.isPresent()) {
             try {
                 identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
+                if (identifiedPlant.getScore() >= 0.3) {
+                    response.put("bestMatch", identifiedPlant.getBestMatch());
+                    response.put("score", identifiedPlant.getScore());
+                    response.put("commonNames", identifiedPlant.getCommonNames());
+                    response.put("gbifId", identifiedPlant.getGbifId());
+                    response.put("imageUrl", identifiedPlant.getImageUrl());
 
-                response.put("bestMatch", identifiedPlant.getBestMatch());
-                response.put("score", identifiedPlant.getScore());
-                response.put("commonNames", identifiedPlant.getCommonNames());
-                response.put("gbifId", identifiedPlant.getGbifId());
-                response.put("imageUrl", identifiedPlant.getImageUrl());
+                    return ResponseEntity.ok(response);
+                } else {
+                    errorResponse.put(errorKey, "Please ensure the plant is taking up most of the frame and the photo is not blurry.");
+                    return ResponseEntity.badRequest().body(errorResponse);
+                }
 
-                return ResponseEntity.ok(response);
+
             } catch (Exception e) {
                 if (e.getMessage().contains("Species not found")) {
-                    errorResponse.put("error", "Sorry, we could not identify your image. Try with a different image.");
-                } else {
-                    errorResponse.put("error", e.getMessage());
+                    errorResponse.put(errorKey, "There is no matching plant with your image. Please try with a different image of the plant.");
+                } else if (e.getMessage().contains("Unsupported file type for image")) {
+                    errorResponse.put(errorKey, "Image must be of type png, jpg or svg.");
+                }else {
+                    errorResponse.put(errorKey, e.getMessage());
                 }
                 return ResponseEntity.badRequest().body(errorResponse);
             }
         } else {
-            errorResponse.put("error", "User not authenticated");
+            errorResponse.put(errorKey, "User not authenticated");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
@@ -142,11 +151,11 @@ public class ScanController {
                 plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
                 return ResponseEntity.ok(response);
             } catch (Exception e) {
-                errorResponse.put("error", "Failed to save the identified plant: " + e.getMessage());
+                errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
                 return ResponseEntity.badRequest().body(errorResponse);
             }
         } else {
-            errorResponse.put("error", "User not authenticated");
+            errorResponse.put(errorKey, "User not authenticated");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
