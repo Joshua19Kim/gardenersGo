@@ -26,6 +26,10 @@ public class PlantWikiController {
     private String searchTerm;
 
 
+    /**
+     * Constructs a new PlantWikiController with the service required for searching and returning plants.
+     * @param plantWikiService the service for handling reqests to the Perenual plant API
+     */
     @Autowired
     public PlantWikiController(PlantWikiService plantWikiService) {
         this.plantWikiService = plantWikiService;
