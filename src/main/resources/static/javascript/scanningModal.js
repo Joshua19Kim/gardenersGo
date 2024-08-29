@@ -142,30 +142,10 @@ document.addEventListener('DOMContentLoaded', function() {
 //User got the plant identified and clicks save button for myCollection
 saveToCollectionButton.addEventListener('click', function() {
     if (identifiedPlantData) {
-        fetch('/saveIdentifiedPlant', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
-            },
-            body: JSON.stringify(identifiedPlantData)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
-                var modal = bootstrap.Modal.getInstance(document.getElementById('scanningModal'));
-                modal.hide();
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                alert('An error occurred while saving the plant.');
-            });
+        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+        var modal = bootstrap.Modal.getInstance(document.getElementById('scanningModal'));
+        modal.hide();
     } else {
         alert('No plant data to save. Please identify a plant first.');
     }
@@ -178,4 +158,32 @@ goToCollectionButton.addEventListener('click', function() {
     setTimeout(function() {
         window.location.href = goToCollectionButton.getAttribute('data-url');
     }, 150);
+
+
+    fetch('/saveIdentifiedPlant', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+        },
+        body: JSON.stringify(identifiedPlantData)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var modal = bootstrap.Modal.getInstance(successModal);
+            modal.hide();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('An error occurred while saving the plant.');
+        });
+
+
+
+
 });
