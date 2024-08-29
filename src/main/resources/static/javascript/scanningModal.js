@@ -181,8 +181,8 @@ goToCollectionButton.addEventListener('click', function() {
         })
         .then(data => {
             var modal = bootstrap.Modal.getInstance(successModal);
-            document.getElementById('name').setAttribute('name',"");
-            document.getElementById('description').setAttribute('description', "");
+            document.getElementById('name').value = "";
+            document.getElementById('description').value = "";
             modal.hide();
         })
         .catch((error) => {
