@@ -23,7 +23,8 @@
             <div th:each="plant : ${resultPlants}" class="col-md-2 mb-4">
                 <div class="card collection-gardens-card">
                     <div class="btn-wrapper">
-                        <button type="button" class="btn btn-success">Add plant</button>
+                        <button type="button" class="btn btn-success" data-target="#add-plant-modal" data-toggle="modal" id="add-plant-button"
+                                onclick="displayAddPlantModal()">Add plant</button>
                     </div>
                     <img id="collection-card-img" class="card-img-top" th:src="${plant.imagePath  != ''} ? ${plant.imagePath} : '/images/placeholder.jpg'" alt="No Image">
                     <div class="card-collection-body">
@@ -52,8 +53,89 @@
                 </div>
             </div>
         </div>
+
+
+<!--        GET ALL THE EXTRA STUFF AND WHACK IT IN DESCRIPTION AND AUTOPOPULATE NAME, PICTURE, DATE (todays date)-->
+<!--        POTENTIALLY IMAGE NEEDS TO BE DOWNLOADED FROM THEM? IS THIS OKAY? COPYRIGHT? SECURITY?-->
+<!--        fix navbar not populating when searching for something (you lose navbar links)-->
+
+
+        <div aria-hidden="true" class="friend-modal" id="add-plant-modal">
+            <div class="container mb-5">
+                <div class="card mb-5 w-50">
+                    <h1> Add New Plant </h1>
+                    <label class="fst-italic">* Required</label>
+                    <br/>
+                    <form id="plantForm" method="post" enctype="multipart/form-data">
+                        <select class="form-select" aria-label="Select">
+                            <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
+                                <option selected>Choose a garden</option>
+                                <option class="dropdown-item" th:text="${garden.name}"></option>
+                            </th:block>
+                        </select>
+                        <br/>
+                        <label for="name"> *Name: </label>
+                        <input type="text" class="form-control" id="name" name="name" maxlength="64" placeholder="Name">
+                        <br/>
+                        <label for="count"> Plant Count: </label>
+                        <input type="text" class="form-control" id="count"  name="count" maxlength="12" placeholder="How many?"
+                        <br/>
+                        <label for="description"> Description: </label>
+                        <br/>
+                        <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
+                        <textarea class="form-control" id="description" name="description"  maxlength="512"></textarea>
+                        <br/>
+                        <label for="datePlanted"> Date Planted: </label>
+                        <input type="date" class="form-control" id="datePlanted" name="date">
+                        <span id="dateError" class="smallErrorMessage"></span>
+                        <script>
+                            document.getElementById( "datePlanted" ).addEventListener( "invalid",
+                                function( event ) {
+                                    event.preventDefault();
+                                    document.getElementById("datePlanted").style.border = "1px solid red";
+                                    document.getElementById("dateError").textContent = "Date is not in valid format, DD/MM/YYYY";
+                                });
+                        </script>
+                        <br/>
+                        <label for="image"> Image: </label>
+                        <div class="plant-image-container" id="image">
+                            <img th:src="@{'/images/placeholder.jpg'}" alt="Plant" id="currentImage">
+                            <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
+                            <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*" onchange="handleImageChange()">
+                        </div>
+                        <br/>
+                        <button class="btn btn-success w-100" type="submit">Submit</button>
+                    </form>
+                    <a class="btn btn-secondary w-50 mt-3" onclick="displayAddPlantModal()">
+                        Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+
+<script>
+    function displayAddPlantModal() {
+        const modal = document.getElementById("add-plant-modal");
+        switch (modal.style.display) {
+            case "":
+                document.getElementById("add-plant-modal").style.display = "block";
+                break;
+            case "block":
+                document.getElementById("add-plant-modal").style.display = "";
+                document.getElementById("name").value = "";
+                document.getElementById("count").value = "";
+                document.getElementById("date").value = ""; // fix - currently not working
+                document.getElementById("description").value = ""; // fix - currently not working
+                document.getElementById("datePlanted").value = "";
+                break;
+        }
+    }
+
+
+</script>
 
 </body>
 </html>
