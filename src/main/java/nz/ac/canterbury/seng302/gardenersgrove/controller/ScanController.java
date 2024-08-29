@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -133,9 +134,21 @@ public class ScanController {
 
         if (gardener.isPresent()) {
             try {
-                //Now we need to save plantData into server
-                // example of plantData is : {score=0.48718, bestMatch=Helianthus giganteus L., commonNames=[Giant sunflower, Indian-potato, Tall sunflower], imageUrl=https://bs.plantnet.org/image/o/585a093e0130b80791fef3ff4fb49c43c94d47af, gbifId=3119240}
-                logger.info(plantData.toString());
+                Double score = (Double) plantData.get("score");
+                String bestMatch = (String) plantData.get("bestMatch");
+                List<String> commonNames = (List<String>) plantData.get("commonNames");
+                String imageUrl = (String) plantData.get("imageUrl");
+                String gbifId = (String) plantData.get("gbifId");
+
+                // to show the details are coming correctly!!!!!!
+                logger.info("Score: " + score);
+                logger.info("Best Match: " + bestMatch);
+                logger.info("Common Names: " + commonNames);
+                logger.info("Image URL: " + imageUrl);
+                logger.info("GBIF ID: " + gbifId);
+
+
+
                 response.put("message", "Plant saved successfully");
                 return ResponseEntity.ok(response);
             } catch (Exception e) {
