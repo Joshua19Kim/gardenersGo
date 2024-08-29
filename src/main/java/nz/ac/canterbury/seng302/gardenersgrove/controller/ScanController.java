@@ -113,7 +113,9 @@ public class ScanController {
             } catch (Exception e) {
                 if (e.getMessage().contains("Species not found")) {
                     errorResponse.put(errorKey, "There is no matching plant with your image. Please try with a different image of the plant.");
-                } else {
+                } else if (e.getMessage().contains("Unsupported file type for image")) {
+                    errorResponse.put(errorKey, "Image must be of type png, jpg or svg.");
+                }else {
                     errorResponse.put(errorKey, e.getMessage());
                 }
                 return ResponseEntity.badRequest().body(errorResponse);
