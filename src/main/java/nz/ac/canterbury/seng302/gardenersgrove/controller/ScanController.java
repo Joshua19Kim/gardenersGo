@@ -35,6 +35,7 @@ public class ScanController {
     private final ImageService imageService;
     private final Map<String, String> errorResponse;
     private final Map<String, Object> response;
+    private final String errorKey = "error";
     /**
      * Constructs a new ScanController with the services required for sending and storing identified plants.
      *
@@ -82,12 +83,12 @@ public class ScanController {
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
         if (image.isEmpty()) {
-            errorResponse.put("error", "Please add an image to identify.");
+            errorResponse.put(errorKey, "Please add an image to identify.");
             return ResponseEntity.badRequest().body(errorResponse);
         } else {
             Optional<String> uploadMessage = imageService.checkValidImage(image);
             if (uploadMessage.isPresent()) {
-                errorResponse.put("error", uploadMessage.get());
+                errorResponse.put(errorKey, uploadMessage.get());
                 return ResponseEntity.badRequest().body(errorResponse);
             }
         }
@@ -104,21 +105,21 @@ public class ScanController {
 
                     return ResponseEntity.ok(response);
                 } else {
-                    errorResponse.put("error", "Please ensure the plant is taking up most of the frame and the photo is not blurry.");
+                    errorResponse.put(errorKey, "Please ensure the plant is taking up most of the frame and the photo is not blurry.");
                     return ResponseEntity.badRequest().body(errorResponse);
                 }
 
 
             } catch (Exception e) {
                 if (e.getMessage().contains("Species not found")) {
-                    errorResponse.put("error", "There is no matching plant with your image. Please try with a different image of the plant.");
+                    errorResponse.put(errorKey, "There is no matching plant with your image. Please try with a different image of the plant.");
                 } else {
-                    errorResponse.put("error", e.getMessage());
+                    errorResponse.put(errorKey, e.getMessage());
                 }
                 return ResponseEntity.badRequest().body(errorResponse);
             }
         } else {
-            errorResponse.put("error", "User not authenticated");
+            errorResponse.put(errorKey, "User not authenticated");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
@@ -146,71 +147,16 @@ public class ScanController {
                 String imageUrl = (String) plantData.get("imageUrl");
                 String gbifId = (String) plantData.get("gbifId");
 
-
-                logger.info("Score: " + score);
-                logger.info("Best Match: " + bestMatch);
-                logger.info("Common Names: " + commonNames);
-                logger.info("Image URL: " + imageUrl);
-                logger.info("GBIF ID: " + gbifId);
-
-
-
                 response.put("message", "Plant saved successfully");
                 return ResponseEntity.ok(response);
             } catch (Exception e) {
-                errorResponse.put("error", "Failed to save the identified plant: " + e.getMessage());
+                errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
                 return ResponseEntity.badRequest().body(errorResponse);
             }
         } else {
-            errorResponse.put("error", "User not authenticated");
+            errorResponse.put(errorKey, "User not authenticated");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
 
-
-
-
-//    /**
-//     * Handles POST requests to the /scan endpoint.
-//     * Processes the uploaded image, identifies the plant, and displays the result of the identification
-//     *
-//     * @param image the image file uploaded by the user for plant identification
-//     * @param model the model to hold attributes for rendering in the view
-//     * @return the name of the template to display the identification results or errors
-//     */
-//    @PostMapping("/scan")
-//    public String sendScanForm(@RequestParam("image") MultipartFile image, Model model) {
-//        Optional<Gardener> gardener = getGardenerFromAuthentication();
-//        if (gardener.isPresent()) {
-//            try {
-//                IdentifiedPlant identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
-//
-//                model.addAttribute("bestMatch", identifiedPlant.getBestMatch());
-//                model.addAttribute("score", identifiedPlant.getScore());
-//                model.addAttribute("speciesScientificNameWithoutAuthor", identifiedPlant.getSpeciesScientificNameWithoutAuthor());
-//                model.addAttribute("speciesScientificNameAuthorship", identifiedPlant.getSpeciesScientificNameAuthorship());
-//                model.addAttribute("speciesScientificName", identifiedPlant.getSpeciesScientificName());
-//                model.addAttribute("genusScientificNameWithoutAuthor", identifiedPlant.getGenusScientificNameWithoutAuthor());
-//                model.addAttribute("genusScientificNameAuthorship", identifiedPlant.getGenusScientificNameAuthorship());
-//                model.addAttribute("genusScientificName", identifiedPlant.getGenusScientificName());
-//                model.addAttribute("familyScientificNameWithoutAuthor", identifiedPlant.getFamilyScientificNameWithoutAuthor());
-//                model.addAttribute("familyScientificNameAuthorship", identifiedPlant.getFamilyScientificNameAuthorship());
-//                model.addAttribute("familyScientificName", identifiedPlant.getFamilyScientificName());
-//                model.addAttribute("commonNames", identifiedPlant.getCommonNames());
-//                model.addAttribute("gbifId", identifiedPlant.getGbifId());
-//                model.addAttribute("powoId", identifiedPlant.getPowoId());
-//                model.addAttribute("iucnId", identifiedPlant.getIucnId());
-//                model.addAttribute("iucnCategory", identifiedPlant.getIucnCategory());
-//                model.addAttribute("imageUrl", identifiedPlant.getImageUrl());
-//
-//                return "scan";
-//            } catch (Exception e) {
-//                model.addAttribute("error", "Error: " + e.getMessage());
-//                return "scan";
-//            }
-//        } else {
-//            model.addAttribute("error", "Error: User not authenticated");
-//            return "scan";
-//        }
-//    }
 }
