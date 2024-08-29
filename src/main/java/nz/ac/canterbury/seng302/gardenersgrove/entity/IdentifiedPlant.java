@@ -1,11 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -91,21 +89,26 @@ public class IdentifiedPlant {
     /**
      * Constructs an IdentifiedPlant with the specified identification details.
      *
-     * @param bestMatch                  the best match for the plant identification
-     * @param result                     the JSON node containing the identification results
-     * @param commonNames                the list of common names for the identified plant
-     * @param gardener                   the gardener associated with the identified plant
-     * @param imagePath                  the path to the uploaded image used for identification
+     * @param bestMatch the best match for the plant identification
+     * @param score the matching score for the plant identified plant
+     * @param commonNames the list of common names for the identified plant
+     * @param speciesScientificNameWithoutAuthor The species Scientific name of the identified plant without Author
+     * @param familyScientificNameWithoutAuthor The family Scientific name of the identified plant without Author
+     * @param imagePath the path to the uploaded image used for identification
+     * @param gardener the gardener associated with the identified plant
      */
-    public IdentifiedPlant(String bestMatch, JsonNode result, List<String> commonNames, Gardener gardener, String imagePath) {
+    public IdentifiedPlant(String bestMatch, Double score, List<String> commonNames,
+                           String gbifId, String imageUrl, String imagePath,
+                           String speciesScientificNameWithoutAuthor, String familyScientificNameWithoutAuthor,
+                           Gardener gardener) {
         this.gardener = gardener;
         this.bestMatch = bestMatch;
-        this.score = result.get("score").asDouble();
-        this.speciesScientificNameWithoutAuthor = result.get("species").get("scientificNameWithoutAuthor").asText();
-        this.familyScientificNameWithoutAuthor = result.get("species").get("family").get("scientificNameWithoutAuthor").asText();
+        this.score = score;
+        this.speciesScientificNameWithoutAuthor = speciesScientificNameWithoutAuthor;
+        this.familyScientificNameWithoutAuthor = familyScientificNameWithoutAuthor;
         this.commonNames = commonNames;
-        this.gbifId = result.get("gbif").get("id").asText();
-        this.imageUrl = result.get("images").get(0).get("url").get("o").asText();
+        this.gbifId = gbifId;
+        this.imageUrl = imageUrl;
         this.uploadedImage = imagePath;
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");

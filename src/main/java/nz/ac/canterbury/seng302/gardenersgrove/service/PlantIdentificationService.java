@@ -46,6 +46,7 @@ public class PlantIdentificationService {
     private final String apiKey;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
+    private final IdentifiedPlantRepository identifiedPlantRepository;
 
     /**
      * Constructs a new PlantIdentificationService with the specified API key and repository.
@@ -54,8 +55,9 @@ public class PlantIdentificationService {
      * @param identifiedPlantRepository the repository for saving identified plants
      */
     @Autowired
-    public PlantIdentificationService(@Value("${plantNet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository) {
+    public PlantIdentificationService(@Value("${plantNet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository, IdentifiedPlantRepository identifiedPlantRepository1) {
         this.apiKey = apiKey;
+        this.identifiedPlantRepository = identifiedPlantRepository1;
         this.objectMapper = new ObjectMapper();
         this.restTemplate = new RestTemplate();
     }
@@ -160,11 +162,18 @@ public class PlantIdentificationService {
     public IdentifiedPlant getIdentifiedPlantDetails(IdentifiedPlantResponse identifiedPlantResponse, Gardener gardener, String imagePath) {
         JsonNode firstResult = identifiedPlantResponse.getResults().get(0);
         String bestMatch = identifiedPlantResponse.getBestMatch();
+        Double score = firstResult.get("score").asDouble();
         List<String> commonNames = objectMapper.convertValue(
                 firstResult.get("species").get("commonNames"),
                 objectMapper.getTypeFactory().constructCollectionType(List.class, String.class)
         );
-        return new IdentifiedPlant(bestMatch, firstResult, commonNames, gardener, imagePath);
+        String gbifId = firstResult.get("gbif").get("id").asText();
+        String imageUrl = firstResult.get("images").get(0).get("url").get("o").asText();
+        String speciesScientificNameWithoutAuthor = firstResult.get("species").get("scientificNameWithoutAuthor").asText();
+        String familyScientificNameWithoutAuthor = firstResult.get("species").get("family").get("scientificNameWithoutAuthor").asText();
+
+        return new IdentifiedPlant(bestMatch, score, commonNames, gbifId, imageUrl, imagePath, speciesScientificNameWithoutAuthor, familyScientificNameWithoutAuthor, gardener);
+
     }
 
 

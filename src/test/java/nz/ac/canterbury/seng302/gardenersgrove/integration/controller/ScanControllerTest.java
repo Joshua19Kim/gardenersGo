@@ -60,7 +60,9 @@ public class ScanControllerTest {
                 List.of("Sunflower", "Rose"),
                 "5414641",
                 "https://example.com/sunflower.jpg",
-                "https://example.com/sunflower.jpg"
+                "https://example.com/sunflower.jpg",
+                "Helianthus",
+                "annuus"
                 , testGardener
         );
         when(plantIdentificationService.identifyPlant(
