@@ -1571,6 +1571,19 @@ form.search-bar::after {
 
 .collection-gardens-card {
     padding: 0 !important;
+    position: relative;
+}
+
+.collection-gardens-card .btn-wrapper {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.collection-gardens-card .btn-success {
+    padding: 2px 10px;
+    font-size: smaller;
+    min-width: fit-content;
 }
 
 .friend-modal-content {
