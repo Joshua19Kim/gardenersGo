@@ -61,12 +61,28 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <h5 class="modal-title" id="successModalLabel">Name your plant!</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Plant saved to your collection successfully!
+                <p>Add a name to your discovery</p>
+
+                <form id="identifiedPlantNameForm">
+                    <label for="name"> Name: </label>
+                    <input type="text" class="form-control" th:value="*{name}" id="name" name="name" maxlength="64" placeholder="Name"
+                           th:classappend="${nameError} ? 'is-invalid' : ''">
+                    <p th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></p>
+                    <div id="commonNames"></div>
+                    <br/>
+                    <label for="description"> Description (Optional): </label>
+                    <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
+                    <textarea class="form-control" th:value="*{description}" id="description" name="description"  maxlength="512"
+                              th:classappend="${descriptionError} ? 'is-invalid' : ''">[[${description}]]</textarea>
+                    <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
+                </form>
             </div>
+
+
             <div class="modal-footer d-flex justify-content-center" >
                 <button type="button" class="btn btn-primary" id="goToCollectionButton" th:data-url="@{/myCollection}">Go to my collection</button>
                 <button type="button" class="btn cancel-button text-white" data-bs-dismiss="modal">Close</button>

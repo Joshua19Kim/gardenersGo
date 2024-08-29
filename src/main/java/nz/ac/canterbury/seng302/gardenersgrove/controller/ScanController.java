@@ -35,6 +35,8 @@ public class ScanController {
     private final ImageService imageService;
     private final Map<String, String> errorResponse;
     private final Map<String, Object> response;
+    private IdentifiedPlant identifiedPlant;
+
     /**
      * Constructs a new ScanController with the services required for sending and storing identified plants.
      *
@@ -94,7 +96,7 @@ public class ScanController {
 
         if (gardener.isPresent()) {
             try {
-                IdentifiedPlant identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
+                identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
 
                 response.put("bestMatch", identifiedPlant.getBestMatch());
                 response.put("score", identifiedPlant.getScore());
@@ -120,7 +122,6 @@ public class ScanController {
     /**
      * Handles POST requests to the /saveIdentifiedPlant endpoint.
      * Process the data of the identified plant
-     * @param plantData The data of the identified plant
      * @return ResponseEntity<?> with one of the following:
      *         - ResponseEntity.ok() with a success message if the plant data is saved successfully
      *         - ResponseEntity.badRequest() with an error message if saving the plant data fails
@@ -128,28 +129,17 @@ public class ScanController {
      */
     @PostMapping("/saveIdentifiedPlant")
     @ResponseBody
-    public ResponseEntity<?> saveIdentifiedPlant(@RequestBody Map<String, Object> plantData) {
+    public ResponseEntity<?> saveIdentifiedPlant( @RequestBody Map<String, String> extra) {
         logger.info("POST /saveIdentifiedPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
         if (gardener.isPresent()) {
             try {
-                Double score = (Double) plantData.get("score");
-                String bestMatch = (String) plantData.get("bestMatch");
-                List<String> commonNames = (List<String>) plantData.get("commonNames");
-                String imageUrl = (String) plantData.get("imageUrl");
-                String gbifId = (String) plantData.get("gbifId");
-
-                // to show the details are coming correctly!!!!!!
-                logger.info("Score: " + score);
-                logger.info("Best Match: " + bestMatch);
-                logger.info("Common Names: " + commonNames);
-                logger.info("Image URL: " + imageUrl);
-                logger.info("GBIF ID: " + gbifId);
-
-
+                identifiedPlant.setName(extra.get("name"));
+                identifiedPlant.setDescription(extra.get("description"));
 
                 response.put("message", "Plant saved successfully");
+                plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
                 return ResponseEntity.ok(response);
             } catch (Exception e) {
                 errorResponse.put("error", "Failed to save the identified plant: " + e.getMessage());
@@ -161,50 +151,4 @@ public class ScanController {
         }
     }
 
-
-
-
-//    /**
-//     * Handles POST requests to the /scan endpoint.
-//     * Processes the uploaded image, identifies the plant, and displays the result of the identification
-//     *
-//     * @param image the image file uploaded by the user for plant identification
-//     * @param model the model to hold attributes for rendering in the view
-//     * @return the name of the template to display the identification results or errors
-//     */
-//    @PostMapping("/scan")
-//    public String sendScanForm(@RequestParam("image") MultipartFile image, Model model) {
-//        Optional<Gardener> gardener = getGardenerFromAuthentication();
-//        if (gardener.isPresent()) {
-//            try {
-//                IdentifiedPlant identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
-//
-//                model.addAttribute("bestMatch", identifiedPlant.getBestMatch());
-//                model.addAttribute("score", identifiedPlant.getScore());
-//                model.addAttribute("speciesScientificNameWithoutAuthor", identifiedPlant.getSpeciesScientificNameWithoutAuthor());
-//                model.addAttribute("speciesScientificNameAuthorship", identifiedPlant.getSpeciesScientificNameAuthorship());
-//                model.addAttribute("speciesScientificName", identifiedPlant.getSpeciesScientificName());
-//                model.addAttribute("genusScientificNameWithoutAuthor", identifiedPlant.getGenusScientificNameWithoutAuthor());
-//                model.addAttribute("genusScientificNameAuthorship", identifiedPlant.getGenusScientificNameAuthorship());
-//                model.addAttribute("genusScientificName", identifiedPlant.getGenusScientificName());
-//                model.addAttribute("familyScientificNameWithoutAuthor", identifiedPlant.getFamilyScientificNameWithoutAuthor());
-//                model.addAttribute("familyScientificNameAuthorship", identifiedPlant.getFamilyScientificNameAuthorship());
-//                model.addAttribute("familyScientificName", identifiedPlant.getFamilyScientificName());
-//                model.addAttribute("commonNames", identifiedPlant.getCommonNames());
-//                model.addAttribute("gbifId", identifiedPlant.getGbifId());
-//                model.addAttribute("powoId", identifiedPlant.getPowoId());
-//                model.addAttribute("iucnId", identifiedPlant.getIucnId());
-//                model.addAttribute("iucnCategory", identifiedPlant.getIucnCategory());
-//                model.addAttribute("imageUrl", identifiedPlant.getImageUrl());
-//
-//                return "scan";
-//            } catch (Exception e) {
-//                model.addAttribute("error", "Error: " + e.getMessage());
-//                return "scan";
-//            }
-//        } else {
-//            model.addAttribute("error", "Error: User not authenticated");
-//            return "scan";
-//        }
-//    }
 }

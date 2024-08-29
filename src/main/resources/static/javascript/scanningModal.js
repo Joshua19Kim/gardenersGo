@@ -6,8 +6,10 @@ const errorContainer= document.getElementById('errorContainer');
 const imageInput= document.getElementById('imageInput');
 const imagePreview= document.getElementById('imagePreview');
 const saveToCollectionButton= document.getElementById('saveToCollectionButton');
+const commonNames = document.getElementById('commonNames');
 const fileName= document.getElementById('fileName');
 const gbifInfo= document.getElementById('gbifInfo');
+
 
 let identifiedPlantData = null;
 var goToCollectionButton = document.getElementById('goToCollectionButton');
@@ -142,6 +144,8 @@ document.addEventListener('DOMContentLoaded', function() {
 //User got the plant identified and clicks save button for myCollection
 saveToCollectionButton.addEventListener('click', function() {
     if (identifiedPlantData) {
+        var nameResults = identifiedPlantData.commonNames && identifiedPlantData.commonNames.length > 0 ? 'Suggestions: ' + identifiedPlantData.commonNames.join(', ') : '';
+        commonNames.innerText = nameResults;
         var successModal = new bootstrap.Modal(document.getElementById('successModal'));
         successModal.show();
         var modal = bootstrap.Modal.getInstance(document.getElementById('scanningModal'));
@@ -155,9 +159,10 @@ saveToCollectionButton.addEventListener('click', function() {
 goToCollectionButton.addEventListener('click', function() {
     var modal = bootstrap.Modal.getInstance(successModal);
     modal.hide();
-    setTimeout(function() {
-        window.location.href = goToCollectionButton.getAttribute('data-url');
-    }, 150);
+
+    var formData = new FormData(document.getElementById('identifiedPlantNameForm'));
+    var name = formData.get('name');
+    var description = formData.get('description');
 
 
     fetch('/saveIdentifiedPlant', {
@@ -166,7 +171,7 @@ goToCollectionButton.addEventListener('click', function() {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
         },
-        body: JSON.stringify(identifiedPlantData)
+        body: JSON.stringify({ name: name, description: description })
     })
         .then(response => {
             if (!response.ok) {
@@ -176,6 +181,8 @@ goToCollectionButton.addEventListener('click', function() {
         })
         .then(data => {
             var modal = bootstrap.Modal.getInstance(successModal);
+            document.getElementById('name').setAttribute('name',"");
+            document.getElementById('description').setAttribute('description', "");
             modal.hide();
         })
         .catch((error) => {
@@ -183,7 +190,45 @@ goToCollectionButton.addEventListener('click', function() {
             alert('An error occurred while saving the plant.');
         });
 
+});
 
+// Character count section below
 
+const txHeight = 16;
+const tx = document.getElementsByTagName("textarea");
+for (let i = 0; i < tx.length; i++) {
+    if (tx[i].value === '') {
+        tx[i].setAttribute("style", "height:" + txHeight + "px;overflow-y:hidden;");
+    } else {
+        tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+    }
+    tx[i].addEventListener("input", OnInput, false);
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCharacterCount();
+    });
+    document.addEventListener('input', function() {
+        updateCharacterCount();
+    });
 
+}
+
+function OnInput() {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight) + "px";
+}
+function updateCharacterCount() {
+    var textarea = document.getElementById("description");
+    var characterCount = document.getElementById("characterCount");
+    characterCount.textContent = textarea.value.length;
+}
+
+document.getElementById("identifiedPlantNameForm").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        var activeElement = document.activeElement;
+        if (activeElement.type === "date" || activeElement.tagName === "BUTTON") {
+            return true;
+        } else {
+            event.preventDefault();
+        }
+    }
 });
