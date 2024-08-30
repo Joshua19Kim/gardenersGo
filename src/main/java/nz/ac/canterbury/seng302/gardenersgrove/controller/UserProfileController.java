@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,11 +33,11 @@ import java.util.Optional;
 @Controller
 public class UserProfileController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
-    private final GardenService gardenService;
     private final GardenerFormService gardenerFormService;
     private final RequestService requestService;
     private final WriteEmail writeEmail;
     private final MainPageLayoutService mainPageLayoutService;
+    private final GardenService gardenService;
     private Gardener gardener;
 
     @Autowired
@@ -98,14 +96,12 @@ public class UserProfileController {
         logger.info("GET /user");
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-        List<Garden> gardens;
 
         model.addAttribute("requestURI", requestService.getRequestURI(request));
 
         if (gardenerOptional.isPresent()) {
             gardener = gardenerOptional.get();
-            gardens = gardenService.getGardensByGardenerId(gardener.getId());
-            model.addAttribute("gardens", gardens);
+
             if(user != null) {
                 Optional<Gardener> friend = gardenerFormService.findById(Long.parseLong(user, 10));
                 // If the current user is friends
@@ -249,8 +245,7 @@ public class UserProfileController {
             } else {
                 Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
                 gardenerOptional.ifPresent(value -> gardener = value);
-                List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());;
-                model.addAttribute("gardens", gardens);
+
                 model.addAttribute("requestURI", requestService.getRequestURI(request));
                 model.addAttribute("uploadMessage", uploadMessage.get());
                 model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
@@ -278,7 +273,6 @@ public class UserProfileController {
     @GetMapping("/redirectToUserPage")
     public String profileButton() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        logger.info("Authentication: " + authentication);
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             return "user";
         }
@@ -293,13 +287,6 @@ public class UserProfileController {
     public String passwordForm(Model model, HttpServletRequest request) {
         logger.info("GET /password");
         model.addAttribute("requestURI", requestService.getRequestURI(request));
-        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-        List<Garden> gardens;
-
-        gardenerOptional.ifPresent(value -> gardener = value);
-
-        gardens = gardenService.getGardensByGardenerId(gardener.getId());
-        model.addAttribute("gardens", gardens);
         return "password";
     }
 
@@ -330,8 +317,6 @@ public class UserProfileController {
 
         if (gardenerOptional.isEmpty()) {return "loginForm";}
 
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-        model.addAttribute("gardens", gardens);
         Optional<String> passwordCorrectError = inputValidator.checkSavedPassword(oldPassword, gardener.getPassword());
         model.addAttribute("passwordCorrect", passwordCorrectError.orElse(""));
         Optional<String> passwordMatchError = inputValidator.checkPasswordsMatch(newPassword, retypePassword);

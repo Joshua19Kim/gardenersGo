@@ -24,8 +24,6 @@ import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -113,13 +111,6 @@ public class GardenDetailsController {
        logger.info("GET /gardens/details");
 
        Optional<Gardener> currentUserOptional = getGardenerFromAuthentication();
-       List<Garden> gardens = new ArrayList<>();
-       if (currentUserOptional.isPresent()) {
-           gardener = currentUserOptional.get();
-           gardens = gardenService.getGardensByGardenerId(gardener.getId());
-       }
-
-       model.addAttribute("gardens", gardens);
 
        if (gardenId == null) {
            return "redirect:/gardens";
@@ -227,8 +218,7 @@ public class GardenDetailsController {
         if (gardenId == null || gardenerOptional.isEmpty()) {
             return "redirect:/gardens";
         }
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
-        model.addAttribute("gardens", gardens);
+
         Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
         if (garden.isPresent()) {
 
@@ -314,13 +304,7 @@ public class GardenDetailsController {
         if (gardenOptional.isEmpty()) {
             return "redirect:/gardens";
         }
-        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-        List<Garden> gardens = new ArrayList<>();
-        if (gardenerOptional.isPresent()) {
-            gardener = gardenerOptional.get();
-            gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
-        }
-        model.addAttribute("gardens", gardens);
+
         Garden garden = gardenOptional.get();
         Optional<String> validTagError = tagValidation.validateTag(tag);
         Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
