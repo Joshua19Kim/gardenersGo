@@ -4,9 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.cucumber;
 import io.cucumber.junit.platform.engine.Constants;
 import io.cucumber.spring.CucumberContextConfiguration;
 import nz.ac.canterbury.seng302.gardenersgrove.GardenersGroveApplication;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.LocationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.platform.suite.api.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,5 +30,6 @@ import org.springframework.test.context.ContextConfiguration;
 @MockBean(Authentication.class)
 @MockBean(LocationService.class)
 @MockBean(EmailUserService.class)
+@MockBean(PlantIdentificationService.class)
 public class RunCucumberTest {
 }
