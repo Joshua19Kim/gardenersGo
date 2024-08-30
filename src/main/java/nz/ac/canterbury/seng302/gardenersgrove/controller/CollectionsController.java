@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Species;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
@@ -78,18 +79,16 @@ public class CollectionsController {
     @GetMapping("/myCollection")
     public String getMyCollection(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
-            Model model
-    ) {
+            Model model) {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
-        Page<IdentifiedPlant> collectionsList = plantIdentificationService.getGardenerIdentifiedPlantsPaginated(pageNo, pageSize, gardener.getId());
+        Page<Species> speciesList = plantIdentificationService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
         logger.info("GET /myCollection");
-        model.addAttribute("collectionsList", collectionsList);
-        int totalPages = collectionsList.getTotalPages();
+        model.addAttribute("speciesList", speciesList);
+        int totalPages = speciesList.getTotalPages();
         if(totalPages > 0) {
             int lowerBound = Math.max(pageNo - 1, 1);
             int upperBound = Math.min(pageNo + 3, totalPages);
@@ -98,7 +97,7 @@ public class CollectionsController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
 
-            long totalItems = collectionsList.getTotalElements();
+            long totalItems = speciesList.getTotalElements();
             int startIndex = pageSize * pageNo + 1;
             long endIndex = Math.min((long) pageSize * (pageNo + 1), totalItems);
             String paginationMessage = "Showing results " + startIndex + " to " + endIndex + " of " + totalItems;

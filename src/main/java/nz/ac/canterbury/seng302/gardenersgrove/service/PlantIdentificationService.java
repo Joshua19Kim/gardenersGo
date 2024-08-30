@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Species;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,5 +191,17 @@ public class PlantIdentificationService {
     public Page<IdentifiedPlant> getGardenerIdentifiedPlantsPaginated(int pageNo, int pageSize, Long gardenerId) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         return identifiedPlantRepository.findPlantSpeciesByGardenerId(gardenerId, pageable);
+    }
+
+    /**
+     * Gets the IdentifiedPlant species that are owned by the gardener in paginated form
+     * @param pageNo the page number
+     * @param pageSize the size of the page
+     * @param gardenerId the id of the gardener
+     * @return the page of IdentifiedPlant species
+     */
+    public Page<Species> getGardenerPlantSpeciesPaginated(int pageNo, int pageSize, Long gardenerId) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return identifiedPlantRepository.getSpeciesByGardenerId(gardenerId, pageable);
     }
 }
