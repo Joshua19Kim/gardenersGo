@@ -1,0 +1,64 @@
+#scanningModal .modal-content {
+    background-color: var(--background-color);
+}
+
+#scanningAttribution {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.identified-plant-image {
+    max-width: 300px;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.cancel-button {
+    background-color: var(--button-cancel-colour);
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+    background-color: var(--button-cancel-hover-colour);
+}
+
+.image-button {
+    background-color: var(--secondary-color);
+    padding: 5px 8px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.image-button:hover {
+    background-color: var(--primary-color);
+}
+
+.image-button:active {
+    background-color: var(--primary-color);
+}
+
+
+.extra-small {
+    font-size: 0.6em;
+    line-height: 1;
+}
+
+
+.detail-button {
+    background-color: var(--secondary-color);
+    padding: 5px 8px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.detail-button:hover {
+    background-color: var(--primary-color);
+}
+
