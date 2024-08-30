@@ -116,6 +116,23 @@ public class IdentifiedPlant {
 
     }
 
+    public IdentifiedPlant(String bestMatch, String description,
+                           String speciesScientificNameWithoutAuthor, LocalDate uploadedDate,
+                           Gardener gardener) {
+
+        this.bestMatch = bestMatch;
+        this.description = description;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        this.dateUploaded = uploadedDate.format(formatter);
+        this.speciesScientificNameWithoutAuthor = speciesScientificNameWithoutAuthor;
+        this.gardener = gardener;
+
+
+    }
+
+
+
+
 
     public Long getId() {
         return id;

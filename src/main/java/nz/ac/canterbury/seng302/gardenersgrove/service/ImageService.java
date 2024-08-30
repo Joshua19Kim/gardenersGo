@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,16 @@ public class ImageService {
     private final Logger logger = LoggerFactory.getLogger(ImageService.class);
     private final GardenerFormService gardenerFormService;
     private final PlantService plantService;
+    private final PlantIdentificationService plantIdentificationService;
     private static final int MAX_SIZE = 10*1024*1024;
     private final List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
     private static final String UPLOADS_DIR = "/uploads/";
     private static final String UPLOAD_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
     @Autowired
-    public ImageService(GardenerFormService gardenerFormService, PlantService plantService) {
+    public ImageService(GardenerFormService gardenerFormService, PlantService plantService, PlantIdentificationService plantIdentificationService) {
         this.gardenerFormService = gardenerFormService;
         this.plantService = plantService;
+        this.plantIdentificationService = plantIdentificationService;
     }
 
     /**
@@ -153,4 +156,33 @@ public class ImageService {
                     "Image must be less than 10MB");
         }
     }
+
+
+    public void saveCollectionPlantImage(MultipartFile file, IdentifiedPlant identifiedPlant) {
+
+        try {
+            Files.createDirectories(Paths.get(UPLOAD_DIRECTORY));
+            String fileName = file.getOriginalFilename();
+            //NullPointerException shouldn't affect below line as HTML form prevents an empty upload, i.e. file will never be null
+            assert fileName != null;
+            String newFileName = "identifiedPlant_" + identifiedPlant.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
+            Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);
+                File checkFile = new File(filePath.toString());
+                String canonicalDestinationPath = checkFile.getCanonicalPath();
+
+                if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
+                    throw new IOException("Entry is outside of the target directory");
+                }
+                Files.write(filePath, file.getBytes());
+                identifiedPlant.setUploadedImage(UPLOADS_DIR + newFileName);
+                plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+    }
+
+
+
+
+
 }

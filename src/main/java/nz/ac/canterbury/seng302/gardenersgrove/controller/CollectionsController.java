@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
@@ -16,8 +17,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +33,7 @@ import java.util.stream.IntStream;
 @Controller
 public class CollectionsController {
     private final PlantIdentificationService plantIdentificationService;
-
+    private final ImageService imageService;
     Logger logger = LoggerFactory.getLogger(CollectionsController.class);
 
     private int pageSize;
@@ -46,8 +50,9 @@ public class CollectionsController {
      * @param gardenService used in conjunction with gardener form service to populate navbar
      * @param gardenerFormService used in conjunction with above to populate navbar
      */
-    public CollectionsController(PlantIdentificationService plantIdentificationService, GardenService gardenService, GardenerFormService gardenerFormService) {
+    public CollectionsController(PlantIdentificationService plantIdentificationService, ImageService imageService, GardenService gardenService, GardenerFormService gardenerFormService) {
         this.plantIdentificationService = plantIdentificationService;
+        this.imageService = imageService;
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         pageSize = 12;
@@ -114,5 +119,36 @@ public class CollectionsController {
 
         return "myCollectionTemplate";
     }
+
+    @PostMapping("/myCollection")
+    public String addPlantToCollection(
+            @RequestParam (name="plantName") String plantName,
+            @RequestParam (name="description", required = false) String description,
+            @RequestParam (name="scientificName", required = false) String scientificName,
+            @RequestParam (name="date") LocalDate date,
+            @RequestParam (name="plantImage") MultipartFile plantImage,
+            Model model
+    ) {
+        logger.info("/myCollection/addNewPlantToMyCollection");
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+
+        //validation check needed. Look at plantAddFormController.
+
+        IdentifiedPlant newPlantDetails = new IdentifiedPlant(plantName, description, scientificName, date, gardener);
+
+        IdentifiedPlant newPlant = plantIdentificationService.saveIdentifiedPlantDetails(newPlantDetails);
+
+        imageService.saveCollectionPlantImage(plantImage, newPlant);
+
+        return "myCollectionTemplate";
+    }
+
+
+
+
+
+
+
 
 }
