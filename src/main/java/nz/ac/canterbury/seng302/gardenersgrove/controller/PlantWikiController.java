@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
@@ -23,7 +24,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,11 +39,14 @@ public class PlantWikiController {
 
     private final PlantWikiService plantWikiService;
 
+    private final PlantService plantService;
+
     private final GardenerFormService gardenerFormService;
 
     private final GardenService gardenService;
 
-    private final ImageDownloadService imageDownloadService;
+    private final ImageService imageService;
+
 
 
     private Gardener gardener;
@@ -48,11 +55,12 @@ public class PlantWikiController {
 
 
     @Autowired
-    public PlantWikiController(PlantWikiService plantWikiService, GardenerFormService gardenerFormService, GardenService gardenService, ImageDownloadService imageDownloadService) {
+    public PlantWikiController(PlantWikiService plantWikiService, PlantService plantService, GardenerFormService gardenerFormService, GardenService gardenService, ImageService imageService) {
         this.plantWikiService = plantWikiService;
+        this.plantService = plantService;
         this.gardenerFormService = gardenerFormService;
         this.gardenService = gardenService;
-        this.imageDownloadService = imageDownloadService;
+        this.imageService = imageService;
     }
 
 
@@ -108,34 +116,112 @@ public class PlantWikiController {
     public String addPlant(
             @RequestParam("gardenId") Long gardenId,
             @RequestParam("name") String name,
-            @RequestParam("count") Integer count,
+            @RequestParam("count") String count,
             @RequestParam("description") String description,
             @RequestParam("date") String date,
+            @RequestParam(value = "isDateInvalid", required = false) boolean isDateInvalid,
+            @RequestParam(value = "imageUrl", required = false) String imageUrl,
+            @RequestParam(value = "searchTerm", required = false) String searchTerm,
             @RequestParam("file") MultipartFile file,
-            Model model) {
-
-        model.addAttribute(name, "tempName");
-        model.addAttribute(String.valueOf(count), 1);
-        model.addAttribute(description, "tempName");
-        model.addAttribute(date, "tempName");
-        model.addAttribute(String.valueOf(file), "tempName");
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         logger.info("POST /addPlant");
 
-        return "plantWikiTemplate";
+        Optional<Garden> gardenOptional = gardenService.getGarden(gardenId);
+        if (gardenOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Selected garden does not exist.");
+            return "redirect:/plantWiki";
+        }
 
+        Garden garden = gardenOptional.get();
+        String validatedPlantName = ValidityChecker.validatePlantName(name);
+        String validatedPlantCount = ValidityChecker.validatePlantCount(count);
+        String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
+
+        boolean isValid = true;
+
+        Optional<String> dateError = Optional.empty();
+        if (isDateInvalid) {
+            dateError = Optional.of("Date is not in valid format, DD/MM/YYYY");
+            isValid = false;
+        }
+        model.addAttribute("DateValid", dateError.orElse(""));
+
+        if (!Objects.equals(name, validatedPlantName)) {
+            model.addAttribute("nameError", validatedPlantName);
+            isValid = false;
+        }
+        if (count != null && !Objects.equals(count.replace(",", "."), validatedPlantCount)) {
+            model.addAttribute("countError", validatedPlantCount);
+            isValid = false;
+        }
+        if (!Objects.equals(description, validatedPlantDescription)) {
+            model.addAttribute("descriptionError", validatedPlantDescription);
+            isValid = false;
+        }
+        if (!file.isEmpty()) {
+            Optional<String> uploadMessage = imageService.checkValidImage(file);
+            if (uploadMessage.isPresent()) {
+                model.addAttribute("uploadError", uploadMessage.get());
+                isValid = false;
+            }
+        }
+
+        if (isValid) {
+            Plant plant = new Plant(name, garden);
+            boolean countPresent = count != null && !validatedPlantCount.trim().isEmpty();
+            boolean descriptionPresent = description != null && !validatedPlantDescription.trim().isEmpty();
+            boolean datePresent = date != null;
+
+            if (countPresent) {
+                plant.setCount(new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
+            }
+            if (descriptionPresent) {
+                plant.setDescription(validatedPlantDescription);
+            }
+            if (datePresent) {
+                DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate parsedDate = LocalDate.parse(date, inputFormatter);
+                String formattedDate = parsedDate.format(outputFormatter);
+
+                plant.setDatePlanted(formattedDate);
+            }
+
+            // First need to save the plant to get the id assigned by the database
+            plantService.addPlant(plant);
+
+            if (!file.isEmpty()) {
+                imageService.savePlantImage(file, plant);
+            } else if (imageUrl != null && !imageUrl.isEmpty()) {
+                String filePath = imageService.downloadImage(imageUrl, plant.getId());
+                logger.info(filePath);
+                plant.setImage(filePath);
+                plantService.addPlant(plant);
+            } else {
+                plant.setImage("/images/placeholder.jpg");
+                plantService.addPlant(plant);
+            }
+
+            redirectAttributes.addFlashAttribute("successMessage", "Plant added successfully!");
+            return "redirect:/plantWiki";
+        } else {
+            // Handle validation errors and re-display the form with errors
+            Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+            gardenerOptional.ifPresent(value -> gardener = value);
+            List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+            model.addAttribute("gardens", gardens);
+            model.addAttribute("name", name);
+            model.addAttribute("count", count);
+            model.addAttribute("description", description);
+            model.addAttribute("date", date);
+            model.addAttribute("garden", garden);
+            return "plantWikiTemplate";
+        }
     }
-
-    @PostMapping("/downloadImage")
-    public String downloadImage(@RequestParam("imageUrl") String imageUrl, RedirectAttributes redirectAttributes) {
-        String uniqueFilename = imageDownloadService.downloadImage(imageUrl); // Get the unique filename
-
-        redirectAttributes.addFlashAttribute("imagePath", "/images/tempImageStorage/" + uniqueFilename);
-        redirectAttributes.addFlashAttribute("showModal", true);
-
-        return "redirect:/plantWiki";
-    }
-
-
 
 }
+
+
+

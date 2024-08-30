@@ -10,15 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service to handle the validation and naming of images, before writing to file
@@ -114,6 +111,7 @@ public class ImageService {
                 }
                 Files.write(filePath, file.getBytes());
                 plant.setImage(UPLOADS_DIR + newFileName);
+                logger.info(UPLOADS_DIR + newFileName);
                 plantService.addPlant(plant);
                 return Optional.empty();
             } else {
@@ -153,4 +151,44 @@ public class ImageService {
                     "Image must be less than 10MB");
         }
     }
+
+    /**
+     * Helper function to download the image from the api
+     * @param imageUrl location of image
+     * @param id id of the plant you want image for
+     * @return the location of the upload to store in the database
+     */
+    public String downloadImage(String imageUrl, Long id) {
+        String newFileName = "plant_" + id.toString() + ".png";
+
+        String destinationFile = Paths.get(UPLOAD_DIRECTORY, "plants", newFileName).toString();
+        try {
+            Files.createDirectories(Paths.get(UPLOAD_DIRECTORY, "plants"));
+
+            try (InputStream in = new BufferedInputStream(new URL(imageUrl).openStream());
+                 FileOutputStream out = new FileOutputStream(destinationFile)) {
+
+                byte[] dataBuffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+                    out.write(dataBuffer, 0, bytesRead);
+                }
+                logger.info("Image downloaded successfully to " + destinationFile);
+            }
+        } catch (IOException e) {
+            logger.error("Failed to download the image from {} to {}: {}", imageUrl, destinationFile, e.getMessage());
+            return null;
+        }
+        String keyword = "/uploads/";
+        String uploadLocation;
+        int startIndex = destinationFile.indexOf(keyword);
+
+        if (startIndex != -1) {
+            uploadLocation = destinationFile.substring(startIndex);
+        } else {
+            uploadLocation = "/images/placeholder.jpg";
+        }
+        return uploadLocation;
+    }
+
 }

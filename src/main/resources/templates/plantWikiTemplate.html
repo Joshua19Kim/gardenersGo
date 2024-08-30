@@ -11,7 +11,7 @@
 <div class="browse-gardens-container">
     <div class="search-container d-flex justify-content-center">
         <form class="form-inline" method="post" th:action="@{/plantWiki}">
-            <input aria-label="Search" class="form-control mr-2 mb-0 mt-0" placeholder="Search" th:value="${searchTerm}" th:name="searchTerm" type="search">
+            <input aria-label="Search" class="form-control mr-2 mb-0 mt-0" placeholder="Search" th:value="${searchTerm}" name="searchTerm" type="search">
             <button class="btn btn-outline-success mt-0" type="submit">Search</button>
         </form>
     </div>
@@ -65,12 +65,11 @@
                     <h1> Add New Plant </h1>
                     <label class="fst-italic">* Required</label>
                     <br/>
-                    <form id="plantForm" method="post" enctype="multipart/form-data">
+                    <form id="plantForm" method="post" th:action="@{/addPlant}" enctype="multipart/form-data">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                        <select class="form-select" aria-label="Select">
-                            <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
-                                <option selected>Choose a garden*</option>
-                                <option class="dropdown-item" th:text="${garden.name}"></option>
+                        <select class="form-select" name="gardenId" aria-label="Select">
+                            <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}" placeholder="Choose a garden*">
+                                <option class="dropdown-item" th:text="${garden.name}" th:value="${garden.id}"></option>
                             </th:block>
                         </select>
                         <br/>
@@ -97,6 +96,8 @@
                                 });
                         </script>
                         <br/>
+                        <!-- Hidden input to store image URL -->
+                        <input type="hidden" id="imageUrl" name="imageUrl">
                         <label for="image"> Image: </label>
                         <div class="plant-image-container" id="image">
                             <img id="currentImage" src="" alt="Plant">
@@ -110,6 +111,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
@@ -120,12 +122,13 @@
 
         const imageUrl = button.getAttribute('data-image-url');
         document.getElementById('currentImage').src = imageUrl;
+        document.getElementById('imageUrl').value = imageUrl; // Set the hidden input value
 
         const plantName = button.getAttribute('data-plant-name');
-        document.getElementById('name').value = plantName ;
+        document.getElementById('name').value = plantName;
 
         const plantDesc = button.getAttribute('data-plant-desc');
-        document.getElementById('description').value = plantDesc.replace(/\\n/g, '\n'); //actually make it new line
+        document.getElementById('description').value = plantDesc.replace(/\\n/g, '\n'); // Actually make it a new line
 
         // Set today's date in DD/MM/YYYY format
         const today = new Date();
@@ -147,6 +150,7 @@
             var reader = new FileReader();
             reader.onload = function(e) {
                 document.getElementById('currentImage').src = e.target.result;
+                document.getElementById('imageUrl').value = ''; // Clear the URL if a file is chosen
             };
             reader.readAsDataURL(file);
         }
