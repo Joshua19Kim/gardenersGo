@@ -68,4 +68,8 @@ public class FollowerService {
         }
         return List.of();
     }
+
+    public Optional<Follower> findFollower(long gardenerId, long gardenId) {
+        return followerRepository.findByGardenerIdAndGardenId(gardenerId, gardenId);
+    }
 }

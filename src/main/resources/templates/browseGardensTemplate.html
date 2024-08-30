@@ -52,7 +52,7 @@
     </div>
     <div class="container">
     <div class="d-flex flex-wrap justify-content-center">
-        <div th:each="garden : ${gardensPage.content}" style="width: 400px;">
+        <div class="m-1" th:each="garden : ${gardensPage.content}" style="width: 400px;">
             <a th:href="@{gardens/details(gardenId=${garden.id})}" style="text-decoration: none; color: inherit; width: 400px">
                 <div class="card browse-gardens-card col p-0 h-100"  >
                     <div class="card-body w-100">
@@ -64,7 +64,7 @@
                             </div>
 
                             <form class="position-absolute" method="post" th:action="@{/follow(pageNo=${gardensPage.number},pageRequest=true)}" style="text-align: right">
-                                <button name="gardenToFollow" class="btn" th:classappend="${gardensFollowing.contains(garden.id)} ? 'btn-outline-danger' : 'btn-outline-warning'" th:value="${garden.id}" style="width: 50px" th:text="${gardensFollowing.contains(garden.id)} ? 'Unfollow' : 'Follow'"></button>
+                                <button name="gardenToFollow" class="p-1 btn" th:classappend="${gardensFollowing.contains(garden.id)} ? 'btn-danger' : 'btn-success'" th:value="${garden.id}" style="width: 25px" th:text="${gardensFollowing.contains(garden.id)} ? 'Unfollow' : 'Follow'"></button>
                             </form>
                         </div>
                         <div style="display: flex; justify-content: center; margin-top: 13px;">

@@ -313,8 +313,14 @@ public class BrowseGardensController {
         Optional<Gardener> gardener = getGardenerFromAuthentication();
         if (gardener.isPresent()) {
             Long gardenerId = gardener.get().getId();
-            Follower follower = new Follower(gardenerId, gardenToFollow);
-            followerService.addfollower(follower);
+
+            // If the relation exists, delete it (unfollow), otherwise create it (follow)
+            if (followerService.findFollower(gardenerId, gardenToFollow).isPresent()) {
+                followerService.deleteFollower(gardenerId, gardenToFollow);
+            } else {
+                Follower follower = new Follower(gardenerId, gardenToFollow);
+                followerService.addfollower(follower);
+            }
         }
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
