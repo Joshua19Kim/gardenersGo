@@ -29,7 +29,10 @@
 body {
     background-color: var(--background-color);
     color: var(--text-color);
-    font-family: Arial, sans-serif;
+    font-family: "Nunito", sans-serif;
+    font-weight: 500;
+    font-optical-sizing: auto;
+    font-style: normal;
     height: 100%;
     margin: 0;
     align-items: center;
@@ -75,12 +78,21 @@ body {
 h1 {
     margin-bottom: 20px;
     color: var(--text-color);
+    font-weight: bold;
 }
 
 .nav-title h1 {
     margin-bottom: 20px;
     color: var(--text-color);
     font-family: 'Matemasie', sans-serif;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
 }
 
 .title {
@@ -163,6 +175,7 @@ textarea#description.garden-form-control {
     display: block;
     text-align: center;
     margin-top: 10px;
+    font-style: italic;
 }
 
 .btn-link:hover {
@@ -196,6 +209,7 @@ textarea#description.garden-form-control {
     display: block;
     transition: 0.2s;
     color: white;
+    font-style: italic;
 }
 
 .form-field:focus {
@@ -243,7 +257,9 @@ textarea#description.garden-form-control {
     font-size: 16px;
     border: none;
     cursor: pointer;
-    font-family: 'Roboto', sans-serif;
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
     display: flex;
     align-items: center; /* Aligns text and arrow vertically */
 }
@@ -748,7 +764,9 @@ img {
 
 
 body, h2, h3, h4, h5, h6, a {
-    font-family: 'Roboto', sans-serif;
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
     color: #1c1c1a;
 }
 
@@ -757,7 +775,9 @@ body, h2, h3, h4, h5, h6, a {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
     scrollbar-color: #8dab6e #e7f0dc;
 }
 
@@ -852,6 +872,7 @@ body, h2, h3, h4, h5, h6, a {
 .main-page2-card-title {
     font-size: 1.25rem;
     margin-bottom: 1rem;
+    font-weight: bold;
 }
 
 .main-page-avatar {
@@ -923,6 +944,7 @@ body, h2, h3, h4, h5, h6, a {
     margin-bottom: 2%;
     justify-content: center;
     display: flex;
+    font-weight: bold;
 }
 
 .warningMessageContainer {
@@ -1541,6 +1563,12 @@ form.search-bar::after {
     padding: 0 20px;
 }
 
+.collection-container {
+    max-width: 1800px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
 
 .friend-modal {
     display: none;
@@ -1567,6 +1595,16 @@ form.search-bar::after {
 
 .collection-gardens-card {
     padding: 0 !important;
+}
+
+.plant-wiki-card {
+    padding: 0 !important;
+    min-height: 633px
+}
+
+.plant-wiki-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
 .friend-modal-content {

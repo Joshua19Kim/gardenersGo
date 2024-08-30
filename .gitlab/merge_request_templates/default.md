@@ -5,6 +5,7 @@
 - - [ ] Did relevant manual testing and specified it in the manual testing column
 - - [ ] Add merge description to the request
 - - [ ] Make sure delete branch is checked
+- - [ ] Checked SonarQube for major issues (vulnerabilities, hotspots, etc)
 
 ## MERGE DESCRIPTION
 
