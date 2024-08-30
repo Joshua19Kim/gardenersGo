@@ -20,8 +20,8 @@
     </div>
     <div class="plant-wiki-container">
         <div class="row">
-            <div th:each="plant : ${resultPlants}" class="col-md-2 mb-4">
-                <div class="card collection-gardens-card">
+            <div th:each="plant : ${resultPlants}" class="col-md-4 col-sm-6 col-lg-3 col-xl-3 col-xxl-2 mb-4">
+                <div class="card plant-wiki-card">
 
                     <img id="collection-card-img" class="card-img-top" th:src="${plant.imagePath  != ''} ? ${plant.imagePath} : '/images/placeholder.jpg'" alt="No Image">
                     <div class="card-collection-body">
