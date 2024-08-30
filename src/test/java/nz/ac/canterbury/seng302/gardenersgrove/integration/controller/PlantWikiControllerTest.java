@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantWikiController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantWikiService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,10 @@ public class PlantWikiControllerTest {
 
     @MockBean
     private PlantWikiService plantWikiService;
+    @MockBean
+    private GardenService gardenService;
+    @MockBean
+    private GardenerFormService gardenerFormService;
 
     private List<WikiPlant> expectedWikiPlants;
 

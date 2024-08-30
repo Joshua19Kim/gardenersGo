@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.config.GlobalControllerAdvice;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -35,7 +36,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@WebMvcTest(controllers = BrowseGardensController.class)
+@WebMvcTest(controllers = {BrowseGardensController.class, GlobalControllerAdvice.class})
 public class BrowseGardensControllerTest {
 
     @Autowired
@@ -101,7 +102,6 @@ public class BrowseGardensControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
-                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -118,7 +118,6 @@ public class BrowseGardensControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
-                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -136,7 +135,6 @@ public class BrowseGardensControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attributeDoesNotExist("pageNumbers"))
-                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 

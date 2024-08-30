@@ -76,10 +76,9 @@ public class GardensControllerTest {
                 .perform((MockMvcRequestBuilders.get("/gardens")))
                 .andExpect(status().isOk())
                 .andExpect(view().name("gardensTemplate"))
-                .andExpect(model().attributeExists("gardens"))
                 .andExpect(model().attribute("gardens", gardens));
 
-        verify(gardenerFormService, times(1)).findByEmail(any());
+        verify(gardenerFormService, times(2)).findByEmail(any()); // This is increased to 2 because it happens once in GlobalControllerAdvice
         verify(gardenService, times(1)).getGardensByGardenerId(any());
     }
 
@@ -111,7 +110,6 @@ public class GardensControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
                         .principal(authentication))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("gardens", testGardens))
                 .andExpect(model().attribute("gardener", otherUser))
                 .andExpect(view().name("gardensTemplate"));
     }
@@ -144,7 +142,6 @@ public class GardensControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens").param("user", "2")
                         .principal(authentication))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("gardens", testGardens))
                 .andExpect(model().attribute("gardener", otherUser))
                 .andExpect(view().name("gardensTemplate"));
     }

@@ -358,6 +358,8 @@ public class GardenDetailsController {
                 tagService.addTag(newTag);
                 logger.info("Tag '{}' passes moderation checks", tag);
             } else {
+                Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+                gardenerOptional.ifPresent(value -> gardener = value);
                 String warningMessage = tagService.addBadWordCount(gardener);
                 // save the updated state of the gardener - either increased bad word count or if they are banned
                 gardenerFormService.addGardener(gardener);
