@@ -5,6 +5,13 @@
         document.getElementById('logoutForm').submit(); // Submit the hidden logout form
     }
     console.log("Cookie: " + document.cookie);
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
 </script>
 
 <!-- Navbar Section -->
@@ -38,8 +45,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" th:href="@{/gardens/form(redirect=${requestURI})}">
 <!--                                    <span class="material-symbols-outlined" id="create-garden-icon">add_circle</span>-->
-                                    <img class="material-symbols-outlined" id="create-garden-icon" src="./images/icons/add_circle.png" style="max-width: 20px; object-fit: contain; cursor: pointer;" alt="Add Circle">
-
+                                    <img class="material-symbols-outlined" id="create-garden-icon" src="./images/icons/add_circle_off_black.png" style="max-width: 20px; object-fit: contain; cursor: pointer;" alt="Add Circle">
                                     Create New Garden
                                 </a>
                             </li>
@@ -69,7 +75,15 @@
 
                     <!-- Centered Scan Plant Item -->
                     <li class="nav-item text-center">
-                        <img class="nav-link modal-link"  data-bs-target="#scanningModal" data-bs-toggle="modal"  src="./images/icons/indeterminate_question_box.png" style="max-width: 50px; object-fit: contain; cursor: pointer;" alt="Scan Plant">
+                        <img
+                                class="nav-link modal-link"
+                                data-bs-target="#scanningModal"
+                                data-bs-toggle="modal"
+                                src="./images/icons/indeterminate_question_box_off_black.png"
+                                style="max-width: 50px; object-fit: contain; cursor: pointer;"
+                                alt="Scan Plant"
+                                title="Scan Plant"
+                        >
                     </li>
 
                     <!-- Spacer -->
@@ -90,7 +104,7 @@
                     <li class="nav-item flex-grow-1"></li>
 
                     <li class="nav-item-dropdown dropdown">
-                        <img class="nav-link dropdown-toggle" src="./images/icons/account_circle.png" style="max-width: 50px; object-fit: contain;" th:href="@{/user}" role="button" data-bs-hover="dropdown" aria-expanded="false" alt="Account">
+                        <img class="nav-link dropdown-toggle" src="./images/icons/account_circle_off_black.png" style="max-width: 50px; object-fit: contain;" th:href="@{/user}" role="button" data-bs-hover="dropdown" aria-expanded="false" alt="Account">
 
 <!--                        <a class="nav-link dropdown-toggle" th:href="@{/user}" role="button" data-bs-hover="dropdown" aria-expanded="false">-->
 <!--                            <span class="material-symbols-outlined" id="account-circle">-->
