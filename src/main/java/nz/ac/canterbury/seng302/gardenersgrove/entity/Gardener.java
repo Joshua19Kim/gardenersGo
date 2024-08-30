@@ -58,9 +58,6 @@ public class Gardener {
     @Column(name = "ban_expiry_date")
     private Date banExpiryDate;
 
-    /** The list of gardens belonging to the gardener. */
-    @OneToMany(mappedBy = "gardener")
-    private List<PlantSpecies> species;
 
     /**
      * JPA required no-args constructor

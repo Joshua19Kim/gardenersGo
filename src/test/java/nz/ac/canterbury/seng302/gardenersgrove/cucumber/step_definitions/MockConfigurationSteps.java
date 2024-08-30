@@ -56,8 +56,10 @@ public class MockConfigurationSteps {
                 List.of("Sunflower", "Rose"),
                 "5414641",
                 "https://example.com/sunflower.jpg",
-                "https://example.com/sunflower.jpg"
-                ,gardener
+                "https://example.com/sunflower.jpg",
+                "Helianthus",
+                "annuus"
+                , gardener
         );
         when(plantIdentificationService.identifyPlant(
                 any(MultipartFile.class),
@@ -74,8 +76,10 @@ public class MockConfigurationSteps {
                 List.of("Sunflower", "Rose"),
                 "5414641",
                 "https://example.com/sunflower.jpg",
-                "https://example.com/sunflower.jpg"
-                ,gardener
+                "https://example.com/sunflower.jpg",
+                "Helianthus",
+                "annuus"
+                , gardener
         );
         when(plantIdentificationService.identifyPlant(
                 any(MultipartFile.class),

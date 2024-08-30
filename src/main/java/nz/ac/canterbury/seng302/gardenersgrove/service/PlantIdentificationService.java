@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -43,6 +46,7 @@ public class PlantIdentificationService {
     private final String apiKey;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
+    private final IdentifiedPlantRepository identifiedPlantRepository;
 
     /**
      * Constructs a new PlantIdentificationService with the specified API key and repository.
@@ -51,8 +55,9 @@ public class PlantIdentificationService {
      * @param identifiedPlantRepository the repository for saving identified plants
      */
     @Autowired
-    public PlantIdentificationService(@Value("${plantNet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository) {
+    public PlantIdentificationService(@Value("${plantNet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository, IdentifiedPlantRepository identifiedPlantRepository1) {
         this.apiKey = apiKey;
+        this.identifiedPlantRepository = identifiedPlantRepository1;
         this.objectMapper = new ObjectMapper();
         this.restTemplate = new RestTemplate();
     }
@@ -66,7 +71,7 @@ public class PlantIdentificationService {
     /**
      * Identifies a plant from the provided image using an external API and saves the result in the database.
      * The result is first stored in an intermediate object containing the JSON data.
-     * Then, a new entity is created to map the response data into and save in the database.
+     * Then, a new entity is created to map the response data into.
      *
      * @param image    the image file of the plant to be identified
      * @param gardener the gardener who uploaded the image
@@ -93,7 +98,6 @@ public class PlantIdentificationService {
         if (response.getStatusCode().is2xxSuccessful()) {
             String imagePath = saveImageFile(image);
             IdentifiedPlantResponse identifiedPlantResponse = objectMapper.readValue(response.getBody(), IdentifiedPlantResponse.class);
-
 
             return getIdentifiedPlantDetails(identifiedPlantResponse, gardener, imagePath);
         } else {
@@ -153,7 +157,7 @@ public class PlantIdentificationService {
      * @param identifiedPlantResponse the response from the API containing identification details, stored in a Java object
      * @param gardener                the gardener who uploaded the image
      * @param imagePath               the path to the uploaded image
-     * @return the saved identified plant entity
+     * @return the identified plant entity
      */
     public IdentifiedPlant getIdentifiedPlantDetails(IdentifiedPlantResponse identifiedPlantResponse, Gardener gardener, String imagePath) {
         JsonNode firstResult = identifiedPlantResponse.getResults().get(0);
@@ -165,7 +169,41 @@ public class PlantIdentificationService {
         );
         String gbifId = firstResult.get("gbif").get("id").asText();
         String imageUrl = firstResult.get("images").get(0).get("url").get("o").asText();
+        String speciesScientificNameWithoutAuthor = firstResult.get("species").get("scientificNameWithoutAuthor").asText();
+        String familyScientificNameWithoutAuthor = firstResult.get("species").get("family").get("scientificNameWithoutAuthor").asText();
 
-        return new IdentifiedPlant(bestMatch, score, commonNames, gbifId, imageUrl, imagePath, gardener);
+        return new IdentifiedPlant(bestMatch, score, commonNames, gbifId, imageUrl, imagePath, speciesScientificNameWithoutAuthor, familyScientificNameWithoutAuthor, gardener);
+
+    }
+
+
+    public IdentifiedPlant saveIdentifiedPlantDetails(IdentifiedPlant identifiedPlant) {
+
+        return identifiedPlantRepository.save(identifiedPlant);
+    }
+
+    /**
+     * Retrieves a page of IdentifiedPlants from the repository
+     * Used for pagination on the collection page
+     *
+     * @param pageNo the page number that you want to see
+     * @param pageSize the number of elements on a page of IdentifiedPlants
+     * @return a page of IdentifiedPlants
+     */
+    public Page<IdentifiedPlant> getAllIdentifiedPlantsPaginated(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return identifiedPlantRepository.findAll(pageable);
+    }
+
+    /**
+     * Gets the IdentifiedPlants that are owned by the gardener in paginated form
+     * @param pageNo the page number
+     * @param pageSize the size of the page
+     * @param gardenerId the id of the gardener
+     * @return the page of IdentifiedPlants
+     */
+    public Page<IdentifiedPlant> getGardenerIdentifiedPlantsPaginated(int pageNo, int pageSize, Long gardenerId) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return identifiedPlantRepository.findPlantSpeciesByGardenerId(gardenerId, pageable);
     }
 }

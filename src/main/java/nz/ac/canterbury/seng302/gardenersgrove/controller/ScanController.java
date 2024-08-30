@@ -35,6 +35,8 @@ public class ScanController {
     private final ImageService imageService;
     private final Map<String, String> errorResponse;
     private final Map<String, Object> response;
+    private IdentifiedPlant identifiedPlant;
+
     private final String errorKey = "error";
     /**
      * Constructs a new ScanController with the services required for sending and storing identified plants.
@@ -95,7 +97,7 @@ public class ScanController {
 
         if (gardener.isPresent()) {
             try {
-                IdentifiedPlant identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
+                identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
                 if (identifiedPlant.getScore() >= 0.3) {
                     response.put("bestMatch", identifiedPlant.getBestMatch());
                     response.put("score", identifiedPlant.getScore());
@@ -129,7 +131,6 @@ public class ScanController {
     /**
      * Handles POST requests to the /saveIdentifiedPlant endpoint.
      * Process the data of the identified plant
-     * @param plantData The data of the identified plant
      * @return ResponseEntity<?> with one of the following:
      *         - ResponseEntity.ok() with a success message if the plant data is saved successfully
      *         - ResponseEntity.badRequest() with an error message if saving the plant data fails
@@ -137,19 +138,17 @@ public class ScanController {
      */
     @PostMapping("/saveIdentifiedPlant")
     @ResponseBody
-    public ResponseEntity<?> saveIdentifiedPlant(@RequestBody Map<String, Object> plantData) {
+    public ResponseEntity<?> saveIdentifiedPlant( @RequestBody Map<String, String> extra) {
         logger.info("POST /saveIdentifiedPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
         if (gardener.isPresent()) {
             try {
-                Double score = (Double) plantData.get("score");
-                String bestMatch = (String) plantData.get("bestMatch");
-                List<String> commonNames = (List<String>) plantData.get("commonNames");
-                String imageUrl = (String) plantData.get("imageUrl");
-                String gbifId = (String) plantData.get("gbifId");
+                identifiedPlant.setName(extra.get("name"));
+                identifiedPlant.setDescription(extra.get("description"));
 
                 response.put("message", "Plant saved successfully");
+                plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
                 return ResponseEntity.ok(response);
             } catch (Exception e) {
                 errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());

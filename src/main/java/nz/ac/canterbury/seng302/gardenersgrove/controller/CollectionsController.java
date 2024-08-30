@@ -2,10 +2,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantSpecies;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantSpeciesService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +27,10 @@ import java.util.stream.IntStream;
  * Controller class for handling HTTP requests for the Collections page
  */
 @Controller
-public class PlantSpeciesCollectionsController {
+public class CollectionsController {
+    private final PlantIdentificationService plantIdentificationService;
 
-    private final PlantSpeciesService plantSpeciesService;
-
-    Logger logger = LoggerFactory.getLogger(PlantSpeciesCollectionsController.class);
+    Logger logger = LoggerFactory.getLogger(CollectionsController.class);
 
     private int pageSize;
 
@@ -41,19 +40,16 @@ public class PlantSpeciesCollectionsController {
 
     private Gardener gardener;
 
-
-
     /**
-     * Constructor to instantiate PlantSpeciesCollectionsController
-     * @param plantSpeciesService the service used to interact with database
-     * @param gardenService used in conjuction with gardener form service to populate navbar
-     * @param gardenerFormService used in conjuction with above to populate navbar
+     * Constructor to instantiate CollectionsController
+     * @param plantIdentificationService the service used to interact with database
+     * @param gardenService used in conjunction with gardener form service to populate navbar
+     * @param gardenerFormService used in conjunction with above to populate navbar
      */
-    @Autowired
-    public PlantSpeciesCollectionsController(PlantSpeciesService plantSpeciesService, GardenerFormService gardenerFormService, GardenService gardenService) {
-        this.plantSpeciesService = plantSpeciesService;
-        this.gardenerFormService = gardenerFormService;
+    public CollectionsController(PlantIdentificationService plantIdentificationService, GardenService gardenService, GardenerFormService gardenerFormService) {
+        this.plantIdentificationService = plantIdentificationService;
         this.gardenService = gardenService;
+        this.gardenerFormService = gardenerFormService;
         pageSize = 12;
     }
 
@@ -90,10 +86,10 @@ public class PlantSpeciesCollectionsController {
 
 
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
-        Page<PlantSpecies> plantSpeciesList = plantSpeciesService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
+        Page<IdentifiedPlant> collectionsList = plantIdentificationService.getGardenerIdentifiedPlantsPaginated(pageNo, pageSize, gardener.getId());
         logger.info("GET /myCollection");
-        model.addAttribute("plantSpeciesList", plantSpeciesList);
-        int totalPages = plantSpeciesList.getTotalPages();
+        model.addAttribute("collectionsList", collectionsList);
+        int totalPages = collectionsList.getTotalPages();
         if(totalPages > 0) {
             int lowerBound = Math.max(pageNo - 1, 1);
             int upperBound = Math.min(pageNo + 3, totalPages);
@@ -102,7 +98,7 @@ public class PlantSpeciesCollectionsController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
 
-            long totalItems = plantSpeciesList.getTotalElements();
+            long totalItems = collectionsList.getTotalElements();
             int startIndex = pageSize * pageNo + 1;
             long endIndex = Math.min((long) pageSize * (pageNo + 1), totalItems);
             String paginationMessage = "Showing results " + startIndex + " to " + endIndex + " of " + totalItems;
@@ -118,4 +114,5 @@ public class PlantSpeciesCollectionsController {
 
         return "myCollectionTemplate";
     }
+
 }
