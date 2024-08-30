@@ -6,12 +6,12 @@
 </head>
 
 <body>
+
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="browse-gardens-container">
     <div class="search-container d-flex justify-content-center">
         <form class="form-inline" method="post" th:action="@{/plantWiki}">
-            <input aria-label="Search" class="form-control mr-2 mb-0 mt-0" placeholder="Search" th:value="${searchTerm}" th:name="searchTerm"
-                   type="search">
+            <input aria-label="Search" class="form-control mr-2 mb-0 mt-0" placeholder="Search" th:value="${searchTerm}" th:name="searchTerm" type="search">
             <button class="btn btn-outline-success mt-0" type="submit">Search</button>
         </form>
     </div>
@@ -23,15 +23,13 @@
             <div th:each="plant : ${resultPlants}" class="col-md-2 mb-4">
                 <div class="card collection-gardens-card">
                     <div class="btn-wrapper">
-                        <button type="button" class="btn btn-success" data-target="#add-plant-modal" data-toggle="modal" id="add-plant-button"
-                                onclick="displayAddPlantModal()">Add plant</button>
+                        <button type="button" class="btn btn-success" th:data-image-url="${plant.imagePath}" onclick="displayAddPlantModal(this)">Add plant</button>
                     </div>
-                    <img id="collection-card-img" class="card-img-top" th:src="${plant.imagePath  != ''} ? ${plant.imagePath} : '/images/placeholder.jpg'" alt="No Image">
+                    <img id="collection-card-img" class="card-img-top" th:src="${plant.imagePath != ''} ? ${plant.imagePath} : '/images/placeholder.jpg'" alt="No Image">
                     <div class="card-collection-body">
                         <div class="card-body">
                             <h5 style="color: #fffdf6" class="card-title" th:text="${plant.name}"></h5>
-                            <p style="color: #fffdf6" class="card-text"
-                               th:with="concatenatedNames=${#strings.listJoin(plant.scientificName, ', ')}">
+                            <p style="color: #fffdf6" class="card-text" th:with="concatenatedNames=${#strings.listJoin(plant.scientificName, ', ')}">
                                 <strong>Scientific Names: </strong>
                                 <span th:text="${concatenatedNames}"></span>
                             </p>
@@ -43,8 +41,7 @@
                                 <strong>Watering Frequency: </strong>
                                 <span th:text="${plant.watering}"></span>
                             </p>
-                            <p style="color: #fffdf6" class="card-text"
-                               th:with="concatenatedSunlightNames=${#strings.listJoin(plant.sunlight,', ')}">
+                            <p style="color: #fffdf6" class="card-text" th:with="concatenatedSunlightNames=${#strings.listJoin(plant.sunlight,', ')}">
                                 <strong>Suggested Sunlight Levels: </strong>
                                 <span th:text="${concatenatedSunlightNames}"></span>
                             </p>
@@ -54,19 +51,15 @@
             </div>
         </div>
 
-
-<!--        GET ALL THE EXTRA STUFF AND WHACK IT IN DESCRIPTION AND AUTOPOPULATE NAME, PICTURE, DATE (todays date)-->
-<!--        POTENTIALLY IMAGE NEEDS TO BE DOWNLOADED FROM THEM? IS THIS OKAY? COPYRIGHT? SECURITY?-->
-<!--        fix navbar not populating when searching for something (you lose navbar links)-->
-
-
-        <div aria-hidden="true" class="friend-modal" id="add-plant-modal">
+        <!-- Add Plant Modal -->
+        <div class="friend-modal" id="add-plant-modal" style="display:none;">
             <div class="container mb-5">
                 <div class="card mb-5 w-50">
                     <h1> Add New Plant </h1>
                     <label class="fst-italic">* Required</label>
                     <br/>
                     <form id="plantForm" method="post" enctype="multipart/form-data">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <select class="form-select" aria-label="Select">
                             <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
                                 <option selected>Choose a garden</option>
@@ -78,19 +71,19 @@
                         <input type="text" class="form-control" id="name" name="name" maxlength="64" placeholder="Name">
                         <br/>
                         <label for="count"> Plant Count: </label>
-                        <input type="text" class="form-control" id="count"  name="count" maxlength="12" placeholder="How many?"
+                        <input type="text" class="form-control" id="count" name="count" maxlength="12" placeholder="How many?">
                         <br/>
                         <label for="description"> Description: </label>
                         <br/>
                         <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
-                        <textarea class="form-control" id="description" name="description"  maxlength="512"></textarea>
+                        <textarea class="form-control" id="description" name="description" maxlength="512"></textarea>
                         <br/>
                         <label for="datePlanted"> Date Planted: </label>
                         <input type="date" class="form-control" id="datePlanted" name="date">
                         <span id="dateError" class="smallErrorMessage"></span>
                         <script>
-                            document.getElementById( "datePlanted" ).addEventListener( "invalid",
-                                function( event ) {
+                            document.getElementById("datePlanted").addEventListener("invalid",
+                                function(event) {
                                     event.preventDefault();
                                     document.getElementById("datePlanted").style.border = "1px solid red";
                                     document.getElementById("dateError").textContent = "Date is not in valid format, DD/MM/YYYY";
@@ -99,42 +92,48 @@
                         <br/>
                         <label for="image"> Image: </label>
                         <div class="plant-image-container" id="image">
-                            <img th:src="@{'/images/placeholder.jpg'}" alt="Plant" id="currentImage">
+                            <img id="currentImage" src="" alt="Plant">
                             <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
                             <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*" onchange="handleImageChange()">
                         </div>
                         <br/>
                         <button class="btn btn-success w-100" type="submit">Submit</button>
                     </form>
-                    <a class="btn btn-secondary w-50 mt-3" onclick="displayAddPlantModal()">
-                        Cancel
-                    </a>
+                    <a class="btn btn-secondary w-50 mt-3" onclick="closeAddPlantModal()">Cancel</a>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
-    function displayAddPlantModal() {
+    function displayAddPlantModal(button) {
         const modal = document.getElementById("add-plant-modal");
-        switch (modal.style.display) {
-            case "":
-                document.getElementById("add-plant-modal").style.display = "block";
-                break;
-            case "block":
-                document.getElementById("add-plant-modal").style.display = "";
-                document.getElementById("name").value = "";
-                document.getElementById("count").value = "";
-                document.getElementById("date").value = ""; // fix - currently not working
-                document.getElementById("description").value = ""; // fix - currently not working
-                document.getElementById("datePlanted").value = "";
-                break;
-        }
+        modal.style.display = "block"; // Show the modal
+
+        // Get the image URL from the button's data attribute
+        const imageUrl = button.getAttribute('data-image-url');
+
+        // Update the image src in the modal to display the selected plant image
+        document.getElementById('currentImage').src = imageUrl;
     }
 
+    function closeAddPlantModal() {
+        const modal = document.getElementById("add-plant-modal");
+        modal.style.display = "none"; // Hide the modal
+    }
 
+    function handleImageChange() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('currentImage').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
 </script>
 
 </body>
