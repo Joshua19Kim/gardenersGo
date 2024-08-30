@@ -116,11 +116,21 @@ public class IdentifiedPlant {
 
     }
 
-    public IdentifiedPlant(String bestMatch, String description,
+
+    /**
+     * Constructs an IdentifiedPlant with the new plant details.
+     *
+     * @param plantName the name of the new plant
+     * @param description the description of the new plant
+     * @param speciesScientificNameWithoutAuthor the scientific name of the new plant
+     * @param uploadedDate the date of the plant uploaded
+     * @param gardener the gardener associated with the new plant
+     */
+    public IdentifiedPlant(String plantName, String description,
                            String speciesScientificNameWithoutAuthor, LocalDate uploadedDate,
                            Gardener gardener) {
 
-        this.bestMatch = bestMatch;
+        this.bestMatch = plantName;
         this.description = description;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         this.dateUploaded = uploadedDate.format(formatter);
