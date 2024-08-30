@@ -96,7 +96,7 @@ public class ScanController {
         if (gardener.isPresent()) {
             try {
                 identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
-                if (identifiedPlant.getScore() >= 0.2) {
+                if (identifiedPlant.getScore() >= 0.3) {
                     response.put("bestMatch", identifiedPlant.getBestMatch());
                     response.put("score", identifiedPlant.getScore());
                     response.put("commonNames", identifiedPlant.getCommonNames());
