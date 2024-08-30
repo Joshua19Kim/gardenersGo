@@ -50,61 +50,63 @@
     <div id="tag-error-container">
         <p id="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
     </div>
+    <div class="container">
     <div class="row">
-        <div th:each="garden : ${gardensPage.content}" th:if="${gardenStat.index < 5}" class="col" style="width: 300px;">
-            <a th:href="@{gardens/details(gardenId=${garden.id})}" style="text-decoration: none; color: inherit;">
-                <div class="card browse-gardens-card col p-0">
+        <div th:each="garden : ${gardensPage.content}" style="width: 400px;">
+            <a th:href="@{gardens/details(gardenId=${garden.id})}" style="text-decoration: none; color: inherit; width: 400px">
+                <div class="card browse-gardens-card col p-0 h-100" style="width: 400px"  >
                     <div class="card-body w-100">
+                        <div class="row mt-auto">
+
+                            <div class="col" style="display: flex; flex-direction: row; justify-content: left; align-items: center;">
+                                <img class="avatar" th:src="@{${garden.gardener.profilePicture}}"/>
+                                <p style="color: #fffdf6; max-width: 50%" class="card-text d-inline-block text-truncate" th:text="${garden.gardener.firstName} + ${garden.gardener.lastName != null ? ' ' + garden.gardener.lastName : ''}"></p>
+                            </div>
+
+                            <form class="position-absolute" method="post" th:action="@{/follow(pageNo=${gardensPage.number},pageRequest=true)}" style="text-align: right">
+                                <button name="gardenToFollow" class="btn btn-outline-warning" th:value="${garden.id}" style="width: 50px">Follow</button>
+                            </form>
+                        </div>
+                        <div style="display: flex; justify-content: center; margin-top: 13px;">
+                            <p style="color: #fffdf6" class="card-text" th:text="${garden.creationDate}"></p>
+                        </div>
                         <div class="row">
                             <div class="col-12 text-center">
                                 <h3 class="d-inline-block text-truncate"  style="color: #fffdf6; max-width: 100%;" th:text="${garden.name}"></h3>
                             </div>
-                            <div style="display: flex; justify-content: center; margin-top: 13px;">
-                                <p style="color: #fffdf6" class="card-text" th:text="${garden.creationDate}"></p>
-                                <form method="post" th:action="@{/follow(pageNo=${gardensPage.number},pageRequest=true)}">
-                                    <button name="gardenToFollow" th:value="${garden.id}">Follow</button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="row mt-auto">
-                            <div class="col-12 text-left">
-                                <div style="display: flex; flex-direction: row; justify-content: left; align-items: center">
-                                    <img class="avatar" th:src="@{${garden.gardener.profilePicture}}"/>
-                                    <p style="color: #fffdf6; max-width: 100%" class="card-text d-inline-block text-truncate" th:text="${garden.gardener.firstName} + ${garden.gardener.lastName != null ? ' ' + garden.gardener.lastName : ''}"></p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </a>
         </div>
     </div>
-    <div class="row">
-        <div th:each="garden : ${gardensPage.content}" th:if="${gardenStat.index >= 5 && gardenStat.index < 10}" class="col" style="width: 300px;">
-            <a th:href="@{gardens/details(gardenId=${garden.id})}" style="text-decoration: none; color: inherit;">
-                <div class="card browse-gardens-card col p-0" >
-                    <div class="card-body w-100">
-                        <div class="row">
-                            <div class="col-12 text-center">
-                                <h3 class="d-inline-block text-truncate" style="color: #fffdf6; max-width: 100%;" th:text="${garden.name}"></h3>
-                            </div>
-                            <div style="display: flex; justify-content: center; margin-top: 13px;">
-                                <p style="color: #fffdf6" class="card-text" th:text="${garden.creationDate}"></p>
-                            </div>
-                        </div>
-                        <div class="row mt-auto">
-                            <div class="col-12 text-left">
-                                <div style="display: flex; flex-direction: row; justify-content: left; align-items: center">
-                                    <img class="avatar" th:src="@{${garden.gardener.profilePicture}}"/>
-                                    <p style="color: #fffdf6; max-width: 100%" class="card-text d-inline-block text-truncate" th:text="${garden.gardener.firstName} + ${garden.gardener.lastName != null ? ' ' + garden.gardener.lastName : ''}"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
     </div>
+<!--    <div class="row">-->
+<!--        <div th:each="garden : ${gardensPage.content}" th:if="${gardenStat.index >= 5 && gardenStat.index < 10}" class="col" style="width: 300px;">-->
+<!--            <a th:href="@{gardens/details(gardenId=${garden.id})}" style="text-decoration: none; color: inherit;">-->
+<!--                <div class="card browse-gardens-card col p-0" >-->
+<!--                    <div class="card-body w-100">-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-12 text-center">-->
+<!--                                <h3 class="d-inline-block text-truncate" style="color: #fffdf6; max-width: 100%;" th:text="${garden.name}"></h3>-->
+<!--                            </div>-->
+<!--                            <div style="display: flex; justify-content: center; margin-top: 13px;">-->
+<!--                                <p style="color: #fffdf6" class="card-text" th:text="${garden.creationDate}"></p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="row mt-auto">-->
+<!--                            <div class="col-12 text-left">-->
+<!--                                <div style="display: flex; flex-direction: row; justify-content: left; align-items: center">-->
+<!--                                    <img class="avatar" th:src="@{${garden.gardener.profilePicture}}"/>-->
+<!--                                    <p style="color: #fffdf6; max-width: 100%" class="card-text d-inline-block text-truncate" th:text="${garden.gardener.firstName} + ${garden.gardener.lastName != null ? ' ' + garden.gardener.lastName : ''}"></p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </a>-->
+<!--        </div>-->
+<!--    </div>-->
 </div>
 
 
