@@ -280,6 +280,7 @@ public class BrowseGardensControllerTest {
     @Test
     @WithMockUser
     public void FollowAGarden_UserIsAlreadyFollowing_FollowerRemoved() throws Exception {
+
         when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.of(new Follower(1L, 1L)));
         mockMvc.perform(MockMvcRequestBuilders.post("/follow")
                 .param("pageNo", "1")
@@ -291,9 +292,11 @@ public class BrowseGardensControllerTest {
     @WithMockUser
     public void FollowAGarden_UserIsNotFollowing_FollowerAdded() throws Exception {
         when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.empty());
+
         mockMvc.perform(MockMvcRequestBuilders.post("/follow")
                 .param("pageNo", "1")
                 .param("gardenToFollow", "1"));
         verify(followerService, times(1)).addfollower(any(Follower.class));
     }
+
 }

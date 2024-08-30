@@ -115,7 +115,7 @@ public class BrowseGardensController {
     public String browseGardens(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
             @RequestParam(name="pageRequest", defaultValue = "hehe") String pageRequest,
-            Model model)
+            Model model, RedirectAttributes redirectAttributes)
     {
         // this is used to distinguish between a fresh get request and one used to paginate or add tag
         if(Objects.equals(pageRequest, "hehe") && !model.containsAttribute("pageRequest")) {
@@ -180,6 +180,9 @@ public class BrowseGardensController {
         List<Long> gardensFollowing = followerService.findAllGardens(gardener.getId());
         model.addAttribute("gardensFollowing", gardensFollowing);
 
+        if (redirectAttributes.containsAttribute("gardenFollowUpdate")) {
+            model.addAttribute("gardenFollowUpdate", redirectAttributes.getAttribute("gardenFollowUpdate"));
+        }
         return "browseGardensTemplate";
     }
 
@@ -251,7 +254,6 @@ public class BrowseGardensController {
         List<Long> gardensFollowing = followerService.findAllGardens(gardener.getId());
         model.addAttribute("gardensFollowing", gardensFollowing);
 
-
         return "browseGardensTemplate";
     }
 
@@ -317,13 +319,17 @@ public class BrowseGardensController {
         Optional<Gardener> gardener = getGardenerFromAuthentication();
         if (gardener.isPresent()) {
             Long gardenerId = gardener.get().getId();
+            Optional<Garden> gardenOptional = gardenService.getGarden(gardenToFollow);
 
             // If the relation exists, delete it (unfollow), otherwise create it (follow)
             if (followerService.findFollower(gardenerId, gardenToFollow).isPresent()) {
                 followerService.deleteFollower(gardenerId, gardenToFollow);
+                gardenOptional.ifPresent(garden -> redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You are no longer following " + garden.getName()));
+
             } else {
                 Follower follower = new Follower(gardenerId, gardenToFollow);
                 followerService.addfollower(follower);
+                gardenOptional.ifPresent(garden -> redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You are now following " + garden.getName()));
             }
         }
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
