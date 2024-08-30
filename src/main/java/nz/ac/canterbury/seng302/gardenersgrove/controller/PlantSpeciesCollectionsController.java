@@ -10,12 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -53,6 +56,19 @@ public class PlantSpeciesCollectionsController {
         pageSize = 12;
     }
 
+    /**
+     * Retrieve an optional of a gardener using the current authentication. We will always have to
+     * check whether the gardener was retrieved in the calling method, so the return type was left as
+     * an optional
+     *
+     * @return An optional of the requested gardener
+     */
+    public Optional<Gardener> getGardenerFromAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+        return gardenerFormService.findByEmail(currentUserEmail);
+    }
+
 
     /**
      * Handles GET requests for /myCollection stub and returns the template for
@@ -67,6 +83,9 @@ public class PlantSpeciesCollectionsController {
     public String getMyCollection(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
             Model model) {
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
         Page<PlantSpecies> plantSpeciesList = plantSpeciesService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
         logger.info("GET /myCollection");

@@ -115,7 +115,8 @@ public class GardenDetailsController {
        if (gardenId == null) {
            return "redirect:/gardens";
        }
-       model.addAttribute("gardenId", gardenId);
+       currentUserOptional.ifPresent(value -> gardener = value);
+           model.addAttribute("gardenId", gardenId);
        Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
        if (garden.isPresent()) {
            model.addAttribute("requestURI", requestService.getRequestURI(request));
@@ -172,7 +173,7 @@ public class GardenDetailsController {
                return "gardenDetailsTemplate";
            } else {
                Gardener gardenOwner = garden.get().getGardener();
-               Boolean isFriend = relationshipService
+               boolean isFriend = relationshipService
                        .getCurrentUserRelationships(gardenOwner.getId())
                        .contains(currentUserOptional.get());
                if (isFriend || garden.get().getIsGardenPublic()) {
