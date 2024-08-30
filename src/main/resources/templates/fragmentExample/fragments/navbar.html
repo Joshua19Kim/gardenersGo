@@ -37,7 +37,9 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li class="nav-item">
                                 <a class="nav-link" th:href="@{/gardens/form(redirect=${requestURI})}">
-                                    <span class="material-symbols-outlined" id="create-garden-icon">add_circle</span>
+<!--                                    <span class="material-symbols-outlined" id="create-garden-icon">add_circle</span>-->
+                                    <img class="material-symbols-outlined" id="create-garden-icon" src="./images/icons/add_circle.png" style="max-width: 20px; object-fit: contain; cursor: pointer;" alt="Add Circle">
+
                                     Create New Garden
                                 </a>
                             </li>
@@ -67,9 +69,7 @@
 
                     <!-- Centered Scan Plant Item -->
                     <li class="nav-item text-center">
-                        <a class="nav-link modal-link" data-bs-target="#scanningModal" data-bs-toggle="modal" style="cursor: pointer;">
-                            Scan Plant
-                        </a>
+                        <img class="nav-link modal-link"  data-bs-target="#scanningModal" data-bs-toggle="modal"  src="./images/icons/indeterminate_question_box.png" style="max-width: 50px; object-fit: contain; cursor: pointer;" alt="Scan Plant">
                     </li>
 
                     <!-- Spacer -->
@@ -90,12 +90,14 @@
                     <li class="nav-item flex-grow-1"></li>
 
                     <li class="nav-item-dropdown dropdown">
-                        <a class="nav-link dropdown-toggle" th:href="@{/user}" role="button" data-bs-hover="dropdown" aria-expanded="false">
+                        <img class="nav-link dropdown-toggle" src="./images/icons/account_circle.png" style="max-width: 50px; object-fit: contain;" th:href="@{/user}" role="button" data-bs-hover="dropdown" aria-expanded="false" alt="Account">
+
+<!--                        <a class="nav-link dropdown-toggle" th:href="@{/user}" role="button" data-bs-hover="dropdown" aria-expanded="false">-->
 <!--                            <span class="material-symbols-outlined" id="account-circle">-->
 <!--                                account_circle-->
 <!--                            </span>-->
 <!--                            add back in when font spike approved-->
-                        </a>
+<!--                        </a>-->
                         <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="navbarDropdown">
                             <li class="nav-item">
                                 <a class="nav-link" th:href="@{/user}">My Profile</a>
