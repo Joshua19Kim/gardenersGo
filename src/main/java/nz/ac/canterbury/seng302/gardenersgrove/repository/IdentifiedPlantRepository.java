@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Species;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +27,16 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
      * @return the identified plants that the gardener has
      */
     Page<IdentifiedPlant> findPlantSpeciesByGardenerId(long id, Pageable pageable);
+
+    /**
+     * Custom query to retrieve species by gardener id, with pagination
+     *
+     * @param id the id of the gardener
+     * @param pageable object representing pagination
+     * @return a page of species with count, species name, and image URL
+     */
+    @Query("SELECT new nz.ac.canterbury.seng302.gardenersgrove.entity.Species(p.speciesScientificNameWithoutAuthor, p.imageUrl, COUNT(p)) " +
+            "FROM IdentifiedPlant p WHERE p.gardener = :id " +
+            "GROUP BY p.speciesScientificNameWithoutAuthor, p.imageUrl")
+    Page<Species> getSpeciesByGardenerId(long id, Pageable pageable);
 }
