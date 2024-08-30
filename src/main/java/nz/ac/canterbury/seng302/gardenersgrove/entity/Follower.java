@@ -43,11 +43,11 @@ public class Follower {
         return gardenerId;
     }
 
-    public Long getFollowingId() {
+    public Long getGardenId() {
         return gardenId;
     }
 
     public void setGardenerId(Long gardenerId) { this.gardenerId = gardenerId; }
 
-    public void setFollowingId(Long friendId) { this.gardenId = friendId; }
+    public void setGardenId(Long gardenId) { this.gardenId = gardenId; }
 }

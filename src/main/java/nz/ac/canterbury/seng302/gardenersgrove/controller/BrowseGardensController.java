@@ -176,6 +176,9 @@ public class BrowseGardensController {
         List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         model.addAttribute("gardens", gardens);
 
+        // Get a list of all gardens the user follows - required to determine if the page shows "follow" or "unfollow"
+        List<Long> gardensFollowing = followerService.findAllGardens(gardener.getId());
+        model.addAttribute("gardensFollowing", gardensFollowing);
 
         return "browseGardensTemplate";
     }

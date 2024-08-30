@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.FollowerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,4 +57,15 @@ public class FollowerService {
         }
     }
 
+    public List<Long> findAllGardens(Long id) {
+        List<Follower> followers = followerRepository.findAllByGardenerId(id);
+        if (!followers.isEmpty()) {
+            List<Long> gardenIds = new ArrayList<Long>();
+            for (Follower follower : followers) {
+                gardenIds.add(follower.getGardenId());
+            }
+            return gardenIds;
+        }
+        return List.of();
+    }
 }
