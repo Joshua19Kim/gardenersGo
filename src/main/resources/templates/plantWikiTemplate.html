@@ -23,7 +23,14 @@
             <div th:each="plant : ${resultPlants}" class="col-md-2 mb-4">
                 <div class="card collection-gardens-card">
                     <div class="btn-wrapper">
-                        <button type="button" class="btn btn-success" th:data-image-url="${plant.imagePath}" onclick="displayAddPlantModal(this)">Add plant</button>
+                        <button type="button" class="btn btn-success"
+                                th:data-image-url="${plant.imagePath}"
+                                th:data-plant-name="${plant.name}"
+                                th:data-plant-desc="'Scientific Names: ' + ${#strings.listJoin(plant.scientificName, ', ')} + '\n' +
+                       'Cycle: ' + ${plant.cycle} + '\n' +
+                       'Watering Frequency: ' + ${plant.watering} + '\n' +
+                       'Suggested Sunlight Levels: ' + ${#strings.listJoin(plant.sunlight, ', ')}"
+                                onclick="displayAddPlantModal(this)">Add plant</button>
                     </div>
                     <img id="collection-card-img" class="card-img-top" th:src="${plant.imagePath != ''} ? ${plant.imagePath} : '/images/placeholder.jpg'" alt="No Image">
                     <div class="card-collection-body">
@@ -62,7 +69,7 @@
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <select class="form-select" aria-label="Select">
                             <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}">
-                                <option selected>Choose a garden</option>
+                                <option selected>Choose a garden*</option>
                                 <option class="dropdown-item" th:text="${garden.name}"></option>
                             </th:block>
                         </select>
@@ -111,11 +118,21 @@
         const modal = document.getElementById("add-plant-modal");
         modal.style.display = "block"; // Show the modal
 
-        // Get the image URL from the button's data attribute
         const imageUrl = button.getAttribute('data-image-url');
-
-        // Update the image src in the modal to display the selected plant image
         document.getElementById('currentImage').src = imageUrl;
+
+        const plantName = button.getAttribute('data-plant-name');
+        document.getElementById('name').value = plantName ;
+
+        const plantDesc = button.getAttribute('data-plant-desc');
+        document.getElementById('description').value = plantDesc.replace(/\\n/g, '\n'); //actually make it new line
+
+        // Set today's date in DD/MM/YYYY format
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0 ;)
+        const year = today.getFullYear();
+        document.getElementById('datePlanted').value = `${year}-${month}-${day}`;
     }
 
     function closeAddPlantModal() {
