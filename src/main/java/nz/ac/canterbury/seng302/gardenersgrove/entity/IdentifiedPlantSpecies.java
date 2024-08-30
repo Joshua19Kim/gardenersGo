@@ -1,12 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 
-public class Species {
+public class IdentifiedPlantSpecies {
     private String speciesName;
     private String imageUrl;
     private Long count;
 
-    public Species(String speciesName, String imageUrl, Long count) {
+    public IdentifiedPlantSpecies(String speciesName, String imageUrl, Long count) {
         this.speciesName = speciesName;
         this.imageUrl = imageUrl;
         this.count = count;

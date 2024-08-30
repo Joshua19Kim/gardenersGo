@@ -2,15 +2,13 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Species;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -85,7 +83,7 @@ public class CollectionsController {
         gardenerOptional.ifPresent(value -> gardener = value);
 
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
-        Page<Species> speciesList = plantIdentificationService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
+        Page<IdentifiedPlantSpecies> speciesList = plantIdentificationService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
         logger.info("GET /myCollection");
         model.addAttribute("speciesList", speciesList);
         int totalPages = speciesList.getTotalPages();
