@@ -173,26 +173,11 @@ public class PlantIdentificationService {
         String familyScientificNameWithoutAuthor = firstResult.get("species").get("family").get("scientificNameWithoutAuthor").asText();
 
         return new IdentifiedPlant(bestMatch, score, commonNames, gbifId, imageUrl, imagePath, speciesScientificNameWithoutAuthor, familyScientificNameWithoutAuthor, gardener);
-
     }
 
 
     public IdentifiedPlant saveIdentifiedPlantDetails(IdentifiedPlant identifiedPlant) {
-
         return identifiedPlantRepository.save(identifiedPlant);
-    }
-
-    /**
-     * Retrieves a page of IdentifiedPlants from the repository
-     * Used for pagination on the collection page
-     *
-     * @param pageNo the page number that you want to see
-     * @param pageSize the number of elements on a page of IdentifiedPlants
-     * @return a page of IdentifiedPlants
-     */
-    public Page<IdentifiedPlant> getAllIdentifiedPlantsPaginated(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return identifiedPlantRepository.findAll(pageable);
     }
 
     /**
