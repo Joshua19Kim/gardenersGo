@@ -43,7 +43,7 @@ public class BrowsePublicGardens {
     private ResultActions resultActions;
     private String searchTerm;
     private Gardener gardener;
-
+    private Garden gardenToFollow;
     private List<String> allTags = new ArrayList<>();
 
 
@@ -74,6 +74,19 @@ public class BrowsePublicGardens {
         this.searchTerm = searchTerm;
     }
 
+    @Given("I am following the garden {string}")
+    public void i_am_following_the_garden(String gardenName) {
+        List<Garden> allGardens = gardenService.getGardensByGardenerId(gardener.getId());
+        Garden garden = gardenService.getGardensByGardenerId(gardener.getId()).stream().filter(garden1 -> garden1.getName().equals(gardenName)).findFirst().get();
+        followerService.addfollower(new Follower(gardener.getId(), garden.getId()));
+        gardenToFollow = garden;
+    }
+
+    @Given("I want to follow a garden with the name {string}")
+    public void I_want_to_follow_a_garden_with_the_name(String gardenName) {
+        gardenToFollow = gardenService.getGardensByGardenerId(gardener.getId()).stream().filter(garden1 -> garden1.getName().equals(gardenName)).findFirst().get();
+    }
+
     @When("I press the search button")
     public void iPressTheSearchButton() throws Exception {
         resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
@@ -93,27 +106,41 @@ public class BrowsePublicGardens {
 
     @When("I click on the follow button")
     public void i_click_on_the_follow_button() throws Exception {
-        Garden garden = gardenService.getGardensByGardenerId(gardener.getId()).getFirst();
+
         resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/follow")
                 .param("pageNo", "1")
-                .param("gardenToFollow", String.valueOf(garden.getId()))
+                .param("gardenToFollow", gardenToFollow.getId().toString())
                 .with(csrf()));
     }
 
     @Then("I am now following the garden")
     public void i_am_now_following_the_garden() {
-        Garden garden = gardenService.getGardensByGardenerId(gardener.getId()).getFirst();
-        Optional<Follower> followerOptional = followerService.findFollower(gardener.getId(), garden.getId());
+        Optional<Follower> followerOptional = followerService.findFollower(gardener.getId(), gardenToFollow.getId());
         assertTrue(followerOptional.isPresent());
     }
 
     @Then("I see a notification telling me I am now following that garden")
     public void i_see_a_notification_telling_me_i_am_now_following_the_garden() {
-        Garden garden = gardenService.getGardensByGardenerId(gardener.getId()).getFirst();
         MvcResult result = resultActions.andReturn();
         FlashMap flashMap = result.getFlashMap();
-        assertEquals("You are now following " + garden.getName(), flashMap.get("gardenFollowUpdate"));
+        assertEquals("You are now following " + gardenToFollow.getName(), flashMap.get("gardenFollowUpdate"));
 
     }
+
+    @Then("I see a notification telling me I am no longer following that garden")
+    public void i_see_a_notification_telling_me_i_am_no_longer_following_the_garden() {
+        MvcResult result = resultActions.andReturn();
+        FlashMap flashMap = result.getFlashMap();
+        assertEquals("You are no longer following " + gardenToFollow.getName(), flashMap.get("gardenFollowUpdate"));
+
+    }
+
+    @Then("I am no longer following the garden")
+    public void i_am_no_longer_following_the_garden() {
+        Optional<Follower> followerOptional = followerService.findFollower(gardener.getId(), gardenToFollow.getId());
+        assertTrue(followerOptional.isEmpty());
+    }
+
+
 
 }
