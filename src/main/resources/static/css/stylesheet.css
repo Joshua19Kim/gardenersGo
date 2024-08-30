@@ -1563,6 +1563,12 @@ form.search-bar::after {
     padding: 0 20px;
 }
 
+.collection-container {
+    max-width: 1800px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
 
 .friend-modal {
     display: none;
@@ -1589,6 +1595,16 @@ form.search-bar::after {
 
 .collection-gardens-card {
     padding: 0 !important;
+}
+
+.plant-wiki-card {
+    padding: 0 !important;
+    min-height: 633px
+}
+
+.plant-wiki-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
 .friend-modal-content {
