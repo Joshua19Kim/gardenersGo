@@ -21,6 +21,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+// The base of this file was shown in the code that Matthew suggested to follow in the workshop
+// https://eng-git.canterbury.ac.nz/seng302-2024/cucumber-mocking-example
+// This class will contain mocking API and steps here can be reused from multiple stories
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class MockConfigurationSteps {
     @Autowired
