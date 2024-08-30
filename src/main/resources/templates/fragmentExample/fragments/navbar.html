@@ -1,4 +1,5 @@
 <script>
+
     // JavaScript function to submit the logout form
     function logout(event) {
         event.preventDefault(); // Prevent the link from navigating
@@ -44,8 +45,7 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li class="nav-item">
                                 <a class="nav-link" th:href="@{/gardens/form(redirect=${requestURI})}">
-<!--                                    <span class="material-symbols-outlined" id="create-garden-icon">add_circle</span>-->
-                                    <img class="material-symbols-outlined" id="create-garden-icon" src="./images/icons/add_circle_off_black.png" style="max-width: 20px; object-fit: contain; cursor: pointer;" alt="Add Circle">
+                                    <img class="nav-link" id="create-garden-icon" src="./images/icons/add_circle_off_black.png" style="max-width: 40px; object-fit: contain; cursor: pointer;" alt="Add Circle">
                                     Create New Garden
                                 </a>
                             </li>
@@ -105,13 +105,6 @@
 
                     <li class="nav-item-dropdown dropdown">
                         <img class="nav-link dropdown-toggle" src="./images/icons/account_circle_off_black.png" style="max-width: 50px; object-fit: contain;" th:href="@{/user}" role="button" data-bs-hover="dropdown" aria-expanded="false" alt="Account">
-
-<!--                        <a class="nav-link dropdown-toggle" th:href="@{/user}" role="button" data-bs-hover="dropdown" aria-expanded="false">-->
-<!--                            <span class="material-symbols-outlined" id="account-circle">-->
-<!--                                account_circle-->
-<!--                            </span>-->
-<!--                            add back in when font spike approved-->
-<!--                        </a>-->
                         <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="navbarDropdown">
                             <li class="nav-item">
                                 <a class="nav-link" th:href="@{/user}">My Profile</a>
