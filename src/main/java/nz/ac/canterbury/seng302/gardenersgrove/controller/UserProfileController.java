@@ -37,7 +37,6 @@ public class UserProfileController {
     private final RequestService requestService;
     private final WriteEmail writeEmail;
     private final MainPageLayoutService mainPageLayoutService;
-    private final GardenService gardenService;
     private Gardener gardener;
 
     @Autowired
@@ -49,9 +48,8 @@ public class UserProfileController {
     private boolean isFileNotAdded;
 
     @Autowired
-    public UserProfileController(GardenerFormService gardenerFormService, GardenService gardenService, WriteEmail writeEmail, RequestService requestService, MainPageLayoutService mainPageLayoutService) {
+    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail, RequestService requestService, MainPageLayoutService mainPageLayoutService) {
         this.gardenerFormService = gardenerFormService;
-        this.gardenService = gardenService;
         this.writeEmail = writeEmail;
         this.requestService = requestService;
         this.mainPageLayoutService = mainPageLayoutService;
