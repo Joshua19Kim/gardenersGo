@@ -39,7 +39,7 @@
                     <textarea class="form-control input-modal" th:value="${description}" id="description" name="description" placeholder="Description"  maxlength="512">[[${description}]]</textarea>
                     <br/>
                     <label for="plantDate"> Date Planted: </label>
-                    <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" name="uploadedDate" style="color:#6c757d;">
+                    <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" name="uploadedDate" style="color:#6c757d;" max="9999-12-31">
                     <span id="dateError" class="smallErrorMessage"></span>
                     <script>
                         document.getElementById( "plantDate" ).addEventListener( "invalid",
