@@ -1,10 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.util;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.LocationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +25,8 @@ public class InputValidationUtilTest {
     @MockBean
     private LocationService locationService;
 
-
+    @MockBean
+    private PlantIdentificationService plantIdentificationService;
     @MockBean
     private ForgotPasswordFormController forgotPasswordFormController;
 

@@ -20,7 +20,17 @@ public class WikiPlant {
     private String imagePath;
 
 
-
+    /**
+     * Constructor for the WikiPlant entity
+     * @param id API id for the plant
+     * @param name common name of the plant
+     * @param scientificName scientifc name of the plant
+     * @param otherNames list of other common names of the plant
+     * @param cycle cycle of the plant, e.g. perennnial,annual
+     * @param watering preferred watering of the plant
+     * @param sunlight preferred sunlight for the plant
+     * @param imagePath image path from the API
+     */
     public WikiPlant(Long id, String name, List<String> scientificName, List<String> otherNames, String cycle, String watering, List<String> sunlight, String imagePath) {
         this.id = id;
         this.name = name;

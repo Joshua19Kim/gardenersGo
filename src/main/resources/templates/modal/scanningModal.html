@@ -1,0 +1,79 @@
+<link th:href="@{/css/modal.css}" rel="stylesheet">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+<div id="scanningModal" class="modal fade" aria-hidden="true" aria-labelledby="scanningModalLabel" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="scanningModalLabel" class="modal-title text-dark">Identify your plant</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body d-grid">
+                <form class="mt-2" id="scanForm" enctype="multipart/form-data">
+                    <div id="imagePreviewContainer" class="text-center mb-2">
+                        <img id="imagePreview"
+                             src="/images/defaultScanningImage.png"
+                             class="img-fluid" style="max-width: 200px; max-height: 200px; object-fit: contain;">
+                    </div>
+                    <div class="mb-3 text-center">
+                        <div id="fileName" class="mt-2"></div>
+                        <label for="imageInput" class="btn image-button">
+                            Upload plant image..
+                            <input type="file" id="imageInput" name="image" accept="image/*" required class="d-none">
+                        </label>
+                    </div>
+                    <div class="text-center warningMessageContainer mb-2" id="errorContainer" style="display: none;"></div>
+                </form>
+                <div class="d-flex justify-content-around mb-2">
+                    <button id="identifyButton" class="btn btn-primary" type="button">Identify</button>
+                </div>
+                <div id="resultContainer" style="display: none;"></div>
+
+                <div class="d-flex flex-column align-items-center justify-content-center py-1">
+                    <button id="saveToCollectionButton" class="btn btn-primary mt-2 mb-2" type="button" style="display:none;">Save in my collection</button>
+                    <button class="btn cancel-button text-white" data-bs-dismiss="modal" type="button">Close</button>
+                </div>
+
+                <div class="d-grid mt-5 mb-2">
+                    <div id="gbifInfo" class="row justify-content-end" style="display: none">
+                        <small class="col-12 text-end">*GBIF: The Global Biodiversity Information Facility</small>
+                    </div>
+                    <div class="row justify-content-end">
+                        <div class="col-6">
+                            <img src="/images/apiLogo/powered-by-plantnet-light.png"
+                                 class="img-fluid" style="max-width: 500px; object-fit: contain;">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <span class="extra-small">The image-based plant species identification service used, is based on the Pl@ntNet recognition API, regularly updated and accessible through the site https://my.plantnet.org/</span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Plant saved to your collection successfully!
+            </div>
+            <div class="modal-footer d-flex justify-content-center" >
+                <button type="button" class="btn btn-primary" id="goToCollectionButton" th:data-url="@{/myCollection}">Go to my collection</button>
+                <button type="button" class="btn cancel-button text-white" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/javascript/scanningModal.js}"></script>
+

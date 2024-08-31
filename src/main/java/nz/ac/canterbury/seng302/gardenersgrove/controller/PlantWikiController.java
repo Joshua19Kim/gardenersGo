@@ -32,6 +32,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * The controller for the plant wiki page. It handles all requests for going to the page and searching for plant information.
+ */
 @Controller
 public class PlantWikiController {
 
@@ -78,6 +81,13 @@ public class PlantWikiController {
     }
 
 
+    /**
+     * The main method to get to the plant wiki page
+     * @param model the model which has all the necessary attributes
+     * @return the html template that displays all the plant information
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     @GetMapping("/plantWiki")
     public String plantWiki(
             Model model
@@ -92,11 +102,18 @@ public class PlantWikiController {
         List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         model.addAttribute("gardens", gardens);
 
-        String imageUrl = "https://perenual.com/storage/species_image/3_abies_concolor/small/52292935430_f4f3b22614_b.jpg";
-
         return "plantWikiTemplate";
     }
 
+    /**
+     * The post request when the user searches for the plant information. It queries the API and returns matching plants.
+     * If no plants are found it will display an error message
+     * @param searchTerm the term that the user entered in the search bar
+     * @param model the model which has all the necessary attributes
+     * @return the html template that displays all the plant information
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     @PostMapping("/plantWiki")
     public String plantWikiSearch(@RequestParam("searchTerm") String searchTerm, Model model) throws IOException, URISyntaxException {
 
