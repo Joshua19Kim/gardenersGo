@@ -10,7 +10,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationServic
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -120,13 +119,16 @@ public class CollectionsController {
         return "myCollectionTemplate";
     }
 
+
+
+
     @PostMapping("/myCollection")
     public String addPlantToCollection(
             @RequestParam (name="plantName") String plantName,
             @RequestParam (name="description", required = false) String description,
             @RequestParam (name="scientificName", required = false) String scientificName,
-            @RequestParam (name="date") LocalDate date,
-            @RequestParam (name="plantImage") MultipartFile plantImage,
+            @RequestParam (name="uploadedDate", required = false) LocalDate uploadedDate,
+            @RequestParam ("plantImage") MultipartFile plantImage,
             Model model
     ) {
         logger.info("/myCollection/addNewPlantToMyCollection");
@@ -135,13 +137,25 @@ public class CollectionsController {
 
         //validation check needed. Look at plantAddFormController.
 
-        IdentifiedPlant newPlantDetails = new IdentifiedPlant(plantName, description, scientificName, date, gardener);
+        IdentifiedPlant newPlantDetails = new IdentifiedPlant(plantName, description, scientificName, uploadedDate, gardener);
 
         IdentifiedPlant newPlant = plantIdentificationService.saveIdentifiedPlantDetails(newPlantDetails);
 
         imageService.saveCollectionPlantImage(plantImage, newPlant);
+        logger.info("plantName : " + plantName);
+        logger.info("description : " + description);
+        logger.info("scientificName : " + scientificName);
+        logger.info("uploadedDate : " + uploadedDate);
 
-        return "myCollectionTemplate";
+
+
+        model.addAttribute("plantName", plantName);
+        model.addAttribute("description", description);
+        model.addAttribute("scientificName", scientificName);
+        model.addAttribute("uploadedDate", uploadedDate);
+
+        return "redirect:/myCollection";
+
     }
 
 

@@ -1,0 +1,112 @@
+<link th:href="@{/css/modal.css}" rel="stylesheet">
+
+
+<div class="modal fade" id="addPlantModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Add New Plant To My Collection</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="plantForm" th:action="@{/myCollection}" method="post" enctype="multipart/form-data" style="display: flex; align-items: center; flex-direction: column;">
+                    <div class="plant-image-container" id="image">
+                        <img th:src="@{'/images/placeholder.jpg'}" alt="Plant" id="currentImage">
+                        <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
+                        <input type="file" id="fileInput" name="plantImage" style="display: none;" accept="image/*" onchange="handleImageChange()">
+                    </div>
+                    <br/>
+                    <label for="plantName"> *Name: </label>
+                    <input type="text" class="form-control" th:value="${plantName}" id="plantName" name="plantName" maxlength="64" placeholder="Plant Name">
+
+                    <br/>
+                    <label for="scientificName"> Scientific Name: </label>
+                    <input type="text" class="form-control" th:value="${scientificName}" id="scientificName" name="scientificName" maxlength="64" placeholder="Scientific Name">
+
+                    <br/>
+                    <label for="description"> Description: </label>
+                    <br/>
+                    <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
+                    <textarea class="form-control" th:value="${description}" id="description" name="description"  maxlength="512">[[${description}]]</textarea>
+                    <br/>
+                    <label for="plantDate"> Date Planted: </label>
+                    <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" name="uploadedDate">
+                    <span id="dateError" class="smallErrorMessage"></span>
+                    <script>
+                        document.getElementById( "plantDate" ).addEventListener( "invalid",
+                            function( event ) {
+                                event.preventDefault();
+                                document.getElementById("plantDate").style.border = "1px solid red";
+                                document.getElementById("dateError").textContent = "Date is not in valid format, DD/MM/YYYY";
+                            });
+                    </script>
+                    <div style="display: flex; align-items: center; flex-direction: column;">
+                        <button type="submit" class="btn btn-primary" >Save New Plant</button>
+                        <button type="button" class="btn cancel-button text-white" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("plantForm").addEventListener("submit", function(event) {
+         document.getElementById("plantForm").submit();
+        var modal = bootstrap.Modal.getInstance(addPlantModal);
+        modal.hide();
+    });
+    document.getElementById("plantForm").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            var activeElement = document.activeElement;
+            if (activeElement.type === "date" || activeElement.tagName === "BUTTON") {
+                return true;
+            } else {
+                event.preventDefault();
+            }
+        }
+    });
+
+    function handleImageChange() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('currentImage').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+</script>
+<script type="text/javascript">
+    const txHeight = 16;
+    const tx = document.getElementsByTagName("textarea");
+    for (let i = 0; i < tx.length; i++) {
+        if (tx[i].value === '') {
+            tx[i].setAttribute("style", "height:" + txHeight + "px;overflow-y:hidden;");
+        } else {
+            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+        }
+        tx[i].addEventListener("input", OnInput, false);
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCharacterCount();
+        });
+        document.addEventListener('input', function() {
+            updateCharacterCount();
+        });
+
+    }
+
+    function OnInput() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + "px";
+    }
+    function updateCharacterCount() {
+        var textarea = document.getElementById("description");
+        var characterCount = document.getElementById("characterCount");
+        characterCount.textContent = textarea.value.length;
+    }
+</script>
