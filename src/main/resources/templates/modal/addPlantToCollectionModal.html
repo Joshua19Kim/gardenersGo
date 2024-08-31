@@ -12,7 +12,7 @@
                 <form id="plantForm" class="d-grid" th:action="@{/myCollection}" method="post" enctype="multipart/form-data"
                       style="display: flex; align-items: center; flex-direction: column;">
                     <div class="row justify-content-center w-100">
-                        <div class="col-auto">
+                        <div class="col-auto" style="margin-left: 30px;">
                             <div class="new-plant-image-container" id="image" >
                                 <img th:src="@{'/images/placeholder.jpg'}" alt="Plant" id="currentImage" >
                                 <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()" style="position: absolute; bottom: 10px; right: 10px; z-index: 10;">+</button>
