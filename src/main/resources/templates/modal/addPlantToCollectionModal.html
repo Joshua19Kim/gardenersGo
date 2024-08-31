@@ -101,21 +101,7 @@
         var file = fileInput.files[0];
         if (file) {
             var reader = new FileReader();
-            reader.onload = functiondocument.addEventListener('DOMContentLoaded', function() {
-    var inputs = document.querySelectorAll('input[placeholder], textarea[placeholder]');
-
-    inputs.forEach(function(input) {
-        var placeholder = input.placeholder;
-
-        input.addEventListener('focus', function() {
-            this.placeholder = '';
-        });
-
-        input.addEventListener('blur', function() {
-            if (this.value === '') {
-                this.placeholder = placeholder;
-            }
-        });(e) {
+            reader.onload = function(e) {
                 document.getElementById('currentImage').src = e.target.result;
             };
             reader.readAsDataURL(file);
