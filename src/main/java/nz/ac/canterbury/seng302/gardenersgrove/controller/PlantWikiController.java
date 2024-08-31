@@ -125,6 +125,13 @@ public class PlantWikiController {
             model.addAttribute("errorMessage", errorMessage);
         }
         model.addAttribute("searchTerm", searchTerm);
+
+        // need to add to model so that the navbar can populate the dropdown
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+        model.addAttribute("gardens", gardens);
+
         return "plantWikiTemplate";
     }
 
@@ -139,7 +146,7 @@ public class PlantWikiController {
             @RequestParam(value = "isDateInvalid", required = false) boolean isDateInvalid,
             @RequestParam(value = "imageUrl", required = false) String imageUrl,
             @RequestParam(value = "searchTerm", required = false) String searchTerm,
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "file", required = false) MultipartFile file,
             Model model,
             RedirectAttributes redirectAttributes) {
 
