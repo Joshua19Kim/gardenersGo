@@ -130,7 +130,7 @@ public class IdentifiedPlant {
                            String speciesScientificNameWithoutAuthor, LocalDate uploadedDate,
                            Gardener gardener) {
 
-        this.bestMatch = plantName;
+        this.name = plantName;
         this.description = description;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         this.dateUploaded = uploadedDate.format(formatter);
@@ -139,10 +139,6 @@ public class IdentifiedPlant {
 
 
     }
-
-
-
-
 
     public Long getId() {
         return id;

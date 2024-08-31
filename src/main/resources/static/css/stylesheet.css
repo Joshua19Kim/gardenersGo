@@ -230,6 +230,10 @@ textarea#description.garden-form-control {
         box-shadow: none;
     }
 }
+.required-label {
+    color: var(--button-cancel-colour);
+    font-size: 0.8rem;
+}
 
 #autocomplete-results {
     align-items: baseline;

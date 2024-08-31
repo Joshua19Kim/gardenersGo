@@ -9,14 +9,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="plantForm" th:action="@{/myCollection}" method="post" enctype="multipart/form-data" style="display: flex; align-items: center; flex-direction: column;">
-                    <div class="plant-image-container" id="image">
-                        <img th:src="@{'/images/placeholder.jpg'}" alt="Plant" id="currentImage">
-                        <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
-                        <input type="file" id="fileInput" name="plantImage" style="display: none;" accept="image/*" onchange="handleImageChange()">
+                <form id="plantForm" class="d-grid" th:action="@{/myCollection}" method="post" enctype="multipart/form-data"
+                      style="display: flex; align-items: center; flex-direction: column;">
+                    <div class="row justify-content-center w-100">
+                        <div class="col-auto">
+                            <div class="new-plant-image-container" id="image" >
+                                <img th:src="@{'/images/placeholder.jpg'}" alt="Plant" id="currentImage" >
+                                <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()" style="position: absolute; bottom: 10px; right: 10px; z-index: 10;">+</button>
+                                <input type="file" id="fileInput" name="plantImage" style="display: none;" accept="image/*" onchange="handleImageChange()">
+                            </div>
+                        </div>
                     </div>
                     <br/>
-                    <label for="plantName"> *Name: </label>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label for="plantName"> Name: </label>
+                        <label for="plantName" class="required-label"> *Required </label>
+                    </div>
+
                     <input type="text" class="form-control" th:value="${plantName}" id="plantName" name="plantName" maxlength="64" placeholder="Plant Name">
 
                     <br/>
@@ -27,10 +36,10 @@
                     <label for="description"> Description: </label>
                     <br/>
                     <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
-                    <textarea class="form-control" th:value="${description}" id="description" name="description"  maxlength="512">[[${description}]]</textarea>
+                    <textarea class="form-control" th:value="${description}" id="description" name="description" placeholder="Description"  maxlength="512">[[${description}]]</textarea>
                     <br/>
                     <label for="plantDate"> Date Planted: </label>
-                    <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" name="uploadedDate">
+                    <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" name="uploadedDate" style="color:#6c757d;">
                     <span id="dateError" class="smallErrorMessage"></span>
                     <script>
                         document.getElementById( "plantDate" ).addEventListener( "invalid",
@@ -40,9 +49,9 @@
                                 document.getElementById("dateError").textContent = "Date is not in valid format, DD/MM/YYYY";
                             });
                     </script>
-                    <div style="display: flex; align-items: center; flex-direction: column;">
-                        <button type="submit" class="btn btn-primary" >Save New Plant</button>
-                        <button type="button" class="btn cancel-button text-white" data-bs-dismiss="modal">Close</button>
+                    <div class="d-flex flex-column align-items-center justify-content-center py-1">
+                        <button type="submit" class="btn btn-primary mt-2 mb-2" >Save New Plant</button>
+                        <button type="button" id="cancelButton" class="btn cancel-button text-white" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>
 
@@ -52,7 +61,28 @@
     </div>
 </div>
 <script>
-    document.getElementById("plantForm").addEventListener("submit", function(event) {
+    var form = document.getElementById('plantForm');
+    var fileInput = document.getElementById('fileInput');
+    var currentImage = document.getElementById('currentImage');
+    var addPlantModal = document.getElementById('addPlantModal');
+    var plantDateInput = document.getElementById('plantDate');
+    var today = new Date();
+
+
+    // this will be triggered when the modal is about to open
+    addPlantModal.addEventListener('show.bs.modal', function (event) {
+        form.reset();
+        fileInput.value = '';
+        currentImage.src = '[[@{/images/placeholder.jpg}]]';
+
+        plantDateInput.value = today.getFullYear() + '-' +
+            String(today.getMonth() + 1).padStart(2, '0') + '-' +
+            String(today.getDate()).padStart(2, '0');
+
+    });
+
+
+    form.addEventListener("submit", function(event) {
          document.getElementById("plantForm").submit();
         var modal = bootstrap.Modal.getInstance(addPlantModal);
         modal.hide();
@@ -69,7 +99,6 @@
     });
 
     function handleImageChange() {
-        var fileInput = document.getElementById('fileInput');
         var file = fileInput.files[0];
         if (file) {
             var reader = new FileReader();
@@ -82,6 +111,7 @@
 
 </script>
 <script type="text/javascript">
+
     const txHeight = 16;
     const tx = document.getElementsByTagName("textarea");
     for (let i = 0; i < tx.length; i++) {
@@ -109,4 +139,5 @@
         var characterCount = document.getElementById("characterCount");
         characterCount.textContent = textarea.value.length;
     }
+
 </script>
