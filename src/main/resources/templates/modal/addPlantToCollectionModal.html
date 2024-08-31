@@ -8,10 +8,10 @@
                 <h3 class="modal-title" id="exampleModalLabel">Add New Plant To My Collection</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body d-flex justify-content-center align-items-center">
                 <form id="plantForm" class="d-grid" th:action="@{/myCollection}" method="post" enctype="multipart/form-data"
-                      style="display: flex; align-items: center; flex-direction: column;">
-                    <div class="row justify-content-center w-100">
+                      style="display: flex; align-items: center; flex-direction: column; width:400px;">
+                    <div class="row justify-content-center w-100 mb-5">
                         <div class="col-auto" style="margin-left: 30px;">
                             <div class="new-plant-image-container" id="image" >
                                 <img th:src="@{'/images/placeholder.jpg'}" alt="Plant" id="currentImage" >
