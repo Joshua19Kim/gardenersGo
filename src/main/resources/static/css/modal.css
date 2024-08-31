@@ -7,6 +7,11 @@
     color: #6c757d;
 }
 
+
+.input-modal {
+    color: #777777;
+}
+
 .identified-plant-image {
     max-width: 300px;
     max-height: 300px;

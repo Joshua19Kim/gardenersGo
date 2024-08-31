@@ -26,17 +26,17 @@
                         <label for="plantName" class="required-label"> *Required </label>
                     </div>
 
-                    <input type="text" class="form-control" th:value="${plantName}" id="plantName" name="plantName" maxlength="64" placeholder="Plant Name">
+                    <input type="text" class="form-control input-modal" th:value="${plantName}" id="plantName" name="plantName" maxlength="64" placeholder="Plant Name">
 
                     <br/>
                     <label for="scientificName"> Scientific Name: </label>
-                    <input type="text" class="form-control" th:value="${scientificName}" id="scientificName" name="scientificName" maxlength="64" placeholder="Scientific Name">
+                    <input type="text" class="form-control input-modal" th:value="${scientificName}" id="scientificName" name="scientificName" maxlength="64" placeholder="Scientific Name">
 
                     <br/>
                     <label for="description"> Description: </label>
                     <br/>
                     <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
-                    <textarea class="form-control" th:value="${description}" id="description" name="description" placeholder="Description"  maxlength="512">[[${description}]]</textarea>
+                    <textarea class="form-control input-modal" th:value="${description}" id="description" name="description" placeholder="Description"  maxlength="512">[[${description}]]</textarea>
                     <br/>
                     <label for="plantDate"> Date Planted: </label>
                     <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" name="uploadedDate" style="color:#6c757d;">
@@ -81,7 +81,6 @@
 
     });
 
-
     form.addEventListener("submit", function(event) {
          document.getElementById("plantForm").submit();
         var modal = bootstrap.Modal.getInstance(addPlantModal);
@@ -102,7 +101,21 @@
         var file = fileInput.files[0];
         if (file) {
             var reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = functiondocument.addEventListener('DOMContentLoaded', function() {
+    var inputs = document.querySelectorAll('input[placeholder], textarea[placeholder]');
+
+    inputs.forEach(function(input) {
+        var placeholder = input.placeholder;
+
+        input.addEventListener('focus', function() {
+            this.placeholder = '';
+        });
+
+        input.addEventListener('blur', function() {
+            if (this.value === '') {
+                this.placeholder = placeholder;
+            }
+        });(e) {
                 document.getElementById('currentImage').src = e.target.result;
             };
             reader.readAsDataURL(file);

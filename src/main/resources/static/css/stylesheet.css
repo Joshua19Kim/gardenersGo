@@ -1680,3 +1680,11 @@ table td {
 .add-button .text {
     font-size: 20px;
 }
+
+input:focus::placeholder {
+    color: transparent;
+}
+
+textarea:focus::placeholder {
+    color: transparent;
+}
