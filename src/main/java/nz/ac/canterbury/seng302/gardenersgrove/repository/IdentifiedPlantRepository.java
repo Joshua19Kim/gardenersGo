@@ -36,7 +36,7 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
      * @return a page of species with count, species name, and image URL
      */
     @Query("SELECT new nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies(p.speciesScientificNameWithoutAuthor, p.imageUrl, COUNT(p)) " +
-            "FROM IdentifiedPlant p WHERE p.gardener = :id " +
+            "FROM IdentifiedPlant p WHERE p.gardener.id = :id " +
             "GROUP BY p.speciesScientificNameWithoutAuthor, p.imageUrl")
     Page<IdentifiedPlantSpecies> getSpeciesByGardenerId(long id, Pageable pageable);
 }

@@ -37,7 +37,7 @@
             <li class="page-item"><a class="page-link" th:href="@{/myCollection(pageNo=${pageNumber - 1})}" th:text="${pageNumber}"></a></li>
         </ul>
         <li class="page-item">
-            <a class="page-link" th:href="@{/myCollection(pageNo=${collectionsList.totalPages - 1})}" aria-label="Next">
+            <a class="page-link" th:href="@{/myCollection(pageNo=${speciesList.totalPages - 1})}" aria-label="Next">
                 <span aria-hidden="true">Last</span>
             </a>
         </li>
