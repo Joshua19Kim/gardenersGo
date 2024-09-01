@@ -21,12 +21,15 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
     Page<IdentifiedPlant> findAll(Pageable pageable);
 
     /**
-     * Find the identified plants by gardener id with pagination
-     * @param id the id of the gardener
+     * Custom query to retrieve identified plants by gardener id and species name, with pagination
+     *
+     * @param gardenerId the id of the gardener
+     * @param speciesName the name of the plant species
      * @param pageable object representing pagination
-     * @return the identified plants that the gardener has
+     * @return the identified plants matching the species name that the gardener has
      */
-    Page<IdentifiedPlant> findPlantSpeciesByGardenerId(long id, Pageable pageable);
+    @Query("SELECT p FROM IdentifiedPlant p WHERE p.gardener.id = :gardenerId AND p.speciesScientificNameWithoutAuthor = :speciesName")
+    Page<IdentifiedPlant> getPlantByGardenerIdAndSpecies(long gardenerId, String speciesName, Pageable pageable);
 
     /**
      * Custom query to retrieve species by gardener id, with pagination
