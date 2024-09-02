@@ -1598,18 +1598,6 @@ form.search-bar::after {
     position: relative;
 }
 
-.collection-gardens-card .btn-wrapper {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-}
-
-.collection-gardens-card .btn-success {
-    padding: 2px 10px;
-    font-size: smaller;
-    min-width: fit-content;
-}
-
 .plant-wiki-card {
     padding: 0 !important;
     min-height: 633px
@@ -1618,6 +1606,18 @@ form.search-bar::after {
 .plant-wiki-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.plant-wiki-card .btn-wrapper {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.plant-wiki-card .btn-success {
+    padding: 2px 10px;
+    font-size: smaller;
+    min-width: fit-content;
 }
 
 .friend-modal-content {

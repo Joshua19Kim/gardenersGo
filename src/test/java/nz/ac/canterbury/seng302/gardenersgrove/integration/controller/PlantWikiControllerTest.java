@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantWikiController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
@@ -15,10 +16,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.mock.web.MockMultipartFile;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -58,22 +62,24 @@ public class PlantWikiControllerTest {
         int totalSearchWikiPlants = 3;
         expectedWikiPlants = new ArrayList<>();
         expectedSearchWikiPlants = new ArrayList<>();
-        testGardener = new Gardener("Test", "Gardener",
-                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
-                "Password1!");
+
+        testGardener = new Gardener("Test", "Gardener", LocalDate.of(2024, 4, 1), "testgardener@gmail.com", "Password1!");
+
+        // Mock gardener retrieval by email (authentication)
+        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(testGardener));
+
         for(int i = 0; i < totalWikiPlants; i++) {
             WikiPlant expectedWikiPlant;
             if(i >= totalWikiPlants - totalSearchWikiPlants) {
-                expectedWikiPlant = new WikiPlant((long) i, "Pine tree" + i, List.of("Pine"), List.of("Common Silver Fir"),
-                        "Perennial", "Frequent", List.of("full sun"), "randomImage.jpeg");
+                expectedWikiPlant = new WikiPlant((long) i, "Pine tree" + i, List.of("Pine"), List.of("Common Silver Fir"), "Perennial", "Frequent", List.of("full sun"), "randomImage.jpeg");
                 expectedSearchWikiPlants.add(expectedWikiPlant);
             } else {
-                expectedWikiPlant = new WikiPlant((long) i, "European Silver Fir " + i, List.of("Abies alba"), List.of("Common Silver Fir"),
-                        "Perennial", "Frequent", List.of("full sun"), "randomImage.jpeg");
+                expectedWikiPlant = new WikiPlant((long) i, "European Silver Fir " + i, List.of("Abies alba"), List.of("Common Silver Fir"), "Perennial", "Frequent", List.of("full sun"), "randomImage.jpeg");
             }
             expectedWikiPlants.add(expectedWikiPlant);
         }
     }
+
 
     @Test
     @WithMockUser
@@ -117,29 +123,34 @@ public class PlantWikiControllerTest {
                 .andExpect(model().attribute("errorMessage", errorMessage));
     }
 
+
     @Test
     @WithMockUser
-    public void PlantWikiPlantAdded_ValidRequest_PlantAddedToGarden() throws Exception{
-        String query = "";
+    public void PlantWikiPlantAdded_ValidRequest_PlantAddedToGarden() throws Exception {
+        Garden mockGarden = Mockito.spy(Garden.class);
         Long gardenId = 1L;
+        mockGarden.setId(gardenId);
+
         String name = "Apple Tree";
         String count = "2";
         String description = "Big ol' fruit tree";
-        String date = "01/01/2020";
-        Mockito.when(plantWikiService.getPlants(query)).thenReturn(expectedWikiPlants);
-        mockMvc.perform(MockMvcRequestBuilders.post("/addPlant")
+        String date = "2020-01-01";
+
+        MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "Some image content".getBytes());
+        Mockito.when(gardenService.getGarden(gardenId)).thenReturn(Optional.of(mockGarden));
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/addPlant")
+                        .file(file)
                         .param("gardenId", String.valueOf(gardenId))
                         .param("name", name)
                         .param("count", count)
                         .param("description", description)
                         .param("date", date)
-                .with(csrf()))
-                .andExpect(view().name("plantWikiTemplate"))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("gardenId", gardenId))
-                .andExpect(model().attribute("name", name))
-                .andExpect(model().attribute("count", count))
-                .andExpect(model().attribute("description", description))
-                .andExpect(model().attribute("date", date));
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/plantWiki"));
     }
+
+
+
 }

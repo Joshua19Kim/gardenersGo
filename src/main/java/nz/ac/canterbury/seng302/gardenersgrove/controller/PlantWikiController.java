@@ -184,7 +184,7 @@ public class PlantWikiController {
             model.addAttribute("descriptionError", validatedPlantDescription);
             isValid = false;
         }
-        if (!file.isEmpty()) {
+        if (!file.isEmpty() && !file.isEmpty()) {
             Optional<String> uploadMessage = imageService.checkValidImage(file);
             if (uploadMessage.isPresent()) {
                 model.addAttribute("uploadError", uploadMessage.get());
@@ -216,7 +216,7 @@ public class PlantWikiController {
             // First need to save the plant to get the id assigned by the database
             plantService.addPlant(plant);
 
-            if (!file.isEmpty()) {
+            if (!file.isEmpty() && !file.isEmpty()) {
                 imageService.savePlantImage(file, plant);
             } else if (imageUrl != null && !imageUrl.isEmpty()) {
                 String filePath = imageService.downloadImage(imageUrl, plant.getId());
