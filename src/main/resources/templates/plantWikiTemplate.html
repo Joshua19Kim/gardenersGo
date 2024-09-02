@@ -77,19 +77,25 @@
                         </select>
                         <br/>
                         <label for="name"> *Name: </label>
-                        <input type="text" class="form-control" id="name" name="name" maxlength="64" placeholder="Name">
+                        <input type="text" class="form-control" id="name" name="name" maxlength="64" placeholder="Name"
+                               th:classappend="${nameError} ? 'is-invalid' : ''" th:value="${name}">
+                        <p th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage text-danger"></p>
                         <br/>
                         <label for="count"> Plant Count: </label>
-                        <input type="text" class="form-control" id="count" name="count" maxlength="12" placeholder="How many?">
+                        <input type="text" class="form-control" id="count" name="count" maxlength="12" placeholder="How many?"
+                               th:classappend="${countError} ? 'is-invalid' : ''" th:value="${count}">
+                        <p th:if="${countError}" th:text="${countError}" class="smallErrorMessage text-danger"></p>
                         <br/>
                         <label for="description"> Description: </label>
                         <br/>
                         <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
-                        <textarea class="form-control" id="description" name="description" maxlength="512"></textarea>
+                        <textarea class="form-control" id="description" name="description" maxlength="512"
+                                  th:classappend="${descriptionError} ? 'is-invalid' : ''" th:value="${description}">[[${description}]]</textarea>
+                        <p th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage text-danger"></p>
                         <br/>
                         <label for="datePlanted"> Date Planted: </label>
-                        <input type="date" class="form-control" id="datePlanted" name="date">
-                        <span id="dateError" class="smallErrorMessage"></span>
+                        <input type="date" class="form-control" id="datePlanted" name="date" th:value="${date}">
+                        <p th:if="${dateError}" th:text="${dateError}" class="smallErrorMessage text-danger"></p>
                         <script>
                             document.getElementById("datePlanted").addEventListener("invalid",
                                 function(event) {
@@ -107,6 +113,7 @@
                             <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
                             <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*" onchange="handleImageChange()">
                         </div>
+                        <p th:if="${uploadError}" th:text="${uploadError}" class="smallErrorMessage text-danger"></p>
                         <br/>
                         <button class="btn btn-success w-100" type="submit">Submit</button>
                     </form>
@@ -133,7 +140,7 @@
         const plantDesc = button.getAttribute('data-plant-desc');
         document.getElementById('description').value = plantDesc.replace(/\\n/g, '\n'); // Actually make it a new line
 
-        // Set today's date in DD/MM/YYYY format
+        // Set today's date in YYYY-MM-DD format
         const today = new Date();
         const day = String(today.getDate()).padStart(2, '0');
         const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0 ;)

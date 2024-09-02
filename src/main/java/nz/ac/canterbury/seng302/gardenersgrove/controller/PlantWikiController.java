@@ -192,6 +192,8 @@ public class PlantWikiController {
             }
         }
 
+        logger.info(String.valueOf(isValid));
+
         if (isValid) {
             Plant plant = new Plant(name, garden);
             boolean countPresent = count != null && !validatedPlantCount.trim().isEmpty();
@@ -231,6 +233,7 @@ public class PlantWikiController {
             redirectAttributes.addFlashAttribute("successMessage", "Plant added successfully!");
             return "redirect:/plantWiki";
         } else {
+            logger.info("In else condition");
             // Handle validation errors and re-display the form with errors
             Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
             gardenerOptional.ifPresent(value -> gardener = value);
@@ -241,7 +244,7 @@ public class PlantWikiController {
             model.addAttribute("description", description);
             model.addAttribute("date", date);
             model.addAttribute("garden", garden);
-            return "plantWikiTemplate";
+            return "redirect:/plantWiki";
         }
     }
 
