@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,10 +90,15 @@ public class GardensController {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
+
         List<Long> followedGardens = followerService.findAllGardens(gardener.getId());
-        model.addAttribute("followedGardens", followedGardens);
-        logger.info("DSHFLKJSHFKJDSHFKJHDSFKLDSFHKJDSHFHFKJDSHFKJDSHFKJDSHFHDSFKHDSFLKHDSKFHDSKJHFKDSHFLKSHFLKSDHFLDSHFLKJHDSLFKHDFS");
-        logger.info(followedGardens.toString());
+        List<Garden> followedGardenList = new ArrayList<>();
+        for (Long gardenId : followedGardens) {
+            Optional<Garden> garden = gardenService.getGarden(gardenId);
+            garden.ifPresent(followedGardenList::add);
+        }
+
+        model.addAttribute("followedGardenList", followedGardenList);
 
         List<Garden> gardens;
         if (user == null) {

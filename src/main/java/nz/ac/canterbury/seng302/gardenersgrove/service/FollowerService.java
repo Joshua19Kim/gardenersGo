@@ -1,13 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FollowerRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +17,12 @@ import java.util.Optional;
  */
 @Service
 public class FollowerService {
-    Logger logger = LoggerFactory.getLogger(FollowerService.class);
-    private final GardenRepository gardenRepository;
 
     private final FollowerRepository followerRepository;
 
     @Autowired
     public FollowerService(
-            GardenRepository gardenRepository,
             FollowerRepository followerRepository) {
-        this.gardenRepository = gardenRepository;
         this.followerRepository = followerRepository;
     }
 
@@ -70,7 +63,7 @@ public class FollowerService {
     public List<Long> findAllGardens(Long id) {
         List<Follower> followers = followerRepository.findAllByGardenerId(id);
         if (!followers.isEmpty()) {
-            List<Long> gardenIds = new ArrayList<Long>();
+            List<Long> gardenIds = new ArrayList<>();
             for (Follower follower : followers) {
                 gardenIds.add(follower.getGardenId());
             }
@@ -81,17 +74,6 @@ public class FollowerService {
 
     public Optional<Follower> findFollower(long gardenerId, long gardenId) {
         return followerRepository.findByGardenerIdAndGardenId(gardenerId, gardenId);
-    }
-    public List<Garden> getGardensOwnedByPeopleFollowed(Long gardenerId) {
-        List<Follower> followed = followerRepository.findAllByGardenerId(gardenerId);
-
-        List<Garden> gardens = new ArrayList<>();
-        for (Follower userIsFollowing : followed) {
-            gardens.addAll(gardenRepository.findByGardenerId(userIsFollowing.getId()));
-            logger.info("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
-            logger.info(gardenRepository.findByGardenerId(userIsFollowing.getGardenId()).toString());
-        }
-        return gardens;
     }
 
 }

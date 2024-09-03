@@ -11,19 +11,28 @@
     <div class="card">
         <h1 th:text="${gardener.firstName} + (${gardener.lastName != null}? ' ' + ${gardener.lastName} : '') + '\'s Gardens'"></h1>
         <th:block th:each="garden : ${gardens}">
-            <div class="container card m-2">
+            <div class="container card m-4">
                 <a th:text="${garden.name}" th:href="@{/gardens/details(gardenId=${garden.id})}"></a>
             </div>
         </th:block>
     </div>
-    <div class="card">
+    <div class="card mt-4">
+        <h1>Followed Gardens</h1>
         <div class="container mt-4">
-            <div class="card m-2">
-                <th:block th:each="followedGarden : ${followedGardens}">
-                    <li><a th:text="${followedGarden}"></a></li>
-                </th:block>
-            </div>
+            <th:block th:if="${followedGardenList != null && !followedGardenList.isEmpty()}">
+                <div class="card m-2">
+                    <th:block th:each="followedGarden : ${followedGardenList}">
+                        <div class="container card m-4">
+                            <a th:text="${followedGarden.name}" th:href="@{/gardens/details(gardenId=${followedGarden.id})}"></a>
+                        </div>
+                    </th:block>
+                </div>
+            </th:block>
+            <th:block th:if="${followedGardenList == null || followedGardenList.isEmpty()}">
+                <p>You are not following any gardens yet.</p>
+            </th:block>
         </div>
+
     </div>
 </div>
 </body>
