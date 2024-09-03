@@ -6,6 +6,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.FollowerRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +20,16 @@ import java.util.Optional;
  */
 @Service
 public class FollowerService {
-    private GardenRepository gardenRepository;
+    Logger logger = LoggerFactory.getLogger(FollowerService.class);
+    private final GardenRepository gardenRepository;
 
     private final FollowerRepository followerRepository;
 
     @Autowired
-    public FollowerService(FollowerRepository followerRepository) {
+    public FollowerService(
+            GardenRepository gardenRepository,
+            FollowerRepository followerRepository) {
+        this.gardenRepository = gardenRepository;
         this.followerRepository = followerRepository;
     }
 
@@ -77,10 +83,13 @@ public class FollowerService {
         return followerRepository.findByGardenerIdAndGardenId(gardenerId, gardenId);
     }
     public List<Garden> getGardensOwnedByPeopleFollowed(Long gardenerId) {
-        List<Follower> followers = followerRepository.findAllByGardenerId(gardenerId);
+        List<Follower> followed = followerRepository.findAllByGardenerId(gardenerId);
+
         List<Garden> gardens = new ArrayList<>();
-        for (Follower follower : followers) {
-            gardens.addAll(gardenRepository.findByGardenerId(follower.getGardenId()));
+        for (Follower userIsFollowing : followed) {
+            gardens.addAll(gardenRepository.findByGardenerId(userIsFollowing.getId()));
+            logger.info("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+            logger.info(gardenRepository.findByGardenerId(userIsFollowing.getGardenId()).toString());
         }
         return gardens;
     }

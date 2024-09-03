@@ -17,12 +17,13 @@
         </th:block>
     </div>
     <div class="card">
-        <h1 th:text="${gardener.firstName} + (${gardener.lastName != null}? ' ' + ${gardener.lastName} : '') + '\'s Gardens'"></h1>
-        <th:block th:each="garden : ${followedGardens}">
-            <div class="container card m-2">
-                <a th:text="${garden.name}" th:href="@{/gardens/followed(gardener=${gardener.id})}"></a>
+        <div class="container mt-4">
+            <div class="card m-2">
+                <th:block th:each="followedGarden : ${followedGardens}">
+                    <li><a th:text="${followedGarden}"></a></li>
+                </th:block>
             </div>
-        </th:block>
+        </div>
     </div>
 </div>
 </body>

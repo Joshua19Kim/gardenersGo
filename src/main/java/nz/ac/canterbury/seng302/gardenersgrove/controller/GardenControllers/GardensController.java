@@ -88,6 +88,10 @@ public class GardensController {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
+        List<Long> followedGardens = followerService.findAllGardens(gardener.getId());
+        model.addAttribute("followedGardens", followedGardens);
+        logger.info("DSHFLKJSHFKJDSHFKJHDSFKLDSFHKJDSHFHFKJDSHFKJDSHFKJDSHFHDSFKHDSFLKHDSKFHDSKJHFKDSHFLKSHFLKSDHFLDSHFLKJHDSLFKHDFS");
+        logger.info(followedGardens.toString());
 
         List<Garden> gardens;
         if (user == null) {
@@ -110,15 +114,6 @@ public class GardensController {
         }
         model.addAttribute("gardens", gardens);
         model.addAttribute("requestURI", requestService.getRequestURI(request));
-        return "gardensTemplate";
-    }
-
-    @GetMapping("/gardens/followed")
-    public String getFollowedGardens(
-            @RequestParam("gardenerId") Long gardenerId,
-            Model model) {
-        List<Garden> followedGardens = followerService.getGardensOwnedByPeopleFollowed(gardenerId);
-        model.addAttribute("followedGardens", followedGardens);
         return "gardensTemplate";
     }
 }
