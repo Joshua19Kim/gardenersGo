@@ -170,24 +170,24 @@ public class PlantWikiController {
             dateError = Optional.of("Date is not in valid format, DD/MM/YYYY");
             isValid = false;
         }
-        model.addAttribute("DateValid", dateError.orElse(""));
+        redirectAttributes.addFlashAttribute("DateValid", dateError.orElse(""));
 
         if (!Objects.equals(name, validatedPlantName)) {
-            model.addAttribute("nameError", validatedPlantName);
+            redirectAttributes.addFlashAttribute("nameError", validatedPlantName);
             isValid = false;
         }
         if (count != null && !Objects.equals(count.replace(",", "."), validatedPlantCount)) {
-            model.addAttribute("countError", validatedPlantCount);
+            redirectAttributes.addFlashAttribute("countError", validatedPlantCount);
             isValid = false;
         }
         if (!Objects.equals(description, validatedPlantDescription)) {
-            model.addAttribute("descriptionError", validatedPlantDescription);
+            redirectAttributes.addFlashAttribute("descriptionError", validatedPlantDescription);
             isValid = false;
         }
         if (!file.isEmpty() && !file.isEmpty()) {
             Optional<String> uploadMessage = imageService.checkValidImage(file);
             if (uploadMessage.isPresent()) {
-                model.addAttribute("uploadError", uploadMessage.get());
+                    redirectAttributes.addFlashAttribute("uploadError", uploadMessage.get());
                 isValid = false;
             }
         }
@@ -238,12 +238,15 @@ public class PlantWikiController {
             Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
             gardenerOptional.ifPresent(value -> gardener = value);
             List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-            model.addAttribute("gardens", gardens);
-            model.addAttribute("name", name);
-            model.addAttribute("count", count);
-            model.addAttribute("description", description);
-            model.addAttribute("date", date);
-            model.addAttribute("garden", garden);
+            redirectAttributes.addFlashAttribute("gardens", gardens);
+            redirectAttributes.addFlashAttribute("name", name);
+            redirectAttributes.addFlashAttribute("count", count);
+            redirectAttributes.addFlashAttribute("description", description);
+            redirectAttributes.addFlashAttribute("date", date);
+            redirectAttributes.addFlashAttribute("garden", garden);
+            redirectAttributes.addFlashAttribute("imageUrl", imageUrl);
+            redirectAttributes.addFlashAttribute("errorOccurred", "an error has occurred");
+
             return "redirect:/plantWiki";
         }
     }

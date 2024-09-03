@@ -6,9 +6,10 @@
 </head>
 
 <body>
-
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="browse-gardens-container">
+    <div id="errorOccurred" th:attr="data-error-occurred=${errorOccurred}"></div>
+    <div id="originalImageUrl" th:attr="data-imageUrl=${imageUrl}"></div>
     <div class="search-container d-flex justify-content-center">
         <form class="form-inline" method="post" th:action="@{/plantWiki}">
             <input aria-label="Search" class="form-control mr-2 mb-0 mt-0" placeholder="Search" th:value="${searchTerm}" th:name="searchTerm"
@@ -130,27 +131,61 @@
         const modal = document.getElementById("add-plant-modal");
         modal.style.display = "block"; // Show the modal
 
-        const imageUrl = button.getAttribute('data-image-url');
+        let imageUrl;
+
+        if (button) {
+            // Modal opened via button click
+            imageUrl = button.getAttribute('data-image-url');
+        } else {
+            // Modal opened due to form error on redirect
+            imageUrl = document.getElementById('originalImageUrl').getAttribute('data-imageUrl');
+        }
+
         document.getElementById('currentImage').src = imageUrl;
         document.getElementById('imageUrl').value = imageUrl; // Set the hidden input value
 
-        const plantName = button.getAttribute('data-plant-name');
+        const plantName = button ? button.getAttribute('data-plant-name') : document.getElementById('name').value;
         document.getElementById('name').value = plantName;
 
-        const plantDesc = button.getAttribute('data-plant-desc');
-        document.getElementById('description').value = plantDesc.replace(/\\n/g, '\n'); // Actually make it a new line
+        const plantDesc = button ? button.getAttribute('data-plant-desc') : document.getElementById('description').value;
+        document.getElementById('description').value = plantDesc.replace(/\\n/g, '\n'); // Ensure new lines
 
-        // Set today's date in YYYY-MM-DD format
+        // Set today's date in YYYY-MM-DD format or use the date from the flash attribute
         const today = new Date();
         const day = String(today.getDate()).padStart(2, '0');
-        const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0 ;)
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0
         const year = today.getFullYear();
-        document.getElementById('datePlanted').value = `${year}-${month}-${day}`;
+        document.getElementById('datePlanted').value = document.getElementById('datePlanted').value || `${year}-${month}-${day}`;
     }
+
+    // To clear error messages
+    function clearModalErrors() {
+        const modal = document.getElementById('add-plant-modal');
+        const paragraphs = modal.querySelectorAll('p');
+        paragraphs.forEach((paragraph) => {
+            paragraph.textContent = '';
+        });
+
+        // Remove 'is-invalid' class from all inputs
+        const invalidInputs = modal.querySelectorAll('.is-invalid');
+        invalidInputs.forEach((input) => {
+            input.classList.remove('is-invalid');
+        });
+
+        document.getElementById("count").value = "";
+
+        // Replace image with the image url from the API
+        var originalImageUrl = document.getElementById("originalImageUrl").getAttribute("data-imageUrl");
+        console.log('hi');
+        console.log(originalImageUrl);
+        document.getElementById('currentImage').src = originalImageUrl;
+    }
+
 
     function closeAddPlantModal() {
         const modal = document.getElementById("add-plant-modal");
         modal.style.display = "none"; // Hide the modal
+        clearModalErrors();
     }
 
     function handleImageChange() {
@@ -165,6 +200,22 @@
             reader.readAsDataURL(file);
         }
     }
+
+    function checkIfError() {
+        const errorOccurred = document.getElementById("errorOccurred").getAttribute("data-error-occurred");
+        if (errorOccurred === "an error has occurred") {
+            displayAddPlantModal(null);
+            console.log("Checking for error...");
+        }
+    }
+
+
+
+    window.onload = function() {
+        console.log("on load...")
+        checkIfError()
+    };
+
 </script>
 
 </body>
