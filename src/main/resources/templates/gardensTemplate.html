@@ -14,7 +14,14 @@
             <div class="container card m-2">
                 <a th:text="${garden.name}" th:href="@{/gardens/details(gardenId=${garden.id})}"></a>
             </div>
-
+        </th:block>
+    </div>
+    <div class="card">
+        <h1 th:text="${gardener.firstName} + (${gardener.lastName != null}? ' ' + ${gardener.lastName} : '') + '\'s Gardens'"></h1>
+        <th:block th:each="garden : ${followedGardens}">
+            <div class="container card m-2">
+                <a th:text="${garden.name}" th:href="@{/gardens/followed(gardener=${gardener.id})}"></a>
+            </div>
         </th:block>
     </div>
 </div>

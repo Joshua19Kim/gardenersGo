@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FollowerRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import java.util.Optional;
  */
 @Service
 public class FollowerService {
+    private GardenRepository gardenRepository;
+
     private final FollowerRepository followerRepository;
 
     @Autowired
@@ -72,4 +76,13 @@ public class FollowerService {
     public Optional<Follower> findFollower(long gardenerId, long gardenId) {
         return followerRepository.findByGardenerIdAndGardenId(gardenerId, gardenId);
     }
+    public List<Garden> getGardensOwnedByPeopleFollowed(Long gardenerId) {
+        List<Follower> followers = followerRepository.findAllByGardenerId(gardenerId);
+        List<Garden> gardens = new ArrayList<>();
+        for (Follower follower : followers) {
+            gardens.addAll(gardenRepository.findByGardenerId(follower.getGardenId()));
+        }
+        return gardens;
+    }
+
 }

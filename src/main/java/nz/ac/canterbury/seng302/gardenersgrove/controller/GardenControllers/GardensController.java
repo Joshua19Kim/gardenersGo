@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +23,7 @@ import static java.lang.Long.parseLong;
 public class GardensController {
     Logger logger = LoggerFactory.getLogger(GardensController.class);
     private final GardenService gardenService;
+    private final FollowerService followerService;
     private final GardenerFormService gardenerFormService;
     private final RelationshipService relationshipService;
     private final RequestService requestService;
@@ -41,10 +41,12 @@ public class GardensController {
     @Autowired
     public GardensController(
             GardenService gardenService,
+            FollowerService followerService,
             GardenerFormService gardenerFormService,
             RelationshipService relationshipService,
             RequestService requestService) {
         this.gardenService = gardenService;
+        this.followerService = followerService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
         this.requestService = requestService;
@@ -108,6 +110,15 @@ public class GardensController {
         }
         model.addAttribute("gardens", gardens);
         model.addAttribute("requestURI", requestService.getRequestURI(request));
+        return "gardensTemplate";
+    }
+
+    @GetMapping("/gardens/followed")
+    public String getFollowedGardens(
+            @RequestParam("gardenerId") Long gardenerId,
+            Model model) {
+        List<Garden> followedGardens = followerService.getGardensOwnedByPeopleFollowed(gardenerId);
+        model.addAttribute("followedGardens", followedGardens);
         return "gardensTemplate";
     }
 }
