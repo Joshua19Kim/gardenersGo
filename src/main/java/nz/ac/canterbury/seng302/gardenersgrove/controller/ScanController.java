@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import java.util.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -20,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
-
 /**
  * Controller responsible for handling requests related to plant identification.
  */
@@ -36,6 +35,7 @@ public class ScanController {
     private IdentifiedPlant identifiedPlant;
 
     private final String errorKey = "error";
+
     /**
      * Constructs a new ScanController with the services required for sending and storing identified plants.
      *
