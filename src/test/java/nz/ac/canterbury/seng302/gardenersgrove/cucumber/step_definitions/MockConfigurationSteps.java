@@ -31,7 +31,9 @@ public class MockConfigurationSteps {
     @Autowired
     private GardenerFormService gardenerFormService;
     private Optional<Gardener> gardenerOptional;
+    private IdentifiedPlant testIdentifiedPlant;
     Gardener gardener;
+
     @Then("send an email.")
     public void send_an_email() {
         Mockito.verify(emailUserService, Mockito.times(1)).sendEmail(anyString(), anyString(), anyString());
@@ -48,7 +50,7 @@ public class MockConfigurationSteps {
     public void the_app_identifies_the_plant_image() throws IOException {
         gardenerOptional = gardenerFormService.findByEmail("a@gmail.com");
         gardener = gardenerOptional.get();
-        IdentifiedPlant testIdentifiedPlant = new IdentifiedPlant(
+        testIdentifiedPlant = new IdentifiedPlant(
                 "Helianthus annuus",
                 0.88,
                 List.of("Sunflower", "Rose"),
