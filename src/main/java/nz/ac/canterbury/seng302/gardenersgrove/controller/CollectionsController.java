@@ -6,7 +6,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
-import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -168,8 +161,8 @@ public class CollectionsController {
     /**
      *
      * @param plantIdString string version of id of plant being edited
-     * @param model
-     * @return
+     * @param model used for passing attributes to the view
+     * @return edit form or redirect back to collection
      */
     @GetMapping("/collectionDetails/edit")
     public String editIdentifiedPlant(

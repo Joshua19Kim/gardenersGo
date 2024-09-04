@@ -1,8 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
-import java.util.Objects;
-import java.util.Optional;
-
 /**
  *  A class used to validate the inputs of forms. Contains static methods that will either return the input if
  *  it is valid or an error message if it is invalid.
