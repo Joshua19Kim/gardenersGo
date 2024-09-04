@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -198,6 +199,15 @@ public class PlantIdentificationService {
     public Page<IdentifiedPlant> getGardenerPlantsBySpeciesPaginated(int pageNo, int pageSize, Long gardenerId, String speciesName) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         return identifiedPlantRepository.getPlantByGardenerIdAndSpecies(gardenerId, speciesName, pageable);
+    }
+
+    /**
+     * Gets the IdentifiedPlant by id
+     * @param plantId the id of the plant to be retrieved
+     * @return IdentifiedPlant matching the id
+     */
+    public Optional<IdentifiedPlant> getCollectionPlantById(Long plantId) {
+        return identifiedPlantRepository.findById(plantId);
     }
 
     /**

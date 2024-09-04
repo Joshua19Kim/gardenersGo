@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
+import java.util.Objects;
+import java.util.Optional;
+
 /**
  *  A class used to validate the inputs of forms. Contains static methods that will either return the input if
  *  it is valid or an error message if it is invalid.
@@ -110,7 +113,7 @@ public class ValidityChecker {
         }
 
         if(name != null && name.length() > 64) {
-            result += "Plant name must be less than 64 characters";
+            result += "Plant name must be less than or equal to 64 characters";
         }
 
         if (!result.isEmpty()) {
