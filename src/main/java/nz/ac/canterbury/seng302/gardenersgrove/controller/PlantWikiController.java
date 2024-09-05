@@ -132,6 +132,24 @@ public class PlantWikiController {
     }
 
 
+    /**
+     * Post mapping to add a plant from the plant wiki to the garden. Repurposed plant form to create the modal in which
+     * a user can add a plant straiht from the wiki. Due to it being a modal there are redirect attributes that are
+     * needed in order to control the flow of this.
+     *
+     * @param gardenId id of the garden that you want to add the plant to
+     * @param name name of the plant you are wanting to add
+     * @param count quantity of plants adding to your garden
+     * @param description description is autopopulated with useful information from API, can be changed at any time
+     * @param date the plant is added to garden
+     * @param isDateInvalid flag to check if date formatted correctly
+     * @param imageUrl image url from api used for downloading once submitting
+     * @param file users uploaded image for that plant
+     * @param isFileUploaded flag to tell the difference between upload and image url
+     * @param model the model
+     * @param redirectAttributes for redirection
+     * @return redirect to plantWiki page so page reloaded in correct state
+     */
     @PostMapping("/addPlant")
     public String addPlant(
             @RequestParam("gardenId") Long gardenId,
