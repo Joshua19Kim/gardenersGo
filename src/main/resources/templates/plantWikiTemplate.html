@@ -9,7 +9,7 @@
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="browse-gardens-container">
     <div id="errorOccurred" th:attr="data-error-occurred=${errorOccurred}"></div>
-    <div id="originalImageUrl" th:attr="data-imageUrl=${imageUrl}"></div>
+    <div id="originalImageUrl" th:attr="data-imageUrl=${imageUrl ?: ''}"></div>
     <div class="search-container d-flex justify-content-center">
         <form class="form-inline" method="post" th:action="@{/plantWiki}">
             <input aria-label="Search" class="form-control mr-2 mb-0 mt-0" placeholder="Search" th:value="${searchTerm}" th:name="searchTerm"
@@ -34,7 +34,7 @@
                        'Suggested Sunlight Levels: ' + ${#strings.listJoin(plant.sunlight, ', ')}"
                                 onclick="displayAddPlantModal(this)">Add plant</button>
                     </div>
-                    <img id="collection-card-img" class="card-img-top" th:src="${plant.imagePath  != ''} ? ${plant.imagePath} : '/images/placeholder.jpg'" alt="No Image">
+                    <img id="collection-card-img" class="card-img-top" th:src="${plant.imagePath != ''} ? ${plant.imagePath} : '/images/placeholder.jpg'" alt="No Image">
                     <div class="card-collection-body">
                         <div class="card-body">
                             <h5 style="color: #fffdf6" class="card-title" th:text="${plant.name}"></h5>
@@ -107,7 +107,9 @@
                         </script>
                         <br/>
                         <!-- Hidden input to store image URL -->
-                        <input type="hidden" id="imageUrl" name="imageUrl">
+                        <input type="hidden" id="imageUrl" name="imageUrl" th:value="${imageUrl}">
+                        <!-- Hidden input to check if an image file was uploaded -->
+                        <input type="hidden" id="isFileUploaded" name="isFileUploaded" value="false">
                         <label for="image"> Image: </label>
                         <div class="plant-image-container" id="image">
                             <img id="currentImage" src="" alt="Plant">
@@ -141,6 +143,11 @@
             imageUrl = document.getElementById('originalImageUrl').getAttribute('data-imageUrl');
         }
 
+        // Check if imageUrl is empty or undefined, and set to placeholder if needed
+        if (!imageUrl) {
+            imageUrl = '/images/placeholder.jpg';
+        }
+
         document.getElementById('currentImage').src = imageUrl;
         document.getElementById('imageUrl').value = imageUrl; // Set the hidden input value
 
@@ -157,6 +164,7 @@
         const year = today.getFullYear();
         document.getElementById('datePlanted').value = document.getElementById('datePlanted').value || `${year}-${month}-${day}`;
     }
+
 
     // To clear error messages
     function clearModalErrors() {
@@ -181,7 +189,6 @@
         document.getElementById('currentImage').src = originalImageUrl;
     }
 
-
     function closeAddPlantModal() {
         const modal = document.getElementById("add-plant-modal");
         modal.style.display = "none"; // Hide the modal
@@ -195,7 +202,8 @@
             var reader = new FileReader();
             reader.onload = function(e) {
                 document.getElementById('currentImage').src = e.target.result;
-                document.getElementById('imageUrl').value = ''; // Clear the URL if a file is chosen
+                document.getElementById('isFileUploaded').value = 'true'; // Set flag for file upload
+                // Do not clear the image URL
             };
             reader.readAsDataURL(file);
         }
@@ -209,11 +217,9 @@
         }
     }
 
-
-
     window.onload = function() {
-        console.log("on load...")
-        checkIfError()
+        console.log("on load...");
+        checkIfError();
     };
 
 </script>

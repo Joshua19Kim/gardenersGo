@@ -9,15 +9,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -29,8 +26,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The controller for the plant wiki page. It handles all requests for going to the page and searching for plant information.
@@ -145,12 +141,13 @@ public class PlantWikiController {
             @RequestParam("date") String date,
             @RequestParam(value = "isDateInvalid", required = false) boolean isDateInvalid,
             @RequestParam(value = "imageUrl", required = false) String imageUrl,
-            @RequestParam(value = "searchTerm", required = false) String searchTerm,
             @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam(value = "isFileUploaded", required = false, defaultValue = "false") boolean isFileUploaded,
             Model model,
             RedirectAttributes redirectAttributes) {
 
         logger.info("POST /addPlant");
+        logger.info("Image URL: " + imageUrl);
 
         Optional<Garden> gardenOptional = gardenService.getGarden(gardenId);
         if (gardenOptional.isEmpty()) {
@@ -165,91 +162,86 @@ public class PlantWikiController {
 
         boolean isValid = true;
 
-        Optional<String> dateError = Optional.empty();
         if (isDateInvalid) {
-            dateError = Optional.of("Date is not in valid format, DD/MM/YYYY");
+            redirectAttributes.addFlashAttribute("dateError", "Date is not in valid format, DD/MM/YYYY");
             isValid = false;
         }
-        redirectAttributes.addFlashAttribute("DateValid", dateError.orElse(""));
 
         if (!Objects.equals(name, validatedPlantName)) {
             redirectAttributes.addFlashAttribute("nameError", validatedPlantName);
             isValid = false;
         }
+
         if (count != null && !Objects.equals(count.replace(",", "."), validatedPlantCount)) {
             redirectAttributes.addFlashAttribute("countError", validatedPlantCount);
             isValid = false;
         }
+
         if (!Objects.equals(description, validatedPlantDescription)) {
             redirectAttributes.addFlashAttribute("descriptionError", validatedPlantDescription);
             isValid = false;
         }
-        if (!file.isEmpty() && !file.isEmpty()) {
+
+        if (isFileUploaded && file != null && !file.isEmpty()) {
             Optional<String> uploadMessage = imageService.checkValidImage(file);
             if (uploadMessage.isPresent()) {
-                    redirectAttributes.addFlashAttribute("uploadError", uploadMessage.get());
+                redirectAttributes.addFlashAttribute("uploadError", uploadMessage.get());
                 isValid = false;
             }
         }
 
-        logger.info(String.valueOf(isValid));
-
         if (isValid) {
             Plant plant = new Plant(name, garden);
-            boolean countPresent = count != null && !validatedPlantCount.trim().isEmpty();
-            boolean descriptionPresent = description != null && !validatedPlantDescription.trim().isEmpty();
-            boolean datePresent = date != null;
 
-            if (countPresent) {
+            if (count != null && !count.trim().isEmpty()) {
                 plant.setCount(new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
             }
-            if (descriptionPresent) {
+
+            if (description != null && !description.trim().isEmpty()) {
                 plant.setDescription(validatedPlantDescription);
             }
-            if (datePresent) {
+
+            if (date != null) {
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDate parsedDate = LocalDate.parse(date, inputFormatter);
                 String formattedDate = parsedDate.format(outputFormatter);
-
                 plant.setDatePlanted(formattedDate);
             }
 
-            // First need to save the plant to get the id assigned by the database
             plantService.addPlant(plant);
 
-            if (!file.isEmpty() && !file.isEmpty()) {
+            // Set the image based on the file or URL
+            if (isFileUploaded && file != null && !file.isEmpty()) {
                 imageService.savePlantImage(file, plant);
             } else if (imageUrl != null && !imageUrl.isEmpty()) {
-                String filePath = imageService.downloadImage(imageUrl, plant.getId());
-                logger.info(filePath);
-                plant.setImage(filePath);
-                plantService.addPlant(plant);
+                if (imageUrl.equals("/images/placeholder.jpg")) {
+                    plant.setImage("/images/placeholder.jpg");
+                } else {
+                    String filePath = imageService.downloadImage(imageUrl, plant.getId());
+                    plant.setImage(filePath);
+                }
             } else {
+                // Set the default placeholder image if no image URL or file is provided
                 plant.setImage("/images/placeholder.jpg");
-                plantService.addPlant(plant);
             }
+
+            plantService.addPlant(plant);
 
             redirectAttributes.addFlashAttribute("successMessage", "Plant added successfully!");
             return "redirect:/plantWiki";
         } else {
-            logger.info("In else condition");
-            // Handle validation errors and re-display the form with errors
-            Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-            gardenerOptional.ifPresent(value -> gardener = value);
-            List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-            redirectAttributes.addFlashAttribute("gardens", gardens);
             redirectAttributes.addFlashAttribute("name", name);
             redirectAttributes.addFlashAttribute("count", count);
             redirectAttributes.addFlashAttribute("description", description);
             redirectAttributes.addFlashAttribute("date", date);
-            redirectAttributes.addFlashAttribute("garden", garden);
             redirectAttributes.addFlashAttribute("imageUrl", imageUrl);
             redirectAttributes.addFlashAttribute("errorOccurred", "an error has occurred");
 
             return "redirect:/plantWiki";
         }
     }
+
 
 }
 
