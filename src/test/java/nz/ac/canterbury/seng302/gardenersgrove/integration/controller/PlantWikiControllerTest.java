@@ -151,6 +151,85 @@ public class PlantWikiControllerTest {
                 .andExpect(redirectedUrl("/plantWiki"));
     }
 
+    @Test
+    @WithMockUser
+    public void addPlant_InvalidPlantName_ReturnsError() throws Exception {
+        Garden mockGarden = Mockito.spy(Garden.class);
+        Long gardenId = 1L;
+        Mockito.when(gardenService.getGarden(gardenId)).thenReturn(Optional.of(mockGarden));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/addPlant")
+                        .param("gardenId", String.valueOf(gardenId))
+                        .param("name", "")
+                        .param("count", "1")
+                        .param("description", "A test plant")
+                        .param("date", "2023-01-01")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("nameError"))
+                .andExpect(redirectedUrl("/plantWiki"));
+    }
+
+    @Test
+    @WithMockUser
+    public void addPlant_InvalidCount_ReturnsError() throws Exception {
+        Garden mockGarden = Mockito.spy(Garden.class);
+        Long gardenId = 1L;
+        Mockito.when(gardenService.getGarden(gardenId)).thenReturn(Optional.of(mockGarden));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/addPlant")
+                        .param("gardenId", String.valueOf(gardenId))
+                        .param("name", "Test Plant")
+                        .param("count", "invalid")
+                        .param("description", "A test plant")
+                        .param("date", "2023-01-01")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("countError"))
+                .andExpect(redirectedUrl("/plantWiki"));
+    }
+
+    @Test
+    @WithMockUser
+    public void addPlant_InvalidDate_ReturnsError() throws Exception {
+        Garden mockGarden = Mockito.spy(Garden.class);
+        Long gardenId = 1L;
+        Mockito.when(gardenService.getGarden(gardenId)).thenReturn(Optional.of(mockGarden));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/addPlant")
+                        .param("gardenId", String.valueOf(gardenId))
+                        .param("name", "Test Plant")
+                        .param("count", "1")
+                        .param("description", "A test plant")
+                        .param("date", "invalid-date")
+                        .param("isDateInvalid", "true")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("dateError"))
+                .andExpect(redirectedUrl("/plantWiki"));
+    }
+
+    @Test
+    @WithMockUser
+    public void addPlant_MissingFileAndUrl_UsesPlaceholderImage() throws Exception {
+        Garden mockGarden = Mockito.spy(Garden.class);
+        Long gardenId = 1L;
+        Mockito.when(gardenService.getGarden(gardenId)).thenReturn(Optional.of(mockGarden));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/addPlant")
+                        .param("gardenId", String.valueOf(gardenId))
+                        .param("name", "Test Plant")
+                        .param("count", "1")
+                        .param("description", "A test plant")
+                        .param("date", "2023-01-01")
+                        .param("imageUrl", "")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("successMessage"))
+                .andExpect(redirectedUrl("/plantWiki"));
+
+        Mockito.verify(plantService, Mockito.times(2)).addPlant(Mockito.argThat(plant -> plant.getImage().equals("/images/placeholder.jpg")));
+    }
 
 
 }
