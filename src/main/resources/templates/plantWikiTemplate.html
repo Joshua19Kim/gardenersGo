@@ -163,10 +163,20 @@
         const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0
         const year = today.getFullYear();
         document.getElementById('datePlanted').value = document.getElementById('datePlanted').value || `${year}-${month}-${day}`;
+
+        // Initialize character count for description when modal opens
+        updateCharacterCount();
     }
 
+    function updateCharacterCount() {
+        const descriptionField = document.getElementById('description');
+        const characterCount = document.getElementById('characterCount');
+        characterCount.textContent = descriptionField.value.length;
+    }
 
-    // To clear error messages
+    // Event listener for input event to update character count dynamically
+    document.getElementById('description').addEventListener('input', updateCharacterCount);
+
     function clearModalErrors() {
         const modal = document.getElementById('add-plant-modal');
         const paragraphs = modal.querySelectorAll('p');
@@ -184,8 +194,6 @@
 
         // Replace image with the image url from the API
         var originalImageUrl = document.getElementById("originalImageUrl").getAttribute("data-imageUrl");
-        console.log('hi');
-        console.log(originalImageUrl);
         document.getElementById('currentImage').src = originalImageUrl;
     }
 
@@ -220,6 +228,8 @@
     window.onload = function() {
         console.log("on load...");
         checkIfError();
+        // Initialize character count on page load
+        updateCharacterCount();
     };
 
 </script>
