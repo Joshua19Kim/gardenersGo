@@ -1,9 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static org.mockito.ArgumentMatchers.any;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlantResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantWikiService;
@@ -11,19 +17,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 public class PlantWikiServiceTest {
@@ -38,7 +33,7 @@ public class PlantWikiServiceTest {
     @Value("${plantWiki.key}")
     private String apiKey;
 
-    private String PERENUAL_API_URL = "https://perenual.com/api/species-list";
+    private final String PERENUAL_API_URL = "https://perenual.com/api/species-list";
 
 
     @BeforeEach
@@ -91,7 +86,7 @@ public class PlantWikiServiceTest {
 
         Mockito.when(mockObjectMapper.readValue(url, WikiPlantResponse.class)).thenReturn(expectedData);
 
-        List<WikiPlant> actualWikiPlants = plantWikiService.getPlants(query);
+    List<WikiPlant> actualWikiPlants = (List<WikiPlant>) plantWikiService.getPlants(query);
         for(int i = 0; i < expectedWikiPlants.size(); i++) {
             WikiPlant actualWikiPlant = actualWikiPlants.get(i);
             WikiPlant expectedWikiPlant = expectedWikiPlants.get(i);
@@ -118,7 +113,7 @@ public class PlantWikiServiceTest {
 
         Mockito.when(mockObjectMapper.readValue(url, WikiPlantResponse.class)).thenReturn(expectedData);
 
-        List<WikiPlant> actualWikiPlants = plantWikiService.getPlants(query);
+    List<WikiPlant> actualWikiPlants = (List<WikiPlant>) plantWikiService.getPlants(query);
         Assertions.assertEquals(0, actualWikiPlants.size());
     }
 
@@ -137,7 +132,7 @@ public class PlantWikiServiceTest {
         WikiPlantResponse expectedData = objectMapper.readValue(jsonString, WikiPlantResponse.class);
 
         Mockito.when(mockObjectMapper.readValue(url, WikiPlantResponse.class)).thenReturn(expectedData);
-        List<WikiPlant> actualWikiPlants = plantWikiService.getPlants(query);
+    List<WikiPlant> actualWikiPlants = (List<WikiPlant>) plantWikiService.getPlants(query);
         WikiPlant actualWikiPlant = actualWikiPlants.get(0);
         Assertions.assertEquals(expectedWikiPlant.getName(), actualWikiPlant.getName());
         Assertions.assertEquals(expectedWikiPlant.getId(), actualWikiPlant.getId());

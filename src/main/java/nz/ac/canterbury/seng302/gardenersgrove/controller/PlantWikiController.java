@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,8 +45,13 @@ public class PlantWikiController {
             Model model
     ) throws IOException, URISyntaxException {
         logger.info("GET /plantWiki");
-        List<WikiPlant> resultPlants = plantWikiService.getPlants("");
-        model.addAttribute("resultPlants",resultPlants);
+        Object result = plantWikiService.getPlants("");
+        if (result instanceof List<?>) {
+            model.addAttribute("resultPlants", (List<WikiPlant>) result);
+        } else if (result instanceof String) {
+            model.addAttribute("resultPlants", new ArrayList<>());
+            model.addAttribute("errorMessage", result);
+        }
         return "plantWikiTemplate";
     }
 
@@ -60,14 +66,20 @@ public class PlantWikiController {
      */
     @PostMapping("/plantWiki")
     public String plantWikiSearch(@RequestParam("searchTerm") String searchTerm, Model model) throws IOException, URISyntaxException {
-
-        logger.info("POST /plantWiki");
-        List<WikiPlant> resultPlants = plantWikiService.getPlants(searchTerm);
-        model.addAttribute("resultPlants", resultPlants);
         String errorMessage = "No plants were found";
-        if(resultPlants.isEmpty()) {
-            model.addAttribute("errorMessage", errorMessage);
+        logger.info("POST /plantWiki");
+        Object result = plantWikiService.getPlants(searchTerm);
+
+        if (result instanceof List<?>) {
+            model.addAttribute("resultPlants", result);
+            if(((List<WikiPlant>) result).isEmpty()) {
+                model.addAttribute("errorMessage", errorMessage);
+            }
+        } else if (result instanceof String) { // If API is down
+            model.addAttribute("errorMessage", result);
+            model.addAttribute("resultPlants", new ArrayList<>());
         }
+
         model.addAttribute("searchTerm", searchTerm);
         return "plantWikiTemplate";
     }

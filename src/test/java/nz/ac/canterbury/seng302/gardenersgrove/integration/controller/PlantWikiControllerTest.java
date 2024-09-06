@@ -1,5 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantWikiController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantWikiService;
@@ -13,12 +18,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @WebMvcTest(controllers= PlantWikiController.class)
 public class PlantWikiControllerTest {
 
@@ -29,7 +28,6 @@ public class PlantWikiControllerTest {
     private PlantWikiService plantWikiService;
 
     private List<WikiPlant> expectedWikiPlants;
-
     private List<WikiPlant> expectedSearchWikiPlants;
 
     @BeforeEach
@@ -67,7 +65,7 @@ public class PlantWikiControllerTest {
     @WithMockUser
     public void PlantWikiPageSearched_ValidSearch_PlantWikiPageReturnedWithSearchResults() throws Exception{
         String query = "Pine";
-        Mockito.when(plantWikiService.getPlants(query)).thenReturn(expectedSearchWikiPlants);
+    Mockito.when(plantWikiService.getPlants(query)).thenReturn(expectedSearchWikiPlants);
         mockMvc.perform(MockMvcRequestBuilders.post("/plantWiki")
                         .param("searchTerm", query)
                         .with(csrf()))
@@ -82,15 +80,32 @@ public class PlantWikiControllerTest {
     public void PlantWikiPageSearched_NoResults_PlantWikiPageReturnedWithNoResultsAndMessage() throws Exception{
         String query = "Hello World";
         String errorMessage = "No plants were found";
-        List<WikiPlant> emptyList = new ArrayList<>();
-        Mockito.when(plantWikiService.getPlants(query)).thenReturn(emptyList);
-        mockMvc.perform(MockMvcRequestBuilders.post("/plantWiki")
-                        .param("searchTerm", query)
-                        .with(csrf()))
-                .andExpect(view().name("plantWikiTemplate"))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("resultPlants", emptyList))
-                .andExpect(model().attribute("searchTerm", query))
-                .andExpect(model().attribute("errorMessage", errorMessage));
+    Mockito.when(plantWikiService.getPlants(query)).thenReturn(new ArrayList<>());
+    mockMvc
+        .perform(MockMvcRequestBuilders.post("/plantWiki").param("searchTerm", query).with(csrf()))
+        .andExpect(view().name("plantWikiTemplate"))
+        .andExpect(status().isOk())
+        .andExpect(model().attribute("resultPlants", new ArrayList<>()))
+        .andExpect(model().attribute("searchTerm", query))
+        .andExpect(model().attribute("errorMessage", errorMessage));
     }
+
+  @Test
+  @WithMockUser
+  public void PlantWikiPageSearched_APIDown_PlantWikiPageReturnedWithErrorMessage()
+      throws Exception {
+    String query = "Pine";
+    String errorMessage = "The plant wiki API is down for the day :( \n Try again tomorrow";
+    Mockito.when(plantWikiService.getPlants(query)).thenReturn(errorMessage);
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.post("/plantWiki").param("searchTerm", query).with(csrf()))
+        .andExpect(view().name("plantWikiTemplate"))
+        .andExpect(status().isOk())
+        .andExpect(model().attribute("resultPlants", new ArrayList<>())) // Expecting empty list
+        .andExpect(model().attribute("searchTerm", query))
+        .andExpect(
+            model()
+                .attribute("errorMessage", errorMessage)); // Expecting error message in the model
+  }
 }
