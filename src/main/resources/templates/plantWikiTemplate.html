@@ -8,6 +8,8 @@
 <body>
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="browse-gardens-container">
+    <div id="errorOccurred" th:attr="data-error-occurred=${errorOccurred}"></div>
+    <div id="originalImageUrl" th:attr="data-imageUrl=${imageUrl ?: ''}"></div>
     <div class="search-container d-flex justify-content-center">
         <form class="form-inline" method="post" th:action="@{/plantWiki}">
             <input aria-label="Search" class="form-control mr-2 mb-0 mt-0" placeholder="Search" th:value="${searchTerm}" th:name="searchTerm"
@@ -22,8 +24,17 @@
         <div class="row">
             <div th:each="plant : ${resultPlants}" class="col-md-4 col-sm-6 col-lg-3 col-xl-3 col-xxl-2 mb-4">
                 <div class="card plant-wiki-card">
-
-                    <img id="collection-card-img" class="card-img-top" th:src="${plant.imagePath  != ''} ? ${plant.imagePath} : '/images/placeholder.jpg'" alt="No Image">
+                    <div class="btn-wrapper">
+                        <button type="button" class="btn btn-success"
+                                th:data-image-url="${plant.imagePath}"
+                                th:data-plant-name="${plant.name}"
+                                th:data-plant-desc="'Scientific Names: ' + ${#strings.listJoin(plant.scientificName, ', ')} + '\n' +
+                       'Cycle: ' + ${plant.cycle} + '\n' +
+                       'Watering Frequency: ' + ${plant.watering} + '\n' +
+                       'Suggested Sunlight Levels: ' + ${#strings.listJoin(plant.sunlight, ', ')}"
+                                onclick="displayAddPlantModal(this)">Add plant</button>
+                    </div>
+                    <img id="collection-card-img" class="card-img-top" th:src="${plant.imagePath != ''} ? ${plant.imagePath} : '/images/placeholder.jpg'" alt="No Image">
                     <div class="card-collection-body">
                         <div class="card-body">
                             <h5 style="color: #fffdf6" class="card-title" th:text="${plant.name}"></h5>
@@ -50,8 +61,189 @@
                 </div>
             </div>
         </div>
+
+        <!-- Add Plant Modal -->
+        <div class="friend-modal" id="add-plant-modal" style="display:none;">
+            <div class="container mb-5">
+                <div class="card mb-5 w-50">
+                    <h1> Add New Plant </h1>
+                    <label class="fst-italic">* Required</label>
+                    <br/>
+                    <form id="plantForm" method="post" th:action="@{/addPlant}" enctype="multipart/form-data" novalidate>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <select class="form-select" name="gardenId" aria-label="Select">
+                            <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}" placeholder="Choose a garden*">
+                                <option class="dropdown-item" th:text="${garden.name}" th:value="${garden.id}"></option>
+                            </th:block>
+                        </select>
+                        <br/>
+                        <label for="name"> *Name: </label>
+                        <input type="text" class="form-control" id="name" name="name" maxlength="64" placeholder="Name"
+                               th:classappend="${nameError} ? 'is-invalid' : ''" th:value="${name}">
+                        <p th:if="${nameError}" th:text="${nameError}" class="smallErrorMessage text-danger"></p>
+                        <br/>
+                        <label for="count"> Plant Count: </label>
+                        <input type="text" class="form-control" id="count" name="count" maxlength="12" placeholder="How many?"
+                               th:classappend="${countError} ? 'is-invalid' : ''" th:value="${count}">
+                        <p th:if="${countError}" th:text="${countError}" class="smallErrorMessage text-danger"></p>
+                        <br/>
+                        <label for="description"> Description: </label>
+                        <br/>
+                        <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
+                        <textarea class="form-control" id="description" name="description" maxlength="512"
+                                  th:classappend="${descriptionError} ? 'is-invalid' : ''" th:value="${description}">[[${description}]]</textarea>
+                        <p th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage text-danger"></p>
+                        <br/>
+                        <label for="datePlanted"> Date Planted: </label>
+                        <input type="date" class="form-control" id="datePlanted" name="date"
+                               th:value="${date}" th:classappend="${dateError} ? 'is-invalid' : ''">
+                        <p th:if="${dateError}" th:text="${dateError}" class="smallErrorMessage text-danger"></p>
+                        <input type="hidden" id="isDateInvalid" name="isDateInvalid" th:value="false"/>
+
+                        <br/>
+                        <!-- Hidden input to store image URL -->
+                        <input type="hidden" id="imageUrl" name="imageUrl" th:value="${imageUrl}">
+                        <!-- Hidden input to check if an image file was uploaded -->
+                        <input type="hidden" id="isFileUploaded" name="isFileUploaded" value="false">
+                        <label for="image"> Image: </label>
+                        <div class="plant-image-container" id="image">
+                            <img id="currentImage" src="" alt="Plant">
+                            <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()">+</button>
+                            <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*" onchange="handleImageChange()">
+                        </div>
+                        <p th:if="${uploadError}" th:text="${uploadError}" class="smallErrorMessage text-danger"></p>
+                        <br/>
+                        <button class="btn btn-success w-100" type="submit">Submit</button>
+                    </form>
+                    <a class="btn btn-secondary w-50 mt-3" onclick="closeAddPlantModal()">Cancel</a>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+
+<script>
+    // Mark the date as invalid and allow the form to submit
+    document.getElementById("plantForm").addEventListener("submit", function(event) {
+        const dateInput = document.getElementById("datePlanted");
+        if (!(dateInput.checkValidity())) {
+            console.log("invalid date");
+            event.preventDefault();
+            document.getElementById("isDateInvalid").value = true;
+            document.getElementById("plantForm").submit();
+        } else {
+            console.log("valid date");
+            document.getElementById("isDateInvalid").value = false;
+        }
+    });
+
+    function displayAddPlantModal(button) {
+        const modal = document.getElementById("add-plant-modal");
+        modal.style.display = "block"; // Show the modal
+
+        let imageUrl;
+
+        if (button) {
+            // Modal opened via button click
+            imageUrl = button.getAttribute('data-image-url');
+        } else {
+            // Modal opened due to form error on redirect
+            imageUrl = document.getElementById('originalImageUrl').getAttribute('data-imageUrl');
+        }
+
+        // Check if imageUrl is empty or undefined, and set to placeholder if needed
+        if (!imageUrl) {
+            imageUrl = '/images/placeholder.jpg';
+        }
+
+        document.getElementById('currentImage').src = imageUrl;
+        document.getElementById('imageUrl').value = imageUrl; // Set the hidden input value
+
+        const plantName = button ? button.getAttribute('data-plant-name') : document.getElementById('name').value;
+        document.getElementById('name').value = plantName;
+
+        const plantDesc = button ? button.getAttribute('data-plant-desc') : document.getElementById('description').value;
+        document.getElementById('description').value = plantDesc.replace(/\\n/g, '\n'); // Ensure new lines
+
+        // Set today's date in YYYY-MM-DD format or use the date from the flash attribute
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0
+        const year = today.getFullYear();
+        document.getElementById('datePlanted').value = document.getElementById('datePlanted').value || `${year}-${month}-${day}`;
+
+        // Initialize character count for description when modal opens
+        updateCharacterCount();
+    }
+
+    function updateCharacterCount() {
+        const descriptionField = document.getElementById('description');
+        const characterCount = document.getElementById('characterCount');
+        characterCount.textContent = descriptionField.value.length;
+    }
+
+    // Event listener for input event to update character count dynamically
+    document.getElementById('description').addEventListener('input', updateCharacterCount);
+
+    function clearModalErrors() {
+        const modal = document.getElementById('add-plant-modal');
+        const paragraphs = modal.querySelectorAll('p');
+        paragraphs.forEach((paragraph) => {
+            paragraph.textContent = '';
+        });
+
+        // Remove 'is-invalid' class from all inputs
+        const invalidInputs = modal.querySelectorAll('.is-invalid');
+        invalidInputs.forEach((input) => {
+            input.classList.remove('is-invalid');
+        });
+
+        document.getElementById('datePlanted').style.border = "none";
+
+        document.getElementById("count").value = "";
+
+        // Replace image with the image url from the API
+        var originalImageUrl = document.getElementById("originalImageUrl").getAttribute("data-imageUrl");
+        document.getElementById('currentImage').src = originalImageUrl;
+    }
+
+    function closeAddPlantModal() {
+        const modal = document.getElementById("add-plant-modal");
+        modal.style.display = "none"; // Hide the modal
+        clearModalErrors();
+    }
+
+    function handleImageChange() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('currentImage').src = e.target.result;
+                document.getElementById('isFileUploaded').value = 'true'; // Set flag for file upload
+                // Do not clear the image URL
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function checkIfError() {
+        const errorOccurred = document.getElementById("errorOccurred").getAttribute("data-error-occurred");
+        if (errorOccurred === "an error has occurred") {
+            displayAddPlantModal(null);
+            console.log("Checking for error...");
+        }
+    }
+
+    window.onload = function() {
+        console.log("on load...");
+        checkIfError();
+        // Initialize character count on page load
+        updateCharacterCount();
+    };
+
+</script>
 
 </body>
 </html>
