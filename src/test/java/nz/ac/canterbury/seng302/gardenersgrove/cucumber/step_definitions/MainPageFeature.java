@@ -22,6 +22,7 @@ import java.time.LocalDate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -128,10 +129,10 @@ public class MainPageFeature {
                 .andReturn();
 
         List<Plant> returnedPlants = (List<Plant>) mvcResult.getModelAndView().getModel().get("newestPlants");
-        List<Plant> reversedExpectedPlants = newestPlants.reversed();
+        Collections.reverse(newestPlants);
 
         for (int i = 0; i < returnedPlants.size(); i++) {
-            Assertions.assertEquals(returnedPlants.get(i).getName(), reversedExpectedPlants.get(i).getName());
+            Assertions.assertEquals(returnedPlants.get(i).getName(), newestPlants.get(i).getName());
 
         }
     }

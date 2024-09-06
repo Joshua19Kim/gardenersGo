@@ -1,5 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.*;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ScanController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -11,24 +19,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
-
-
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @WebMvcTest(controllers = ScanController.class)
 public class ScanControllerTest {
@@ -157,14 +153,66 @@ public class ScanControllerTest {
                 .andExpect(jsonPath("$.error").value(errorMessage));
     }
 
+  @Test
+  @WithMockUser
+  void AfterValidScan_UserEntersValidInputsAndClicksAddButton_ShowResponseFromAPI()
+      throws Exception {
 
+    // mock image content
+    byte[] imageContent = new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0};
 
+    imageFile = new MockMultipartFile("image", "test_image.jpg", "image/jpeg", imageContent);
+    Map<String, String> requestBody = new HashMap<>();
+    requestBody.put("name", "Tomato");
+    requestBody.put("description", "Vegetable");
 
+    ObjectMapper objectMapper = new ObjectMapper();
+    String jsonBody = objectMapper.writeValueAsString(requestBody);
 
+    this.mockMvc
+        .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
+        .andExpect(status().isOk());
 
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.multipart("/saveIdentifiedPlant")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody)
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message").value("Plant saved successfully"));
+  }
 
+    @Test
+    @WithMockUser
+    void AfterValidScan_UserEntersInvalidNameAndDescriptionAndClicksAddButton_ShowResponseFromAPI()
+            throws Exception {
+        String name = "J@CK";
+        String description = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus el";
 
+        // mock image content
+        byte[] imageContent = new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0};
 
+        imageFile = new MockMultipartFile("image", "test_image.jpg", "image/jpeg", imageContent);
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("name", name);
+        requestBody.put("description", description);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonBody = objectMapper.writeValueAsString(requestBody);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
+                .andExpect(status().isOk());
+
+        this.mockMvc
+                .perform(
+                        MockMvcRequestBuilders.multipart("/saveIdentifiedPlant")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonBody)
+                                .with(csrf()))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.nameError").value("Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>"));
+    }
 }
 
 

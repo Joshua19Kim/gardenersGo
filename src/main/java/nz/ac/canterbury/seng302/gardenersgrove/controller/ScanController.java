@@ -1,10 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import java.util.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Controller responsible for handling requests related to plant identification.
@@ -38,6 +35,7 @@ public class ScanController {
     private IdentifiedPlant identifiedPlant;
 
     private final String errorKey = "error";
+
     /**
      * Constructs a new ScanController with the services required for sending and storing identified plants.
      *
@@ -144,12 +142,34 @@ public class ScanController {
 
         if (gardener.isPresent()) {
             try {
-                identifiedPlant.setName(extra.get("name"));
-                identifiedPlant.setDescription(extra.get("description"));
+                String name = extra.get("name");
+                String description = extra.get("description");
 
-                response.put("message", "Plant saved successfully");
-                plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
-                return ResponseEntity.ok(response);
+                String validatedPlantName = ValidityChecker.validatePlantName(extra.get("name"));
+                String validatedPlantDescription = ValidityChecker.validatePlantDescription(extra.get("description"));
+                boolean isValid = true;
+                if (!Objects.equals(name, validatedPlantName)) {
+                    errorResponse.put("nameError", validatedPlantName);
+                    isValid = false;
+                }
+                if (!Objects.equals(description, validatedPlantDescription)) {
+                    errorResponse.put("descriptionError", validatedPlantDescription);
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    identifiedPlant.setName(validatedPlantName);
+                    boolean descriptionPresent = description != null && !validatedPlantDescription.trim().isEmpty();
+                    if (descriptionPresent) {
+                        identifiedPlant.setDescription(validatedPlantDescription);
+                    }
+                    response.put("message", "Plant saved successfully");
+                    plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
+                    return ResponseEntity.ok(response);
+
+                }
+                return ResponseEntity.badRequest().body(errorResponse);
+
             } catch (Exception e) {
                 errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
                 return ResponseEntity.badRequest().body(errorResponse);

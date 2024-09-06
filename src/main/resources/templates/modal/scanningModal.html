@@ -14,7 +14,6 @@
                 <form class="mt-2" id="scanForm" enctype="multipart/form-data">
                     <div id="imagePreviewContainer" class="text-center mb-2">
                         <img id="imagePreview"
-                             src="./images/defaultScanningImage.png"
                              class="img-fluid" style="max-width: 200px; max-height: 200px; object-fit: contain;">
                     </div>
                     <div class="mb-3 text-center">
@@ -32,7 +31,7 @@
                 <div id="resultContainer" style="display: none;"></div>
 
                 <div class="d-flex flex-column align-items-center justify-content-center py-1">
-                    <button id="saveToCollectionButton" class="btn btn-primary mt-2 mb-2" type="button" style="display:none;">Save in my collection</button>
+                    <button id="saveToCollectionButton" class="btn btn-primary mt-2 mb-2" type="button" style="display:none;">Add to my collection</button>
                     <button class="btn cancel-button text-white" data-bs-dismiss="modal" type="button">Close</button>
                 </div>
 
@@ -42,7 +41,7 @@
                     </div>
                     <div class="row justify-content-end">
                         <div class="col-6">
-                            <img src="./images/apiLogo/powered-by-plantnet-light.png"
+                            <img id="plantNetLogo"
                                  class="img-fluid" style="max-width: 500px; object-fit: contain;">
                         </div>
                     </div>
@@ -71,21 +70,21 @@
                     <label for="name"> Name: </label>
                     <input type="text" class="form-control" th:value="*{name}" id="name" name="name" maxlength="64" placeholder="Name"
                            th:classappend="${nameError} ? 'is-invalid' : ''">
-                    <p th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></p>
                     <div id="commonNames"></div>
+                    <p id="nameError" class="smallErrorMessage" th:utext="${nameError != null ? nameError : ''}"></p>
                     <br/>
                     <label for="scanning-description"> Description (Optional): </label>
                     <span id="scanningCharacterCountContainer"><span id="scanningCharacterCount">0</span> /512</span>
                     <textarea class="form-control" th:value="*{description}" id="scanning-description" name="description"  maxlength="512"
                               th:classappend="${descriptionError} ? 'is-invalid' : ''">[[${description}]]</textarea>
-                    <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
+                    <span id="descriptionError" class="smallErrorMessage" th:text="${descriptionError != null ? descriptionError : ''}"></span>
                 </form>
             </div>
 
 
             <div class="modal-footer d-flex justify-content-center" >
-                <button type="button" class="btn btn-primary" id="goToCollectionButton" th:data-url="@{/myCollection}">Go to my collection</button>
-                <button type="button" class="btn cancel-button text-white" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="goToCollectionButton" th:data-url="@{/myCollection}">Save to my collection</button>
+                <button type="button" class="btn cancel-button text-white" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

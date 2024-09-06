@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,10 +21,25 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
     Page<IdentifiedPlant> findAll(Pageable pageable);
 
     /**
-     * Find the identified plants by gardener id with pagination
+     * Custom query to retrieve identified plants by gardener id and species name, with pagination
+     *
+     * @param gardenerId the id of the gardener
+     * @param speciesName the name of the plant species
+     * @param pageable object representing pagination
+     * @return the identified plants matching the species name that the gardener has
+     */
+    @Query("SELECT p FROM IdentifiedPlant p WHERE p.gardener.id = :gardenerId AND p.speciesScientificNameWithoutAuthor = :speciesName")
+    Page<IdentifiedPlant> getPlantByGardenerIdAndSpecies(long gardenerId, String speciesName, Pageable pageable);
+
+    /**
+     * Custom query to retrieve species by gardener id, with pagination
+     *
      * @param id the id of the gardener
      * @param pageable object representing pagination
-     * @return the identified plants that the gardener has
+     * @return a page of species with count, species name, and image URL
      */
-    Page<IdentifiedPlant> findPlantSpeciesByGardenerId(long id, Pageable pageable);
+    @Query("SELECT new nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies(p.speciesScientificNameWithoutAuthor, p.imageUrl, COUNT(p)) " +
+            "FROM IdentifiedPlant p WHERE p.gardener.id = :id " +
+            "GROUP BY p.speciesScientificNameWithoutAuthor, p.imageUrl")
+    Page<IdentifiedPlantSpecies> getSpeciesByGardenerId(long id, Pageable pageable);
 }
