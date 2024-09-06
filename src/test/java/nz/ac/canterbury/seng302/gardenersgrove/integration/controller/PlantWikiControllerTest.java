@@ -53,7 +53,7 @@ public class PlantWikiControllerTest {
     private Gardener testGardener;
 
     @BeforeEach
-    protected void setUp() {
+    void setUp() {
         int totalWikiPlants = 10;
         int totalSearchWikiPlants = 3;
         expectedWikiPlants = new ArrayList<>();
@@ -79,7 +79,7 @@ public class PlantWikiControllerTest {
 
     @Test
     @WithMockUser
-    protected void PlantWikiPageRequested_ValidRequest_PlantWikiPageReturned() throws Exception{
+    void PlantWikiPageRequested_ValidRequest_PlantWikiPageReturned() throws Exception{
         String query = "";
         Mockito.when(plantWikiService.getPlants(query)).thenReturn(expectedWikiPlants);
         mockMvc.perform(MockMvcRequestBuilders.get("/plantWiki"))
@@ -90,7 +90,7 @@ public class PlantWikiControllerTest {
 
     @Test
     @WithMockUser
-    protected void PlantWikiPageSearched_ValidSearch_PlantWikiPageReturnedWithSearchResults() throws Exception{
+    void PlantWikiPageSearched_ValidSearch_PlantWikiPageReturnedWithSearchResults() throws Exception{
         String query = "Pine";
     Mockito.when(plantWikiService.getPlants(query)).thenReturn(expectedSearchWikiPlants);
         mockMvc.perform(MockMvcRequestBuilders.post("/plantWiki")
@@ -104,7 +104,7 @@ public class PlantWikiControllerTest {
 
     @Test
     @WithMockUser
-    protected void PlantWikiPageSearched_NoResults_PlantWikiPageReturnedWithNoResultsAndMessage() throws Exception{
+    void PlantWikiPageSearched_NoResults_PlantWikiPageReturnedWithNoResultsAndMessage() throws Exception{
         String query = "Hello World";
         String errorMessage = "No plants were found";
     Mockito.when(plantWikiService.getPlants(query)).thenReturn(new ArrayList<>());
@@ -119,7 +119,7 @@ public class PlantWikiControllerTest {
 
   @Test
   @WithMockUser
-  protected void PlantWikiPageSearched_APIDown_PlantWikiPageReturnedWithErrorMessage()
+  void PlantWikiPageSearched_APIDown_PlantWikiPageReturnedWithErrorMessage()
       throws Exception {
     String query = "Pine";
     String errorMessage = "The plant wiki is down for the day :( Try again tomorrow";
@@ -137,7 +137,7 @@ public class PlantWikiControllerTest {
   }
     @Test
     @WithMockUser
-    protected void PlantWikiPlantAdded_ValidRequest_PlantAddedToGarden() throws Exception {
+    void PlantWikiPlantAdded_ValidRequest_PlantAddedToGarden() throws Exception {
         Garden mockGarden = Mockito.spy(Garden.class);
         Long gardenId = 1L;
         mockGarden.setId(gardenId);
@@ -164,7 +164,7 @@ public class PlantWikiControllerTest {
 
     @Test
     @WithMockUser
-    protected void addPlant_InvalidPlantName_ReturnsError() throws Exception {
+    void addPlant_InvalidPlantName_ReturnsError() throws Exception {
         Garden mockGarden = Mockito.spy(Garden.class);
         Long gardenId = 1L;
         Mockito.when(gardenService.getGarden(gardenId)).thenReturn(Optional.of(mockGarden));
@@ -183,7 +183,7 @@ public class PlantWikiControllerTest {
 
     @Test
     @WithMockUser
-    protected void addPlant_InvalidCount_ReturnsError() throws Exception {
+    void addPlant_InvalidCount_ReturnsError() throws Exception {
         Garden mockGarden = Mockito.spy(Garden.class);
         Long gardenId = 1L;
         Mockito.when(gardenService.getGarden(gardenId)).thenReturn(Optional.of(mockGarden));
@@ -202,7 +202,7 @@ public class PlantWikiControllerTest {
 
     @Test
     @WithMockUser
-    protected void addPlant_InvalidDate_ReturnsError() throws Exception {
+    void addPlant_InvalidDate_ReturnsError() throws Exception {
         Garden mockGarden = Mockito.spy(Garden.class);
         Long gardenId = 1L;
         Mockito.when(gardenService.getGarden(gardenId)).thenReturn(Optional.of(mockGarden));
@@ -222,7 +222,7 @@ public class PlantWikiControllerTest {
 
     @Test
     @WithMockUser
-    protected void addPlant_MissingFileAndUrl_UsesPlaceholderImage() throws Exception {
+    void addPlant_MissingFileAndUrl_UsesPlaceholderImage() throws Exception {
         Garden mockGarden = Mockito.spy(Garden.class);
         Long gardenId = 1L;
         Mockito.when(gardenService.getGarden(gardenId)).thenReturn(Optional.of(mockGarden));

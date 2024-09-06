@@ -15,7 +15,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,8 +179,7 @@ public class PlantWikiController {
             @RequestParam(value = "isFileUploaded", required = false, defaultValue = "false") boolean isFileUploaded,
             Model model,
             RedirectAttributes redirectAttributes) {
-
-        InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
+        
 
 
         logger.info("POST /addPlant");
