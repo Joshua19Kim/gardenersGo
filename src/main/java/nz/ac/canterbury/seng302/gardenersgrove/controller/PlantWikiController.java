@@ -98,7 +98,7 @@ public class PlantWikiController {
         logger.info("GET /plantWiki");
         Object result = plantWikiService.getPlants("");
         if (result instanceof List<?>) {
-            model.addAttribute("resultPlants", (List<WikiPlant>) result);
+            model.addAttribute("resultPlants", result);
         } else if (result instanceof String) {
             model.addAttribute("resultPlants", new ArrayList<>());
             model.addAttribute("errorMessage", result);

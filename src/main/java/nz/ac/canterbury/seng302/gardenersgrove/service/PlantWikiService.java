@@ -22,7 +22,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Service class for interacting with the Perenual API
@@ -37,7 +36,7 @@ public class PlantWikiService {
     private String api_key;
 
     private String PERENUAL_API_URL = "https://perenual.com/api/species-list";
-    private String API_DOWN= "The plant wiki is down for the day :( Try again tomorrow";
+    private String apiDown = "The plant wiki is down for the day :( Try again tomorrow";
     private final ObjectMapper objectMapper;
 
   /**
@@ -77,7 +76,7 @@ public class PlantWikiService {
       objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
       String rateLimitRemaining = connection.getHeaderField("X-RateLimit-Remaining");
       if (rateLimitRemaining != null && Integer.parseInt(rateLimitRemaining) <= 0) {
-        return API_DOWN;
+        return apiDown;
       }
       if (responseCode == HttpStatus.OK.value()) {
         WikiPlantResponse wikiPlantResponse = objectMapper.readValue(url, WikiPlantResponse.class);
@@ -110,7 +109,7 @@ public class PlantWikiService {
         }
         return plantResults;
       } else if (responseCode == HttpStatus.TOO_MANY_REQUESTS.value()) {
-        return API_DOWN;
+        return apiDown;
       } else {
         throw new IOException("Unexpected response code: " + responseCode);
       }
