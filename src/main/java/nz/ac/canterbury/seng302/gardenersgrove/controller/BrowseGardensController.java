@@ -315,7 +315,7 @@ public class BrowseGardensController {
     @PostMapping("/follow")
     public String followUser(@RequestParam(name="pageNo") String pageNo,
                              @RequestParam(name="gardenToFollow") Long gardenToFollow,
-                             RedirectAttributes redirectAttributes) {
+                             RedirectAttributes redirectAttributes) throws IllegalArgumentException{
         Optional<Gardener> gardener = getGardenerFromAuthentication();
         if (gardener.isPresent()) {
             Long gardenerId = gardener.get().getId();
@@ -328,8 +328,12 @@ public class BrowseGardensController {
 
             } else {
                 Follower follower = new Follower(gardenerId, gardenToFollow);
-                followerService.addfollower(follower);
-                gardenOptional.ifPresent(garden -> redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You are now following " + garden.getName()));
+                try {
+                    followerService.addfollower(follower);
+                    gardenOptional.ifPresent(garden -> redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You are now following " + garden.getName()));
+                } catch (IllegalArgumentException e) {
+                    redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You cannot follow this garden");
+                }
             }
         }
         redirectAttributes.addFlashAttribute("pageNo", pageNo);

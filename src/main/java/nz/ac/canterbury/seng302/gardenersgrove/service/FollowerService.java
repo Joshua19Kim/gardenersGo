@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FollowerRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -19,19 +21,13 @@ import java.util.Optional;
 public class FollowerService {
 
     private final FollowerRepository followerRepository;
+    private final GardenRepository gardenRepository;
 
     @Autowired
     public FollowerService(
-            FollowerRepository followerRepository) {
+            FollowerRepository followerRepository, GardenRepository gardenRepository) {
         this.followerRepository = followerRepository;
-    }
-
-    /**
-     * Gets all Followers from persistence
-     * @return all Followers currently saved in persistence
-     */
-    public List<Follower> getfollower() {
-        return followerRepository.findAll();
+        this.gardenRepository = gardenRepository;
     }
 
     /**
@@ -39,12 +35,20 @@ public class FollowerService {
      *
      * @param follower object to persist
      */
-    public void addfollower(Follower follower) {
+    public void addfollower(Follower follower) throws IllegalArgumentException {
+        // Check follower garden is public
+        long gardenId = follower.getGardenId();
+        Optional<Garden> garden = gardenRepository.findById(gardenId);
+        if (garden.isPresent()) {
+            if (!garden.get().getIsGardenPublic()) {
+                throw new IllegalArgumentException("Cannot follow this garden");
+            } else if (Objects.equals(garden.get().getGardener().getId(), follower.getGardenerId())) {
+                throw new IllegalArgumentException("Cannot follow your own garden");
+            }
+        } else {
+            throw new IllegalArgumentException("Cannot follow this garden");
+        }
         followerRepository.save(follower);
-    }
-
-    public Optional<Follower> getfollower(long gardenerId, long gardenId) {
-        return followerRepository.findByGardenerIdAndGardenId(gardenerId, gardenId);
     }
 
     /**
