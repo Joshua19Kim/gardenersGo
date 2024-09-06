@@ -55,9 +55,7 @@ body {
     max-width: 128px;
 }
 
-#collection-card-img {
-    max-width: max-content !important;
-}
+
 
 .current {
     background-color: var(--weather-colour) !important;
@@ -1653,6 +1651,12 @@ form.search-bar::after {
 .collection-gardens-card {
     padding: 0 !important;
     position: relative;
+    min-height: 400px;
+}
+
+#collection-card-img {
+    max-width: max-content !important;
+    max-height: 300px;
 }
 
 .plant-wiki-card {
