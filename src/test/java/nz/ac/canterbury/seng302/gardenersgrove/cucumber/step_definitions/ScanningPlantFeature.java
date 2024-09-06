@@ -27,16 +27,12 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class ScanningPlantFeature {
@@ -55,11 +51,8 @@ public class ScanningPlantFeature {
   private ResultActions resultActions;
   private IdentifiedPlant cataloguedPlant;
   private Gardener currentUser;
-  private MockMvc collectionsMVC;
-
   @Before("@U7001 or @7002 or @7004")
   public void setUp() {
-//    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail("a@gmail.com");
     currentUser = new Gardener("Test", "Gardener",
             LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
             "Password1!");
@@ -71,11 +64,6 @@ public class ScanningPlantFeature {
 
     when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
     when(requestService.getRequestURI(any())).thenReturn("");
-
-    // Use this to replace autowiring
-//    CollectionsController collectionsController = new CollectionsController(plantIdentificationService,
-//            gardenService, gardenerFormService, requestService);
-//    collectionsMVC = MockMvcBuilders.standaloneSetup(collectionsController).build();
   }
 
   @Given("I have an image of a plant")
@@ -163,7 +151,7 @@ public class ScanningPlantFeature {
   }
 
   @Then("the information is updated")
-  public void the_information_is_updated() throws Exception {
+  public void the_information_is_updated() {
     // resultActions are not checked
     Assertions.assertEquals(inputName, cataloguedPlant.getName());
     Assertions.assertEquals((inputDescription.isEmpty() ? null : inputDescription), cataloguedPlant.getDescription());
