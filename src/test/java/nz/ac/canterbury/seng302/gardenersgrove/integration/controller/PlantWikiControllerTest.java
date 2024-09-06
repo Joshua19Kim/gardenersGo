@@ -95,7 +95,7 @@ public class PlantWikiControllerTest {
   public void PlantWikiPageSearched_APIDown_PlantWikiPageReturnedWithErrorMessage()
       throws Exception {
     String query = "Pine";
-    String errorMessage = "The plant wiki API is down for the day :( \n Try again tomorrow";
+    String errorMessage = "The plant wiki is down for the day :( Try again tomorrow";
     Mockito.when(plantWikiService.getPlants(query)).thenReturn(errorMessage);
 
     mockMvc

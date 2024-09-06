@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 
 @SpringBootTest
 public class PlantWikiServiceTest {
@@ -143,4 +145,9 @@ public class PlantWikiServiceTest {
         Assertions.assertEquals(expectedWikiPlant.getOtherNames(), actualWikiPlant.getOtherNames());
         Assertions.assertEquals(expectedWikiPlant.getWatering(), actualWikiPlant.getWatering());
     }
+
+
+
+
+
 }

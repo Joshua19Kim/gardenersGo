@@ -51,11 +51,12 @@ public class PlantWikiService {
    * @throws IOException If there is an error reading the response from the API.
    * @throws URISyntaxException If the constructed URI is invalid.
    */
-  @Cacheable(value = "plantInformation", key = "#query")
-  public Object getPlants(String query) throws IOException, URISyntaxException {
-        List<WikiPlant> plantResults = new ArrayList<>();
-        query = query.replace(" ", "%20");
-        String uri = PERENUAL_API_URL +"?key="+ this.api_key + "&q=" + query;
+  @Cacheable(value = "plantInformation", key = "#query", unless = "#result == 'The plant wiki is down for the day :( Try again tomorrow'")
+  public Object getPlants(String query) throws URISyntaxException {
+
+    List<WikiPlant> plantResults = new ArrayList<>();
+    query = query.replace(" ", "%20");
+    String uri = PERENUAL_API_URL + "?key=" + this.api_key + "&q=" + query;
     try {
       URL url = new URI(uri).toURL();
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -64,10 +65,10 @@ public class PlantWikiService {
       objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
       if (responseCode == HttpStatus.OK.value()) {
-        String remainingRequests = connection.getHeaderField("X-RateLimit-Remaining");
+        String rateLimitRemaining = connection.getHeaderField("X-RateLimit-Remaining");
 
-        if (remainingRequests != null && Integer.parseInt(remainingRequests) <= 0) {
-          return "The plant wiki API is down for the day :( \n Try again tomorrow";
+        if (rateLimitRemaining != null && Integer.parseInt(rateLimitRemaining) <= 0) {
+          return "The plant wiki is down for the day :( Try again tomorrow";
         }
 
         WikiPlantResponse wikiPlantResponse = objectMapper.readValue(url, WikiPlantResponse.class);
@@ -99,12 +100,14 @@ public class PlantWikiService {
           }
         }
         return plantResults;
+      } else if (responseCode == HttpStatus.TOO_MANY_REQUESTS.value()) {
+        return "The plant wiki is down for the day :( Try again tomorrow";
       } else {
         throw new IOException("Unexpected response code: " + responseCode);
       }
     } catch (IOException ex) {
-      // this occurs when no plant matches the search
-      return null;
+      // this occurs when no plant matches the search or when there's a connection issue
+      return "An error occurred while fetching plant data. Please try again later.";
     }
   }
 
