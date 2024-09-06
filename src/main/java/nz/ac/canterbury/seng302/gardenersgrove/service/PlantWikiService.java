@@ -10,7 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -26,6 +30,7 @@ import java.util.List;
 @Service
 public class PlantWikiService {
 
+    Logger logger = LoggerFactory.getLogger(PlantWikiService.class);
     private String api_key;
 
     private String PERENUAL_API_URL = "https://perenual.com/api/species-list";
@@ -47,8 +52,11 @@ public class PlantWikiService {
      * @throws IOException        If there is an error reading the response from the API.
      * @throws URISyntaxException If the constructed URI is invalid.
      */
+
+    @Cacheable(value = "plantInformation", key = "#query")
     public List<WikiPlant> getPlants(String query) throws IOException, URISyntaxException {
         List<WikiPlant> plantResults = new ArrayList<>();
+        query = query.replace(" ", "%20");
         String uri = PERENUAL_API_URL +"?key="+ this.api_key + "&q=" + query;
         URL url = new URI(uri).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -67,8 +75,8 @@ public class PlantWikiService {
                      String watering = plant.get("watering").asText();
                      List<String> sunlight = objectMapper.convertValue(plant.get("sunlight"), new TypeReference<List<String>>() {});
                      String imagePath ="";
-                     if (plant.get("default_image").has("original_url")) {
-                         imagePath = plant.get("default_image").get("original_url").asText();}
+                     if (plant.get("default_image").has("small_url")) {
+                         imagePath = plant.get("default_image").get("small_url").asText();}
 
                      WikiPlant wikiPlant = new WikiPlant(id, name, scientificName, otherNames, cycle, watering, sunlight, imagePath);
                      plantResults.add(wikiPlant);
@@ -82,5 +90,13 @@ public class PlantWikiService {
         }
 
     }
+
+    /** Used to clear the cache every hour to ensure that the plant information data is not stale */
+    @CacheEvict(value = {"plantInformation"}, allEntries = true)
+    @Scheduled(fixedRateString = "${caching.spring.currentWeatherTTL}")
+    public void emptyPlantWikiCache() {
+        logger.info("Emptying plant wiki information cache");
+    }
+
 
 }

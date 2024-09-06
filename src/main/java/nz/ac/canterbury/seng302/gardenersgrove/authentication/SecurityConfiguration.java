@@ -76,7 +76,7 @@ public class SecurityConfiguration {
                                 // If you change this, you will need to ask for permission to add it to the VM as well
                                 .policyDirectives(
                                         "default-src 'self'; " +
-                                        "img-src 'self' data: https://cdn.weatherapi.com " + " https://bs.plantnet.org " + " https://perenual.com/storage/species_image/; " +
+                                        "img-src 'self' data: https://cdn.weatherapi.com https://perenual.com/storage/species_image/ https://bs.plantnet.org;" +
                                         "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
                                         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
                                         "font-src 'self' https://fonts.gstatic.com")
