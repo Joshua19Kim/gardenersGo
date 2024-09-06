@@ -627,12 +627,14 @@ img {
     left: 0;
     right: 0;
     bottom: 0;
+    border-radius: inherit;
     background-color: rgba(0, 0, 0, 0.5);
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
 }
 .plant-image-container:hover::before {
+    border-radius: inherit;
     opacity: 1;
 }
 
@@ -842,6 +844,7 @@ body, h2, h3, h4, h5, h6, a {
 .UserProfilePicContainer::before {
     content: '';
     position: absolute;
+    border-radius: 12px;
     top: 0;
     left: 0;
     right: 0;
@@ -852,6 +855,7 @@ body, h2, h3, h4, h5, h6, a {
     pointer-events: none;
 }
 .UserProfilePicContainer:hover::before {
+    border-radius: 12px;
     opacity: 1;
 }
 .UserProfilePicContainer .image-button {
