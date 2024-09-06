@@ -1,6 +1,6 @@
 <link th:href="@{/css/modal.css}" rel="stylesheet">
 
-
+<div id="errorOccurred" th:attr="data-value=${errorOccurred}"></div>
 <div class="modal fade" id="addPlantModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -9,7 +9,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body d-flex justify-content-center align-items-center">
-                <form id="plantForm" class="d-grid" th:action="@{/myCollection}" method="post" enctype="multipart/form-data"
+                <form id="plantForm" class="d-grid" th:action="@{/myCollection}" method="post" novalidate enctype="multipart/form-data"
                       style="display: flex; align-items: center; flex-direction: column; width:400px;">
                     <div class="row justify-content-center w-100 mb-5">
                         <div class="col-auto" style="margin-left: 30px;">
@@ -27,28 +27,22 @@
                     </div>
 
                     <input type="text" class="form-control input-modal" th:value="${plantName}" id="plantName" name="plantName" maxlength="64" placeholder="Plant Name">
-
+                    <span th:if="${plantNameError}" th:utext="${plantNameError}" class="smallErrorMessage"></span>
                     <br/>
                     <label for="scientificName"> Scientific Name: </label>
                     <input type="text" class="form-control input-modal" th:value="${scientificName}" id="scientificName" name="scientificName" maxlength="64" placeholder="Scientific Name">
-
+                    <span th:if="${scientificNameError}" th:utext="${scientificNameError}" class="smallErrorMessage"></span>
                     <br/>
                     <label for="description"> Description: </label>
                     <br/>
                     <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
                     <textarea class="form-control input-modal" th:value="${description}" id="description" name="description" placeholder="Description"  maxlength="512">[[${description}]]</textarea>
+                    <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
                     <br/>
                     <label for="plantDate"> Date Planted: </label>
-                    <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" name="uploadedDate" style="color:#6c757d;" max="9999-12-31">
-                    <span id="dateError" class="smallErrorMessage"></span>
-                    <script>
-                        document.getElementById( "plantDate" ).addEventListener( "invalid",
-                            function( event ) {
-                                event.preventDefault();
-                                document.getElementById("plantDate").style.border = "1px solid red";
-                                document.getElementById("dateError").textContent = "Date is not in valid format, DD/MM/YYYY";
-                            });
-                    </script>
+                    <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" th:name="uploadedDate" style="color:#6c757d;" max="9999-12-31">
+                    <span id="dateError" class="smallErrorMessage" th:utext="${dateError}"></span>
+                    <input type="hidden" id="isDateInvalid" th:name="isDateInvalid" th:value="false"/>
                     <div class="d-flex flex-column align-items-center justify-content-center py-1">
                         <button type="submit" class="btn btn-primary mt-2 mb-2" >Save New Plant</button>
                         <button type="button" id="cancelButton" class="btn cancel-button text-white" data-bs-dismiss="modal">Close</button>
@@ -68,6 +62,18 @@
     var plantDateInput = document.getElementById('plantDate');
     var today = new Date();
 
+    const errorOccurred = document.getElementById("errorOccurred").getAttribute("data-value");
+    window.onload = function() {
+        console.log(errorOccurred)
+        if(errorOccurred === 'true') {
+            var modal = bootstrap.Modal.getOrCreateInstance(addPlantModal);
+            modal.show();
+        }
+    }
+
+    addPlantModal.addEventListener('hide.bs.modal', function(event) {
+
+    });
 
     // this will be triggered when the modal is about to open
     addPlantModal.addEventListener('show.bs.modal', function (event) {
@@ -81,11 +87,6 @@
 
     });
 
-    form.addEventListener("submit", function(event) {
-         document.getElementById("plantForm").submit();
-        var modal = bootstrap.Modal.getInstance(addPlantModal);
-        modal.hide();
-    });
     document.getElementById("plantForm").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             var activeElement = document.activeElement;
@@ -107,6 +108,18 @@
             reader.readAsDataURL(file);
         }
     }
+
+    document.getElementById("plantForm").addEventListener("submit", function(event) {
+        const dateInput = document.getElementById("plantDate");
+        if (!(dateInput.checkValidity())) {
+            event.preventDefault();
+            document.getElementById("isDateInvalid").value = true;
+            document.getElementById("plantForm").submit();
+        } else {
+            document.getElementById("isDateInvalid").value = false;
+        }
+    });
+
 
 </script>
 <script type="text/javascript">

@@ -140,6 +140,17 @@ public class IdentifiedPlant {
 
     }
 
+    /**
+     * A constructor for the required parameters of identified plant
+     * @param plantName the name of the plant
+     * @param gardener the gardener it belongs to
+     */
+    public IdentifiedPlant(String plantName, Gardener gardener) {
+        this.name = plantName;
+        this.gardener = gardener;
+    }
+
+
     public Long getId() {
         return id;
     }
