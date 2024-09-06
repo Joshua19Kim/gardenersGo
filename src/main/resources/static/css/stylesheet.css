@@ -681,6 +681,8 @@ img {
 #form .plant-image-container .image-button:hover {
     cursor: pointer;
     opacity: 1;
+    color: transparent !important;
+
 }
 
 .return p {
@@ -819,6 +821,10 @@ body, h2, h3, h4, h5, h6, a {
     font-size: 25px;
     box-shadow: none;
     z-index: 1;
+}
+
+button.image-button:hover {
+    background-color: transparent !important;
 }
 
 
