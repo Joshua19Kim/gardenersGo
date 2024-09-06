@@ -231,6 +231,10 @@ textarea#description.garden-form-control {
     }
 }
 
+.is-invalid {
+    border: 1px solid red !important;
+}
+
 #autocomplete-results {
     align-items: baseline;
     max-height: 25vh;
@@ -677,6 +681,8 @@ img {
 #form .plant-image-container .image-button:hover {
     cursor: pointer;
     opacity: 1;
+    color: transparent !important;
+
 }
 
 .return p {
@@ -815,6 +821,10 @@ body, h2, h3, h4, h5, h6, a {
     font-size: 25px;
     box-shadow: none;
     z-index: 1;
+}
+
+button.image-button:hover {
+    background-color: transparent !important;
 }
 
 
@@ -1595,6 +1605,7 @@ form.search-bar::after {
 
 .collection-gardens-card {
     padding: 0 !important;
+    position: relative;
 }
 
 .plant-wiki-card {
@@ -1605,6 +1616,18 @@ form.search-bar::after {
 .plant-wiki-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.plant-wiki-card .btn-wrapper {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.plant-wiki-card .btn-success {
+    padding: 2px 10px;
+    font-size: smaller;
+    min-width: fit-content;
 }
 
 .friend-modal-content {

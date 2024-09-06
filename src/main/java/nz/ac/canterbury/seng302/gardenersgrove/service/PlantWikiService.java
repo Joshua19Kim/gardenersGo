@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -96,5 +97,6 @@ public class PlantWikiService {
     public void emptyPlantWikiCache() {
         logger.info("Emptying plant wiki information cache");
     }
+
 
 }
