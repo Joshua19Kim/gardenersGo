@@ -27,12 +27,12 @@
                         <label for="plantName" class="required-label"> *Required </label>
                     </div>
 
-                    <input type="text" class="form-control input-modal" th:value="${plantName}" id="plantName" name="plantName" maxlength="64" placeholder="Plant Name"
+                    <input type="text" class="form-control input-modal" th:value="${plantName}" id="plantName" name="plantName" placeholder="Plant Name"
                            th:classappend="${plantNameError} ? 'is-invalid' : ''">
                     <span th:if="${plantNameError}" th:utext="${plantNameError}" class="smallErrorMessage"></span>
                     <br/>
                     <label for="scientificName"> Scientific Name: </label>
-                    <input type="text" class="form-control input-modal" th:value="${scientificName}" id="scientificName" name="scientificName" maxlength="64" placeholder="Scientific Name"
+                    <input type="text" class="form-control input-modal" th:value="${scientificName}" id="scientificName" name="scientificName" placeholder="Scientific Name"
                            th:classappend="${scientificNameError} ? 'is-invalid' : ''">
                     <span th:if="${scientificNameError}" th:utext="${scientificNameError}" class="smallErrorMessage"></span>
                     <br/>
@@ -97,8 +97,8 @@
         })
 
         document.getElementById('description').value = '';
-        document.getElementById('plantName').textContent = '';
-        document.getElementById('scientificName').textContent = '';
+        document.getElementById('plantName').value = '';
+        document.getElementById('scientificName').value = '';
 
 
     });

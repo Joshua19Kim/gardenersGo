@@ -404,4 +404,20 @@ public class ValidityCheckerTest {
         Assertions.assertEquals(expectedNumber, actualNumber);
     }
 
+    @ParameterizedTest
+    @CsvSource(value = {
+            "@@@@@@@: Scientific name must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>",
+            "Science: Science",
+            "     :     ",
+            "@@@$$%^S^&&S&FBBNSJLKJNSLFNNSSKNKNY#^^#T*HFBSFBSKNOIH#&@Y(@*Y*(@HOFSIHF(*Y#)#H)HFONW*(*3*@B***@HG(H@: " +
+                    "Scientific name must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>" +
+                    "Scientific name must be less than 64 characters",
+            "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh: " +
+                    "Scientific name must be less than 64 characters"
+    }, delimiter = ':')
+    public void ValidateScientificNameTest(String scientificName, String expectedMessage) {
+        String actualMessage = ValidityChecker.validateScientificPlantName(scientificName);
+        Assertions.assertEquals(expectedMessage, actualMessage);
+    }
+
 }
