@@ -6,8 +6,10 @@
 </head>
 
 <body>
+
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="collection-container">
+
     <div class="row">
         <div id="addPlantButton" class="col-md-3 mb-4" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#addPlantModal">
             <div class="card border-custom collection-gardens-card" style="align-items: center; display:flex; flex-direction: column;  height:100%; justify-content:center;">
@@ -22,7 +24,7 @@
         <div th:each="species : ${speciesList.content}" class="col-md-3 mb-4">
             <a th:href="@{/collectionDetails(speciesName=${species.speciesName})}" style="text-decoration: none;">
                 <div class="card collection-gardens-card">
-                    <img id="collection-card-img" class="card-img-top" th:src="${species.imageUrl}" alt="Plant Species image">
+                    <img id="collection-card-img" class="card-img-top" th:src="${species.imageUrl} == null ? '/images/placeholder.jpg' : ${species.imageUrl}" alt="Plant Species image">
                     <div class="card-collection-body">
                         <div class="card-body">
                             <h5 style="color: #fffdf6" class="card-title" th:text="${species.speciesName}"></h5>

@@ -20,9 +20,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -115,6 +118,10 @@ public class CollectionsController {
         List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         model.addAttribute("gardens", gardens);
 
+        if(!model.containsAttribute("errorOccurred")) {
+            model.addAttribute("errorOccurred", false);
+        }
+
         return "myCollectionTemplate";
     }
 
@@ -126,7 +133,6 @@ public class CollectionsController {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
-
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
         Page<IdentifiedPlant> collectionsList = plantIdentificationService.getGardenerPlantsBySpeciesPaginated(pageNo, pageSize, gardener.getId(), speciesName);
         model.addAttribute("collectionsList", collectionsList);
@@ -166,33 +172,82 @@ public class CollectionsController {
             @RequestParam (name="description", required = false) String description,
             @RequestParam (name="scientificName", required = false) String scientificName,
             @RequestParam (name="uploadedDate", required = false) LocalDate uploadedDate,
+            @RequestParam(name = "isDateInvalid", required = false) boolean isDateInvalid,
             @RequestParam ("plantImage") MultipartFile plantImage,
-            Model model
+            RedirectAttributes redirectAttributes
     ) {
         logger.info("/myCollection/addNewPlantToMyCollection");
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        //validation check needed. Look at plantAddFormController.
+        String validatedPlantName = ValidityChecker.validatePlantName(plantName);
+        String validatedScientificName = ValidityChecker.validateScientificPlantName(scientificName);
+        String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
 
-        IdentifiedPlant newPlantDetails = new IdentifiedPlant(plantName, description, scientificName, uploadedDate, gardener);
+        boolean isValid = true;
 
-        IdentifiedPlant newPlant = plantIdentificationService.saveIdentifiedPlantDetails(newPlantDetails);
+        if (isDateInvalid) {
+            String dateError = "Date is not in valid format, DD/MM/YYYY";
+            redirectAttributes.addFlashAttribute("dateError", dateError);
+            isValid = false;
+        }
 
-        imageService.saveCollectionPlantImage(plantImage, newPlant);
-        logger.info("plantName : " + plantName);
-        logger.info("description : " + description);
-        logger.info("scientificName : " + scientificName);
-        logger.info("uploadedDate : " + uploadedDate);
+        if (!Objects.equals(plantName, validatedPlantName)) {
+            redirectAttributes.addFlashAttribute("plantNameError", validatedPlantName);
+            isValid = false;
+        }
+        if (!Objects.equals(scientificName, validatedScientificName)) {
+            redirectAttributes.addFlashAttribute("scientificNameError", validatedScientificName);
+            isValid = false;
+        }
+        if (!Objects.equals(description, validatedPlantDescription)) {
+            redirectAttributes.addFlashAttribute("descriptionError", validatedPlantDescription);
+            isValid = false;
+        }
+
+        if(!plantImage.isEmpty()) {
+            Optional<String> uploadMessage = imageService.checkValidImage(plantImage);
+            if(uploadMessage.isPresent()) {
+                redirectAttributes.addFlashAttribute("uploadError", uploadMessage.get());
+                isValid = false;
+            }
+        }
+
+        if(isValid) {
+            IdentifiedPlant identifiedPlant = new IdentifiedPlant(plantName, gardener);
+
+            if(description != null && !description.trim().isEmpty()) {
+                identifiedPlant.setDescription(description);
+            }
+            if(scientificName != null && !scientificName.trim().isEmpty()) {
+                identifiedPlant.setSpeciesScientificNameWithoutAuthor(scientificName);
+            } else {
+                identifiedPlant.setSpeciesScientificNameWithoutAuthor("No Species");
+            }
+            if(uploadedDate != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                identifiedPlant.setDateUploaded(uploadedDate.format(formatter));
+            }
+            if(plantImage.isEmpty()) {
+                identifiedPlant.setUploadedImage("/images/placeholder.jpg");
+                plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
+            } else {
+                plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
+                imageService.saveCollectionPlantImage(plantImage, identifiedPlant);
+            }
+            return "redirect:/myCollection";
+        } else {
+            redirectAttributes.addFlashAttribute("plantName", plantName);
+            redirectAttributes.addFlashAttribute("description", description);
+            redirectAttributes.addFlashAttribute("scientificName", scientificName);
+            redirectAttributes.addFlashAttribute("uploadedDate", uploadedDate);
+            redirectAttributes.addFlashAttribute("errorOccurred", true);
+
+            return "redirect:/myCollection";
+        }
 
 
 
-        model.addAttribute("plantName", plantName);
-        model.addAttribute("description", description);
-        model.addAttribute("scientificName", scientificName);
-        model.addAttribute("uploadedDate", uploadedDate);
-
-        return "redirect:/myCollection";
 
     }
 

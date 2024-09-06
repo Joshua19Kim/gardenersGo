@@ -121,6 +121,32 @@ public class ValidityChecker {
     }
 
     /**
+     * Validates that the scientific plant name is of valid format
+     * @param name the scientific plant name
+     * @return Either an error message or the plant name
+     */
+    public static String validateScientificPlantName(String name) {
+        if(name == null || name.trim().isEmpty()) {
+            return name;
+        }
+
+        String regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        String result = "";
+        if (!name.matches(regex)) {
+            result += "Scientific name must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>";
+        }
+
+        if(name.length() > 64) {
+            result += "Scientific name must be less than 64 characters";
+        }
+        if (!result.isEmpty()) {
+            return result;
+        }
+
+        return name;
+    }
+
+    /**
      * Validates the plant count is of valid format
      * @param count the plant count
      * @return Either an error message or the correctly formatted count
