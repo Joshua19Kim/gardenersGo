@@ -63,14 +63,11 @@ public class PlantWikiService {
       connection.setRequestMethod("GET");
       int responseCode = connection.getResponseCode();
       objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
+      String rateLimitRemaining = connection.getHeaderField("X-RateLimit-Remaining");
+      if (rateLimitRemaining != null && Integer.parseInt(rateLimitRemaining) <= 0) {
+        return "The plant wiki is down for the day :( Try again tomorrow";
+      }
       if (responseCode == HttpStatus.OK.value()) {
-        String rateLimitRemaining = connection.getHeaderField("X-RateLimit-Remaining");
-
-        if (rateLimitRemaining != null && Integer.parseInt(rateLimitRemaining) <= 0) {
-          return "The plant wiki is down for the day :( Try again tomorrow";
-        }
-
         WikiPlantResponse wikiPlantResponse = objectMapper.readValue(url, WikiPlantResponse.class);
         for (JsonNode plant : wikiPlantResponse.getData()) {
           long id = plant.get("id").asLong();
