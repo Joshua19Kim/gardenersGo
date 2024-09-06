@@ -22,6 +22,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Service clas for interacting with the Perenual API
@@ -114,4 +115,6 @@ public class PlantWikiService {
     public void emptyPlantWikiCache() {
         logger.info("Emptying plant wiki information cache");
     }
+
+
 }

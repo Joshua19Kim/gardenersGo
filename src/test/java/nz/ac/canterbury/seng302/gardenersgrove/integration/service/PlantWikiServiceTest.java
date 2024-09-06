@@ -11,8 +11,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantWikiController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlantResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantWikiService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,9 +28,10 @@ import org.springframework.http.HttpStatus;
 @SpringBootTest
 public class PlantWikiServiceTest {
 
-
+    @MockBean
+    private GardenerFormService gardenerFormService;
     private PlantWikiService plantWikiService;
-    
+
     private ObjectMapper mockObjectMapper;
 
     private ObjectMapper objectMapper;
@@ -145,9 +149,4 @@ public class PlantWikiServiceTest {
         Assertions.assertEquals(expectedWikiPlant.getOtherNames(), actualWikiPlant.getOtherNames());
         Assertions.assertEquals(expectedWikiPlant.getWatering(), actualWikiPlant.getWatering());
     }
-
-
-
-
-
 }
