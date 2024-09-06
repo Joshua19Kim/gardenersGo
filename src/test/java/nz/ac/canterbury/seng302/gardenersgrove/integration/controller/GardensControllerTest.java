@@ -2,12 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDate;
 import java.util.*;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,13 +40,7 @@ public class GardensControllerTest {
     private RelationshipService relationshipService;
 
     @MockBean
-    private RequestService requestService;
-
-    @MockBean
-    private WeatherService weatherService;
-
-    @MockBean
-    private TagService tagService;
+    private FollowerService followerService;
 
     @BeforeEach
     void setUp() {
@@ -60,7 +50,6 @@ public class GardensControllerTest {
         testGardener.setId(1L);
         gardenerFormService.addGardener(testGardener);
         when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(testGardener));
-
     }
 
     @Test
@@ -194,6 +183,21 @@ public class GardensControllerTest {
                 .andExpect(redirectedUrl("/gardens"));
     }
 
+    @Test
+    @WithMockUser
+    public void ViewFollowedGardens_NotFollowingAnyGardens_NoGardensShown() throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+        currentUser.setId(1L);
+        gardenerFormService.addGardener(currentUser);
+
+        when(followerService.findAllGardens(currentUser.getId())).thenReturn(Collections.emptyList());
+
+        mockMvc
+                .perform(MockMvcRequestBuilders.get("/gardens"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("followedGardenList"))
+                .andExpect(model().attribute("followedGardenList", hasSize(0)));
+    }
 
 
 

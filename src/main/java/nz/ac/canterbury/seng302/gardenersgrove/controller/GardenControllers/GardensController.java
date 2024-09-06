@@ -91,6 +91,7 @@ public class GardensController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
+        // Getting the gardens that users followed to show on the gardens page
         List<Long> followedGardens = followerService.findAllGardens(gardener.getId());
         List<Garden> followedGardenList = new ArrayList<>();
         for (Long gardenId : followedGardens) {
