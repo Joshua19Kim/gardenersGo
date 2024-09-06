@@ -231,6 +231,10 @@ textarea#description.garden-form-control {
     }
 }
 
+.is-invalid {
+    border: 1px solid red !important;
+}
+
 #autocomplete-results {
     align-items: baseline;
     max-height: 25vh;

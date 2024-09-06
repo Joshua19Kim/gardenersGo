@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
+import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,8 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The controller for the plant wiki page. It handles all requests for going to the page and searching for plant information.
@@ -45,8 +46,6 @@ public class PlantWikiController {
     private final GardenService gardenService;
 
     private final ImageService imageService;
-
-
 
     private Gardener gardener;
 
@@ -164,8 +163,17 @@ public class PlantWikiController {
             Model model,
             RedirectAttributes redirectAttributes) {
 
+        InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
+
+
         logger.info("POST /addPlant");
-        logger.info("Image URL: " + imageUrl);
+
+        // Add values to model for displaying in the form in case of errors
+        model.addAttribute("name", name);
+        model.addAttribute("count", count);
+        model.addAttribute("description", description);
+        model.addAttribute("date", date);
+        model.addAttribute("imageUrl", imageUrl);
 
         Optional<Garden> gardenOptional = gardenService.getGarden(gardenId);
         if (gardenOptional.isEmpty()) {
@@ -174,16 +182,12 @@ public class PlantWikiController {
         }
 
         Garden garden = gardenOptional.get();
+        boolean isValid = true;
+
+        // Validate name, count, and description (same as before)
         String validatedPlantName = ValidityChecker.validatePlantName(name);
         String validatedPlantCount = ValidityChecker.validatePlantCount(count);
         String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
-
-        boolean isValid = true;
-
-        if (isDateInvalid) {
-            redirectAttributes.addFlashAttribute("dateError", "Date is not in valid format, DD/MM/YYYY");
-            isValid = false;
-        }
 
         if (!Objects.equals(name, validatedPlantName)) {
             redirectAttributes.addFlashAttribute("nameError", validatedPlantName);
@@ -200,6 +204,25 @@ public class PlantWikiController {
             isValid = false;
         }
 
+        // Date validation similar to DoB handling in registerController
+        Optional<String> dateError = Optional.empty();
+        if (isDateInvalid) {
+            dateError = Optional.of("Date is not in valid format, DD/MM/YYYY");
+        } else {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate.parse(date, formatter); // Try to parse the date, will throw an exception if invalid
+            } catch (DateTimeParseException e) {
+                dateError = Optional.of("Date is not in valid format, DD/MM/YYYY");
+            }
+        }
+
+        if (dateError.isPresent()) {
+            redirectAttributes.addFlashAttribute("dateError", dateError.get());
+            isValid = false;
+        }
+
+        // Image validation (same as before)
         if (isFileUploaded && file != null && !file.isEmpty()) {
             Optional<String> uploadMessage = imageService.checkValidImage(file);
             if (uploadMessage.isPresent()) {
@@ -210,7 +233,7 @@ public class PlantWikiController {
 
         if (isValid) {
             Plant plant = new Plant(name, garden);
-
+            // Plant details setup (same as before)
             if (count != null && !count.trim().isEmpty()) {
                 plant.setCount(new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
             }
@@ -219,7 +242,7 @@ public class PlantWikiController {
                 plant.setDescription(validatedPlantDescription);
             }
 
-            if (date != null && !date.isEmpty() ) {
+            if (date != null && !date.isEmpty()) {
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDate parsedDate = LocalDate.parse(date, inputFormatter);
@@ -229,7 +252,7 @@ public class PlantWikiController {
 
             plantService.addPlant(plant);
 
-            // Set the image based on the file or URL
+            // Image handling (same as before)
             if (isFileUploaded && file != null && !file.isEmpty()) {
                 imageService.savePlantImage(file, plant);
             } else if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -240,7 +263,6 @@ public class PlantWikiController {
                     plant.setImage(filePath);
                 }
             } else {
-                // Set the default placeholder image if no image URL or file is provided
                 plant.setImage("/images/placeholder.jpg");
             }
 
@@ -259,6 +281,7 @@ public class PlantWikiController {
             return "redirect:/plantWiki";
         }
     }
+
 
 
 }

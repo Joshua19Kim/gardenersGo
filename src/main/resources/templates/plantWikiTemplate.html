@@ -69,7 +69,7 @@
                     <h1> Add New Plant </h1>
                     <label class="fst-italic">* Required</label>
                     <br/>
-                    <form id="plantForm" method="post" th:action="@{/addPlant}" enctype="multipart/form-data">
+                    <form id="plantForm" method="post" th:action="@{/addPlant}" enctype="multipart/form-data" novalidate>
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <select class="form-select" name="gardenId" aria-label="Select">
                             <th:block th:each="garden : ${userGardens != null ? userGardens : gardens}" placeholder="Choose a garden*">
@@ -95,16 +95,11 @@
                         <p th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage text-danger"></p>
                         <br/>
                         <label for="datePlanted"> Date Planted: </label>
-                        <input type="date" class="form-control" id="datePlanted" name="date" th:value="${date}">
-                        <p id="dateError" th:text="${dateError}" class="smallErrorMessage text-danger"></p>
-                        <script>
-                            document.getElementById("datePlanted").addEventListener("invalid",
-                                function(event) {
-                                    event.preventDefault();
-                                    document.getElementById("datePlanted").style.border = "1px solid red";
-                                    document.getElementById("dateError").textContent = "Date is not in valid format, DD/MM/YYYY";
-                                });
-                        </script>
+                        <input type="date" class="form-control" id="datePlanted" name="date"
+                               th:value="${date}" th:classappend="${dateError} ? 'is-invalid' : ''">
+                        <p th:if="${dateError}" th:text="${dateError}" class="smallErrorMessage text-danger"></p>
+                        <input type="hidden" id="isDateInvalid" name="isDateInvalid" th:value="false"/>
+
                         <br/>
                         <!-- Hidden input to store image URL -->
                         <input type="hidden" id="imageUrl" name="imageUrl" th:value="${imageUrl}">
@@ -129,6 +124,20 @@
 </div>
 
 <script>
+    // Mark the date as invalid and allow the form to submit
+    document.getElementById("plantForm").addEventListener("submit", function(event) {
+        const dateInput = document.getElementById("datePlanted");
+        if (!(dateInput.checkValidity())) {
+            console.log("invalid date");
+            event.preventDefault();
+            document.getElementById("isDateInvalid").value = true;
+            document.getElementById("plantForm").submit();
+        } else {
+            console.log("valid date");
+            document.getElementById("isDateInvalid").value = false;
+        }
+    });
+
     function displayAddPlantModal(button) {
         const modal = document.getElementById("add-plant-modal");
         modal.style.display = "block"; // Show the modal
