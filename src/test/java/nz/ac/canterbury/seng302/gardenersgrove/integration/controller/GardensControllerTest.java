@@ -42,6 +42,16 @@ public class GardensControllerTest {
     @MockBean
     private FollowerService followerService;
 
+    @MockBean
+    private RequestService requestService;
+
+    @MockBean
+    private WeatherService weatherService;
+
+    @MockBean
+    private TagService tagService;
+
+
     @BeforeEach
     void setUp() {
         Mockito.reset(gardenerFormService);
