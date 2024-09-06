@@ -133,7 +133,6 @@ public class CollectionsController {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
-
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
         Page<IdentifiedPlant> collectionsList = plantIdentificationService.getGardenerPlantsBySpeciesPaginated(pageNo, pageSize, gardener.getId(), speciesName);
         model.addAttribute("collectionsList", collectionsList);
@@ -222,6 +221,8 @@ public class CollectionsController {
             }
             if(scientificName != null && !scientificName.trim().isEmpty()) {
                 identifiedPlant.setSpeciesScientificNameWithoutAuthor(scientificName);
+            } else {
+                identifiedPlant.setSpeciesScientificNameWithoutAuthor("No Species");
             }
             if(uploadedDate != null) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
