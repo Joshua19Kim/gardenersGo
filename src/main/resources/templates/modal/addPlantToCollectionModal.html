@@ -18,6 +18,7 @@
                                 <button type="button" class="image-button" onclick="document.getElementById('fileInput').click()" style="position: absolute; bottom: 10px; right: 10px; z-index: 10;">+</button>
                                 <input type="file" id="fileInput" name="plantImage" style="display: none;" accept="image/*" onchange="handleImageChange()">
                             </div>
+                            <span id="uploadError" th:if="${uploadError}" th:text="${uploadError}" class="smallErrorMessage"></span>
                         </div>
                     </div>
                     <br/>
@@ -26,21 +27,25 @@
                         <label for="plantName" class="required-label"> *Required </label>
                     </div>
 
-                    <input type="text" class="form-control input-modal" th:value="${plantName}" id="plantName" name="plantName" maxlength="64" placeholder="Plant Name">
+                    <input type="text" class="form-control input-modal" th:value="${plantName}" id="plantName" name="plantName" maxlength="64" placeholder="Plant Name"
+                           th:classappend="${plantNameError} ? 'is-invalid' : ''">
                     <span th:if="${plantNameError}" th:utext="${plantNameError}" class="smallErrorMessage"></span>
                     <br/>
                     <label for="scientificName"> Scientific Name: </label>
-                    <input type="text" class="form-control input-modal" th:value="${scientificName}" id="scientificName" name="scientificName" maxlength="64" placeholder="Scientific Name">
+                    <input type="text" class="form-control input-modal" th:value="${scientificName}" id="scientificName" name="scientificName" maxlength="64" placeholder="Scientific Name"
+                           th:classappend="${scientificNameError} ? 'is-invalid' : ''">
                     <span th:if="${scientificNameError}" th:utext="${scientificNameError}" class="smallErrorMessage"></span>
                     <br/>
                     <label for="description"> Description: </label>
                     <br/>
                     <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
-                    <textarea class="form-control input-modal" th:value="${description}" id="description" name="description" placeholder="Description"  maxlength="512">[[${description}]]</textarea>
+                    <textarea class="form-control input-modal" th:value="${description}" id="description" name="description" placeholder="Description"  maxlength="512"
+                              th:classappend="${descriptionError} ? 'is-invalid' : ''">[[${description}]]</textarea>
                     <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
                     <br/>
                     <label for="plantDate"> Date Planted: </label>
-                    <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" th:name="uploadedDate" style="color:#6c757d;" max="9999-12-31">
+                    <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" th:name="uploadedDate" style="color:#6c757d;" max="9999-12-31"
+                           th:classappend="${dateError} ? 'is-invalid' : ''">
                     <span id="dateError" class="smallErrorMessage" th:utext="${dateError}"></span>
                     <input type="hidden" id="isDateInvalid" th:name="isDateInvalid" th:value="false"/>
                     <div class="d-flex flex-column align-items-center justify-content-center py-1">
@@ -62,28 +67,54 @@
     var plantDateInput = document.getElementById('plantDate');
     var today = new Date();
 
-    const errorOccurred = document.getElementById("errorOccurred").getAttribute("data-value");
+    var errorOccurred = document.getElementById("errorOccurred").getAttribute("data-value");
     window.onload = function() {
         console.log(errorOccurred)
         if(errorOccurred === 'true') {
             var modal = bootstrap.Modal.getOrCreateInstance(addPlantModal);
             modal.show();
         }
+
+        updateCharacterCount();
     }
 
+    // clears all the fields when the modal is closed
     addPlantModal.addEventListener('hide.bs.modal', function(event) {
+        errorOccurred = false;
+
+        const addPlantForm = document.getElementById('plantForm')
+
+        const invalidInputs = addPlantForm.querySelectorAll('.is-invalid');
+        invalidInputs.forEach((input) => {
+            input.classList.remove('is-invalid');
+        });
+
+        const errorMessages = addPlantForm.querySelectorAll('span');
+        errorMessages.forEach((errorMessage) => {
+            if(errorMessage.id !== 'characterCountContainer' && errorMessage.id !== 'characterCount') {
+                errorMessage.textContent = '';
+            }
+        })
+
+        const inputs = addPlantForm.querySelectorAll('input');
+        inputs.forEach((input) => {
+            input.value = '';
+        })
+
+        document.getElementById('description').value = '';
 
     });
 
     // this will be triggered when the modal is about to open
     addPlantModal.addEventListener('show.bs.modal', function (event) {
-        form.reset();
         fileInput.value = '';
         currentImage.src = '[[@{/images/placeholder.jpg}]]';
 
-        plantDateInput.value = today.getFullYear() + '-' +
-            String(today.getMonth() + 1).padStart(2, '0') + '-' +
-            String(today.getDate()).padStart(2, '0');
+        if(errorOccurred !== 'true') {
+            plantDateInput.value = today.getFullYear() + '-' +
+                String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                String(today.getDate()).padStart(2, '0');
+        }
 
     });
 
@@ -120,32 +151,8 @@
         }
     });
 
+    document.getElementById('description').addEventListener('input', updateCharacterCount);
 
-</script>
-<script type="text/javascript">
-
-    const txHeight = 16;
-    const tx = document.getElementsByTagName("textarea");
-    for (let i = 0; i < tx.length; i++) {
-        if (tx[i].value === '') {
-            tx[i].setAttribute("style", "height:" + txHeight + "px;overflow-y:hidden;");
-        } else {
-            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-        }
-        tx[i].addEventListener("input", OnInput, false);
-        document.addEventListener('DOMContentLoaded', function() {
-            updateCharacterCount();
-        });
-        document.addEventListener('input', function() {
-            updateCharacterCount();
-        });
-
-    }
-
-    function OnInput() {
-        this.style.height = 'auto';
-        this.style.height = (this.scrollHeight) + "px";
-    }
     function updateCharacterCount() {
         var textarea = document.getElementById("description");
         var characterCount = document.getElementById("characterCount");

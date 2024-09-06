@@ -74,9 +74,9 @@
                     <p th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></p>
                     <div id="commonNames"></div>
                     <br/>
-                    <label for="description"> Description (Optional): </label>
-                    <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
-                    <textarea class="form-control" th:value="*{description}" id="description" name="description"  maxlength="512"
+                    <label for="scanning-description"> Description (Optional): </label>
+                    <span id="scanningCharacterCountContainer"><span id="scanningCharacterCount">0</span> /512</span>
+                    <textarea class="form-control" th:value="*{description}" id="scanning-description" name="description"  maxlength="512"
                               th:classappend="${descriptionError} ? 'is-invalid' : ''">[[${description}]]</textarea>
                     <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
                 </form>
