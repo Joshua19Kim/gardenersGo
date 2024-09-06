@@ -15,9 +15,9 @@ var goToCollectionButton = document.getElementById('goToCollectionButton');
 
 function getBaseUrl() {
     const path = window.location.pathname.split('/');
-    if (path[0] === 'test') {
+    if (path[1] === 'test') {
         return '/test';
-    } else if (path[0] === 'prod') {
+    } else if (path[1] === 'prod') {
         return '/prod';
     }
     return '';
