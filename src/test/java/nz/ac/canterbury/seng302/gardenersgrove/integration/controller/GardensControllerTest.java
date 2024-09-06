@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDate;
 import java.util.*;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -209,6 +210,48 @@ public class GardensControllerTest {
                 .andExpect(model().attribute("followedGardenList", hasSize(0)));
     }
 
+    @Test
+    @WithMockUser
+    public void ViewFollowedGardens_FollowingGardens_GardensShown() throws Exception {
+        Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
+        currentUser.setId(1L);
 
+        Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
+        otherUser.setId(2L);
 
+        gardenerFormService.addGardener(currentUser);
+        gardenerFormService.addGardener(otherUser);
+
+        Garden garden1 = new Garden("Test1 garden", "99 test1 address", null, "Christchurch", "New Zealand", null, "9999", otherUser, "");
+        Garden garden2 = new Garden("Test2 garden", "99 test2 address", null, "Christchurch", "New Zealand", null, "9999", otherUser, "");
+        Garden garden3 = new Garden("Test3 garden", "99 test3 address", null, "Christchurch", "New Zealand", null, "9999", otherUser, "");
+
+        garden1.setId(1L);
+        garden2.setId(2L);
+        garden3.setId(3L);
+
+        Follower followGarden1 = new Follower(currentUser.getId(), garden1.getId());
+        Follower followGarden2 = new Follower(currentUser.getId(), garden2.getId());
+        Follower followGarden3 = new Follower(currentUser.getId(), garden3.getId());
+
+        followerService.addfollower(followGarden1);
+        followerService.addfollower(followGarden2);
+        followerService.addfollower(followGarden3);
+
+        List<Long> followedGardenIds = Arrays.asList(garden1.getId(), garden2.getId(), garden3.getId());
+
+        when(followerService.findAllGardens(currentUser.getId())).thenReturn(followedGardenIds);
+        when(gardenService.getGarden(garden1.getId())).thenReturn(Optional.of(garden1));
+        when(gardenService.getGarden(garden2.getId())).thenReturn(Optional.of(garden2));
+        when(gardenService.getGarden(garden3.getId())).thenReturn(Optional.of(garden3));
+
+        mockMvc
+                .perform(MockMvcRequestBuilders.get("/gardens"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("followedGardenList"))
+                .andExpect(model().attribute("followedGardenList", hasSize(3)))
+                .andExpect(model().attribute("followedGardenList", hasItem(garden1)))
+                .andExpect(model().attribute("followedGardenList", hasItem(garden2)))
+                .andExpect(model().attribute("followedGardenList", hasItem(garden3)));
+    }
 }
