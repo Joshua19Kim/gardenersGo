@@ -96,7 +96,7 @@
                         <br/>
                         <label for="datePlanted"> Date Planted: </label>
                         <input type="date" class="form-control" id="datePlanted" name="date" th:value="${date}">
-                        <p th:if="${dateError}" th:text="${dateError}" class="smallErrorMessage text-danger"></p>
+                        <p id="dateError" th:text="${dateError}" class="smallErrorMessage text-danger"></p>
                         <script>
                             document.getElementById("datePlanted").addEventListener("invalid",
                                 function(event) {

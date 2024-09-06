@@ -219,7 +219,7 @@ public class PlantWikiController {
                 plant.setDescription(validatedPlantDescription);
             }
 
-            if (date != null) {
+            if (date != null && !date.isEmpty() ) {
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDate parsedDate = LocalDate.parse(date, inputFormatter);

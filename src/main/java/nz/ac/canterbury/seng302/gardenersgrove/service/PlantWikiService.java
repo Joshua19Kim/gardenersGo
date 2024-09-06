@@ -98,6 +98,5 @@ public class PlantWikiService {
         logger.info("Emptying plant wiki information cache");
     }
 
-    public void addPlant(Long gardenId, String name, Integer count, String description, String date, MultipartFile file) {
-    }
+
 }
