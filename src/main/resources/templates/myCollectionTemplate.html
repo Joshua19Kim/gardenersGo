@@ -26,7 +26,7 @@
                 <div class="card-collection-body">
                     <div class="card-body">
                         <h5 style="color: #fffdf6" class="card-title" th:text="${identifiedPlant.name}"></h5>
-                        <p style="color: #fffdf6" class="card-text" th:text="'Scientific Name: ' + ${identifiedPlant.speciesScientificNameWithoutAuthor}"></p>
+                        <p style="color: #fffdf6" class="card-text" th:if="${identifiedPlant.speciesScientificNameWithoutAuthor}" th:text="'Scientific Name: ' + ${identifiedPlant.speciesScientificNameWithoutAuthor}"></p>
                     </div>
                 </div>
              </div>
