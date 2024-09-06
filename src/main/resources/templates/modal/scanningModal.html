@@ -32,7 +32,7 @@
                 <div id="resultContainer" style="display: none;"></div>
 
                 <div class="d-flex flex-column align-items-center justify-content-center py-1">
-                    <button id="saveToCollectionButton" class="btn btn-primary mt-2 mb-2" type="button" style="display:none;">Save in my collection</button>
+                    <button id="saveToCollectionButton" class="btn btn-primary mt-2 mb-2" type="button" style="display:none;">Add to my collection</button>
                     <button class="btn cancel-button text-white" data-bs-dismiss="modal" type="button">Close</button>
                 </div>
 
@@ -71,21 +71,21 @@
                     <label for="name"> Name: </label>
                     <input type="text" class="form-control" th:value="*{name}" id="name" name="name" maxlength="64" placeholder="Name"
                            th:classappend="${nameError} ? 'is-invalid' : ''">
-                    <p th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></p>
                     <div id="commonNames"></div>
+                    <p id="nameError" class="smallErrorMessage" th:utext="${nameError != null ? nameError : ''}"></p>
                     <br/>
                     <label for="description"> Description (Optional): </label>
                     <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
                     <textarea class="form-control" th:value="*{description}" id="description" name="description"  maxlength="512"
                               th:classappend="${descriptionError} ? 'is-invalid' : ''">[[${description}]]</textarea>
-                    <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
+                    <span id="descriptionError" class="smallErrorMessage" th:text="${descriptionError != null ? descriptionError : ''}"></span>
                 </form>
             </div>
 
 
             <div class="modal-footer d-flex justify-content-center" >
-                <button type="button" class="btn btn-primary" id="goToCollectionButton" th:data-url="@{/myCollection}">Go to my collection</button>
-                <button type="button" class="btn cancel-button text-white" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="goToCollectionButton" th:data-url="@{/myCollection}">Save to my collection</button>
+                <button type="button" class="btn cancel-button text-white" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

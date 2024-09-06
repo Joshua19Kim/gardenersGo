@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
@@ -82,17 +83,54 @@ public class CollectionsController {
     @GetMapping("/myCollection")
     public String getMyCollection(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
-            Model model
-    ) {
+            Model model) {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
+        int pageNo = ValidityChecker.validatePageNumber(pageNoString);
+        Page<IdentifiedPlantSpecies> speciesList = plantIdentificationService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
+        logger.info("GET /myCollection");
+        model.addAttribute("speciesList", speciesList);
+        int totalPages = speciesList.getTotalPages();
+        if(totalPages > 0) {
+            int lowerBound = Math.max(pageNo - 1, 1);
+            int upperBound = Math.min(pageNo + 3, totalPages);
+            List<Integer> pageNumbers = IntStream.rangeClosed(lowerBound, upperBound)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+
+            long totalItems = speciesList.getTotalElements();
+            int startIndex = pageSize * pageNo + 1;
+            long endIndex = Math.min((long) pageSize * (pageNo + 1), totalItems);
+            String paginationMessage = "Showing results " + startIndex + " to " + endIndex + " of " + totalItems;
+            model.addAttribute("paginationMessage", paginationMessage);
+        } else {
+            String paginationMessage = "Showing results 0 to 0 of 0";
+            model.addAttribute("paginationMessage", paginationMessage);
+        }
+
+        // need to add to model so that the navbar can populate the dropdown
+        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+        model.addAttribute("gardens", gardens);
+
+        return "myCollectionTemplate";
+    }
+
+    @GetMapping("/collectionDetails")
+    public String getSpeciesDetails(
+            @RequestParam(name = "speciesName") String speciesName,
+            @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
+            Model model) {
+
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
 
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
-        Page<IdentifiedPlant> collectionsList = plantIdentificationService.getGardenerIdentifiedPlantsPaginated(pageNo, pageSize, gardener.getId());
-        logger.info("GET /myCollection");
+        Page<IdentifiedPlant> collectionsList = plantIdentificationService.getGardenerPlantsBySpeciesPaginated(pageNo, pageSize, gardener.getId(), speciesName);
         model.addAttribute("collectionsList", collectionsList);
+
         int totalPages = collectionsList.getTotalPages();
         if(totalPages > 0) {
             int lowerBound = Math.max(pageNo - 1, 1);
@@ -112,11 +150,11 @@ public class CollectionsController {
             model.addAttribute("paginationMessage", paginationMessage);
         }
 
-        // need to add to model so that the navbar can populate the dropdown
+        // Add gardens to the model for the navbar
         List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         model.addAttribute("gardens", gardens);
 
-        return "myCollectionTemplate";
+        return "collectionDetailsTemplate";
     }
 
 

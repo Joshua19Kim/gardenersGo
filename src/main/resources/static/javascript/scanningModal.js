@@ -161,8 +161,7 @@ saveToCollectionButton.addEventListener('click', function() {
 
 //button directs user to myCollection page
 goToCollectionButton.addEventListener('click', function() {
-    var modal = bootstrap.Modal.getInstance(successModal);
-    modal.hide();
+
 
     var formData = new FormData(document.getElementById('identifiedPlantNameForm'));
     var name = formData.get('name');
@@ -179,7 +178,18 @@ goToCollectionButton.addEventListener('click', function() {
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                return response.json().then(data => {
+                    if (data.nameError) {
+                        document.getElementById('name').classList.add('is-invalid');
+                        document.getElementById('nameError').booleanValue= true;
+                        document.getElementById('nameError').innerText= data.nameError;
+                    }
+                    if (data.descriptionError) {
+                        document.getElementById('description').classList.add('is-invalid');
+                        document.querySelector('[th\\:text="${descriptionError}"]').innerText = data.descriptionError;
+                    }
+                    throw new Error('Validation failed');
+                })
             }
             return response.json();
         })
@@ -187,11 +197,12 @@ goToCollectionButton.addEventListener('click', function() {
             var modal = bootstrap.Modal.getInstance(successModal);
             document.getElementById('name').value = "";
             document.getElementById('description').value = "";
+            document.getElementById('nameError').innerText = '';
+            document.getElementById('descriptionError').innerText = '';
             modal.hide();
         })
         .catch((error) => {
             console.error('Error:', error);
-            alert('An error occurred while saving the plant.');
         });
 
 });
