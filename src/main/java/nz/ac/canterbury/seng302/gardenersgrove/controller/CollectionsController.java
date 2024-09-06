@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
 import static java.lang.Long.parseLong;
 
 /**
@@ -182,6 +181,10 @@ public class CollectionsController {
             model.addAttribute("requestURI", requestService.getRequestURI(request));
             model.addAttribute("plant", plant.get());
 
+            // need to add to model so that the navbar can populate the dropdown
+            List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+            model.addAttribute("gardens", gardens);
+
             return "editIdentifiedPlantForm";
         } else {
             // TODO: change redirect?
@@ -212,8 +215,8 @@ public class CollectionsController {
         long plantId = parseLong(plantIdString, 10);
         Optional<IdentifiedPlant> plantOptional = plantIdentificationService.getCollectionPlantById(plantId);
 
-        String validatedPlantName = ValidityChecker.validatePlantName(name);
-        String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
+        String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(name);
+        String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(description);
 
         boolean isValid = true;
 

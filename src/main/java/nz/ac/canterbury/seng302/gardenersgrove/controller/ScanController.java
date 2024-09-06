@@ -145,8 +145,8 @@ public class ScanController {
                 String name = extra.get("name");
                 String description = extra.get("description");
 
-                String validatedPlantName = ValidityChecker.validatePlantName(extra.get("name"));
-                String validatedPlantDescription = ValidityChecker.validatePlantDescription(extra.get("description"));
+                String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(extra.get("name"));
+                String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(extra.get("description"));
                 boolean isValid = true;
                 if (!Objects.equals(name, validatedPlantName)) {
                     errorResponse.put("nameError", validatedPlantName);

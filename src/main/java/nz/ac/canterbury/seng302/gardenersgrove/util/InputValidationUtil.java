@@ -54,7 +54,7 @@ public class InputValidationUtil {
 
     /**
      * Verify name user has input passes conditions:
-     * - 0 < Name < 64
+     * - 0 < Name <= 64
      * - Allows special characters umlauts, macrons, apostrophes, spaces
      * @param name provided by user input
      * @return empty optional if input is valid, otherwise return error string
