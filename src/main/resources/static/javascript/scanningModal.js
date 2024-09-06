@@ -17,13 +17,10 @@ var goToCollectionButton = document.getElementById('goToCollectionButton');
 
 function getBaseUrl() {
     const path = window.location.pathname.split('/');
-
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        return '';
-    }
-    const index = path.findIndex(part => part === 'test' || part === 'prod');
-    if (index !== -1) {
-        return '/' + parts[index];
+    if (path[1] === 'test') {
+        return '/test';
+    } else if (path[1] === 'prod') {
+        return '/prod';
     }
     return '';
 
