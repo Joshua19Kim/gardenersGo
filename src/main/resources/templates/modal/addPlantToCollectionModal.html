@@ -96,12 +96,10 @@
             }
         })
 
-        const inputs = addPlantForm.querySelectorAll('input');
-        inputs.forEach((input) => {
-            input.value = '';
-        })
-
         document.getElementById('description').value = '';
+        document.getElementById('plantName').textContent = '';
+        document.getElementById('scientificName').textContent = '';
+
 
     });
 
