@@ -5,6 +5,7 @@ const resultContainer = document.getElementById('resultContainer');
 const errorContainer= document.getElementById('errorContainer');
 const imageInput= document.getElementById('imageInput');
 const imagePreview= document.getElementById('imagePreview');
+const plantNetLogo = document.getElementById('plantNetLogo');
 const saveToCollectionButton= document.getElementById('saveToCollectionButton');
 const fileName= document.getElementById('fileName');
 const gbifInfo= document.getElementById('gbifInfo');
@@ -14,7 +15,16 @@ var goToCollectionButton = document.getElementById('goToCollectionButton');
 
 
 function getBaseUrl() {
-    return window.location.pathname.split('/').slice(0, -1).join('/');
+        const path = window.location.pathname.split('/');
+
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return '';
+    }
+    const index = parts.findIndex(part => part === 'test' || part === 'prod');
+    if (index !== -1) {
+        return '/' + parts[index];
+    }
+    return '';
 }
 function openGbifDetails(gbifId) {
     window.open(`https://www.gbif.org/species/${gbifId}`, '_blank');
@@ -22,8 +32,9 @@ function openGbifDetails(gbifId) {
 
 document.addEventListener('DOMContentLoaded', function() {
     var scanningModal = document.getElementById('scanningModal');
-    var defaultImageSrc = './images/defaultScanningImage.png';
-
+    var defaultImageSrc = `${getBaseUrl()}/images/defaultScanningImage.png`;
+    imagePreview.src = defaultImageSrc
+    plantNetLogo.src = `${getBaseUrl()}/images/apiLogo/powered-by-plantnet-light.png`;
     // this is to refresh the modal when it is closed
     scanningModal.addEventListener('hidden.bs.modal', function () {
         document.getElementById('scanForm').reset();
