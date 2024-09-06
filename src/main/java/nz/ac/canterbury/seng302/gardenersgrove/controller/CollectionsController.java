@@ -143,8 +143,7 @@ public class CollectionsController {
         gardenerOptional.ifPresent(value -> gardener = value);
 
         String validatedPlantName = ValidityChecker.validatePlantName(plantName);
-        // need to do a separate validation for scientific name
-        String validatedScientificName = ValidityChecker.validatePlantName(scientificName);
+        String validatedScientificName = ValidityChecker.validateScientificPlantName(scientificName);
         String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
 
         boolean isValid = true;
