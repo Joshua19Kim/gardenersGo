@@ -25,7 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Service clas for interacting with the Perenual API
+ * Service class for interacting with the Perenual API
+ * This service handles fetching plant data based on user queries
+ * Uses caching to reduce API calls, but does not cache responses when the
+ * rate limit is exceeded or the API is temporarily unavailable
  */
 @Service
 public class PlantWikiService {
@@ -34,8 +37,14 @@ public class PlantWikiService {
     private String api_key;
 
     private String PERENUAL_API_URL = "https://perenual.com/api/species-list";
+    private String API_DOWN= "The plant wiki is down for the day :( Try again tomorrow";
     private final ObjectMapper objectMapper;
 
+  /**
+   * Constructor for the PlantWikiService. Initializes the API key and object mapper
+   * @param api_key      The API key to access the Perenual API, injected from the application properties
+   * @param objectMapper The object mapper to parse the API response, injected by Spring's dependency injection
+   */
     @Autowired
     public PlantWikiService(@Value("${plantWiki.key}") String api_key, ObjectMapper objectMapper) {
         this.api_key = api_key;
@@ -45,12 +54,14 @@ public class PlantWikiService {
 
   /**
    * Queries the Perenual API for plants matching the given query string. The method sends a GET
-   * request to the API, parses the response, and converts it into a list of WikiPlant objects.
+   * request to the API, parses the response, and converts it into a list of WikiPlant objects
+   * The response is cached unless the API rate limit is exceeded
+   *
    *
    * @param query The search query for the plant.
-   * @return A list of WikiPlant objects that match the query.
-   * @throws IOException If there is an error reading the response from the API.
-   * @throws URISyntaxException If the constructed URI is invalid.
+   * @return A list of WikiPlant objects that match the query or an error message if the query fails
+   * @throws IOException If there is an error reading the response from the API
+   * @throws URISyntaxException If the constructed URI is invalid
    */
   @Cacheable(value = "plantInformation", key = "#query", unless = "#result == 'The plant wiki is down for the day :( Try again tomorrow'")
   public Object getPlants(String query) throws URISyntaxException {
@@ -66,7 +77,7 @@ public class PlantWikiService {
       objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
       String rateLimitRemaining = connection.getHeaderField("X-RateLimit-Remaining");
       if (rateLimitRemaining != null && Integer.parseInt(rateLimitRemaining) <= 0) {
-        return "The plant wiki is down for the day :( Try again tomorrow";
+        return API_DOWN;
       }
       if (responseCode == HttpStatus.OK.value()) {
         WikiPlantResponse wikiPlantResponse = objectMapper.readValue(url, WikiPlantResponse.class);
@@ -99,7 +110,7 @@ public class PlantWikiService {
         }
         return plantResults;
       } else if (responseCode == HttpStatus.TOO_MANY_REQUESTS.value()) {
-        return "The plant wiki is down for the day :( Try again tomorrow";
+        return API_DOWN;
       } else {
         throw new IOException("Unexpected response code: " + responseCode);
       }
