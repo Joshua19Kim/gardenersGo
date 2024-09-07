@@ -6,6 +6,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Optional;
 
 
 /** Controller class responsible for handling garden-related HTTP requests. */
@@ -39,6 +42,18 @@ public class GardenFormController {
     this.gardenerFormService = gardenerFormService;
   }
 
+  /**
+   * Retrieve an optional of a gardener using the current authentication We will always have to
+   * check whether the gardener was retrieved in the calling method, so the return type was left as
+   * an optional
+   *
+   * @return An optional of the requested gardener
+   */
+  public Optional<Gardener> getGardenerFromAuthentication() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String currentUserEmail = authentication.getName();
+    return gardenerFormService.findByEmail(currentUserEmail);
+  }
 
   /**
    * Displays the form for adding a new garden.
@@ -139,6 +154,7 @@ public class GardenFormController {
 
     if (isValid) {
         Garden garden;
+        getGardenerFromAuthentication().ifPresent(gardener1 -> gardener = gardener1);
         if (Objects.equals(size.trim(), "")) {
           garden = gardenService.addGarden(new Garden(name ,newLocation.trim(), newSuburb.trim(), city, country, newPostcode.trim(), gardener, description));
         } else {
