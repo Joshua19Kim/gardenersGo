@@ -63,6 +63,20 @@
 </div>
 
 <div th:insert="~{modal/addPlantToCollectionModal.html}"></div>
+
+<!--This code below was created by Claud AI to open the modal instantly if there is an error-->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        var showModal = /*[[${showModal}]]*/ false;
+        var addPlantModal = new bootstrap.Modal(document.getElementById('addPlantModal'));
+
+        if (showModal) {
+            addPlantModal.show();
+        }
+    });
+    /*]]>*/
+</script>
 </body>
 
 </html>

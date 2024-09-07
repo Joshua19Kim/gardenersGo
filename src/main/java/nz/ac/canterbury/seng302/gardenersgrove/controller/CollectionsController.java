@@ -121,6 +121,9 @@ public class CollectionsController {
         if(!model.containsAttribute("errorOccurred")) {
             model.addAttribute("errorOccurred", false);
         }
+        if (!model.containsAttribute("showModal")) {
+            model.addAttribute("showModal", false);
+        }
 
         return "myCollectionTemplate";
     }
@@ -242,6 +245,7 @@ public class CollectionsController {
             redirectAttributes.addFlashAttribute("scientificName", scientificName);
             redirectAttributes.addFlashAttribute("uploadedDate", uploadedDate);
             redirectAttributes.addFlashAttribute("errorOccurred", true);
+            redirectAttributes.addFlashAttribute("showModal", true);
 
             return "redirect:/myCollection";
         }
