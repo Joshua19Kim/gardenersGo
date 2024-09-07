@@ -24,8 +24,6 @@ import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -113,18 +111,12 @@ public class GardenDetailsController {
        logger.info("GET /gardens/details");
 
        Optional<Gardener> currentUserOptional = getGardenerFromAuthentication();
-       List<Garden> gardens = new ArrayList<>();
-       if (currentUserOptional.isPresent()) {
-           gardener = currentUserOptional.get();
-           gardens = gardenService.getGardensByGardenerId(gardener.getId());
-       }
-
-       model.addAttribute("gardens", gardens);
 
        if (gardenId == null) {
            return "redirect:/gardens";
        }
-       model.addAttribute("gardenId", gardenId);
+       currentUserOptional.ifPresent(value -> gardener = value);
+           model.addAttribute("gardenId", gardenId);
        Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
        if (garden.isPresent()) {
            model.addAttribute("requestURI", requestService.getRequestURI(request));
@@ -181,7 +173,7 @@ public class GardenDetailsController {
                return "gardenDetailsTemplate";
            } else {
                Gardener gardenOwner = garden.get().getGardener();
-               Boolean isFriend = relationshipService
+               boolean isFriend = relationshipService
                        .getCurrentUserRelationships(gardenOwner.getId())
                        .contains(currentUserOptional.get());
                if (isFriend || garden.get().getIsGardenPublic()) {
@@ -227,8 +219,7 @@ public class GardenDetailsController {
         if (gardenId == null || gardenerOptional.isEmpty()) {
             return "redirect:/gardens";
         }
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
-        model.addAttribute("gardens", gardens);
+
         Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
         if (garden.isPresent()) {
 
@@ -314,13 +305,7 @@ public class GardenDetailsController {
         if (gardenOptional.isEmpty()) {
             return "redirect:/gardens";
         }
-        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-        List<Garden> gardens = new ArrayList<>();
-        if (gardenerOptional.isPresent()) {
-            gardener = gardenerOptional.get();
-            gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
-        }
-        model.addAttribute("gardens", gardens);
+
         Garden garden = gardenOptional.get();
         Optional<String> validTagError = tagValidation.validateTag(tag);
         Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
@@ -373,6 +358,8 @@ public class GardenDetailsController {
                 tagService.addTag(newTag);
                 logger.info("Tag '{}' passes moderation checks", tag);
             } else {
+                Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+                gardenerOptional.ifPresent(value -> gardener = value);
                 String warningMessage = tagService.addBadWordCount(gardener);
                 // save the updated state of the gardener - either increased bad word count or if they are banned
                 gardenerFormService.addGardener(gardener);

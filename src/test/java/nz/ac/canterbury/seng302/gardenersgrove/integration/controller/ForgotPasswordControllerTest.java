@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
@@ -33,6 +34,9 @@ public class ForgotPasswordControllerTest {
     private EmailUserService emailService;
     @MockBean
     private WriteEmail writeEmail;
+    @MockBean
+    private GardenService gardenService;
+
     private InputValidationUtil inputValidator;
 
     @Test
