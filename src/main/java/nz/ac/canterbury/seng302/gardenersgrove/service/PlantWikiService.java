@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +32,7 @@ public class PlantWikiService {
     Logger logger = LoggerFactory.getLogger(PlantWikiService.class);
     private String apiKey;
 
-    private String PERENUAL_API_URL = "https://perenual.com/api/species-list";
+    private String perenualApiUrl = "https://perenual.com/api/species-list";
     private String apiDownMessage = "The plant wiki is down for the day :( Try again tomorrow";
     private final ObjectMapper objectMapper;
 
@@ -67,26 +66,23 @@ public class PlantWikiService {
 
     List<WikiPlant> plantResults = new ArrayList<>();
     query = URLEncoder.encode(query, StandardCharsets.UTF_8);
-    String uriString = PERENUAL_API_URL + "?key=" + this.apiKey + "&q=" + query;
+    String uriString = perenualApiUrl + "?key=" + this.apiKey + "&q=" + query;
     URI uri = new URI(uriString);
     URL url = uri.toURL();
     String canonicalUrl = url.toURI().normalize().toString();
 
     // ensure the URL starts with the expected Perenual base URL
-    if (!canonicalUrl.startsWith(PERENUAL_API_URL)) {
+    if (!canonicalUrl.startsWith(perenualApiUrl)) {
         throw new URISyntaxException(canonicalUrl, "Invalid URL - outside of allowed domain.");
     }
-
     try {
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
-      int responseCode = connection.getResponseCode();
       objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
       String rateLimitRemaining = connection.getHeaderField("X-RateLimit-Remaining");
       if (rateLimitRemaining != null && Integer.parseInt(rateLimitRemaining) <= 0) {
         return apiDownMessage;
-      }
-      if (responseCode == HttpStatus.OK.value()) {
+      } else {
         WikiPlantResponse wikiPlantResponse = objectMapper.readValue(url, WikiPlantResponse.class);
         for (JsonNode plant : wikiPlantResponse.getData()) {
           long id = plant.get("id").asLong();
@@ -116,10 +112,6 @@ public class PlantWikiService {
           }
         }
         return plantResults;
-      } else if (responseCode == HttpStatus.TOO_MANY_REQUESTS.value()) {
-        return apiDownMessage;
-      } else {
-        throw new IOException("Unexpected response code: " + responseCode);
       }
     } catch (IOException ex) {
       // this occurs when no plant matches the search or when there's a connection issue
