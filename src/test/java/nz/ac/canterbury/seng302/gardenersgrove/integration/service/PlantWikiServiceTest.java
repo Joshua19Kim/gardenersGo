@@ -1,32 +1,28 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static org.mockito.ArgumentMatchers.any;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.PlantWikiController;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlantResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantWikiService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 public class PlantWikiServiceTest {
@@ -42,11 +38,10 @@ public class PlantWikiServiceTest {
     @Value("${plantWiki.key}")
     private String apiKey;
 
-    private String PERENUAL_API_URL = "https://perenual.com/api/species-list";
+    private final String PERENUAL_API_URL = "https://perenual.com/api/species-list";
 
-
-    @BeforeEach
-    public void setUp() {
+  @BeforeEach
+  void setUp() {
         objectMapper = new ObjectMapper();
         mockObjectMapper = Mockito.mock(ObjectMapper.class);
         plantWikiService = new PlantWikiService(apiKey, mockObjectMapper);
@@ -60,8 +55,8 @@ public class PlantWikiServiceTest {
 
     }
 
-    @Test
-    public void getPlantsRequested_NoQuery_WikiPlantsReturned() throws URISyntaxException, IOException {
+  @Test
+  void getPlantsRequested_NoQuery_WikiPlantsReturned() throws URISyntaxException, IOException {
 
         // Note: this is an actual json response from the api
         String jsonString = "{\"data\":[{\"id\":1,\"common_name\":\"European Silver Fir\",\"scientific_name\":" +
@@ -95,7 +90,7 @@ public class PlantWikiServiceTest {
 
         Mockito.when(mockObjectMapper.readValue(url, WikiPlantResponse.class)).thenReturn(expectedData);
 
-        List<WikiPlant> actualWikiPlants = plantWikiService.getPlants(query);
+    List<WikiPlant> actualWikiPlants = (List<WikiPlant>) plantWikiService.getPlants(query);
         for(int i = 0; i < expectedWikiPlants.size(); i++) {
             WikiPlant actualWikiPlant = actualWikiPlants.get(i);
             WikiPlant expectedWikiPlant = expectedWikiPlants.get(i);
@@ -111,10 +106,10 @@ public class PlantWikiServiceTest {
 
     }
 
-    @Test
-    public void GetPlantsRequested_NothingFound_NoResultsReturned() throws URISyntaxException, IOException {
+  @Test
+  void GetPlantsRequested_NothingFound_NoResultsReturned() throws URISyntaxException, IOException {
         String query = "Hello World";
-        String replacedQuery = query.replace(" ", "%20");
+        String replacedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
         String jsonString = "{\"data\":[]}";
         String uri = PERENUAL_API_URL +"?key="+ apiKey + "&q=" + replacedQuery;
         URL url = new URI(uri).toURL();
@@ -122,12 +117,12 @@ public class PlantWikiServiceTest {
 
         Mockito.when(mockObjectMapper.readValue(url, WikiPlantResponse.class)).thenReturn(expectedData);
 
-        List<WikiPlant> actualWikiPlants = plantWikiService.getPlants(query);
+        List<WikiPlant> actualWikiPlants = (List<WikiPlant>) plantWikiService.getPlants(query);
         Assertions.assertEquals(0, actualWikiPlants.size());
     }
 
-    @Test
-    public void GetPlantsRequested_NoImagePath_NoImagePathAdded() throws URISyntaxException, IOException {
+  @Test
+  void GetPlantsRequested_NoImagePath_NoImagePathAdded() throws URISyntaxException, IOException {
         String jsonString = "{\"data\":[{\"id\":1,\"common_name\":\"European Silver Fir\",\"scientific_name\":" +
                 "[\"Abies alba\"],\"other_name\":[\"Common Silver Fir\"],\"cycle\":\"Perennial\",\"watering\":\"Frequent\"" +
                 ",\"sunlight\":[\"full sun\"],\"default_image\":null}]}";
@@ -141,7 +136,7 @@ public class PlantWikiServiceTest {
         WikiPlantResponse expectedData = objectMapper.readValue(jsonString, WikiPlantResponse.class);
 
         Mockito.when(mockObjectMapper.readValue(url, WikiPlantResponse.class)).thenReturn(expectedData);
-        List<WikiPlant> actualWikiPlants = plantWikiService.getPlants(query);
+    List<WikiPlant> actualWikiPlants = (List<WikiPlant>) plantWikiService.getPlants(query);
         WikiPlant actualWikiPlant = actualWikiPlants.get(0);
         Assertions.assertEquals(expectedWikiPlant.getName(), actualWikiPlant.getName());
         Assertions.assertEquals(expectedWikiPlant.getId(), actualWikiPlant.getId());
