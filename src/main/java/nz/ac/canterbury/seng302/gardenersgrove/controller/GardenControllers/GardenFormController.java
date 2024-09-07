@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -66,12 +65,6 @@ public class GardenFormController {
   @GetMapping("gardens/form")
   public String form(@RequestParam(name = "redirect") String redirectUri, Model model) {
     logger.info("GET /form");
-
-    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-    gardenerOptional.ifPresent(value -> gardener = value);
-    List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-
-    model.addAttribute("gardens", gardens);
     model.addAttribute("requestURI", redirectUri);
     return "gardensFormTemplate";
   }
@@ -113,11 +106,8 @@ public class GardenFormController {
     String validatedPostcode = ValidityChecker.validateGardenPostcode(postcode);
     String validatedSize = ValidityChecker.validateGardenSize(size);
     String validatedDescription = ValidityChecker.validateGardenDescription(description);
-    Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
 
     boolean isValid = true;
-
-    gardenerOptional.ifPresent(value -> gardener = value);
 
     String newLocation;
     newLocation = Objects.requireNonNullElse(location, "");
@@ -164,6 +154,7 @@ public class GardenFormController {
 
     if (isValid) {
         Garden garden;
+        getGardenerFromAuthentication().ifPresent(gardener1 -> gardener = gardener1);
         if (Objects.equals(size.trim(), "")) {
           garden = gardenService.addGarden(new Garden(name ,newLocation.trim(), newSuburb.trim(), city, country, newPostcode.trim(), gardener, description));
         } else {
@@ -172,8 +163,7 @@ public class GardenFormController {
       return "redirect:/gardens/details?gardenId=" + garden.getId();
 
     } else {
-      List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-      model.addAttribute("gardens", gardens);
+
       model.addAttribute("requestURI", redirect);
       model.addAttribute("name", name);
       model.addAttribute("location", newLocation);

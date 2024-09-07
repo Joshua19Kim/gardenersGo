@@ -4,6 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.LoginController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,6 +30,8 @@ public class LoginControllerTest {
     private HttpServletRequest request;
     @MockBean
     private GardenerFormService gardenerFormService;
+    @MockBean
+    private GardenService gardenService;
 
     @Test
     @WithMockUser
