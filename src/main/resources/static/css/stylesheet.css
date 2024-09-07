@@ -454,13 +454,19 @@ img {
     cursor: pointer;
 }
 
+
 #tag-container {
     display: flex;
+    flex-wrap: wrap;
     width: auto;
     margin-bottom: 20px;
     align-items: center;
+    gap: 5px; /
+    max-width: 1200px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    white-space: normal;
 }
-
 
 #tag {
     width: fit-content;
@@ -470,7 +476,9 @@ img {
     margin-left: 5px;
     padding: 5px;
     color: #ffffff;
+    word-break: break-word;
 }
+
 
 #add-tag {
     width: 22px;
