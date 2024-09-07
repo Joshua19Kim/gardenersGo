@@ -1144,6 +1144,12 @@ form.search-bar::after {
     border-radius: 4px;
 }
 
+.friend #manage-friends-pp {
+    height: 150px !important;
+    width: 150px !important;
+    object-fit: cover !important;
+}
+
 .friend a {
     word-wrap: break-word;
     white-space: normal;
