@@ -6,7 +6,6 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.FollowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -19,8 +18,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.FlashMap;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,28 +29,30 @@ public class BrowsePublicGardens {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private GardenRepository gardenRepository;
-
     @Autowired
     private GardenService gardenService;
     @Autowired
     private FollowerService followerService;
+    @Autowired
+    private GardenerFormService gardenerFormService;
     private ResultActions resultActions;
     private String searchTerm;
     private Gardener gardener;
+    private Gardener testGardener;
     private Garden gardenToFollow;
-    private List<String> allTags = new ArrayList<>();
 
-
-    @Autowired
-    private GardenerFormService gardenerFormService;
-
+    @Given("There is a test gardener which has a garden that the current user can follow")
+    public void setUpFollower() {
+        testGardener = new Gardener("test", "test", null, "jane@doe.com", "Password1!");
+        gardenToFollow = new Garden("follow me", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
+        gardenToFollow.setIsGardenPublic(true);
+        gardenerFormService.addGardener(testGardener);
+        gardenService.addGarden(gardenToFollow);
+    }
 
     @Given("there is a garden with the name {string}")
     public void thereIsAGardenWithTheName(String gardenName) {
-        gardener = gardenerFormService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
+        gardenerFormService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).ifPresent(gardener1 -> gardener = gardener1);
         Garden garden = new Garden(gardenName, "99 test address", null, "Christchurch", "New Zealand", null, "9999", gardener, "");
         garden.setIsGardenPublic(true);
         gardenService.addGarden(garden);
@@ -76,15 +75,19 @@ public class BrowsePublicGardens {
 
     @Given("I am following the garden {string}")
     public void i_am_following_the_garden(String gardenName) {
-        List<Garden> allGardens = gardenService.getGardensByGardenerId(gardener.getId());
-        Garden garden = gardenService.getGardensByGardenerId(gardener.getId()).stream().filter(garden1 -> garden1.getName().equals(gardenName)).findFirst().get();
+        Garden garden = new Garden(gardenName, "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
+        garden.setIsGardenPublic(true);
+        gardenService.addGarden(garden);
         followerService.addfollower(new Follower(gardener.getId(), garden.getId()));
         gardenToFollow = garden;
     }
 
     @Given("I want to follow a garden with the name {string}")
     public void I_want_to_follow_a_garden_with_the_name(String gardenName) {
-        gardenToFollow = gardenService.getGardensByGardenerId(gardener.getId()).stream().filter(garden1 -> garden1.getName().equals(gardenName)).findFirst().get();
+        Garden garden = new Garden(gardenName, "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
+        garden.setIsGardenPublic(true);
+        gardenService.addGarden(garden);
+        gardenToFollow = garden;
     }
 
     @When("I press the search button")
@@ -124,7 +127,6 @@ public class BrowsePublicGardens {
         MvcResult result = resultActions.andReturn();
         FlashMap flashMap = result.getFlashMap();
         assertEquals("You are now following " + gardenToFollow.getName(), flashMap.get("gardenFollowUpdate"));
-
     }
 
     @Then("I see a notification telling me I am no longer following that garden")

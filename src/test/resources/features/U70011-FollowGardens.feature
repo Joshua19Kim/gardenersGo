@@ -1,6 +1,9 @@
 # All of the step definitions are in BrowsePublicGardens.java because it makes sense
 Feature: U70011 - As Nikora Foxton, I can follow public gardens I find interesting or inspiring.
 
+  Background:
+    Given There is a test gardener which has a garden that the current user can follow
+
   @AC1
   Scenario:
     Given I am logged in with email "a@gmail.com" and password "Password1!"
