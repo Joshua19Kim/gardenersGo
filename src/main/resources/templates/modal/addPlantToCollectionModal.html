@@ -1,7 +1,7 @@
 <link th:href="@{/css/modal.css}" rel="stylesheet">
 
 <div id="errorOccurred" th:attr="data-value=${errorOccurred}"></div>
-<div class="modal fade" id="addPlantModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addPlantModal" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -27,12 +27,12 @@
                         <label for="plantName" class="required-label"> *Required </label>
                     </div>
 
-                    <input type="text" class="form-control input-modal" th:value="${plantName}" id="plantName" name="plantName" placeholder="Plant Name"
+                    <input type="text" class="form-control input-modal" th:value="${plantName}" id="plantName" name="plantName" placeholder="Plant Name" maxlength="64"
                            th:classappend="${plantNameError} ? 'is-invalid' : ''">
                     <span th:if="${plantNameError}" th:utext="${plantNameError}" class="smallErrorMessage"></span>
                     <br/>
                     <label for="scientificName"> Scientific Name: </label>
-                    <input type="text" class="form-control input-modal" th:value="${scientificName}" id="scientificName" name="scientificName" placeholder="Scientific Name"
+                    <input type="text" class="form-control input-modal" th:value="${scientificName}" id="scientificName" name="scientificName" placeholder="Scientific Name" maxlength="64"
                            th:classappend="${scientificNameError} ? 'is-invalid' : ''">
                     <span th:if="${scientificNameError}" th:utext="${scientificNameError}" class="smallErrorMessage"></span>
                     <br/>

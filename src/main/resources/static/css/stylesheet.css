@@ -1660,7 +1660,7 @@ form.search-bar::after {
 
 #collection-card-img {
     max-width: max-content !important;
-    max-height: 300px;
+    height: 250px;
 }
 
 .plant-wiki-card {
