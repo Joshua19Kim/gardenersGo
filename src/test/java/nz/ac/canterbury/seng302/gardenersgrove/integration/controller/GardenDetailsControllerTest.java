@@ -338,7 +338,7 @@ public class GardenDetailsControllerTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders.post("/gardens/addTag")
-                                .param("tag-input", "ThisTagNameIsWayTooLongAndInvalid")
+                                .param("tag-input", "ThisTagNameIsWayTooInvalid")
                                 .param("gardenId", "1")
                                 .with(csrf()))
                 .andExpect(status().isOk())
