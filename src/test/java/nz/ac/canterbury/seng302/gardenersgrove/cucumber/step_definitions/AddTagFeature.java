@@ -75,6 +75,6 @@ public class AddTagFeature {
 
   @Then("an error message displays {string}")
   public void an_error_message_says(String errorMessage) {
-    assertEquals(Objects.requireNonNull(mvcResult.getModelAndView()).getModel().get("tagWarning"), errorMessage);
+    assertEquals(errorMessage, Objects.requireNonNull(mvcResult.getModelAndView()).getModel().get("tagValid"));
   }
 }

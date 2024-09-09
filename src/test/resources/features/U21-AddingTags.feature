@@ -15,9 +15,9 @@ Feature: U21 - As Inaya, I want to be able to browse gardens by different user-s
     And an error message displays <message>
 
     Examples:
-      | tag                        | message                                                                                                                                                                                                                                 |
-      | ThisTagNameIsWayTooInvalid | "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>"                                                                                                                                                  |
-      | Invalid@Tag                | "A tag cannot exceed 25 characters <br/>"                                                                                                                                                                                               |
-      | -                          | "The tag name must contain at least one alphanumeric character"                                                                                                                                                                         |
-      | $$$$                       | "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>The tag name must contain at least one alphanumeric character"                                                                                     |
-      | @@@@@@@@@@@@@@@@@@@@@@@@@@ | "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>The tag name must contain at least one alphanumeric character" |
+      | tag                        | message                                                                    |
+      | This@Invalid | "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>"                                                        |
+      | ThisTagNameIsWayTooInvalid              | "A tag cannot exceed 25 characters <br/>"                    |
+      | -                          | "The tag name must contain at least one alphanumeric character"     |
+      | $$$$                       | "The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>The tag name must contain at least one alphanumeric character"    |
+      | @@@@@@@@@@@@@@@@@@@@@@@@@@ | "A tag cannot exceed 25 characters <br/>The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>The tag name must contain at least one alphanumeric character" |
