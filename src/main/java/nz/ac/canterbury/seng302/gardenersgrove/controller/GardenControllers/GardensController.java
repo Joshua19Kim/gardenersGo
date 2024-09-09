@@ -91,22 +91,23 @@ public class GardensController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        // Getting the gardens that users followed to show on the gardens page
-        List<Long> followedGardens = followerService.findAllGardens(gardener.getId());
-        List<Garden> followedGardenList = new ArrayList<>();
-        for (Long gardenId : followedGardens) {
-            Optional<Garden> garden = gardenService.getGarden(gardenId);
-            garden.ifPresent(followedGardenList::add);
-        }
 
-        model.addAttribute("followedGardenList", followedGardenList);
-        if (followedGardenList.isEmpty()) {
-            model.addAttribute("errorMessage", "You are not following any gardens yet.");
-        }
 
         List<Garden> gardens;
         if (user == null) {
             model.addAttribute("gardener", gardener);
+            // Getting the gardens that users followed to show on the gardens page
+            List<Long> followedGardens = followerService.findAllGardens(gardener.getId());
+            List<Garden> followedGardenList = new ArrayList<>();
+            for (Long gardenId : followedGardens) {
+                Optional<Garden> garden = gardenService.getGarden(gardenId);
+                garden.ifPresent(followedGardenList::add);
+            }
+
+            model.addAttribute("followedGardenList", followedGardenList);
+            if (followedGardenList.isEmpty()) {
+                model.addAttribute("errorMessage", "You are not following any gardens yet.");
+            }
         } else {
             Optional<Gardener> friend = gardenerFormService.findById(parseLong(user, 10));
             if (friend.isPresent()
