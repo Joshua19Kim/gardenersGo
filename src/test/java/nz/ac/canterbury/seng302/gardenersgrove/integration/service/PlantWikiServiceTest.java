@@ -35,8 +35,8 @@ public class PlantWikiServiceTest {
 
     private ObjectMapper objectMapper;
 
-    @Value("${plantWiki.key}")
-    private String apiKey;
+
+    private String apiKey= "";
 
     private String PERENUAL_API_URL = "https://perenual.com/api/species-list";
 
