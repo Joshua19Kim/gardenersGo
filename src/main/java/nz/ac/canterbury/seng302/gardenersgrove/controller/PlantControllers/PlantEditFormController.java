@@ -121,7 +121,7 @@ public class PlantEditFormController {
      * @param name The updated name of the plant.
      * @param count The updated count of the plant.
      * @param description The updated description of the plant.
-     * @param date The updated date the plant was planted.
+     * @param dateString The updated date the plant was planted.
      * @param plantId The ID of the plant being edited.
      * @param isDateInvalid Indication of existence of a partially inputted date e.g. "10/mm/yyyy"
      * @param model The model for passing data to the view.
@@ -132,7 +132,7 @@ public class PlantEditFormController {
             @RequestParam(name = "name") String name,
             @RequestParam(name = "count", required = false) String count,
             @RequestParam(name = "description", required = false) String description,
-            @RequestParam(name = "date", required = false) LocalDate date,
+            @RequestParam(name = "date", required = false) String dateString,
             @RequestParam(name = "isDateInvalid", required = false) boolean isDateInvalid,
             @RequestParam(name = "plantId") String plantId,
             @RequestParam("file") MultipartFile file,
@@ -150,8 +150,13 @@ public class PlantEditFormController {
         if (isDateInvalid) {
             dateError = Optional.of("Date is not in valid format, DD/MM/YYYY");
             isValid = false;
+        } else if (!dateString.isEmpty()) {
+            dateError = ValidityChecker.validateDate(dateString);
+            isValid = dateError.isEmpty();
+            logger.info("ERRR");
+            logger.info(dateError.isPresent() ? dateError.get() : "HEHEH");
         }
-        model.addAttribute("DateValid", dateError.orElse(""));
+        model.addAttribute("dateError", dateError.orElse(""));
 
         if (!Objects.equals(name, validatedPlantName)) {
             model.addAttribute("nameError", validatedPlantName);
@@ -177,7 +182,6 @@ public class PlantEditFormController {
             plant.setName(validatedPlantName);
             boolean countPresent = !Objects.equals(validatedPlantCount.trim(), "");
             boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
-            boolean datePresent = date != null;
 
             if (countPresent) {
                 plant.setCount(new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
@@ -189,8 +193,9 @@ public class PlantEditFormController {
             } else {
                 plant.setDescription(null);
             }
-            if (datePresent) {
+            if (!dateString.isEmpty()) {
                 String validatedDate = "";
+                LocalDate date = LocalDate.parse(dateString);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 validatedDate = date.format(formatter);
 
@@ -213,7 +218,7 @@ public class PlantEditFormController {
             model.addAttribute("name", name);
             model.addAttribute("count", count);
             model.addAttribute("description", description);
-            model.addAttribute("date", date);
+            model.addAttribute("date", dateString);
             model.addAttribute("plant", plant);
             model.addAttribute("garden", plant.getGarden());
             return "editPlantFormTemplate";

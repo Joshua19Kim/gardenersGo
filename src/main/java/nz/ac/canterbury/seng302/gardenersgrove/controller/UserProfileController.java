@@ -72,7 +72,7 @@ public class UserProfileController {
      * And it will go back to user profile page.
      * @param firstName First name of user to be entered on User profile form
      * @param lastName Last name of user to be entered on User profile form
-     * @param DoB Date of Birth of user to be entered on User profile form
+     * @param DoBString Date of Birth of user to be entered on User profile form
      * @param email Email of Birth of user to be entered on User profile form
      * @param isLastNameOptional Indication of existence of user's last name
      * @param isDoBInvalid Indication of existence of a partially inputted date e.g. "10/mm/yyyy"
@@ -82,7 +82,7 @@ public class UserProfileController {
     @GetMapping("/user")
     public String getUserProfile(@RequestParam(name = "firstName", required = false) String firstName,
                                  @RequestParam(name = "lastName", required = false) String lastName,
-                                 @RequestParam(name = "DoB", required = false) LocalDate DoB,
+                                 @RequestParam(name = "DoB", required = false) String DoBString,
                                  @RequestParam(name = "email", required = false) String email,
                                  @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
                                  @RequestParam(name = "isDoBInvalid", required = false) boolean isDoBInvalid,
@@ -113,7 +113,7 @@ public class UserProfileController {
             } else {
                 model.addAttribute("firstName", gardener.getFirstName());
                 model.addAttribute("lastName", gardener.getLastName());
-                model.addAttribute("DoB", gardener.getDoB());
+                model.addAttribute("DoB", gardener.getDoB().toString());
                 model.addAttribute("email", gardener.getEmail());
                 model.addAttribute("profilePic", gardener.getProfilePicture());
             }
@@ -144,8 +144,8 @@ public class UserProfileController {
         Optional<String> DoBError = Optional.empty();
         if (isDoBInvalid) {
             DoBError = Optional.of("Date is not in valid format, DD/MM/YYYY");
-        } else if (DoB != null) {
-            DoBError = inputValidator.checkDoB(DoB.toString());
+        } else if (DoBString != null) {
+            DoBError = inputValidator.checkDoB(DoBString);
         }
         model.addAttribute("DoBValid", DoBError.orElse(""));
 
@@ -177,11 +177,14 @@ public class UserProfileController {
                 DoBError.isEmpty() &&
                 validEmailError.isEmpty() &&
                 emailInUseError.isEmpty()) {
-            if (firstName != null || lastName != null || DoB != null || email != null) {
+            if (firstName != null || lastName != null || DoBString != null || email != null) {
                 gardener.setFirstName(firstName);
                 gardener.setLastName(lastName);
                 gardener.setEmail(email);
-                gardener.setDoB(DoB);
+                if (DoBString != null) {
+                    LocalDate DoB = LocalDate.parse(DoBString);
+                    gardener.setDoB(DoB);
+                }
                 gardenerFormService.addGardener(gardener);
                 // Re-authenticates user to catch case when they change their email
                 Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());

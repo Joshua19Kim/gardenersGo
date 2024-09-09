@@ -1,5 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Optional;
+
 /**
  *  A class used to validate the inputs of forms. Contains static methods that will either return the input if
  *  it is valid or an error message if it is invalid.
@@ -302,5 +308,29 @@ public class ValidityChecker {
         return pageNo;
     }
 
+    /** Verifies that the date is valid on backend to prevent front end misuse.
+     * @param dateString LocalDate object that contains relevant date
+     * @return empty optional if date is valid, otherwise returns Optional error string
+     */
+    public static Optional<String> validateDate (String dateString) {
+        LocalDate date;
+        String result = "";
+
+        try {
+            date = LocalDate.parse(dateString);
+            if (!date.isBefore(LocalDate.parse("9999-12-31"))) {
+                // New error message
+                result += "The date must be before 31/12/9999";
+            }
+        } catch (Exception e) {
+            result += "Date is not in valid format, DD/MM/YYYY";
+            return Optional.of(result);
+        }
+
+        if(result.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(result);
+    }
 
 }
