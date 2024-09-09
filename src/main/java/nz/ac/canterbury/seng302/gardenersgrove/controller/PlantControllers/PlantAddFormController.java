@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -136,8 +135,6 @@ public class PlantAddFormController {
         } else if (!dateString.isEmpty()) {
             dateError = ValidityChecker.validateDate(dateString);
             isValid = dateError.isEmpty();
-            logger.info("ERRR");
-            logger.info(dateError.isPresent() ? dateError.get() : "HEHEH");
         }
         model.addAttribute("dateError", dateError.orElse(""));
 
@@ -173,10 +170,9 @@ public class PlantAddFormController {
                 plant.setDescription(validatedPlantDescription);
             }
             if (!dateString.isEmpty()) {
-                String validatedDate = "";
                 LocalDate date = LocalDate.parse(dateString);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                validatedDate = date.format(formatter);
+                String validatedDate = date.format(formatter);
 
                 plant.setDatePlanted(validatedDate);
             }

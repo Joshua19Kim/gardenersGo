@@ -1,9 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
 import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -117,7 +114,7 @@ public class ValidityChecker {
         if(name.length() > 64) {
             result += "Plant name must be less than 64 characters";
         }
-        if (result != "") {
+        if (!result.isEmpty()) {
             return result;
         }
         return name;

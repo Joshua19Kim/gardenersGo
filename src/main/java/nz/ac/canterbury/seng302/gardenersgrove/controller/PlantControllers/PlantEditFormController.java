@@ -194,10 +194,9 @@ public class PlantEditFormController {
                 plant.setDescription(null);
             }
             if (!dateString.isEmpty()) {
-                String validatedDate = "";
                 LocalDate date = LocalDate.parse(dateString);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                validatedDate = date.format(formatter);
+                String validatedDate = date.format(formatter);
 
                 plant.setDatePlanted(validatedDate);
             } else {
