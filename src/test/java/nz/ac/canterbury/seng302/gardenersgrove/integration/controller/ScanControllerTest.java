@@ -214,7 +214,7 @@ public class ScanControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonBody)
                                 .with(csrf()))
-                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.nameError").value("Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>"));
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.nameError").value("Plant name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>"));
     }
 }
 
