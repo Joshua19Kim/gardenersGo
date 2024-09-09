@@ -112,7 +112,7 @@ public class UserProfileController {
             } else {
                 model.addAttribute("firstName", gardener.getFirstName());
                 model.addAttribute("lastName", gardener.getLastName());
-                model.addAttribute("DoB", gardener.getDoB().toString());
+                model.addAttribute("DoB", (gardener.getDoB() != null ? gardener.getDoB().toString() :  null));
                 model.addAttribute("email", gardener.getEmail());
                 model.addAttribute("profilePic", gardener.getProfilePicture());
             }

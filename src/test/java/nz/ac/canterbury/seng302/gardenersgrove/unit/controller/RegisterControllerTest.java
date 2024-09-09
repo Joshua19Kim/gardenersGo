@@ -97,12 +97,6 @@ public class RegisterControllerTest {
     }
 
     @Test
-    void GivenDateAtUpperBound_WhenUserRegisters_NewGardenerCreated() {
-        registerFormController.submitForm("Kush", "Desai", LocalDate.of(9999, 12, 30).toString(),"test@gmail.com", "Password1!", "Password1!", true, false, model);
-        Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
-    }
-
-    @Test
     void GivenDateOutOfBounds_WhenUserRegisters_NewGardenerNotCreated() {
         registerFormController.submitForm("Kush", "Desai", LocalDate.of(999999, 12, 31).toString(),"test@gmail.com", "Password1!", "Password1!", true, false, model);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));

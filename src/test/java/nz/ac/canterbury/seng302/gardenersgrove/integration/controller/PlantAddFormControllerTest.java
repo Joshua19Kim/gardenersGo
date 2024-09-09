@@ -213,7 +213,7 @@ public class PlantAddFormControllerTest {
         .andExpect(model().attribute("name", name))
         .andExpect(model().attribute("count", "2.0"))
         .andExpect(model().attribute("description", description))
-        .andExpect(model().attribute("date", LocalDate.parse("2024-03-10")))
+        .andExpect(model().attribute("date", "2024-03-10"))
         .andExpect(
             model()
                 .attribute(
@@ -318,7 +318,7 @@ public class PlantAddFormControllerTest {
         .andExpect(model().attribute("name", name))
         .andExpect(model().attribute("count", count))
         .andExpect(model().attribute("description", description))
-        .andExpect(model().attribute("date", LocalDate.parse(date)))
+        .andExpect(model().attribute("date", date))
         .andExpect(model().attribute(errorName, errorMessage));
 
     verify(plantService, never()).addPlant(any(Plant.class));

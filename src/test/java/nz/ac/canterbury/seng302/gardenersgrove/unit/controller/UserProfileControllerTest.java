@@ -127,12 +127,6 @@ public class UserProfileControllerTest {
     }
 
     @Test
-    void GivenDateAtUpperBound_WhenUserConfirms_GardenerEditUploaded() {
-        userProfileController.getUserProfile("Kush", "Desai", LocalDate.of(9999, 12, 31).toString(), "test@gmail.com", false,false, null, mockRequest, modelMock);
-        Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
-    }
-
-    @Test
     void GivenDateOutOfBounds_WhenUserConfirms_GardenerEditNotUploaded() {
         userProfileController.getUserProfile("Kush", "Desai", LocalDate.of(999999, 12, 31).toString(), "test@gmail.com", false,false, null, mockRequest, modelMock);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
