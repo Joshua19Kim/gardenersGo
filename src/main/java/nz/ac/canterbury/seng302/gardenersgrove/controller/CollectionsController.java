@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
@@ -114,9 +116,23 @@ public class CollectionsController {
             model.addAttribute("paginationMessage", paginationMessage);
         }
 
-        // need to add to model so that the navbar can populate the dropdown
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-        model.addAttribute("gardens", gardens);
+
+        // For Autocomplete
+        List<String> plantScientificNames = plantIdentificationService.getAllSpeciesScientificNames();
+        List<String> plantNames = plantIdentificationService.getAllPlantNames();
+        logger.info(plantScientificNames.toString());
+        logger.info(plantNames.toString());
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String plantNamesJson = objectMapper.writeValueAsString(plantNames);
+            String plantScientificNamesJson = objectMapper.writeValueAsString(plantScientificNames);
+            logger.info("test1 " + plantNamesJson);
+            logger.info("test1 " + plantScientificNamesJson);
+            model.addAttribute("plantNamesJson", plantNamesJson);
+            model.addAttribute("plantScientificNamesJson", plantScientificNamesJson);
+        } catch (JsonProcessingException e) {
+            logger.error("Error converting lists to JSON", e);
+        }
 
         if(!model.containsAttribute("errorOccurred")) {
             model.addAttribute("errorOccurred", false);
@@ -160,10 +176,6 @@ public class CollectionsController {
             model.addAttribute("paginationMessage", paginationMessage);
         }
 
-        //test
-
-
-
         // Add gardens to the model for the navbar
         List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         model.addAttribute("gardens", gardens);
@@ -182,7 +194,8 @@ public class CollectionsController {
             @RequestParam (name="uploadedDate", required = false) LocalDate uploadedDate,
             @RequestParam(name = "isDateInvalid", required = false) boolean isDateInvalid,
             @RequestParam ("plantImage") MultipartFile plantImage,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            Model model
     ) {
         logger.info("/myCollection/addNewPlantToMyCollection");
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
@@ -254,24 +267,7 @@ public class CollectionsController {
 
             return "redirect:/myCollection";
         }
-
-
     }
-
-    @PostMapping("/myCollection/addPlantName")
-    public String addPlantName(
-
-    ) {
-
-
-
-        logger.info(plantIdentificationService.getAllSpeciesScientificNames().toString());
-        logger.info(plantIdentificationService.getAllPlantNames().toString());
-        return "redirect:/myCollection";
-    }
-
-
-
 
 
 

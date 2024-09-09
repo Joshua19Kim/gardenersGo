@@ -26,16 +26,21 @@
                         <label for="plantName"> Name: </label>
                         <label for="plantName" class="required-label"> *Required </label>
                     </div>
-
-                    <input type="text" class="form-control input-modal" th:value="${plantName}" id="plantName" name="plantName" placeholder="Plant Name" maxlength="64"
+                    <input type="text" class="form-control input-modal" th:value="${plantName}" id="plantName" name="plantName" placeholder="Plant Name" maxlength="64" list="plantNamesList"
                            th:classappend="${plantNameError} ? 'is-invalid' : ''">
+                    <datalist id="plantNamesList"></datalist>
                     <span th:if="${plantNameError}" th:utext="${plantNameError}" class="smallErrorMessage"></span>
                     <br/>
+
+
                     <label for="scientificName"> Scientific Name: </label>
-                    <input type="text" class="form-control input-modal" th:value="${scientificName}" id="scientificName" name="scientificName" placeholder="Scientific Name" maxlength="64"
+                    <input type="text" class="form-control input-modal" th:value="${scientificName}" id="scientificName" name="scientificName" placeholder="Scientific Name" maxlength="64" list="scientificNamesList"
                            th:classappend="${scientificNameError} ? 'is-invalid' : ''">
+                    <datalist id="scientificNamesList"></datalist>
                     <span th:if="${scientificNameError}" th:utext="${scientificNameError}" class="smallErrorMessage"></span>
                     <br/>
+
+
                     <label for="description"> Description: </label>
                     <br/>
                     <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
@@ -43,11 +48,15 @@
                               th:classappend="${descriptionError} ? 'is-invalid' : ''">[[${description}]]</textarea>
                     <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
                     <br/>
+
+
                     <label for="plantDate"> Date Planted: </label>
                     <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" th:name="uploadedDate" style="color:#6c757d;" max="9999-12-31"
                            th:classappend="${dateError} ? 'is-invalid' : ''">
                     <span id="dateError" class="smallErrorMessage" th:utext="${dateError}"></span>
                     <input type="hidden" id="isDateInvalid" th:name="isDateInvalid" th:value="false"/>
+
+
                     <div class="d-flex flex-column align-items-center justify-content-center py-1">
                         <button type="submit" class="btn btn-primary mt-2 mb-2" >Save New Plant</button>
                         <button type="button" id="cancelButton" class="btn cancel-button text-white" data-bs-dismiss="modal">Close</button>
@@ -59,6 +68,12 @@
         </div>
     </div>
 </div>
+
+<!--For Autocomplete-->
+<input type="hidden" id="plantNamesJson" th:value="${plantNamesJson}">
+<input type="hidden" id="plantScientificNamesJson" th:value="${plantScientificNamesJson}">
+<!---->
+
 <script>
     var form = document.getElementById('plantForm');
     var fileInput = document.getElementById('fileInput');
@@ -74,7 +89,6 @@
             var modal = bootstrap.Modal.getOrCreateInstance(addPlantModal);
             modal.show();
         }
-
         updateCharacterCount();
     }
 
@@ -156,5 +170,32 @@
         var characterCount = document.getElementById("characterCount");
         characterCount.textContent = textarea.value.length;
     }
+
+
+    let plantNames = JSON.parse(document.getElementById('plantNamesJson').value || '[]');
+    let scientificNames = JSON.parse(document.getElementById('plantScientificNamesJson').value || '[]');
+
+    const plantNamesList = document.getElementById('plantNamesList');
+    plantNames.forEach(name => {
+        let option = document.createElement('option');
+        option.value = name;
+        plantNamesList.appendChild(option);
+    });
+
+    const scientificNamesList = document.getElementById('scientificNamesList');
+    scientificNames.forEach(name => {
+        let option = document.createElement('option');
+        option.value = name;
+        scientificNamesList.appendChild(option);
+    });
+
+    // this bootstrap code was found from https://iqbalfn.github.io/bootstrap-autocomplete/
+    $('#plantName').autocomplete();
+    $('#scientificName').autocomplete();
+
+
+
+
+
 
 </script>
