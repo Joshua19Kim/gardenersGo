@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Following;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.FollowerRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
@@ -83,8 +82,8 @@ public class FollowerService {
         return followerRepository.findByGardenerIdAndGardenId(gardenerId, gardenId);
     }
 
-    public List<Following> findFollowing(Long id) {
-        return followerRepository.findFollowersByGardenId(id);
+    public List<Follower> findFollowing(Long id) {
+        return followerRepository.findAllByGardenId(id);
 
     }
 }
