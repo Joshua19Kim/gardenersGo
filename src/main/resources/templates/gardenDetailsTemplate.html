@@ -52,7 +52,7 @@
             <p>
                 <strong>Followers: </strong>
                 <a class="link-underline-dark" th:if="${followerCount != null and followerCount > 0}" th:text="${followerCount}"></a>
-                <span th:if="${followerCount == null or followerCount == 0}">No followers yet</span>
+                <span id="noFollowers" th:if="${followerCount == null or followerCount == 0}">No followers yet</span>
             </p>
 
             <div id="tag-container">

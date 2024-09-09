@@ -21,9 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDate;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -128,10 +126,10 @@ public class MainPageFeature {
                 .andReturn();
 
         List<Plant> returnedPlants = (List<Plant>) mvcResult.getModelAndView().getModel().get("newestPlants");
-        List<Plant> reversedExpectedPlants = newestPlants.reversed();
+        Collections.reverse(newestPlants);
 
         for (int i = 0; i < returnedPlants.size(); i++) {
-            Assertions.assertEquals(returnedPlants.get(i).getName(), reversedExpectedPlants.get(i).getName());
+            Assertions.assertEquals(returnedPlants.get(i).getName(), newestPlants.get(i).getName());
 
         }
     }

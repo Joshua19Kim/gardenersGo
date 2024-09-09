@@ -61,7 +61,7 @@ public class GardenServiceTest {
     void SearchGardensByName_OneMatchingGardenReturned() {
         Page<Garden> page = gardenService.getSearchResultsPaginated(0, 10,"Test garden", null, 0L);
         List<Garden> gardens = page.getContent();
-        assertEquals("Test garden", gardens.getFirst().getName());
+        assertEquals("Test garden", gardens.get(0).getName());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class GardenServiceTest {
 
         Page<Garden> page = gardenService.getSearchResultsPaginated(0, 10, emoji, null, 0L);
         List<Garden> gardens = page.getContent();
-        assertEquals(emojiGarden, gardens.getFirst());
+        assertEquals(emojiGarden, gardens.get(0));
     }
 
     @ParameterizedTest
@@ -109,7 +109,7 @@ public class GardenServiceTest {
 
         Page<Garden> page = gardenService.getSearchResultsPaginated(0, 10, null, Collections.singletonList(emoji), 1L);
         List<Garden> gardens = page.getContent();
-        assertEquals(emojiGarden, gardens.getFirst());
+        assertEquals(emojiGarden, gardens.get(0));
     }
 
     @Test

@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.unit.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenDetailsController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -34,6 +35,7 @@ public class GardenDetailsControllerTest {
     private TagService mockTagService;
     private LocationService mockLocationService;
     private GardenVisitService mockGardenVisitService;
+    private FollowerService mockFollowerService;
     private Model mockModel;
     private Gardener mockUser;
     private Gardener mockOwner;
@@ -58,10 +60,11 @@ public class GardenDetailsControllerTest {
         mockTagService = Mockito.mock(TagService.class);
         mockLocationService = Mockito.mock(LocationService.class);
         mockGardenVisitService = Mockito.mock(GardenVisitService.class);
+        mockFollowerService = Mockito.mock(FollowerService.class);
 
         gardenDetailsController = new GardenDetailsController(mockGardenService, mockGardenerFormService,
                 mockRelationshipService, requestService, mockWeatherService, mockTagService,
-                mockLocationService, mockGardenVisitService);
+                mockLocationService, mockGardenVisitService, mockFollowerService);
 
         mockModel = Mockito.mock(Model.class);
 
@@ -79,7 +82,6 @@ public class GardenDetailsControllerTest {
     }
 
     // Tests for gardens/details GET method
-    // NB no test for if weather is present yet
 
     @Test
     void GivenGardenDoesNotExist_WhenDetailsRequested_ControllerRedirects()
@@ -156,6 +158,23 @@ public class GardenDetailsControllerTest {
         Mockito.verify(mockWeatherService, times(0)).getWeather(anyString());
         Mockito.verify(mockWeatherService, times(0)).getPrevWeather(anyString());
         Assertions.assertEquals("gardenDetailsTemplate", template);
+    }
+
+    @Test
+    void GivenGardenExistsAndHasAFollower_WhenDetailsRequested_ControllerReturnsDetailsTemplate() throws IOException, URISyntaxException, InterruptedException {
+        Mockito.when(mockGardenService.getGarden(any(long.class))).thenReturn(Optional.of(mockGarden));
+        Mockito.when(mockGarden.getGardener()).thenReturn(mockOwner);
+        Mockito.when(mockOwner.getId()).thenReturn(1L);
+        Mockito.when(mockUser.getId()).thenReturn(1L);
+        HttpResponse<String> mockLocation = Mockito.mock(HttpResponse.class);
+        Mockito.when(mockLocationService.sendRequest(anyString())).thenReturn(mockLocation);
+        Mockito.when(mockLocation.body()).thenReturn("error");
+        Follower mockFollower = new Follower(2L, 1L);
+        List<Follower> mockFollowerList = List.of(mockFollower);
+        Mockito.when(mockFollowerService.findFollowing(mockUser.getId())).thenReturn(mockFollowerList);
+        String template = gardenDetailsController.gardenDetails("1", null, null, null, mockModel, mockRequest);
+        Assertions.assertEquals("gardenDetailsTemplate", template);
+        Mockito.verify(mockFollowerService, times(1)).findFollowing(anyLong());
     }
 
     // Tests for gardens/addTag POST method -- These tests are not bad as the controller is not failsafe secure

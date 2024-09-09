@@ -134,7 +134,6 @@ public class GardenDetailsController {
            model.addAttribute("isGardenPublic", garden.get().getIsGardenPublic());
            model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
            model.addAttribute("allTags", tagService.getUniqueTagNames(parseLong(gardenId)));
-           System.out.println(followerService.findFollowing(parseLong(gardenId)).size());
            model.addAttribute("followerCount", followerService.findFollowing(parseLong(gardenId)).size());
            if (uploadError != null) {
                model.addAttribute("uploadError", uploadError);
