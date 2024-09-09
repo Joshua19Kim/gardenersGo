@@ -44,6 +44,7 @@ public class GardenDetailsController {
     private final WeatherService weatherService;
     private final LocationService locationService;
     private final GardenVisitService gardenVisitService;
+    private  final  FollowerService followerService;
 
     /**
      * Constructor used to create a new instance of the GardenDetailsController. Autowires a
@@ -65,7 +66,7 @@ public class GardenDetailsController {
             RelationshipService relationshipService,
             RequestService requestService,
             WeatherService weatherService,
-            TagService tagService, LocationService locationService, GardenVisitService gardenVisitService) {
+            TagService tagService, LocationService locationService, GardenVisitService gardenVisitService, FollowerService followerService) {
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
@@ -74,6 +75,7 @@ public class GardenDetailsController {
         this.tagService = tagService;
         this.locationService = locationService;
         this.gardenVisitService = gardenVisitService;
+        this.followerService = followerService;
     }
 
     /**
@@ -132,6 +134,8 @@ public class GardenDetailsController {
            model.addAttribute("isGardenPublic", garden.get().getIsGardenPublic());
            model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
            model.addAttribute("allTags", tagService.getUniqueTagNames(parseLong(gardenId)));
+           System.out.println(followerService.findFollowing(parseLong(gardenId)));
+           model.addAttribute("followerCount", followerService.findFollowing(parseLong(gardenId)));
            if (uploadError != null) {
                model.addAttribute("uploadError", uploadError);
                model.addAttribute("errorId", errorId);

@@ -49,7 +49,7 @@
                                              th:text="${garden.size + ' m&sup2;'}"></span>
             </p>
             <p><strong>Description:</strong> <span class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;" th:text="${garden.description}"></span></p>
-
+            <p><strong>Follower count: </strong><span th:if="${followerCount != null}" th:text="${followerCount}"></span></p>
             <div id="tag-container">
                 <strong>Tags:</strong>
                 <div th:if="${tags != null}" th:each="tag : ${tags}">
