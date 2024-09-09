@@ -24,20 +24,39 @@
     <div class="container">
         <div class="card w-75">
             <span>My Friends</span>
-            <div class="table-body">
+
+            <div class="table-body container-fluid">
                 <!-- Iterate over search results -->
-                <div class="friend" th:each="friend : ${friends}">
+                <div class="row friend mb-3 align-items-center" th:each="friend : ${friends}">
+                    <!-- Display gardener profile picture and buttons -->
+                    <div class="col-12 col-lg-4 text-center">
+                        <img id="manage-friends-pp" alt="Profile Picture" th:src="@{${friend.getProfilePicture()}}">
+                        <div class="d-flex flex-column align-items-center">
+                            <button class="button btn btn-md mb-2" style="width: 150px; margin-top: 5px;">
+                                <a th:href="@{/gardens(user=${friend.id})}" style="text-decoration: none; color: white;">View Gardens</a>
+                            </button>
+                            <button class="button btn btn-md" style="width: 150px;">
+                                <a th:href="@{/user(user=${friend.id})}" style="text-decoration: none; color: white;">View Profile</a>
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Display gardener information -->
-                    <img alt="Profile Picture" th:src="@{${friend.getProfilePicture()}}">
-                    <p th:text="${friend.toString()}"></p>
-                    <a th:href="@{/gardens(user=${friend.id})}">View Gardens</a>
-                    <a th:href="@{/user(user=${friend.id})}">View Profile</a>
-                    <button data-target="#remove-friend-modal" data-toggle="modal" id="friend-remove-button"
-                            class="remove-friend-button button"
-                            th:onclick="'displayConfirmRemove(\'' + ${friend.id} + '\');'" type="button">Remove
-                    </button>
+                    <div class="col-12 col-lg-6 text-center text-sm-left">
+                        <p th:text="${friend.toString()}" class="mb-0 text-wrap" style="word-break: break-word;"></p>
+                    </div>
+
+                    <!-- Remove button aligned to the right -->
+                    <div class="col-12 col-lg-2 text-center text-sm-right">
+                        <button data-target="#remove-friend-modal" data-toggle="modal"
+                                class="button btn-danger btn-sm remove-friend-button"
+                                th:onclick="'displayConfirmRemove(\'' + ${friend.id} + '\');'" type="button">
+                            Remove
+                        </button>
+                    </div>
                 </div>
             </div>
+
         </div>
 
             <div aria-hidden="true" class="friend-modal" id="remove-friend-modal">
