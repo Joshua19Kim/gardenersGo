@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,6 +66,17 @@ public class FollowerServiceTest {
         Follower follower = new Follower(testGardener2.getId(), privateGarden.getId());
         assertThrows(IllegalArgumentException.class, () -> followerService.addfollower(follower));
     }
-
+    @Test
+    void AddFollower_FindGardenFollowers_FollowerFound() {
+        Follower follower = new Follower(testGardener2.getId(), garden.getId());
+        followerService.addfollower(follower);
+        List<Follower> followerList = followerService.findFollowing(garden.getId());
+        assertEquals(followerList.get(0), follower);
+    }
+    @Test
+    void FindGardenFollowers_NoFollowerFound() {
+        List<Follower> followerList = followerService.findFollowing(garden.getId());
+        assertEquals(followerList.size(),0);
+    }
 
 }
