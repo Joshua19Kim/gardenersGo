@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
 import nz.ac.canterbury.seng302.gardenersgrove.service.AuthorityFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,8 @@ public class SignupCodeControllerTest {
     private MockMvc mockMvc;
     @MockBean
     GardenerFormService gardenerFormService;
+    @MockBean
+    private GardenService gardenService;
     @MockBean
     AuthorityFormService authorityFormService;
     @MockBean

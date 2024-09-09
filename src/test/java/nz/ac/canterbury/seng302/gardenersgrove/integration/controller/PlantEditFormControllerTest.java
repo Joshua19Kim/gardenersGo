@@ -99,10 +99,9 @@ public class PlantEditFormControllerTest {
                 .with(csrf()))
         .andExpect(status().isOk())
         .andExpect(view().name("editPlantFormTemplate"))
-        .andExpect(model().attributeExists("plant", "garden", "gardens", "requestURI"))
+        .andExpect(model().attributeExists("plant", "garden", "requestURI"))
         .andExpect(model().attribute("plant", plant))
         .andExpect(model().attribute("garden", garden))
-        .andExpect(model().attribute("gardens", gardens))
         .andExpect(model().attribute("requestURI", "/gardens/details/plants/edit"));
   }
 

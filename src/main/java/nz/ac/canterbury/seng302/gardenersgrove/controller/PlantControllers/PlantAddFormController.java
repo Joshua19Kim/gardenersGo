@@ -9,8 +9,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -53,18 +49,6 @@ public class PlantAddFormController {
         this.imageService = imageService;
         this.requestService = requestService;
     }
-    /**
-     * Retrieve an optional of a gardener using the current authentication
-     * We will always have to check whether the gardener was retrieved in the calling method, so the return type was left as an optional
-     * @return An optional of the requested gardener
-     *
-     * Note this code is also used in PlantEditFormController
-     */
-    public Optional<Gardener> getGardenerFromAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
-        return gardenerFormService.findByEmail(currentUserEmail);
-    }
 
     /**
      * Displays the form for adding a new plant to a garden.
@@ -78,13 +62,6 @@ public class PlantAddFormController {
     public String form(@RequestParam(name = "gardenId") String gardenId, Model model, HttpServletRequest request) {
         logger.info("GET /gardens/details/plants/form");
 
-        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-        List<Garden> gardens = new ArrayList<>();
-        if (gardenerOptional.isPresent()) {
-            gardener = gardenerOptional.get();
-            gardens = gardenService.getGardensByGardenerId(gardener.getId());
-        }
-        model.addAttribute("gardens", gardens);
         Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
 
         if (garden.isPresent()) {
@@ -185,11 +162,7 @@ public class PlantAddFormController {
             }
             return "redirect:/gardens/details?gardenId=" + gardenId;
         } else {
-            Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-            gardenerOptional.ifPresent(value -> gardener = value);
-            List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
             model.addAttribute("requestURI", requestService.getRequestURI(request));
-            model.addAttribute("gardens", gardens);
             model.addAttribute("name", name);
             model.addAttribute("count", count);
             model.addAttribute("description", description);

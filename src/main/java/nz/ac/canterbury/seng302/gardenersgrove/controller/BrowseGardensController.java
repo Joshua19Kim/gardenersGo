@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
@@ -10,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -35,8 +31,6 @@ public class BrowseGardensController {
     private final GardenService gardenService;
 
     private final GardenerFormService gardenerFormService;
-
-    private Gardener gardener;
 
     Logger logger = LoggerFactory.getLogger(BrowseGardensController.class);
 
@@ -84,19 +78,6 @@ public class BrowseGardensController {
         this.searchTags = tags;
     }
 
-    /**
-     * Retrieve an optional of a gardener using the current authentication. We will always have to
-     * check whether the gardener was retrieved in the calling method, so the return type was left as
-     * an optional
-     *
-     * @return An optional of the requested gardener
-     */
-    public Optional<Gardener> getGardenerFromAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
-        return gardenerFormService.findByEmail(currentUserEmail);
-    }
-
 
     /**
      * Handles GET request for the browse gardens page. It gets a Page of Garden objects by
@@ -117,7 +98,7 @@ public class BrowseGardensController {
             setSearchTags(new ArrayList<>());
             setSearchTerm("");
         }
-        Long tagCount;
+        long tagCount;
         if (searchTags == null) {
             tagCount = 0L;
         } else {
@@ -166,12 +147,6 @@ public class BrowseGardensController {
         }
         model.addAttribute("searchTerm", searchTerm);
 
-        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-        gardenerOptional.ifPresent(value -> gardener = value);
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-        model.addAttribute("gardens", gardens);
-
-
         return "browseGardensTemplate";
     }
 
@@ -192,7 +167,7 @@ public class BrowseGardensController {
             Model model) {
         logger.info("POST /browseGardens");
         setSearchTerm(searchTerm);
-        Long tagCount;
+        long tagCount;
         if (tags == null) {
             tagCount = 0L;
             setSearchTags(new ArrayList<>());
@@ -234,12 +209,6 @@ public class BrowseGardensController {
             model.addAttribute("paginationMessage", paginationMessage);
         }
 
-        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-        gardenerOptional.ifPresent(value -> gardener = value);
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-        model.addAttribute("gardens", gardens);
-
-
         return "browseGardensTemplate";
     }
 
@@ -259,7 +228,7 @@ public class BrowseGardensController {
             @RequestParam(name="pageNo", defaultValue = "0") String pageNo,
             @RequestParam(name="tag-input") String tag,
             @RequestParam(name="tags", required = false) List<String> tags,
-            Model model, RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes
     ) {
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         if(tags == null) {

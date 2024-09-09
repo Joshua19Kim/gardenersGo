@@ -87,9 +87,7 @@ public class GardensController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        List<Garden> gardens;
         if (user == null) {
-            gardens = gardenService.getGardensByGardenerId(gardener.getId());
             model.addAttribute("gardener", gardener);
         } else {
             Optional<Gardener> friend = gardenerFormService.findById(parseLong(user, 10));
@@ -97,7 +95,7 @@ public class GardensController {
                     && relationshipService
                     .getCurrentUserRelationships(gardener.getId())
                     .contains(friend.get())) {
-                gardens = gardenService.getGardensByGardenerId(parseLong(user, 10));
+
                 model.addAttribute("gardener", friend.get());
                 List<Garden> userGardens;
                 userGardens = gardenService.getGardensByGardenerId(gardener.getId());
@@ -106,7 +104,7 @@ public class GardensController {
                 return "redirect:/gardens";
             }
         }
-        model.addAttribute("gardens", gardens);
+
         model.addAttribute("requestURI", requestService.getRequestURI(request));
         return "gardensTemplate";
     }

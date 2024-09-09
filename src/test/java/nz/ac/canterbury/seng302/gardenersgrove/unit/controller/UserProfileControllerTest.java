@@ -51,7 +51,7 @@ public class UserProfileControllerTest {
         writeEmail = Mockito.mock(WriteEmail.class);
         gardenService = Mockito.mock(GardenService.class);
         mainPageLayoutService = Mockito.mock(MainPageLayoutService.class);
-        userProfileController = new UserProfileController(gardenerFormService, gardenService, writeEmail, requestService, mainPageLayoutService);
+        userProfileController = new UserProfileController(gardenerFormService, writeEmail, requestService, mainPageLayoutService);
         modelMock = Mockito.mock(Model.class);
         gardener = Mockito.mock(Gardener.class);
         inputValidator = Mockito.mock(InputValidationUtil.class);
