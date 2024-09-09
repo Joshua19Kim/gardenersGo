@@ -100,6 +100,9 @@ public class GardensController {
         }
 
         model.addAttribute("followedGardenList", followedGardenList);
+        if (followedGardenList.isEmpty()) {
+            model.addAttribute("errorMessage", "You are not following any gardens yet.");
+        }
 
         List<Garden> gardens;
         if (user == null) {
