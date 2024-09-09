@@ -33,15 +33,17 @@ public class ImageService {
     private final GardenerFormService gardenerFormService;
     private final PlantService plantService;
     private final PlantIdentificationService plantIdentificationService;
+    private final IdentifiedPlantService identifiedPlantService;
     private static final int MAX_SIZE = 10*1024*1024;
     private final List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
     private static final String UPLOADS_DIR = "/uploads/";
     private static final String UPLOAD_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
     @Autowired
-    public ImageService(GardenerFormService gardenerFormService, PlantService plantService, PlantIdentificationService plantIdentificationService) {
+    public ImageService(GardenerFormService gardenerFormService, PlantService plantService, PlantIdentificationService plantIdentificationService, IdentifiedPlantService identifiedPlantService) {
         this.gardenerFormService = gardenerFormService;
         this.plantService = plantService;
         this.plantIdentificationService = plantIdentificationService;
+        this.identifiedPlantService = identifiedPlantService;
     }
 
     /**
@@ -178,7 +180,7 @@ public class ImageService {
                 }
                 Files.write(filePath, file.getBytes());
                 identifiedPlant.setUploadedImage(UPLOADS_DIR + newFileName);
-                plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
+                identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
         } catch (Exception e) {
             logger.info(e.getMessage());
         }

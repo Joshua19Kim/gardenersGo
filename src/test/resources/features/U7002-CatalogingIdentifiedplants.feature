@@ -1,5 +1,10 @@
 Feature: U7002 - As Jackie Wei, I want to catalog identified plants into my personal collection, so that I can keep track of the plants I've discovered.
 
+  @7002
+    Scenario: #AC2 - View plants belonging to a species
+    Given I am logged in with email "a@gmail.com" and password "Password1!"
+    When I click on an entry for a plant on my collections page
+    Then I see a list of all the unique plants that I have collected before that belong to that plant species
 
   @U7002
   Scenario Outline: #AC3 - Save an identified plant

@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -38,6 +39,9 @@ public class CollectionsControllerTest {
 
     @MockBean
     private PlantIdentificationService plantIdentificationService;
+
+    @MockBean
+    private IdentifiedPlantService identifiedPlantService;
 
     @MockBean
     private GardenService gardenService;
@@ -77,7 +81,7 @@ public class CollectionsControllerTest {
         );
         IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
 
-        when(plantIdentificationService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
         doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
         when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
 
@@ -120,7 +124,7 @@ public class CollectionsControllerTest {
         IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
         String uploadMessage = "Image must be of type png, jpg or svg";
 
-        when(plantIdentificationService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
         doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
         when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.of(uploadMessage));
 

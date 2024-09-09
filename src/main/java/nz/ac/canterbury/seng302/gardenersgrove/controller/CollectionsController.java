@@ -4,10 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +33,7 @@ import java.util.stream.IntStream;
 @Controller
 public class CollectionsController {
     private final PlantIdentificationService plantIdentificationService;
+    private final IdentifiedPlantService identifiedPlantService;
     private final ImageService imageService;
     Logger logger = LoggerFactory.getLogger(CollectionsController.class);
 
@@ -53,11 +51,12 @@ public class CollectionsController {
      * @param gardenService used in conjunction with gardener form service to populate navbar
      * @param gardenerFormService used in conjunction with above to populate navbar
      */
-    public CollectionsController(PlantIdentificationService plantIdentificationService, ImageService imageService, GardenService gardenService, GardenerFormService gardenerFormService) {
+    public CollectionsController(PlantIdentificationService plantIdentificationService, ImageService imageService, GardenService gardenService, GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService) {
         this.plantIdentificationService = plantIdentificationService;
         this.imageService = imageService;
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
+        this.identifiedPlantService = identifiedPlantService;
         pageSize = 12;
     }
 
@@ -92,7 +91,7 @@ public class CollectionsController {
         gardenerOptional.ifPresent(value -> gardener = value);
 
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
-        Page<IdentifiedPlantSpecies> speciesList = plantIdentificationService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
+        Page<IdentifiedPlantSpecies> speciesList = identifiedPlantService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
         logger.info("GET /myCollection");
         model.addAttribute("speciesList", speciesList);
         int totalPages = speciesList.getTotalPages();
@@ -137,7 +136,7 @@ public class CollectionsController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
-        Page<IdentifiedPlant> collectionsList = plantIdentificationService.getGardenerPlantsBySpeciesPaginated(pageNo, pageSize, gardener.getId(), speciesName);
+        Page<IdentifiedPlant> collectionsList = identifiedPlantService.getGardenerPlantsBySpeciesPaginated(pageNo, pageSize, gardener.getId(), speciesName);
         model.addAttribute("collectionsList", collectionsList);
         model.addAttribute("speciesName", speciesName);
 
@@ -234,9 +233,9 @@ public class CollectionsController {
             }
             if(plantImage.isEmpty()) {
                 identifiedPlant.setUploadedImage("/images/placeholder.jpg");
-                plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
+                identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
             } else {
-                plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
+                identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                 imageService.saveCollectionPlantImage(plantImage, identifiedPlant);
             }
             return "redirect:/myCollection";
