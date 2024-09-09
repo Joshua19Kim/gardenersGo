@@ -12,6 +12,7 @@ import java.util.List;
  * and the images used for identification.
  */
 @Entity
+@Table(name = "IDENTIFIEDPLANT")
 public class IdentifiedPlant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +37,7 @@ public class IdentifiedPlant {
 
 
     @ElementCollection
-    @CollectionTable(name = "common_names", joinColumns = @JoinColumn(name = "identified_plant_id"))
+    @CollectionTable(name = "common_names", joinColumns = @JoinColumn(name = "IDENTIFIEDPLANT_id"))
     @Column(name = "common_name")
     private List<String> commonNames;
 

@@ -219,7 +219,6 @@ public class BrowseGardensController {
      * @param pageNo the page number
      * @param tag the tag the user typed in or selected
      * @param tags all the tags the user is filtering by
-     * @param model the model
      * @param redirectAttributes attributes used to add to the model of the url it is redirected to
      * @return redirects to the browse gardens page
      */

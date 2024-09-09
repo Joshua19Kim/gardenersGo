@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Repository interface for managing IdentifiedPlant entities
  */
@@ -42,4 +44,21 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
             "FROM IdentifiedPlant p WHERE p.gardener.id = :id " +
             "GROUP BY p.speciesScientificNameWithoutAuthor, p.imageUrl")
     Page<IdentifiedPlantSpecies> getSpeciesByGardenerId(long id, Pageable pageable);
+
+    /**
+     * Gets all the plant names for Identified plant in the database
+     * @return all the plant names in the database
+     */
+    @Query(value = "SELECT DISTINCT name FROM IdentifiedPlant", nativeQuery = true)
+    List<String> getAllPlantNames();
+
+    /**
+     * Gets all the scientific names for Identified plant in the database
+     * @return all the scientific names for Identified plant in the database
+     */
+    @Query(value = "SELECT DISTINCT species_scientific_name_without_author FROM IdentifiedPlant", nativeQuery = true)
+    List<String> getAllSpeciesScientificName();
+
+
+
 }

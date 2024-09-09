@@ -211,4 +211,23 @@ public class PlantIdentificationService {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         return identifiedPlantRepository.getSpeciesByGardenerId(gardenerId, pageable);
     }
+
+    /**
+     * Gets all the plant names for Identified plant in the database
+     * @return all the plant names in the database
+     */
+    public List<String> getAllPlantNames() {
+        return identifiedPlantRepository.getAllPlantNames();
+    }
+
+    /**
+     * Gets all the scientific names for Identified plant in the database
+     * @return all the scientific names for Identified plant in the database
+     */
+    public List<String> getAllSpeciesScientificNames() {
+        return identifiedPlantRepository.getAllSpeciesScientificName();
+    }
+
+
+
 }

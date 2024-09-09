@@ -160,6 +160,10 @@ public class CollectionsController {
             model.addAttribute("paginationMessage", paginationMessage);
         }
 
+        //test
+
+
+
         // Add gardens to the model for the navbar
         List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         model.addAttribute("gardens", gardens);
@@ -252,10 +256,19 @@ public class CollectionsController {
         }
 
 
-
-
     }
 
+    @PostMapping("/myCollection/addPlantName")
+    public String addPlantName(
+
+    ) {
+
+
+
+        logger.info(plantIdentificationService.getAllSpeciesScientificNames().toString());
+        logger.info(plantIdentificationService.getAllPlantNames().toString());
+        return "redirect:/myCollection";
+    }
 
 
 
