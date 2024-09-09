@@ -43,7 +43,7 @@ public class PlantCollectionFeature {
     @Then("I see a list of all the unique plants that I have collected before that belong to that plant species")
     public void i_see_a_list_of_all_the_unique_plants() throws Exception {
         Page<IdentifiedPlant> plants = identifiedPlantService.getGardenerPlantsBySpeciesPaginated(0, 12, gardenerId, "Cynara scolymus");
-        assertEquals(Objects.requireNonNull(mvcResult.getModelAndView()).getViewName(), "collectionDetailsTemplate");
+        assertEquals("collectionDetailsTemplate", Objects.requireNonNull(mvcResult.getModelAndView()).getViewName());
         assertEquals(mvcResult.getModelAndView().getModel().get("collectionsList").toString(), plants.toString());
     }
 }

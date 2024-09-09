@@ -32,7 +32,6 @@ import java.util.stream.IntStream;
  */
 @Controller
 public class CollectionsController {
-    private final PlantIdentificationService plantIdentificationService;
     private final IdentifiedPlantService identifiedPlantService;
     private final ImageService imageService;
     Logger logger = LoggerFactory.getLogger(CollectionsController.class);
@@ -45,14 +44,18 @@ public class CollectionsController {
 
     private Gardener gardener;
 
+    private final String paginationMessageAttribute = "paginationMessage";
+
+    private final String errorOccurredAttribute = "errorOccurred";
+
+    private final String showModalAttribute = "showModal";
+
     /**
      * Constructor to instantiate CollectionsController
-     * @param plantIdentificationService the service used to interact with database
      * @param gardenService used in conjunction with gardener form service to populate navbar
      * @param gardenerFormService used in conjunction with above to populate navbar
      */
-    public CollectionsController(PlantIdentificationService plantIdentificationService, ImageService imageService, GardenService gardenService, GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService) {
-        this.plantIdentificationService = plantIdentificationService;
+    public CollectionsController(ImageService imageService, GardenService gardenService, GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService) {
         this.imageService = imageService;
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
@@ -100,33 +103,41 @@ public class CollectionsController {
             int upperBound = Math.min(pageNo + 3, totalPages);
             List<Integer> pageNumbers = IntStream.rangeClosed(lowerBound, upperBound)
                     .boxed()
-                    .collect(Collectors.toList());
+                    .toList();
             model.addAttribute("pageNumbers", pageNumbers);
 
             long totalItems = speciesList.getTotalElements();
             int startIndex = pageSize * pageNo + 1;
             long endIndex = Math.min((long) pageSize * (pageNo + 1), totalItems);
             String paginationMessage = "Showing results " + startIndex + " to " + endIndex + " of " + totalItems;
-            model.addAttribute("paginationMessage", paginationMessage);
+            model.addAttribute(paginationMessageAttribute, paginationMessage);
         } else {
             String paginationMessage = "Showing results 0 to 0 of 0";
-            model.addAttribute("paginationMessage", paginationMessage);
+            model.addAttribute(paginationMessageAttribute, paginationMessage);
         }
 
         // need to add to model so that the navbar can populate the dropdown
         List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         model.addAttribute("gardens", gardens);
 
-        if(!model.containsAttribute("errorOccurred")) {
-            model.addAttribute("errorOccurred", false);
+        if(!model.containsAttribute(errorOccurredAttribute)) {
+            model.addAttribute(errorOccurredAttribute, false);
         }
-        if (!model.containsAttribute("showModal")) {
-            model.addAttribute("showModal", false);
+        if (!model.containsAttribute(showModalAttribute)) {
+            model.addAttribute(showModalAttribute, false);
         }
 
         return "myCollectionTemplate";
     }
 
+
+    /**
+     * Displays all the plants that have been added to the collection that are a part of the specified species
+     * @param speciesName the name of the species
+     * @param pageNoString the page number
+     * @param model the model
+     * @return the collection details template
+     */
     @GetMapping("/collectionDetails")
     public String getSpeciesDetails(
             @RequestParam(name = "speciesName") String speciesName,
@@ -146,17 +157,17 @@ public class CollectionsController {
             int upperBound = Math.min(pageNo + 3, totalPages);
             List<Integer> pageNumbers = IntStream.rangeClosed(lowerBound, upperBound)
                     .boxed()
-                    .collect(Collectors.toList());
+                    .toList();
             model.addAttribute("pageNumbers", pageNumbers);
 
             long totalItems = collectionsList.getTotalElements();
             int startIndex = pageSize * pageNo + 1;
             long endIndex = Math.min((long) pageSize * (pageNo + 1), totalItems);
             String paginationMessage = "Showing results " + startIndex + " to " + endIndex + " of " + totalItems;
-            model.addAttribute("paginationMessage", paginationMessage);
+            model.addAttribute(paginationMessageAttribute, paginationMessage);
         } else {
             String paginationMessage = "Showing results 0 to 0 of 0";
-            model.addAttribute("paginationMessage", paginationMessage);
+            model.addAttribute(paginationMessageAttribute, paginationMessage);
         }
 
         // Add gardens to the model for the navbar
@@ -167,8 +178,19 @@ public class CollectionsController {
     }
 
 
-
-
+    /**
+     * This post method is used when the user manually adds a plant to their collection. It validates all the user inputs
+     * and adds error messages where appropriate.
+     *
+     * @param plantName the name of the plant
+     * @param description the description of the plant
+     * @param scientificName the scientific name of the plant
+     * @param uploadedDate the date uploaded
+     * @param isDateInvalid whether HTML picked up a date error or not
+     * @param plantImage the image uploaded for the plant
+     * @param redirectAttributes used to add flash attributes for redirection.
+     * @return returns the my collection template
+     */
     @PostMapping("/myCollection")
     public String addPlantToCollection(
             @RequestParam (name="plantName") String plantName,
@@ -244,8 +266,8 @@ public class CollectionsController {
             redirectAttributes.addFlashAttribute("description", description);
             redirectAttributes.addFlashAttribute("scientificName", scientificName);
             redirectAttributes.addFlashAttribute("uploadedDate", uploadedDate);
-            redirectAttributes.addFlashAttribute("errorOccurred", true);
-            redirectAttributes.addFlashAttribute("showModal", true);
+            redirectAttributes.addFlashAttribute(errorOccurredAttribute, true);
+            redirectAttributes.addFlashAttribute(showModalAttribute, true);
 
             return "redirect:/myCollection";
         }

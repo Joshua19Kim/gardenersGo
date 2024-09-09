@@ -14,7 +14,7 @@ public class ImageServiceValidationTest {
 
     @BeforeAll()
     public static void setUp() {
-        imageService = new ImageService(mock(GardenerFormService.class), mock(PlantService.class), mock(PlantIdentificationService.class), mock(IdentifiedPlantService.class));
+        imageService = new ImageService(mock(GardenerFormService.class), mock(PlantService.class), mock(IdentifiedPlantService.class));
     }
 
     @Test

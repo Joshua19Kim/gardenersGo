@@ -32,17 +32,17 @@ public class ImageService {
     private final Logger logger = LoggerFactory.getLogger(ImageService.class);
     private final GardenerFormService gardenerFormService;
     private final PlantService plantService;
-    private final PlantIdentificationService plantIdentificationService;
     private final IdentifiedPlantService identifiedPlantService;
     private static final int MAX_SIZE = 10*1024*1024;
     private final List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
     private static final String UPLOADS_DIR = "/uploads/";
     private static final String UPLOAD_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
+
+    private final String destinationErrorMessage = "Entry is outside of the target directory";
     @Autowired
-    public ImageService(GardenerFormService gardenerFormService, PlantService plantService, PlantIdentificationService plantIdentificationService, IdentifiedPlantService identifiedPlantService) {
+    public ImageService(GardenerFormService gardenerFormService, PlantService plantService, IdentifiedPlantService identifiedPlantService) {
         this.gardenerFormService = gardenerFormService;
         this.plantService = plantService;
-        this.plantIdentificationService = plantIdentificationService;
         this.identifiedPlantService = identifiedPlantService;
     }
 
@@ -75,7 +75,7 @@ public class ImageService {
                     String canonicalDestinationPath = checkFile.getCanonicalPath();
 
                     if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
-                        throw new IOException("Entry is outside of the target directory");
+                        throw new IOException(destinationErrorMessage);
                     }
                     Files.write(filePath, file.getBytes());
                     gardener.setProfilePicture(UPLOADS_DIR + newFileName);
@@ -117,7 +117,7 @@ public class ImageService {
                 String canonicalDestinationPath = checkFile.getCanonicalPath();
 
                 if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
-                    throw new IOException("Entry is outside of the target directory");
+                    throw new IOException(destinationErrorMessage);
                 }
                 Files.write(filePath, file.getBytes());
                 plant.setImage(UPLOADS_DIR + newFileName);
@@ -163,6 +163,11 @@ public class ImageService {
     }
 
 
+    /**
+     * Saves the image locally and sets the image of the identified plant
+     * @param file the image file
+     * @param identifiedPlant the identified plant
+     */
     public void saveCollectionPlantImage(MultipartFile file, IdentifiedPlant identifiedPlant) {
 
         try {
@@ -176,7 +181,7 @@ public class ImageService {
                 String canonicalDestinationPath = checkFile.getCanonicalPath();
 
                 if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
-                    throw new IOException("Entry is outside of the target directory");
+                    throw new IOException(destinationErrorMessage);
                 }
                 Files.write(filePath, file.getBytes());
                 identifiedPlant.setUploadedImage(UPLOADS_DIR + newFileName);

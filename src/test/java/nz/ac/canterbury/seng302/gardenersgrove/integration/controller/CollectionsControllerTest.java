@@ -32,7 +32,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = CollectionsController.class)
-public class CollectionsControllerTest {
+class CollectionsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -67,7 +67,7 @@ public class CollectionsControllerTest {
 
     @Test
     @WithMockUser
-    public void AddPlantToCollection_ValidValues_PlantAdded() throws Exception {
+    void AddPlantToCollection_ValidValues_PlantAdded() throws Exception {
         String name = "My Plant";
         String species = "Plant Species";
         LocalDate date = LocalDate.of(2004, 5, 20);
@@ -100,7 +100,7 @@ public class CollectionsControllerTest {
 
     @Test
     @WithMockUser
-    public void AddPlantToCollection_InvalidValues_PlantNotAddedAndErrorMessagesShown() throws Exception {
+    void AddPlantToCollection_InvalidValues_PlantNotAddedAndErrorMessagesShown() throws Exception {
         String name = "";
         String species = "Pl@nt Species";
         LocalDate date = LocalDate.of(2004, 3, 31);
@@ -140,7 +140,7 @@ public class CollectionsControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/myCollection"))
                 .andExpect(flash().attribute("dateError", "Date is not in valid format, DD/MM/YYYY"))
-                .andExpect(flash().attribute("plantNameError", "Plant name cannot by empty and must only " +
+                .andExpect(flash().attribute("plantNameError", "Plant name cannot be empty and must only " +
                         "include letters, numbers, spaces, dots, hyphens or apostrophes <br/>"))
                 .andExpect(flash().attribute("scientificNameError", "Scientific name must only include " +
                         "letters, numbers, spaces, dots, hyphens or apostrophes <br/>"))
