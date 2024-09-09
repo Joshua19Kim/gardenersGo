@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -70,6 +69,7 @@ public class PlantSpeciesCollectionsController {
         return gardenerFormService.findByEmail(currentUserEmail);
     }
 
+
     /**
      * Handles GET requests for /myCollection stub and returns the template for
      * my collections page
@@ -82,12 +82,9 @@ public class PlantSpeciesCollectionsController {
     @GetMapping("/myCollection")
     public String getMyCollection(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
-            Model model
-    ) {
-
+            Model model) {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
-
 
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
         Page<PlantSpecies> plantSpeciesList = plantSpeciesService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
@@ -111,10 +108,6 @@ public class PlantSpeciesCollectionsController {
             String paginationMessage = "Showing results 0 to 0 of 0";
             model.addAttribute("paginationMessage", paginationMessage);
         }
-
-        // need to add to model so that the navbar can populate the dropdown
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-        model.addAttribute("gardens", gardens);
 
         return "myCollectionTemplate";
     }
