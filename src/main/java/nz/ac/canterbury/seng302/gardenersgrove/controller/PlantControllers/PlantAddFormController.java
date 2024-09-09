@@ -109,7 +109,7 @@ public class PlantAddFormController {
         if (isDateInvalid) {
             dateError = Optional.of("Date is not in valid format, DD/MM/YYYY");
             isValid = false;
-        } else if (!dateString.isEmpty()) {
+        } else if (dateString != null) {
             dateError = ValidityChecker.validateDate(dateString);
             isValid = dateError.isEmpty();
         }
@@ -146,7 +146,7 @@ public class PlantAddFormController {
             if (descriptionPresent) {
                 plant.setDescription(validatedPlantDescription);
             }
-            if (!dateString.isEmpty()) {
+            if (dateString != null) {
                 LocalDate date = LocalDate.parse(dateString);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 String validatedDate = date.format(formatter);

@@ -255,11 +255,11 @@ public class PlantAddFormControllerTest {
                             .with(csrf()))
             .andExpect(status().isOk())
             .andExpect(view().name("plantsFormTemplate"))
-            .andExpect(model().attributeExists("DateValid", "name", "count", "description"))
+            .andExpect(model().attributeExists("dateError", "name", "count", "description"))
             .andExpect(model().attribute("name", "tomato"))
             .andExpect(model().attribute("count", "2.0"))
             .andExpect(model().attribute("description", "yummy"))
-            .andExpect(model().attribute("DateValid", "Date is not in valid format, DD/MM/YYYY"));
+            .andExpect(model().attribute("dateError", "Date is not in valid format, DD/MM/YYYY"));
 
     verify(plantService, never()).addPlant(any(Plant.class));
   }
