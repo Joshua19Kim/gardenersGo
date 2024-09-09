@@ -5,10 +5,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,17 +24,14 @@ public class AddTagFeature {
 
   @Autowired private MockMvc mockMvcGardenDetailsController;
   @Autowired private TagService tagService;
-  @Autowired private GardenerFormService gardenerFormService;
+
   @Autowired private GardenService gardenService;
   private Garden garden;
   private Tag tag;
-  private Gardener gardener;
   private MvcResult mvcResult;
 
   @Before("@U21")
   public void setUp() {
-    Optional<Gardener> gardenerOptional = gardenerFormService.findByEmail("a@gmail.com");
-    gardener = gardenerOptional.get();
     Optional<Garden> gardenOptional = gardenService.getGarden(1L);
     garden = gardenOptional.get();
   }
