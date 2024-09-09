@@ -18,7 +18,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.stream.Collectors;
 
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,6 +122,20 @@ public class MainPageController {
         model.addAttribute("mainPageLayout", mainPageLayout);
         model.addAttribute("ordering", mainPageLayout.getFormat());
 
+        // this returning value is like "1 1 1 1" each number indicates the widgets on main page.
+        // The order is [recentlyAccessedGardens, newestPlantsList, myGardensList, friendsList]
+        // If numbers are all 1, that means there will be all the widgets.
+        // "1 0 0 0" means showing only recentlyAccessedGardens.
+        String widgetsEnabled = mainPageLayout.getWidgetsEnabled();
+
+        String[] values = widgetsEnabled.split(" ");
+
+        model.addAttribute("recentlyAccessedGardens", values[0].equals("1"));
+        model.addAttribute("newestPlantsList", values[1].equals("1"));
+        model.addAttribute("myGardensList", values[2].equals("1"));
+        model.addAttribute("friendsList", values[3].equals("1"));
+
+
         return "mainPageTemplate";
     }
 
@@ -161,7 +179,8 @@ public class MainPageController {
      * @return a redirect to the user page
      */
     @PostMapping("/changeLayout")
-    public String changeLayout(@RequestParam("layout") int layout) {
+    public String changeLayout(@RequestParam("layout") int layout,
+                               @RequestParam("customiseSections") List<String> customiseSections) {
         logger.info(String.valueOf(layout));
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
@@ -174,8 +193,49 @@ public class MainPageController {
             default -> throw new IllegalArgumentException("Invalid format specified");
         };
         mainPageLayout.setFormat(format);
+
+        List<Boolean> selectionList = new ArrayList<>();
+
+        selectionList.add(customiseSections.contains("recentlyAccessedGardens"));
+        selectionList.add(customiseSections.contains("newestPlants"));
+        selectionList.add(customiseSections.contains("myGardensList"));
+        selectionList.add(customiseSections.contains("friendsList"));
+
+        String selectionString = selectionList.stream()
+                .map(b -> b ? "1" : "0")
+                .collect(Collectors.joining(" "));
+        mainPageLayout.setWidgetsEnabled(selectionString);
         mainPageLayoutService.addMainPageLayout(mainPageLayout);
+
         return "redirect:/user";
     }
 
+    @PostMapping("/customiseLayout")
+    public String changeLayout(@RequestParam(name ="sections" , required = false) List<String> sections, RedirectAttributes redirectAttributes) {
+        MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
+
+        if (sections == null) {
+            mainPageLayout.setWidgetsEnabled("0 0 0 0");
+            mainPageLayoutService.addMainPageLayout(mainPageLayout);
+            return "redirect:/user";
+        }
+        List<Boolean> selectionList = new ArrayList<>();
+
+        selectionList.add(sections.contains("recentlyAccessedGardens"));
+        selectionList.add(sections.contains("newestPlants"));
+        selectionList.add(sections.contains("myGardensList"));
+        selectionList.add(sections.contains("friendsList"));
+
+
+        String selectionString = selectionList.stream()
+                .map(b -> b ? "1" : "0")
+                .collect(Collectors.joining(" "));
+
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+        mainPageLayout.setWidgetsEnabled(selectionString);
+        mainPageLayoutService.addMainPageLayout(mainPageLayout);
+
+        return "redirect:/user";
+    }
 }

@@ -8,7 +8,7 @@
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
-<button class="btn btn-success w-auto m-2" data-bs-target="#exampleModal" data-bs-toggle="modal" type="button">
+<button class="btn btn-primary w-auto m-2" data-bs-target="#customiseHomepageModal" data-bs-toggle="modal" type="button">
     Edit Homepage
 </button>
 
@@ -29,7 +29,7 @@
     </div>
 
     <div class="container card w-50">
-        <form th:action="@{user}" method="get" id="userForm">
+        <form th:action="@{user}" method="get" id="userForm" class="w-100" novalidate>
 
             <label for="firstName"> First Name: </label>
             <span id="firstName" th:text="${firstName}"></span>
@@ -55,13 +55,7 @@
                        th:name="isLastNameOptional" type="checkbox" style="display: none;">
             </div>
 
-            <script>
-                document.getElementById('isLastNameOptional').onchange = function () {
-                    document.getElementById('lastNameEdit').disabled = this.checked;
-                };
-            </script>
-
-            <p class="smallErrorMessage" th:utext="${lastNameValid}" id="lastNameError"></p>
+            <p class="smallErrorMessage" th:utext="${lastNameValid}"></p>
             <br/>
 
             <label for="DoB"> Date of Birth: </label>
@@ -69,16 +63,7 @@
             <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;"
                    th:classappend="${(DoBValid != '' && DoBValid != null) ? 'is-invalid' : ''}" max="9999-12-31">
             <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
-
-            <script>
-                document.getElementById("DoBEdit").addEventListener("invalid",
-                    function (event) {
-                        event.preventDefault();
-                        console.log("invalid date");
-                        document.getElementById("DoBEdit").style.border = "1px solid red";
-                        document.getElementById("DoBInvalid").textContent = "Date is not in valid format, DD/MM/YYYY";
-                    });
-            </script>
+            <input type="hidden" id="isDoBInvalid" th:name="isDoBInvalid" th:value="false"/>
 
             <br/>
             <label for="email"> Email: </label>
@@ -89,19 +74,74 @@
             <p class="smallErrorMessage" th:utext="${emailValid}"></p>
             <br/>
 
+
             <div id="editButtonDiv">
                 <button class="btn btn-primary mb-3" type="button" onclick="enableEditing()">Edit</button>
             </div>
-            <div id="saveCancelButtonDiv" class="m-0 p-0 d-flex gap-5" style="display: none !important;">
-                <button class="btn btn-secondary mb-3" type="button" onclick="window.location='./password'">Update password</button>
-                <input class="btn btn-primary mb-3" type="submit" value="Save"/>
-                <button class="btn btn-danger mb-3" type="button" onclick="disableEditing(); window.location='./user'">Cancel</button>
+            <div id="saveCancelButtonDiv" class="" style="display: none !important;">
+                <button class="btn btn-secondary mb-3 ml-25p" type="button" onclick="window.location='./password'">Update password</button>
+                <input class="btn btn-primary mb-3 ml-25p" type="submit" value="Save"/>
+                <button class="btn btn-danger mb-3 ml-25p" type="button" onclick="disableEditing(); window.location='./user'">Cancel</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Customise Modal -->
+<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="customiseHomepageModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title text-dark">Customise</h1>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body d-grid">
+                <form method="post" th:action="@{customiseLayout}" id="customiseForm">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="friendsList" name="sections" value="friendsList"
+                               th:checked="${friendsList != null and friendsList == true}">
+                        <label class="form-check-label" for="friendsList">
+                            My Friend's List
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="recentlyAccessedGardens" name="sections" value="recentlyAccessedGardens"
+                               th:checked="${recentlyAccessedGardens != null and recentlyAccessedGardens == true}">
+                        <label class="form-check-label" for="recentlyAccessedGardens">
+                            Recently Accessed Gardens
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="newestPlants" name="sections" value="newestPlants"
+                               th:checked="${newestPlants != null and newestPlants == true}">
+                        <label class="form-check-label" for="newestPlants">
+                            Newest Plants
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="myGardensList" name="sections" value="myGardensList"
+                               th:checked="${myGardensList != null and myGardensList == true}">
+                        <label class="form-check-label" for="myGardensList">
+                            My Garden's List
+                        </label>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer d-flex justify-content-around">
+                <!-- Update this button to trigger the opening of the "Change Layout" modal -->
+                <button class="btn btn-secondary" type="button" data-bs-target="#exampleModal" data-bs-toggle="modal" data-bs-dismiss="modal">
+                    Change Layout
+                </button>
+                <button class="btn btn-primary" onclick="document.getElementById('customiseForm').submit()" type="submit">
+                    Save changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Layout Modal -->
 <div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="exampleModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -112,6 +152,7 @@
             <div class="modal-body d-grid">
                 <form id='layoutForm' method="post" th:action="@{changeLayout}">
                     <input type="hidden" value="1" id="layout" th:name="layout">
+                    <input type="hidden" id="layoutCustomiseSections" name="customiseSections">
                     <div class="row mb-3">
                         <div class="col">
                             <button class="selectable" onclick="selectOption(this, 1)" type="button">
@@ -141,7 +182,7 @@
             </div>
 
             <div class="modal-footer d-flex justify-content-around">
-                <button class="btn btn-primary" onclick="document.getElementById('layoutForm').submit()" type="submit">
+                <button class="btn btn-primary" onclick="submitLayoutForm()" type="submit">
                     Save changes
                 </button>
                 <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
@@ -150,7 +191,26 @@
     </div>
 </div>
 
+
 <script type="text/javascript">
+    document.getElementById('isLastNameOptional').checked = false;
+    document.getElementById('isLastNameOptional').onchange = function () {
+        document.getElementById('lastNameEdit').disabled = this.checked;
+    };
+
+    document.getElementById("userForm").addEventListener("submit", function(event) {
+        const dobInput = document.getElementById("DoBEdit");
+        if (!(dobInput.checkValidity())) {
+            console.log("invalid date")
+            event.preventDefault();
+            document.getElementById("isDoBInvalid").value = true;
+            document.getElementById("userForm").submit();
+        } else {
+            console.log("valid date")
+            document.getElementById("isDoBInvalid").value = false;
+        }
+    });
+
     document.getElementById("userForm").addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             var activeElement = document.activeElement;
@@ -161,8 +221,16 @@
             }
         }
     });
-</script>
-<script>
+
+    function submitLayoutForm() {
+        const checkboxes = document.querySelectorAll('#customiseForm input[type="checkbox"]');
+        const selectedSections = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+        document.getElementById('layoutCustomiseSections').value = selectedSections.join(',');
+        document.getElementById('layoutForm').submit();
+    }
+
     document.getElementById("userForm").addEventListener("submit", function(event) {
         const dobInput = document.getElementById("DoBEdit");
         if (!(dobInput.checkValidity())) {

@@ -111,12 +111,15 @@ public class ValidityChecker {
         if (name == null || name.trim().isEmpty() || !name.matches(regex)) {
             result += "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>";
         }
-        if(name.length() > 64) {
+
+        if(name != null && name.length() > 64) {
             result += "Plant name must be less than 64 characters";
         }
+
         if (!result.isEmpty()) {
             return result;
         }
+
         return name;
     }
 
@@ -244,9 +247,9 @@ public class ValidityChecker {
         if(address != null && address.matches(regex)) {
             result = "Please enter a street number and name without only numerical characters <br/>";
         }
-        regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,./'-]+$";
         if (address != null && !address.trim().isEmpty() && !address.matches(regex)) {
-            result += "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>";
+            result += "Street number and name must only include letters, numbers, spaces, commas, dots, hyphens, slashes or apostrophes <br/>";
         }
         regex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
         if (address != null && !address.trim().isEmpty() && !address.matches(regex)) {

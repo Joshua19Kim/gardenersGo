@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
@@ -43,6 +45,9 @@ public class BrowseGardensControllerTest {
     private GardenService gardenService;
 
     @MockBean
+    private GardenerFormService gardenerFormService;
+
+    @MockBean
     private TagService tagService;
 
     @MockBean
@@ -57,8 +62,6 @@ public class BrowseGardensControllerTest {
     private List<Garden> gardens;
 
     private List<String> allTags;
-
-    private BrowseGardensController browseGardensControllerSpy;
 
 
     @BeforeEach
@@ -76,11 +79,12 @@ public class BrowseGardensControllerTest {
         for (int i = 0; i < 8; i++) {
             allTags.add("tag" + i);
         }
-
-        browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, tagService));
+        Gardener mockedGardener = Mockito.mock(Gardener.class);
+        Mockito.when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
+        Mockito.when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
+        BrowseGardensController browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, gardenerFormService, tagService));
         mockMvc = standaloneSetup(browseGardensControllerSpy).build();
         doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
-        doNothing().when(browseGardensControllerSpy).setTags(anyList());
         doNothing().when(browseGardensControllerSpy).setSearchTags((anyList()));
 
     }
@@ -97,6 +101,7 @@ public class BrowseGardensControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
+                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -113,6 +118,7 @@ public class BrowseGardensControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attribute("pageNumbers", expectedPageNumbers))
+                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -123,13 +129,14 @@ public class BrowseGardensControllerTest {
         int pageNumber = 1;
         Pageable pageable = PageRequest.of(pageNumber, defaultPageSize);
         List<Garden> emptyList = new ArrayList<>();
-        Page<Garden> gardenPage = new PageImpl<>(emptyList, pageable, emptyList.size());
+        Page<Garden> gardenPage = new PageImpl<>(emptyList, pageable, 0);
         Mockito.when(gardenService.getGardensPaginated(pageNumber, defaultPageSize)).thenReturn(gardenPage);
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens")
                         .param("pageNo", String.valueOf(pageNumber)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", gardenPage))
                 .andExpect(model().attributeDoesNotExist("pageNumbers"))
+                .andExpect(model().attributeExists("gardens"))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -236,6 +243,7 @@ public class BrowseGardensControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", matchingGardenPage))
+                .andExpect(model().attribute("searchTerm", searchTerm))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -263,9 +271,9 @@ public class BrowseGardensControllerTest {
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", matchingGardenPage))
+                .andExpect(model().attribute("searchTerm", searchTerm))
                 .andExpect(view().name("browseGardensTemplate"));
 
     }
-
 
 }

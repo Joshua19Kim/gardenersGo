@@ -3,11 +3,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.unit.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +18,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.*;
 
 public class UserProfileControllerTest {
 
@@ -37,11 +34,14 @@ public class UserProfileControllerTest {
     private Optional optional;
     private HttpServletRequest mockRequest;
     private RequestService requestService;
+    private MainPageLayoutService mainPageLayoutService;
+    private MainPageLayout mainPageLayout;
 
 
     @BeforeEach
     public void setUp() {
         authentication = Mockito.mock(Authentication.class);
+        mainPageLayout = Mockito.mock(MainPageLayout.class);
         mockRequest = Mockito.mock(HttpServletRequest.class);
         requestService = Mockito.mock(RequestService.class);
         Mockito.when(mockRequest.getRequestURI()).thenReturn("");
@@ -50,12 +50,16 @@ public class UserProfileControllerTest {
         emailUserService = Mockito.mock(EmailUserService.class);
         writeEmail = Mockito.mock(WriteEmail.class);
         gardenService = Mockito.mock(GardenService.class);
-        userProfileController = new UserProfileController(gardenerFormService, gardenService, writeEmail, requestService);
+        mainPageLayoutService = Mockito.mock(MainPageLayoutService.class);
+        userProfileController = new UserProfileController(gardenerFormService, gardenService, writeEmail, requestService, mainPageLayoutService);
         modelMock = Mockito.mock(Model.class);
         gardener = Mockito.mock(Gardener.class);
         inputValidator = Mockito.mock(InputValidationUtil.class);
         optional = Mockito.mock(Optional.class);
         gardener.setEmail("testEmail@test.test");
+        when(userProfileController.getGardenerFromAuthentication()).thenReturn(Optional.of(gardener));
+        when(mainPageLayout.getWidgetsEnabled()).thenReturn("1 1 1 1");
+        when(mainPageLayoutService.getLayoutByGardenerId(any())).thenReturn(mainPageLayout);
     }
 
     @Test
