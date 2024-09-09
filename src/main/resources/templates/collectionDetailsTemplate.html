@@ -25,17 +25,17 @@
 <div th:if="${collectionsList.totalPages > 0}" class="d-flex justify-content-center" aria-label="Page navigation example ">
     <ul class = "pagination">
         <li class="page-item">
-            <a class="page-link" th:href="@{/myCollection(pageNo=0)}"
+            <a class="page-link" th:href="@{/collectionDetails(pageNo=0, speciesName=${speciesName})}"
                aria-label="Previous">
                 <span aria-hidden="true">First</span>
             </a>
         </li>
         <ul th:if="${collectionsList.totalPages > 0}" class="pagination"
             th:each="pageNumber : ${pageNumbers}">
-            <li class="page-item"><a class="page-link" th:href="@{/myCollection(pageNo=${pageNumber - 1})}" th:text="${pageNumber}"></a></li>
+            <li class="page-item"><a class="page-link" th:href="@{/collectionDetails(pageNo=${pageNumber - 1}, speciesName=${speciesName})}" th:text="${pageNumber}"></a></li>
         </ul>
         <li class="page-item">
-            <a class="page-link" th:href="@{/myCollection(pageNo=${collectionsList.totalPages - 1})}" aria-label="Next">
+            <a class="page-link" th:href="@{/collectionDetails(pageNo=${collectionsList.totalPages - 1}, speciesName=${speciesName})}" aria-label="Next">
                 <span aria-hidden="true">Last</span>
             </a>
         </li>

@@ -125,6 +125,7 @@ public class CollectionsController {
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
         Page<IdentifiedPlant> collectionsList = plantIdentificationService.getGardenerPlantsBySpeciesPaginated(pageNo, pageSize, gardener.getId(), speciesName);
         model.addAttribute("collectionsList", collectionsList);
+        model.addAttribute("speciesName", speciesName);
 
         int totalPages = collectionsList.getTotalPages();
         if(totalPages > 0) {
