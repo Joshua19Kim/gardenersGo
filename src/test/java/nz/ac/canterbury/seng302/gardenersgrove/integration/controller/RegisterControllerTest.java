@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.RegisterController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.MainPageLayoutService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TokenService;
@@ -31,6 +32,8 @@ public class RegisterControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private GardenerFormService gardenerFormService;
+    @MockBean
+    private GardenService gardenService;
     @MockBean
     private AuthenticationManager authenticationManager;
     @MockBean

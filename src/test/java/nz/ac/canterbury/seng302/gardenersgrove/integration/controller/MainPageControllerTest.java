@@ -106,7 +106,7 @@ public class MainPageControllerTest {
                 .andExpect(model().attributeExists("gardens"))
                 .andExpect(model().attribute("gardens", ownedGardens));
 
-        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(gardenerFormService, times(2)).findByEmail(anyString()); // This is increased to 2 because of the GlobalControllerAdvice
         verify(gardenService, times(1)).getGardensByGardenerId(anyLong());
     }
 
@@ -126,7 +126,7 @@ public class MainPageControllerTest {
                 .andExpect(model().attributeExists("recentGardens"))
                 .andExpect(model().attribute("recentGardens", recentlyVisitedGardens));
 
-        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(gardenerFormService, times(2)).findByEmail(anyString()); // This is increased to 2 because of the GlobalControllerAdvice
         verify(gardenVisitService, times(1)).findRecentGardensByGardenerId(anyLong());
     }
 
@@ -148,7 +148,7 @@ public class MainPageControllerTest {
                 .andExpect(model().attributeExists("newestPlants"))
                 .andExpect(model().attribute("newestPlants", recentlyAddedPlants));
 
-        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(gardenerFormService, times(2)).findByEmail(anyString()); // This is increased to 2 because of the GlobalControllerAdvice
         verify(plantService, times(1)).findNewestPlantsByGardenerId(anyLong());
 
     }
@@ -172,7 +172,7 @@ public class MainPageControllerTest {
                 .andExpect(model().attributeExists("friends"))
                 .andExpect(model().attribute("friends", friendsList));
 
-        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(gardenerFormService, times(2)).findByEmail(anyString()); // This is increased to 2 because of the GlobalControllerAdvice
         verify(relationshipService, times(1)).getCurrentUserRelationships(anyLong());
     }
 

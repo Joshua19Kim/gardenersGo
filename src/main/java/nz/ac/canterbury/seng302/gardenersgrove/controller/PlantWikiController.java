@@ -1,11 +1,20 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,17 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.*;
-
 /**
- * The controller for the plant wiki page. It handles all requests for going to the page and searching for plant information.
+ * The controller for the plant wiki page. It handles all requests for going to the page and searching for plant information
  */
 @Controller
 public class PlantWikiController {
@@ -49,9 +49,14 @@ public class PlantWikiController {
 
     private Gardener gardener;
 
-
-
-
+    /**
+     * Constructor for the PlantWikiController. Initializes the required service classes for plant
+     * wiki interaction, garden management, and gardener information retrieval
+     *
+     * @param plantWikiService     The service used to interact with the plant wiki API
+     * @param gardenService        The service used to manage garden data
+     * @param gardenerFormService  The service used to manage gardener information
+     */
     @Autowired
     public PlantWikiController(PlantWikiService plantWikiService, PlantService plantService, GardenerFormService gardenerFormService, GardenService gardenService, ImageService imageService) {
         this.plantWikiService = plantWikiService;
@@ -77,20 +82,26 @@ public class PlantWikiController {
 
 
     /**
-     * The main method to get to the plant wiki page
-     * @param model the model which has all the necessary attributes
-     * @return the html template that displays all the plant information
-     * @throws IOException
-     * @throws URISyntaxException
+     * Retrieves the plant wiki page. If the API call is successful, it displays the plant information.
+     * If the API is down, an error message is shown.
+     *
+     * @param model The model containing attributes to display on the page.
+     * @return The plant wiki HTML template.
+     * @throws IOException        If there is an error during the API call.
+     * @throws URISyntaxException If the API URL is incorrect.
      */
     @GetMapping("/plantWiki")
     public String plantWiki(
             Model model
     ) throws IOException, URISyntaxException {
         logger.info("GET /plantWiki");
-        List<WikiPlant> resultPlants = plantWikiService.getPlants("");
-        model.addAttribute("resultPlants",resultPlants);
-
+        Object result = plantWikiService.getPlants("");
+        if (result instanceof List<?>) {
+            model.addAttribute("resultPlants", result);
+        } else if (result instanceof String) {
+            model.addAttribute("resultPlants", new ArrayList<>());
+            model.addAttribute("errorMessage", result);
+        }
         // need to add to model so that the navbar can populate the dropdown
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
@@ -101,23 +112,29 @@ public class PlantWikiController {
     }
 
     /**
-     * The post request when the user searches for the plant information. It queries the API and returns matching plants.
-     * If no plants are found it will display an error message
-     * @param searchTerm the term that the user entered in the search bar
-     * @param model the model which has all the necessary attributes
-     * @return the html template that displays all the plant information
-     * @throws IOException
-     * @throws URISyntaxException
+     * Searches for plant information based on the search term entered by the user. Displays the result
+     * or an error message if no results are found or the API is down.
+     *
+     * @param searchTerm The plant name or keyword to search for.
+     * @param model      The model containing attributes to display on the page.
+     * @return The plant wiki HTML template.
+     * @throws IOException        If there is an error during the API call.
+     * @throws URISyntaxException If the API URL is incorrect.
      */
     @PostMapping("/plantWiki")
     public String plantWikiSearch(@RequestParam("searchTerm") String searchTerm, Model model) throws IOException, URISyntaxException {
-
-        logger.info("POST /plantWiki");
-        List<WikiPlant> resultPlants = plantWikiService.getPlants(searchTerm);
-        model.addAttribute("resultPlants", resultPlants);
         String errorMessage = "No plants were found";
-        if(resultPlants.isEmpty()) {
-            model.addAttribute("errorMessage", errorMessage);
+        logger.info("POST /plantWiki");
+        Object result = plantWikiService.getPlants(searchTerm);
+
+        if (result instanceof List<?>) {
+            model.addAttribute("resultPlants", result);
+            if(((List<WikiPlant>) result).isEmpty()) {
+                model.addAttribute("errorMessage", errorMessage);
+            }
+        } else if (result instanceof String) { // If API is down
+            model.addAttribute("errorMessage", result);
+            model.addAttribute("resultPlants", new ArrayList<>());
         }
         model.addAttribute("searchTerm", searchTerm);
 
@@ -162,8 +179,7 @@ public class PlantWikiController {
             @RequestParam(value = "isFileUploaded", required = false, defaultValue = "false") boolean isFileUploaded,
             Model model,
             RedirectAttributes redirectAttributes) {
-
-        InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
+        
 
 
         logger.info("POST /addPlant");
@@ -281,9 +297,6 @@ public class PlantWikiController {
             return "redirect:/plantWiki";
         }
     }
-
-
-
 }
 
 

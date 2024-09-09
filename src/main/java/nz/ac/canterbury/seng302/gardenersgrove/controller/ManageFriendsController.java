@@ -1,16 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Relationships;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.SearchService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -28,16 +24,13 @@ import java.util.*;
 public class ManageFriendsController {
     private final Logger logger = LoggerFactory.getLogger(UserProfileController.class);
     private final GardenerFormService gardenerFormService;
-    private final GardenService gardenService;
     private final RelationshipService relationshipService;
     private final RequestService requestService;
     private List<Gardener> noExistingRelationship = new ArrayList<>();
 
     @Autowired
-    public ManageFriendsController(GardenerFormService gardenerFormService, RequestService requestService, GardenService gardenService,
-                                   SearchService searchService, RelationshipService relationshipService, AuthenticationManager authenticationManager) {
+    public ManageFriendsController(GardenerFormService gardenerFormService, RequestService requestService, RelationshipService relationshipService) {
         this.gardenerFormService = gardenerFormService;
-        this.gardenService = gardenService;
         this.relationshipService = relationshipService;
         this.requestService = requestService;
     }
@@ -47,8 +40,8 @@ public class ManageFriendsController {
      * accepted, pending, incoming and declined. These lists are also used to decrease the current available search pool
      * in order to prevent the user for searching and sending requests to other users they have an existing relationship
      * with
-     * @param authentication
-     * @param model
+     * @param authentication Auto-injected authentication object to get the current user
+     * @param model to send attributes to thymeleaf
      * @return manage friend html
      */
     @GetMapping("/manageFriends")
@@ -60,11 +53,9 @@ public class ManageFriendsController {
 
         String currentUserEmail = authentication.getPrincipal().toString();
         Optional<Gardener> currentUserOptional = gardenerFormService.findByEmail(currentUserEmail);
-        List<Garden> gardens = new ArrayList<>();
 
         if (currentUserOptional.isPresent()) {
             Gardener currentUser = currentUserOptional.get();
-            gardens = gardenService.getGardensByGardenerId(currentUser.getId());
             List<Gardener> allCurrentUserRelationships = relationshipService.getCurrentUserRelationships(currentUser.getId());
             List<Gardener> allCurrentUserPending = relationshipService.getGardenerPending(currentUser.getId());
             List<Gardener> allCurrentUserIncoming = relationshipService.getGardenerIncoming(currentUser.getId());
@@ -91,7 +82,7 @@ public class ManageFriendsController {
         } else {
             logger.info("No user with that email");
         }
-        model.addAttribute("gardens", gardens);
+
         return "manageFriends";
 
     }
@@ -100,7 +91,7 @@ public class ManageFriendsController {
      * Upon post submission, the variable noExistingRelationship is looped through as this is a shorter list with the only
      * viable search results
      * @param searchQuery what user submits in search bar
-     * @param model
+     * @param model model
      * @return manage friends html
      */
     @PostMapping("/manageFriends")
@@ -151,16 +142,13 @@ public class ManageFriendsController {
     /**
      * Removes the instance of the relationship between the friend and the currently logged in user
      * @param friendId the id of a friend of the currently logged in user
-     * @param model
      * @return Redirects to the manage friends page
      */
     @PostMapping("/removeRelationship")
-    public String removeRelationship(@RequestParam (name = "friendId") Long friendId, Model model) {
+    public String removeRelationship(@RequestParam (name = "friendId") Long friendId) {
         String currentEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<Gardener> currentGardener = gardenerFormService.findByEmail(currentEmail);
-        if(currentGardener.isPresent()) {
-            relationshipService.deleteRelationShip(currentGardener.get().getId(), friendId);
-        }
+        currentGardener.ifPresent(gardener -> relationshipService.deleteRelationShip(gardener.getId(), friendId));
         return "redirect:/manageFriends";
     }
 

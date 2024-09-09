@@ -18,7 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.stream.Collectors;
 
 
@@ -107,14 +107,12 @@ public class MainPageController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
         List<Garden> recentGardens = gardenVisitService.findRecentGardensByGardenerId(gardener.getId());
         List<Plant> newPlants = plantService.findNewestPlantsByGardenerId(gardener.getId());
         List<Gardener> friends = relationshipService.getCurrentUserRelationships(gardener.getId());
         MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
 
         model.addAttribute("gardener", gardener);
-        model.addAttribute("gardens", gardens);
         model.addAttribute("friends", friends);
         model.addAttribute("newestPlants", newPlants);
         model.addAttribute("recentGardens", recentGardens);
@@ -163,10 +161,8 @@ public class MainPageController {
         gardenerOptional.ifPresent(value -> gardener = value);
 
         MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
 
         model.addAttribute("gardener", gardener);
-        model.addAttribute("gardens", gardens); // For nav bar
         model.addAttribute("requestURI", requestService.getRequestURI(request));
         model.addAttribute("mainPageLayout", mainPageLayout);
 
@@ -211,7 +207,7 @@ public class MainPageController {
     }
 
     @PostMapping("/customiseLayout")
-    public String changeLayout(@RequestParam(name ="sections" , required = false) List<String> sections, RedirectAttributes redirectAttributes) {
+    public String changeLayout(@RequestParam(name ="sections" , required = false) List<String> sections) {
         MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
 
         if (sections == null) {
