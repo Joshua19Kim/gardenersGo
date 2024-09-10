@@ -126,8 +126,6 @@ public class CollectionsController {
         try {
             String plantNamesJson = objectMapper.writeValueAsString(plantNames);
             String plantScientificNamesJson = objectMapper.writeValueAsString(plantScientificNames);
-            logger.info("test1 " + plantNamesJson);
-            logger.info("test1 " + plantScientificNamesJson);
             model.addAttribute("plantNamesJson", plantNamesJson);
             model.addAttribute("plantScientificNamesJson", plantScientificNamesJson);
         } catch (JsonProcessingException e) {
