@@ -231,15 +231,11 @@ public class BrowseGardensController {
             @RequestParam(name="tags", required = false) List<String> tags,
             RedirectAttributes redirectAttributes
     ) {
+        String tagValid ="";
         tag = tag.strip();
 
         // Validate the tag
-        TagValidation tagValidation = new TagValidation(tagService);
-        Optional<String> validTagError = tagValidation.validateTag(tag);
-        if (validTagError.isPresent()) {
-            redirectAttributes.addFlashAttribute("tag", tag);
-            redirectAttributes.addFlashAttribute("tagValid", validTagError.get());
-        }
+
 
         if (tags == null) {
             tags = new ArrayList<>();
@@ -250,17 +246,24 @@ public class BrowseGardensController {
         if (allTags.contains(tag)) {
             // if the tag has already been selected
             if (tags.contains(tag)) {
-                String errorMessage = "You have already selected " + tag;
+                String errorMessage = "You have already selected " + tag + " <br/>";
                 redirectAttributes.addFlashAttribute("tag", tag);
-                redirectAttributes.addFlashAttribute("tagValid", errorMessage);
+                tagValid += errorMessage;
             } else {
                 tags.add(tag);
             }
         } else {
             // if tag doesn't exist
-            String errorMessage = "No tag matching " + tag;
+            String errorMessage = "No tag matching " + tag + " <br/>";
             redirectAttributes.addFlashAttribute("tag", tag);
-            redirectAttributes.addFlashAttribute("tagValid", errorMessage);
+            tagValid += errorMessage;
+        }
+
+        TagValidation tagValidation = new TagValidation(tagService);
+        Optional<String> validTagError = tagValidation.validateTag(tag);
+        if (validTagError.isPresent()) {
+            redirectAttributes.addFlashAttribute("tag", tag);
+            tagValid += validTagError.get();
         }
 
         // remove selected tags from the autocomplete options
@@ -270,6 +273,7 @@ public class BrowseGardensController {
         redirectAttributes.addFlashAttribute("allTags", allTags);
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
+        redirectAttributes.addFlashAttribute("tagValid", tagValid);
 
         return "redirect:/browseGardens";
     }
