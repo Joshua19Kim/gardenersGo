@@ -12,7 +12,10 @@
     <br/>
     <a th:href="@{../gardens(user=${gardener.id})}"
        th:text="'Back to ' + ${gardener.firstName} + (${gardener.lastName != null ? ' ' + gardener.lastName : ''}) + '\'s Gardens'"
-       class="button card"></a>
+       class="button card mb-2 "></a>
+    <form class="position-absolute" method="post" th:action="@{/follow}" style="text-align: right">
+        <button name="gardenToFollow" class="p-1 btn" th:classappend="${isFollowing} ? 'btn-danger' : 'btn-success'" th:value="${garden.id}" style="width: 25px" th:text="${isFollowing} ? 'Unfollow' : 'Follow'"></button>
+    </form>
     <div class="row w-100" style="overflow-wrap: break-word">
         <h1 class="text-black"><span th:text="${garden.name}"></span></h1>
     </div>

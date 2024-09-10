@@ -329,7 +329,7 @@ public class BrowseGardensController {
      * @return redirect to browseGardens get method
      */
     @PostMapping("/follow")
-    public String followUser(@RequestParam(name="pageNo") String pageNo,
+    public String followUser(@RequestParam(name="pageNo", required = false) String pageNo,
                              @RequestParam(name="gardenToFollow") Long gardenToFollow,
                              RedirectAttributes redirectAttributes) throws IllegalArgumentException{
         Optional<Gardener> gardener = getGardenerFromAuthentication();
@@ -354,6 +354,11 @@ public class BrowseGardensController {
         }
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
-        return "redirect:/browseGardens";
+
+        if (pageNo != null) {
+            return "redirect:/browseGardens";
+        } else {
+            return "redirect:/gardens/details?gardenId="+gardenToFollow;
+        }
     }
 }

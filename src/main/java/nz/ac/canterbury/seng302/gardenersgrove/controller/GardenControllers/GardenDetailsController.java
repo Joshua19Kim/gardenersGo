@@ -43,6 +43,8 @@ public class GardenDetailsController {
     private final LocationService locationService;
     private final GardenVisitService gardenVisitService;
 
+    private final FollowerService followerService;
+
     /**
      * Constructor used to create a new instance of the GardenDetailsController. Autowires a
      * various service objects
@@ -63,7 +65,7 @@ public class GardenDetailsController {
             RelationshipService relationshipService,
             RequestService requestService,
             WeatherService weatherService,
-            TagService tagService, LocationService locationService, GardenVisitService gardenVisitService) {
+            TagService tagService, LocationService locationService, GardenVisitService gardenVisitService, FollowerService followerService) {
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
@@ -72,6 +74,7 @@ public class GardenDetailsController {
         this.tagService = tagService;
         this.locationService = locationService;
         this.gardenVisitService = gardenVisitService;
+        this.followerService = followerService;
     }
 
     /**
@@ -182,6 +185,10 @@ public class GardenDetailsController {
 
                    GardenVisit gardenVisit = new GardenVisit(gardener, garden.get(), LocalDateTime.now());
                    gardenVisitService.addGardenVisit(gardenVisit);
+
+                   Optional<Follower> isFollower = followerService.findFollower(currentUserOptional.get().getId(), parseLong(gardenId));
+                   model.addAttribute("isFollowing", isFollower.isPresent());
+
                    return "unauthorizedGardenDetailsTemplate";
                } else {
                    return "redirect:/gardens";
