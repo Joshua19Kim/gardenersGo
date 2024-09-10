@@ -144,10 +144,9 @@ public class ScanningPlantFeature {
 
   @Then("the information is updated")
   public void the_information_is_updated() {
-      //TODO: fix or replace this -- Issue seems to be different objects being passed due to autowire not deep copying.
-    // resultActions are not checked
-//    assertEquals(inputName, cataloguedPlant.getName());
-//    assertEquals((inputDescription.isEmpty() ? null : inputDescription), cataloguedPlant.getDescription());
+    IdentifiedPlant plant = identifiedPlantService.getCollectionPlantById(cataloguedPlant.getId());
+    assertEquals(inputName, plant.getName());
+    assertEquals((inputDescription.isEmpty() ? null : inputDescription), plant.getDescription());
   }
 
   @Then("I get the error message {string}")
