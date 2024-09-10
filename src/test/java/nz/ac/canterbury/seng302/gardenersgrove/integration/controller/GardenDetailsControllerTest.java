@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenDetailsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -27,8 +28,9 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@WebMvcTest(controllers = GardenDetailsController.class)
+@WebMvcTest(controllers = {GardenDetailsController.class, BrowseGardensController.class})
 public class GardenDetailsControllerTest {
     Gardener testGardener = new Gardener("Test", "Gardener",
             LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
@@ -36,6 +38,9 @@ public class GardenDetailsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private MockMvc browseMockMvc;
 
     @MockBean
     private GardenService gardenService;
@@ -83,6 +88,9 @@ public class GardenDetailsControllerTest {
         GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
                 relationshipService, requestService, weatherService, tagService, locationService, gardenVisitService, followerService);
         MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
+        BrowseGardensController browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, gardenerFormService, tagService, followerService));
+        browseMockMvc = standaloneSetup(browseGardensControllerSpy).build();
+
 
     }
 
@@ -905,4 +913,24 @@ public class GardenDetailsControllerTest {
                 .andExpect(redirectedUrl("/login?banned"));
     }
 
+
+    @Test
+    @WithMockUser
+    public void FollowAGarden_UserIsAlreadyFollowing_FollowerRemoved() throws Exception {
+
+        when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.of(new Follower(1L, 1L)));
+        browseMockMvc.perform(MockMvcRequestBuilders.post("/follow")
+                .param("gardenToFollow", "1"));
+        verify(followerService, times(1)).deleteFollower(anyLong(), anyLong());
+    }
+
+    @Test
+    @WithMockUser
+    public void FollowAGarden_UserIsNotFollowing_FollowerAdded() throws Exception {
+        when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.empty());
+
+        browseMockMvc.perform(MockMvcRequestBuilders.post("/follow")
+                .param("gardenToFollow", "1"));
+        verify(followerService, times(1)).addfollower(any(Follower.class));
+    }
 }
