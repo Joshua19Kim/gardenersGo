@@ -123,7 +123,6 @@ public class GardensController {
                 return "redirect:/gardens";
             }
         }
-
         model.addAttribute("requestURI", requestService.getRequestURI(request));
         return "gardensTemplate";
     }
