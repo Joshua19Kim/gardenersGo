@@ -10,6 +10,11 @@
 
 <div class="container align-items-center col-lg-2" style="width: 1200px">
     <br/>
+    <!-- Notification for any update on garden following stuff    -->
+    <div th:if="${gardenFollowUpdate}" class="alert alert-warning alert-dismissible fade show w-50 m-auto text-center" role="alert">
+        <p class="m-auto" th:text="${gardenFollowUpdate}"></p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     <div class="d-flex justify-content-between w-100 mb-4 p-2">
         <a th:href="@{../gardens(user=${gardener.id})}"
            th:text="'Back to ' + ${gardener.firstName} + (${gardener.lastName != null ? ' ' + gardener.lastName : ''}) + '\'s Gardens'"
