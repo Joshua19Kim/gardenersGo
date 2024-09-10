@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -17,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -331,7 +333,8 @@ public class BrowseGardensController {
     @PostMapping("/follow")
     public String followUser(@RequestParam(name="pageNo", required = false) String pageNo,
                              @RequestParam(name="gardenToFollow") Long gardenToFollow,
-                             RedirectAttributes redirectAttributes) throws IllegalArgumentException{
+                             RedirectAttributes redirectAttributes,
+                             HttpServletRequest requestHandler) throws IllegalArgumentException{
         Optional<Gardener> gardener = getGardenerFromAuthentication();
         if (gardener.isPresent()) {
             Long gardenerId = gardener.get().getId();
@@ -355,10 +358,8 @@ public class BrowseGardensController {
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
 
-        if (pageNo != null) {
-            return "redirect:/browseGardens";
-        } else {
-            return "redirect:/gardens/details?gardenId="+gardenToFollow;
-        }
+        String referer = requestHandler.getHeader("Referer");
+        return "redirect:" + referer;
+
     }
 }
