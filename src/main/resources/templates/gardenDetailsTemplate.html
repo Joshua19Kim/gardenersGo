@@ -65,8 +65,8 @@
                     <input type="text" id="tag-input" list="tagList" autocomplete="off"
                            th:value="${tag != null ? tag : ''}"
                            th:style="${tag != null} ? 'display: block;' : 'display: none;'"
-                           placeholder="Add tag..."
-                           maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus class="form-control"
+                           placeholder="Add tag..." maxlength="50" onkeydown="submitTagOnEnter(event)" autofocus
+                           class="form-control"
                            th:classappend="${((tagValid != '' && tagValid != null) || (tagWarning != '' && tagWarning != null)) ? 'error' : ''}"
                            tabindex="13">
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
@@ -77,7 +77,7 @@
                 </form>
                 <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
                    onclick="submitTag()" tabindex="14                   ">
-                    <img class="nav-link" src="/images/icons/add_circle_white.png" alt="Add Circle">
+                    <img class="nav-link" id="addTagIcon" alt="Add Circle">
                 </a>
             </div>
             <div id="tag-error-container">
@@ -291,6 +291,22 @@
                 openModal(tagWarning);
             }
     });
+
+    const addTagIcon = document.getElementById("addTagIcon");
+
+    function getBaseUrl() {
+        const path = window.location.pathname.split('/');
+        if (path[1] === 'test') {
+            return '/test';
+        } else if (path[1] === 'prod') {
+            return '/prod';
+        }
+        return '';
+
+    }
+
+    addTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
+
 
 </script>
 
