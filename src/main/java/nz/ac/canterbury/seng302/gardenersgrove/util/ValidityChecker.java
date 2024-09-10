@@ -319,8 +319,7 @@ public class ValidityChecker {
         try {
             date = LocalDate.parse(dateString);
             if (!date.isBefore(LocalDate.parse("9999-12-31"))) {
-                // New error message
-                result += "The date must be before 31/12/9999";
+                result += "Date is not in valid format, DD/MM/YYYY";
             }
         } catch (Exception e) {
             result += "Date is not in valid format, DD/MM/YYYY";
