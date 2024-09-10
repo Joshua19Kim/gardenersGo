@@ -30,7 +30,7 @@
         </div>
         <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
            onclick="transformToInput()">
-            <img class="nav-link" src="/images/icons/add_circle_white.png" alt="Add Circle">
+            <img class="nav-link" id="addTagIcon" alt="Add Circle">
         </a>
         <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{browseGardens/addTag}">
             <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
@@ -136,4 +136,19 @@
 </div>
 </body>
 <script th:src="@{/javascript/tagAutocomplete.js}"></script>
+<script>
+    const addTagIcon = document.getElementById("addTagIcon");
+
+    function getBaseUrl() {
+        const path = window.location.pathname.split('/');
+        if (path[1] === 'test') {
+            return '/test';
+        } else if (path[1] === 'prod') {
+            return '/prod';
+        }
+        return '';
+
+    }
+    addTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
+</script>
 </html>
