@@ -1,5 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unit.util;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
@@ -12,11 +16,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 public class TagValidationTest {
   @Mock private TagService tagService;
@@ -37,9 +36,10 @@ public class TagValidationTest {
   @CsvSource(
       value = {
         "ValidTag123: ",
-        "ThisTagNameIsWayTooLongAndInvalid: A tag cannot exceed 25 characters <br/>",
-        "Invalid@Tag: The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>",
-        "-: The tag name must contain at least one alphanumeric character"
+        "TagNameThatIsSoSuperValid: ",
+        "ThisTagNameIsWayTooInvalid:A tag cannot exceed 25 characters <br/>",
+        "Invalid@Tag:The tag name must only contain alphanumeric characters, spaces, -, _, ', or \" <br/>",
+        "-:The tag name must contain at least one alphanumeric character"
       },
       delimiter = ':')
   public void testValidateTag(String tagName, String expectedMessage) {

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -33,7 +34,9 @@ public class MockConfigurationSteps {
     @Autowired
     private GardenerFormService gardenerFormService;
     private Optional<Gardener> gardenerOptional;
+    private IdentifiedPlant testIdentifiedPlant;
     Gardener gardener;
+
     @Then("send an email.")
     public void send_an_email() {
         Mockito.verify(emailUserService, Mockito.times(1)).sendEmail(anyString(), anyString(), anyString());
@@ -50,14 +53,16 @@ public class MockConfigurationSteps {
     public void the_app_identifies_the_plant_image() throws IOException {
         gardenerOptional = gardenerFormService.findByEmail("a@gmail.com");
         gardener = gardenerOptional.get();
-        IdentifiedPlant testIdentifiedPlant = new IdentifiedPlant(
+        testIdentifiedPlant = new IdentifiedPlant(
                 "Helianthus annuus",
                 0.88,
                 List.of("Sunflower", "Rose"),
                 "5414641",
                 "https://example.com/sunflower.jpg",
-                "https://example.com/sunflower.jpg"
-                ,gardener
+                "https://example.com/sunflower.jpg",
+                "Helianthus",
+                "annuus"
+                , gardener
         );
         when(plantIdentificationService.identifyPlant(
                 any(MultipartFile.class),
@@ -74,8 +79,10 @@ public class MockConfigurationSteps {
                 List.of("Sunflower", "Rose"),
                 "5414641",
                 "https://example.com/sunflower.jpg",
-                "https://example.com/sunflower.jpg"
-                ,gardener
+                "https://example.com/sunflower.jpg",
+                "Helianthus",
+                "annuus"
+                , gardener
         );
         when(plantIdentificationService.identifyPlant(
                 any(MultipartFile.class),
@@ -98,5 +105,7 @@ public class MockConfigurationSteps {
 
 
     }
+
+
 
 }

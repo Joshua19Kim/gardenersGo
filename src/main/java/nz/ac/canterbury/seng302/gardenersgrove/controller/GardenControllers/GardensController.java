@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,7 @@ import static java.lang.Long.parseLong;
 public class GardensController {
     Logger logger = LoggerFactory.getLogger(GardensController.class);
     private final GardenService gardenService;
+    private final FollowerService followerService;
     private final GardenerFormService gardenerFormService;
     private final RelationshipService relationshipService;
     private final RequestService requestService;
@@ -41,10 +43,12 @@ public class GardensController {
     @Autowired
     public GardensController(
             GardenService gardenService,
+            FollowerService followerService,
             GardenerFormService gardenerFormService,
             RelationshipService relationshipService,
             RequestService requestService) {
         this.gardenService = gardenService;
+        this.followerService = followerService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
         this.requestService = requestService;
@@ -87,8 +91,21 @@ public class GardensController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
+
         if (user == null) {
             model.addAttribute("gardener", gardener);
+            // Getting the gardens that users followed to show on the gardens page
+            List<Long> followedGardens = followerService.findAllGardens(gardener.getId());
+            List<Garden> followedGardenList = new ArrayList<>();
+            for (Long gardenId : followedGardens) {
+                Optional<Garden> garden = gardenService.getGarden(gardenId);
+                garden.ifPresent(followedGardenList::add);
+            }
+
+            model.addAttribute("followedGardenList", followedGardenList);
+            if (followedGardenList.isEmpty()) {
+                model.addAttribute("errorMessage", "You are not following any gardens yet.");
+            }
         } else {
             Optional<Gardener> friend = gardenerFormService.findById(parseLong(user, 10));
             if (friend.isPresent()
@@ -96,15 +113,16 @@ public class GardensController {
                     .getCurrentUserRelationships(gardener.getId())
                     .contains(friend.get())) {
 
-                model.addAttribute("gardener", friend.get());
-                List<Garden> userGardens;
-                userGardens = gardenService.getGardensByGardenerId(gardener.getId());
+                List<Garden> userGardens = gardenService.getGardensByGardenerId(gardener.getId());
                 model.addAttribute("userGardens", userGardens);
+
+                model.addAttribute("gardener", friend.get());
+                List<Garden> gardens = gardenService.getGardensByGardenerId(friend.get().getId());
+                model.addAttribute("gardens", gardens);
             } else {
                 return "redirect:/gardens";
             }
         }
-
         model.addAttribute("requestURI", requestService.getRequestURI(request));
         return "gardensTemplate";
     }
