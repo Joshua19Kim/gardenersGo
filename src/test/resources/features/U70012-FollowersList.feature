@@ -4,13 +4,13 @@ Feature: U70012 - As Kaia, I can see who is following my public gardens on the g
   @AC1
   Scenario:
     Given I am logged in with email "a@gmail.com" and password "Password1!"
-    And I have a public garden with the name "Apple Orchard" that has at least one follower
+    And I have a public garden with the name "Apple Orchard" that has one follower
     When I navigate to the garden details page
-    Then I see the followers section showing the followers of the garden
+    Then It should display the correct follower count
 
   @AC3
   Scenario:
     Given I am logged in with email "a@gmail.com" and password "Password1!"
-    And I have a public garden with the name "Apple Orchard" that has at no followers
+    And I have a public garden with the name "Apple Orchard" that has no followers
     When I navigate to the garden details page
     Then It should display a message indicating "No followers yet"
