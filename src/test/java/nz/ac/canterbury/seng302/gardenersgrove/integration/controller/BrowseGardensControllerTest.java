@@ -312,7 +312,7 @@ public class BrowseGardensControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/follow")
                 .param("pageNo", "1")
                 .param("gardenToFollow", "1"));
-        verify(followerService, times(1)).addfollower(any(Follower.class));
+        verify(followerService, times(1)).addFollower(any(Follower.class));
     }
 
 }

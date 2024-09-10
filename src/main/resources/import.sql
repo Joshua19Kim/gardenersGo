@@ -238,5 +238,13 @@ INSERT INTO identified_plant (score, gardener_id, name, description, best_match,
 
 
 
+INSERT INTO FOLLOWER(garden_id, gardener_id) VALUES (1,3);
+INSERT INTO FOLLOWER(garden_id, gardener_id) VALUES (1,4);
+INSERT INTO FOLLOWER(garden_id, gardener_id) VALUES (6,3);
+INSERT INTO FOLLOWER(garden_id, gardener_id) VALUES (6,4);
+INSERT INTO FOLLOWER(garden_id, gardener_id) VALUES (6,5);
+INSERT INTO FOLLOWER(garden_id, gardener_id) VALUES (8,1);
+INSERT INTO FOLLOWER(garden_id, gardener_id) VALUES (15,1);
+
 -- email: a@gmail.com
 -- password: Password1!

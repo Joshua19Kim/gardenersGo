@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,7 +49,7 @@ public class FollowerServiceTest {
     @Test
     void AddFollower_ValidValues_FollowerCreated() {
         Follower follower = new Follower(testGardener2.getId(), garden.getId());
-        followerService.addfollower(follower);
+        followerService.addFollower(follower);
 
         Optional<Follower> followerOptional = followerService.findFollower(testGardener2.getId(), garden.getId());
         assertTrue(followerOptional.isPresent());
@@ -57,14 +58,25 @@ public class FollowerServiceTest {
     @Test
     void AddFollower_FollowingOwnGarden_ErrorThrown() throws IllegalArgumentException {
         Follower follower = new Follower(testGardener.getId(), garden.getId());
-        assertThrows(IllegalArgumentException.class, () -> followerService.addfollower(follower));
+        assertThrows(IllegalArgumentException.class, () -> followerService.addFollower(follower));
     }
 
     @Test
     void AddFollower_FollowingPrivateGarden_ErrorThrown() throws IllegalArgumentException {
         Follower follower = new Follower(testGardener2.getId(), privateGarden.getId());
-        assertThrows(IllegalArgumentException.class, () -> followerService.addfollower(follower));
+        assertThrows(IllegalArgumentException.class, () -> followerService.addFollower(follower));
     }
-
+    @Test
+    void AddFollower_FindGardenFollowers_FollowerFound() {
+        Follower follower = new Follower(testGardener2.getId(), garden.getId());
+        followerService.addFollower(follower);
+        List<Follower> followerList = followerService.findFollowing(garden.getId());
+        assertEquals(followerList.get(0), follower);
+    }
+    @Test
+    void FindGardenFollowers_NoFollowerFound() {
+        List<Follower> followerList = followerService.findFollowing(garden.getId());
+        assertEquals(followerList.size(),0);
+    }
 
 }

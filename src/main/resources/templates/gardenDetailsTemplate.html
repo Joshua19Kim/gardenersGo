@@ -51,21 +51,18 @@
                 </p>
             </div>
 
-            <!-- Size -->
-            <div class="col-12">
-                <p>
-                    <strong>Size:</strong>
-                    <span th:if="${garden.size != null}" th:text="${garden.size + ' m&sup2;'}"></span>
-                </p>
-            </div>
+            <p><strong>Location:</strong> <span class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;" th:text="${garden.getFullLocation()}"></span></p>
+            <p>
+                <strong>Size:</strong> <span th:if="${garden.size != null}"
+                                             th:text="${garden.size + ' m&sup2;'}"></span>
+            </p>
+            <p><strong>Description:</strong> <span class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;" th:text="${garden.description}"></span></p>
+            <p>
+                <strong>Followers: </strong>
+                <a class="link-underline-dark" th:if="${followerCount != null and followerCount > 0}" th:text="${followerCount}"></a>
+                <span id="noFollowers" th:if="${followerCount == null or followerCount == 0}">No followers yet</span>
+            </p>
 
-            <!-- Description -->
-            <div class="col-12">
-                <p class="description-text">
-                    <strong>Description:</strong>
-                    <span class="description-content" th:text="${garden.description}"></span>
-                </p>
-            </div>
             <div id="tag-container">
                 <strong>Tags:</strong>
                 <div th:if="${tags != null}" th:each="tag : ${tags}">
