@@ -86,7 +86,7 @@ public class ScanController {
             errorResponse.put(errorKey, "Please add an image to identify.");
             return ResponseEntity.badRequest().body(errorResponse);
         } else {
-            Optional<String> uploadMessage = imageService.checkValidImage(image);
+            Optional<String> uploadMessage = imageService.checkValidPlantImage(image);
             if (uploadMessage.isPresent()) {
                 errorResponse.put(errorKey, uploadMessage.get());
                 return ResponseEntity.badRequest().body(errorResponse);
@@ -114,7 +114,7 @@ public class ScanController {
                 if (e.getMessage().contains("Species not found")) {
                     errorResponse.put(errorKey, "There is no matching plant with your image. Please try with a different image of the plant.");
                 } else if (e.getMessage().contains("Unsupported file type for image")) {
-                    errorResponse.put(errorKey, "Image must be of type png, jpg or svg.");
+                    errorResponse.put(errorKey, "Image must be of type png or jpg.");
                 }else {
                     errorResponse.put(errorKey, e.getMessage());
                 }

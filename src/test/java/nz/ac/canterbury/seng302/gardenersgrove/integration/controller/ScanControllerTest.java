@@ -139,7 +139,7 @@ public class ScanControllerTest {
     @Test
     @WithMockUser
     void OnScanningModal_userHasPutInvalidImageAndClickedIdentifyButton_ShowErrorMessage() throws Exception {
-        String errorMessage = "Image must be of type png, jpg or svg";
+        String errorMessage = "Image must be of type png or jpg";
         // Invalid file
         imageFile = new MockMultipartFile(
                 "image",
@@ -147,7 +147,7 @@ public class ScanControllerTest {
                 "plain/text",
                 "Hello World!".getBytes()
         );
-        when(imageService.checkValidImage(imageFile)).thenReturn(Optional.of(errorMessage));
+        when(imageService.checkValidPlantImage(imageFile)).thenReturn(Optional.of(errorMessage));
         this.mockMvc
                 .perform(MockMvcRequestBuilders.multipart("/identifyPlant")
                         .file(imageFile)

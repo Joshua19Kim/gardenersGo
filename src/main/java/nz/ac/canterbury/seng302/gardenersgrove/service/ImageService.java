@@ -35,6 +35,7 @@ public class ImageService {
     private final PlantIdentificationService plantIdentificationService;
     private static final int MAX_SIZE = 10*1024*1024;
     private final List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
+    private final List<String> validPlantImageExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png"));
     private static final String UPLOADS_DIR = "/uploads/";
     private static final String UPLOAD_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
     @Autowired
@@ -139,6 +140,9 @@ public class ImageService {
     public boolean checkValidExtension (MultipartFile file) {
         return validExtensions.contains(file.getContentType());
     }
+    public boolean checkValidPlantImageExtension (MultipartFile file) {
+        return validPlantImageExtensions.contains(file.getContentType());
+    }
 
     /**
      * Using helper functions, checks the image file is of an appropriate image extension as detailed in a global list,
@@ -156,6 +160,19 @@ public class ImageService {
             return Optional.of("Image must be less than 10MB");
         } else {
             return Optional.of("Image must be of type png, jpg or svg " + "\n" +
+                    "Image must be less than 10MB");
+        }
+    }
+
+    public Optional<String> checkValidPlantImage(MultipartFile file) {
+        if (checkValidPlantImageExtension(file) && isFileSizeValid(file)) {
+            return Optional.empty();
+        } else if ((!checkValidPlantImageExtension(file)) && isFileSizeValid(file)) {
+            return Optional.of("Image must be of type png or jpg.");
+        } else if (checkValidPlantImageExtension(file) && (!isFileSizeValid(file))) {
+            return Optional.of("Image must be less than 10MB");
+        } else {
+            return Optional.of("Image must be of type png or jpg " + "\n" +
                     "Image must be less than 10MB");
         }
     }
