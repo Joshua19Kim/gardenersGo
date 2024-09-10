@@ -13,6 +13,7 @@ import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import org.mockito.Mockito;
@@ -40,9 +41,11 @@ public class ScanningPlantFeature {
   @Autowired
   private MockMvc mockMvc;
   @Autowired
-  private PlantIdentificationService plantIdentificationService;
+  private IdentifiedPlantService identifiedPlantService;
   @Autowired
   private GardenerFormService gardenerFormService;
+  @Autowired
+  private IdentifiedPlantRepository identifiedPlantRepository;
   private MockMultipartFile imageFile;
   private String errorMessage;
   private String inputName;
@@ -95,6 +98,11 @@ public class ScanningPlantFeature {
 
   @Given("I have a catalogued plant")
   public void i_have_a_catalogued_plant() {
+    Gardener plantOwner = new Gardener("Test", "Gardener",
+            LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+            "Password1!");
+    gardenerFormService.addGardener(plantOwner);
+
     cataloguedPlant = new IdentifiedPlant(
             "Helianthus annuus",
             0.88,
@@ -104,11 +112,10 @@ public class ScanningPlantFeature {
             "https://example.com/sunflower.jpg",
             "Helianthus",
             "annuus",
-            currentUser
+            plantOwner
     );
     cataloguedPlant.setId(1L);
-    plantIdentificationService.saveIdentifiedPlantDetails(cataloguedPlant);
-    System.out.println(plantIdentificationService.getCollectionPlantById(1L));
+    identifiedPlantService.saveIdentifiedPlantDetails(cataloguedPlant);
   }
 
   @When("I click the edit button")

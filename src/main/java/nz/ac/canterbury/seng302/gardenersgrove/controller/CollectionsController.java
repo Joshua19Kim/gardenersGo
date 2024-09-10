@@ -6,10 +6,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
@@ -30,7 +28,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import static java.lang.Long.parseLong;
 
@@ -40,10 +37,11 @@ import static java.lang.Long.parseLong;
 @Controller
 public class CollectionsController {
     private final IdentifiedPlantService identifiedPlantService;
-    private final ImageService imageService;
     Logger logger = LoggerFactory.getLogger(CollectionsController.class);
 
     private int pageSize;
+
+    private final ImageService imageService;
 
     private final GardenService gardenService;
 
@@ -63,11 +61,14 @@ public class CollectionsController {
      * @param gardenService used in conjunction with gardener form service to populate navbar
      * @param gardenerFormService used in conjunction with above to populate navbar
      */
-    public CollectionsController(ImageService imageService, GardenService gardenService, GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService) {
+    public CollectionsController(ImageService imageService, GardenService gardenService,
+                                 GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService,
+                                 RequestService requestService) {
         this.imageService = imageService;
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.identifiedPlantService = identifiedPlantService;
+        this.requestService = requestService;
         pageSize = 12;
     }
 
@@ -134,10 +135,6 @@ public class CollectionsController {
         if (!model.containsAttribute(showModalAttribute)) {
             model.addAttribute(showModalAttribute, false);
         }
-
-        // need to add to model so that the navbar can populate the dropdown
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
-        model.addAttribute("gardens", gardens);
 
         return "myCollectionTemplate";
     }
@@ -308,11 +305,11 @@ public class CollectionsController {
 
         // TODO: put this in a validator
         long plantId = parseLong(plantIdString, 10);
-        Optional<IdentifiedPlant> plant = plantIdentificationService.getCollectionPlantById(plantId);
+        IdentifiedPlant plant = identifiedPlantService.getCollectionPlantById(plantId);
 
-        if (plant.isPresent()) {
+        if (plant != null) {
             model.addAttribute("requestURI", requestService.getRequestURI(request));
-            model.addAttribute("plant", plant.get());
+            model.addAttribute("plant", plant);
 
             // need to add to model so that the navbar can populate the dropdown
             List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
@@ -346,7 +343,7 @@ public class CollectionsController {
 
         // TODO: put this in a validator
         long plantId = parseLong(plantIdString, 10);
-        Optional<IdentifiedPlant> plantOptional = plantIdentificationService.getCollectionPlantById(plantId);
+        IdentifiedPlant plantOptional = identifiedPlantService.getCollectionPlantById(plantId);
 
         String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(name);
         String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(description);
@@ -362,8 +359,8 @@ public class CollectionsController {
             isValid = false;
         }
 
-        if (isValid && plantOptional.isPresent()) {
-            IdentifiedPlant plant = plantOptional.get();
+        if (isValid && plantOptional != null) {
+            IdentifiedPlant plant = plantOptional;
 
             plant.setName(validatedPlantName);
             boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
@@ -374,7 +371,7 @@ public class CollectionsController {
                 plant.setDescription(null);
             }
 
-            plantIdentificationService.saveIdentifiedPlantDetails(plant);
+            identifiedPlantService.saveIdentifiedPlantDetails(plant);
 
             return "redirect:/collectionDetails?speciesName=" + plant.getSpeciesScientificNameWithoutAuthor();
         } else {
@@ -382,7 +379,7 @@ public class CollectionsController {
             gardenerOptional.ifPresent(value -> gardener = value);
             model.addAttribute("requestURI", requestService.getRequestURI(request));
             model.addAttribute("name", name);
-            model.addAttribute("plant", plantOptional.get());
+            model.addAttribute("plant", plantOptional);
             model.addAttribute("description", description);
             // TODO: Fix css bug with error messages
             return "editIdentifiedPlantForm";

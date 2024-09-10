@@ -8,6 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class IdentifiedPlantService {
     private final IdentifiedPlantRepository identifiedPlantRepository;
@@ -47,5 +49,10 @@ public class IdentifiedPlantService {
     public Page<IdentifiedPlantSpecies> getGardenerPlantSpeciesPaginated(int pageNo, int pageSize, Long gardenerId) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         return identifiedPlantRepository.getSpeciesByGardenerId(gardenerId, pageable);
+    }
+
+    public IdentifiedPlant getCollectionPlantById(long id) {
+        // TODO: DELETE
+        return identifiedPlantRepository.findById(id);
     }
 }
