@@ -57,8 +57,9 @@
                         <span th:text="${tag}"></span>
                     </div>
                 </div>
-                <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
-                   onclick="transformToInput()">+</a>
+                <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'" onclick="transformToInput()">
+                    <img class="nav-link" src="/images/icons/add_circle_white.png" alt="Add Circle">
+                </a>
                 <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{addTag}">
                     <input type="text" id="tag-input" list="tagList" autocomplete="off"
                            th:value="${tag != null ? tag : ''}"
@@ -73,7 +74,9 @@
                     </datalist>
                 </form>
                 <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
-                   onclick="submitTag()">+</a>
+                   onclick="submitTag()">
+                    <img class="nav-link" src="/images/icons/add_circle_white.png" alt="Add Circle">
+                </a>
             </div>
             <div id="tag-error-container">
                 <p class="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
