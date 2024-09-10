@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @WebMvcTest(controllers = {GardenDetailsController.class, BrowseGardensController.class})
-public class GardenDetailsControllerTest {
+class GardenDetailsControllerTest {
     Gardener testGardener = new Gardener("Test", "Gardener",
             LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
             "Password1!");
@@ -96,7 +96,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GardenDetailsRequested_ExistentIdGiven_GardenDetailsProvided() throws Exception {
+    void GardenDetailsRequested_ExistentIdGiven_GardenDetailsProvided() throws Exception {
         Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
@@ -112,7 +112,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GardenDetailsRequested_NonExistentIdGiven_StayOnMyGardens() throws Exception {
+    void GardenDetailsRequested_NonExistentIdGiven_StayOnMyGardens() throws Exception {
         when(gardenService.getGarden(anyLong())).thenReturn(Optional.empty());
 
         mockMvc
@@ -125,7 +125,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GardenPublicCheckboxTicked_GardenPublicityUpdated()
+    void GardenPublicCheckboxTicked_GardenPublicityUpdated()
             throws Exception {
         Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "100", testGardener, "");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -150,7 +150,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GardenPublicCheckboxUnticked_GardenPublicityUpdated()
+    void GardenPublicCheckboxUnticked_GardenPublicityUpdated()
             throws Exception {
         Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "100", testGardener, "");
         garden.setIsGardenPublic(true);
@@ -176,7 +176,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated() throws Exception {
+    void NewTagSubmitted_ValidTagName_GardenDetailsUpdated() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -217,7 +217,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void NewTagSubmitted_OffensiveTagName_TagNotAdded() throws Exception {
+    void NewTagSubmitted_OffensiveTagName_TagNotAdded() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -258,7 +258,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GardenDetailsRequested_TagExists_TagDisplayed() throws Exception {
+    void GardenDetailsRequested_TagExists_TagDisplayed() throws Exception {
         Gardener currentUser =
                 new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
         currentUser.setId(1L);
@@ -289,7 +289,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
+    void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -327,7 +327,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
+    void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -365,7 +365,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
+    void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -403,7 +403,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void addTag_SameTagNameInDifferentGardens() throws Exception {
+    void addTag_SameTagNameInDifferentGardens() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -456,7 +456,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void NewTagSubmitted_ValidTagName_BadWordsCounterNotChanged() throws Exception {
+    void NewTagSubmitted_ValidTagName_BadWordsCounterNotChanged() throws Exception {
 
         Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
         Tag tag = new Tag("My tag", garden);
@@ -477,7 +477,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void NewTagSubmitted_OffensiveTagName_BadWordCounterIncreased() throws Exception {
+    void NewTagSubmitted_OffensiveTagName_BadWordCounterIncreased() throws Exception {
         Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
         Tag tag = new Tag("Fuck", garden);
 
@@ -531,7 +531,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
+    void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
@@ -586,7 +586,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GetTemperatureOfCity_CityDoesntExist_WeatherInformationNotReturned() throws Exception {
+    void GetTemperatureOfCity_CityDoesntExist_WeatherInformationNotReturned() throws Exception {
         Garden garden = new Garden("Test garden", "FAKELOCATION!123", null, "Christchurch", "New Zealand", null, "9999", testGardener, "")
                 ;
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -613,7 +613,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GetWeather_WhenRaining_RainNotificationReturned() throws Exception {
+    void GetWeather_WhenRaining_RainNotificationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
@@ -659,7 +659,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GetPrevWeather_WhenPrevSunny_DryNotificationReturned() throws Exception {
+    void GetPrevWeather_WhenPrevSunny_DryNotificationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
@@ -705,7 +705,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void FifthTagSubmitted_OffensiveTagName_TagNotAddedWarningDisplayed() throws Exception {
+    void FifthTagSubmitted_OffensiveTagName_TagNotAddedWarningDisplayed() throws Exception {
         int initialBadWordCount = 4;
         testGardener.setBadWordCount(initialBadWordCount);
 
@@ -751,7 +751,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GetDate_WhenNotificationClosed_NoNotificationReturned() throws Exception {
+    void GetDate_WhenNotificationClosed_NoNotificationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
@@ -799,7 +799,7 @@ public class GardenDetailsControllerTest {
     }
     @Test
     @WithMockUser
-    public void GivenOnGardenDetails_WhenNotificationClosed_LastNotifiedDateUpdated() throws Exception {
+    void GivenOnGardenDetails_WhenNotificationClosed_LastNotifiedDateUpdated() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
@@ -848,7 +848,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void ViewFriendsGardensRequested_UserIsNotFriend_RedirectedToOwnGardens() throws Exception {
+    void ViewFriendsGardensRequested_UserIsNotFriend_RedirectedToOwnGardens() throws Exception {
         Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
         Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
         currentUser.setId(1L);
@@ -873,7 +873,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void ViewFriendsGardensRequested_FriendDoesNotExist_RedirectedToOwnGardens() throws Exception {
+    void ViewFriendsGardensRequested_FriendDoesNotExist_RedirectedToOwnGardens() throws Exception {
         Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
         currentUser.setId(1L);
         gardenerFormService.addGardener(currentUser);
@@ -893,7 +893,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void UserEntersSixthBadWord_UserIsBanned_UserIsLoggedOut() throws Exception {
+    void UserEntersSixthBadWord_UserIsBanned_UserIsLoggedOut() throws Exception {
         Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
         currentUser.setId(1L);
         currentUser.setBadWordCount(5);
@@ -916,7 +916,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void FollowAGarden_UserIsAlreadyFollowing_FollowerRemoved() throws Exception {
+    void FollowAGarden_UserIsAlreadyFollowing_FollowerRemoved() throws Exception {
 
         when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.of(new Follower(1L, 1L)));
         browseMockMvc.perform(MockMvcRequestBuilders.post("/follow")
@@ -926,7 +926,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void FollowAGarden_UserIsNotFollowing_FollowerAdded() throws Exception {
+    void FollowAGarden_UserIsNotFollowing_FollowerAdded() throws Exception {
         when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.empty());
 
         browseMockMvc.perform(MockMvcRequestBuilders.post("/follow")
