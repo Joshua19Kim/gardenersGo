@@ -92,9 +92,9 @@
                 <div id="location-error" th:if="${date == null}">Location not found, please update your location to see
                     the weather
                 </div>
-                <ul class="list-group list-group-horizontal justify-content-evenly align-items-center d-flex">
+                <ul class="list-group list-group-horizontal justify-content-evenly align-items-center d-flex flex-wrap">
                     <li th:if="${date}">
-                        <div class="card current">
+                        <div class="card current col-md-6 col-sm-6 col-lg-4 col-xl-4 col-xxl-3 mb-4 h-100">
                             <div class="weather-display-row">
                                 <br/>
                                 <p th:text="${date}"></p>
@@ -125,8 +125,8 @@
                     </li>
 
 
-                    <li class="future-weather weather-display-container" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
-                        <div class="card forecast">
+                    <li class="future-weather weather-display-container d-flex flex-wrap" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
+                        <div class="card forecast col-md-6 col-sm-6 col-lg-4 col-xl-4 col-xxl-3 mb-4 h-100 w-100">
                             <img class="card-img-top" alt="No image available"
                                  th:src="'https:' + ${forecastWeatherImage.get(iter.index)}"/>
 
@@ -160,7 +160,7 @@
 
         </div>
 
-        <div class="row  w-100">
+        <div class="row w-100">
             <br/>
             <h4>Plants:</h4>
             <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="btn btn-primary m-2 w-auto"
