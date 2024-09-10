@@ -34,12 +34,12 @@
             <img class="nav-link" id="addTagIcon" alt="Add Circle">
         </a>
         <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{browseGardens/addTag}">
-            <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
-                   th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
-                   maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus
+            <input type="text" id="tag-input" list="tagList" autocomplete="off"
+                   th:value="${tag != null ? tag : ''}"
+                   th:style="${tag != null ? 'display: block;' : 'display: none;'}"
+                   placeholder="Add tag..." maxlength="50" onkeydown="submitTagOnEnter(event)" autofocus
                    th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}" tabindex="15">
-                   maxlength="50" onkeydown="submitTagOnEnter(event)" autofocus
-                   th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}">
+
             <input type="hidden" name="pageNo" th:value="${gardensPage.number}" >
             <input type="hidden" name="tag-input" id="hidden-tag-input">
             <div th:each="tag : ${tags}">

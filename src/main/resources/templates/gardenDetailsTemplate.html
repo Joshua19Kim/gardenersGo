@@ -81,8 +81,8 @@
                     <input type="text" id="tag-input" list="tagList" autocomplete="off"
                            th:value="${tag != null ? tag : ''}"
                            th:style="${tag != null} ? 'display: block;' : 'display: none;'"
-                           placeholder="Add tag..."
-                           maxlength="50" onkeydown="submitTagOnEnter(event)" autofocus class="form-control"
+                           placeholder="Add tag..." maxlength="50" onkeydown="submitTagOnEnter(event)" autofocus
+                           class="form-control"
                            th:classappend="${((tagValid != '' && tagValid != null) || (tagWarning != '' && tagWarning != null)) ? 'error' : ''}"
                            tabindex="13">
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
@@ -320,7 +320,8 @@
         return '';
 
     }
-    addTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png
+
+    addTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
 
 
 </script>
