@@ -58,6 +58,8 @@ public class PlantAddFormControllerTest {
 
   @MockBean private LocationService locationService;
 
+  @MockBean private FollowerService followerService;
+
   @Test
   @WithMockUser
   public void GardenDetailsRequested_ExistentIdGiven_PlantDetailsProvided() throws Exception {
