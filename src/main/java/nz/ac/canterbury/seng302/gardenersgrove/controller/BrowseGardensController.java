@@ -329,7 +329,7 @@ public class BrowseGardensController {
             } else {
                 Follower follower = new Follower(gardenerId, gardenToFollow);
                 try {
-                    followerService.addfollower(follower);
+                    followerService.addFollower(follower);
                     gardenOptional.ifPresent(garden -> redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You are now following " + garden.getName()));
                 } catch (IllegalArgumentException e) {
                     redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You cannot follow this garden");

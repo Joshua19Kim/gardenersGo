@@ -234,9 +234,9 @@ public class GardensControllerTest {
         Follower followGarden2 = new Follower(currentUser.getId(), garden2.getId());
         Follower followGarden3 = new Follower(currentUser.getId(), garden3.getId());
 
-        followerService.addfollower(followGarden1);
-        followerService.addfollower(followGarden2);
-        followerService.addfollower(followGarden3);
+        followerService.addFollower(followGarden1);
+        followerService.addFollower(followGarden2);
+        followerService.addFollower(followGarden3);
 
         List<Long> followedGardenIds = Arrays.asList(garden1.getId(), garden2.getId(), garden3.getId());
 

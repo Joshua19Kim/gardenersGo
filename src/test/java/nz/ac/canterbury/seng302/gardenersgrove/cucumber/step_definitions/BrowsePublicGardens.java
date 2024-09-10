@@ -78,7 +78,7 @@ public class BrowsePublicGardens {
         Garden garden = new Garden(gardenName, "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         garden.setIsGardenPublic(true);
         gardenService.addGarden(garden);
-        followerService.addfollower(new Follower(gardener.getId(), garden.getId()));
+        followerService.addFollower(new Follower(gardener.getId(), garden.getId()));
         gardenToFollow = garden;
     }
 

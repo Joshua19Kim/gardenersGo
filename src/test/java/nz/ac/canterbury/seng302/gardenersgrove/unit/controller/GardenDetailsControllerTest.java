@@ -1,6 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unit.controller;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenDetailsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -13,16 +22,6 @@ import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
 
 public class GardenDetailsControllerTest {
 
