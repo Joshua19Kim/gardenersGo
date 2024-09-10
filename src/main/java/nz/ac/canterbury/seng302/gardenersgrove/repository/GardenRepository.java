@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
@@ -49,7 +48,6 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
      * @return A list of all gardens with the specified owner stored in the repository.
      */
     List<Garden> findByGardenerId(Long gardenerId);
-
     /**
      * Updates the last notified date of a garden by its id
      *

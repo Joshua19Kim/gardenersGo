@@ -147,7 +147,6 @@ textarea#description.garden-form-control {
 
 
 .btn {
-    border: none;
     border-radius: 25px;
     padding: 10px 15px;
     width: 50%;
@@ -454,13 +453,19 @@ img {
     cursor: pointer;
 }
 
+
 #tag-container {
     display: flex;
+    flex-wrap: wrap;
     width: auto;
     margin-bottom: 20px;
     align-items: center;
+    gap: 5px; /
+    max-width: 1200px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    white-space: normal;
 }
-
 
 #tag {
     width: fit-content;
@@ -470,40 +475,30 @@ img {
     margin-left: 5px;
     padding: 5px;
     color: #ffffff;
+    word-break: break-word;
 }
 
-#add-tag {
-    width: 22px;
-    height: 22px;
+
+#add-tag, #submit-tag {
+    width: 30px;
+    height: 30px;
     background-color: var(--primary-color);
     border-radius: 50%;
     display: flex;
-    margin-left: 5px;
-    padding-left: 6.5px;
-    color: #ffffff;
-    font-weight: bolder;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    margin-left: 5px;
+    padding: 0;
 }
 
-#submit-tag {
-    display: none;
-    width: 22px;
-    height: 22px;
-    background-color: var(--button-color);
+#add-tag img, #submit-tag img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 50%;
-    margin-left: 5px;
-    padding-top: 2px;
-    padding-right: 2px;
-    padding-bottom: 2px;
-    padding-left: 6px;
-    color: #ffffff;
-    font-weight: bolder;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
 }
+
 
 #add-tag:hover, #submit-tag:hover {
     cursor: pointer;
@@ -1131,6 +1126,12 @@ form.search-bar::after {
     max-width: 100px;
     max-height: 70px;
     border-radius: 4px;
+}
+
+.friend #manage-friends-pp {
+    height: 150px !important;
+    width: 150px !important;
+    object-fit: cover !important;
 }
 
 .friend a {
