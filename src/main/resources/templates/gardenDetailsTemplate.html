@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
-                   onclick="transformToInput()" tabindex="12">
+                   onclick="transformToInput()" tabindex="13">
                     <img class="nav-link" src="/images/icons/add_circle_white.png" alt="Add Circle">
                 </a>
                 <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{addTag}">
@@ -68,7 +68,7 @@
                            placeholder="Add tag..."
                            maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus class="form-control"
                            th:classappend="${((tagValid != '' && tagValid != null) || (tagWarning != '' && tagWarning != null)) ? 'error' : ''}"
-                           tabindex="13">
+                           tabindex="14">
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
                     <input type="hidden" name="gardenId" th:value="${garden.id}">
                     <datalist id="tagList">
@@ -76,7 +76,7 @@
                     </datalist>
                 </form>
                 <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
-                   onclick="submitTag()" tabindex="14                   ">
+                   onclick="submitTag()" tabindex="15">
                     <img class="nav-link" src="/images/icons/add_circle_white.png" alt="Add Circle">
                 </a>
             </div>

@@ -11,8 +11,8 @@
 <div class="browse-gardens-container">
     <div class="search-container d-flex justify-content-center">
         <form class="form-inline" method="post" th:action="@{/browseGardens}">
-            <input class="form-control mr-2 mb-0 mt-0" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="12">
-            <button class="btn btn-outline-success mt-0" type="submit" tabindex="13">Search</button>
+            <input class="form-control mr-2 mb-0 mt-0" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="13">
+            <button class="btn btn-outline-success mt-0" type="submit" tabindex="14">Search</button>
             <div th:each="tag : ${tags}">
                 <input type="hidden" name="tags" th:value="${tag}" />
             </div>
@@ -29,14 +29,14 @@
             </div>
         </div>
         <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
-           onclick="transformToInput()" tabindex="14">
+           onclick="transformToInput()" tabindex="15">
             <img class="nav-link" src="/images/icons/add_circle_white.png" alt="Add Circle">
         </a>
         <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{browseGardens/addTag}">
             <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
                    th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
                    maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus
-                   th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}" tabindex="15">
+                   th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}" tabindex="16">
             <input type="hidden" name="pageNo" th:value="${gardensPage.number}" >
             <input type="hidden" name="tag-input" id="hidden-tag-input">
             <div th:each="tag : ${tags}">
@@ -47,7 +47,7 @@
             </datalist>
         </form>
         <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
-           onclick="submitTag()" tabindex="16">
+           onclick="submitTag()" tabindex="17">
             <img class="nav-link" src="/images/icons/add_circle_white.png" alt="Add Circle">
         </a>
     </div>

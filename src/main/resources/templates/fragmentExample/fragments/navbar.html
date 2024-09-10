@@ -39,12 +39,13 @@
                     <li class="nav-item flex-grow-1"></li>
 
                     <li class="nav-item-dropdown dropdown" >
-                        <a class="nav-link dropdown-toggle" th:href="@{/gardens}" role="button" data-bs-hover="dropdown" aria-expanded="false" tabindex="2">My
-                            Gardens
+                        <a class="nav-link dropdown-toggle" th:href="@{/gardens}" role="button" data-bs-hover="dropdown" aria-expanded="false" tabindex="2"
+                           id="gardenDropdown" onkeydown="handleGardenKeydown(event)">
+                            My Gardens
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown" tabindex="3">
+                        <ul class="dropdown-menu garden-dropdown-menu" aria-labelledby="navbarDropdown" tabindex="3">
                             <li class="nav-item">
-                                <a class="nav-link" th:href="@{/gardens/form(redirect=${requestURI})}">
+                                <a class="nav-link" th:href="@{/gardens/form(redirect=${requestURI})}" tabindex="4">
                                     <img class="nav-link" id="gardenPlusIcon" src="/images/icons/add_circle_off_black.png" style="max-width: 40px; object-fit: contain; cursor: pointer;" alt="Add Circle">
                                     Create New Garden
                                 </a>
@@ -60,14 +61,14 @@
                     <li class="nav-item flex-grow-1"></li>
 
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/browseGardens}" tabindex="4">Browse Gardens</a>
+                        <a class="nav-link" th:href="@{/browseGardens}" tabindex="5">Browse Gardens</a>
                     </li>
 
                     <!-- Spacer -->
                     <li class="nav-item flex-grow-1"></li>
 
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/plantWiki}" tabindex="5">Plant Wiki</a> <!-- add in when working th:href="@{/plantWiki}"-->
+                        <a class="nav-link" th:href="@{/plantWiki}" tabindex="6">Plant Wiki</a> <!-- add in when working th:href="@{/plantWiki}"-->
                     </li>
 
                     <!-- Spacer -->
@@ -81,7 +82,7 @@
                                 data-bs-toggle="modal"
                                 style="max-width: 50px; object-fit: contain; cursor: pointer;"
                                 alt="Scan Plant"
-                                title="Scan Plant" tabindex="6"
+                                title="Scan Plant" tabindex="7"
                         >
                     </li>
 
@@ -89,14 +90,14 @@
                     <li class="nav-item flex-grow-1"></li>
 
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/myCollection}" tabindex="7">My Collection</a>
+                        <a class="nav-link" th:href="@{/myCollection}" tabindex="8">My Collection</a>
                     </li>
 
                     <!-- Spacer -->
                     <li class="nav-item flex-grow-1"></li>
 
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/manageFriends}" tabindex="8">Manage Friends</a>
+                        <a class="nav-link" th:href="@{/manageFriends}" tabindex="9">Manage Friends</a>
                     </li>
 
                     <!-- Spacer -->
@@ -104,13 +105,13 @@
 
                         <li class="nav-item-dropdown dropdown">
                             <button class="btn btn-link p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img id="userIcon" class="dropdown-toggle" style="max-width: 50px; object-fit: contain;" th:href="@{/user}" alt="Account" tabindex="9">
+                                <img id="userIcon" class="dropdown-toggle" style="max-width: 50px; object-fit: contain;" th:href="@{/user}" alt="Account" tabindex="10">
                             </button>                        <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li class="nav-item" tabindex="10">
+                            <li class="nav-item" tabindex="11">
                                 <a class="nav-link" th:href="@{/user}" >My Profile</a>
                             </li>
                             <div class="dropdown-divider"></div>
-                            <li class="nav-item" sec:authorize="isAuthenticated()" tabindex="11">
+                            <li class="nav-item" sec:authorize="isAuthenticated()" tabindex="12">
                                 <a class="nav-link" href="#" onclick="logout(event)">Logout</a>
                                 <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
                                     <input type="submit" value="Logout"/>
@@ -146,6 +147,55 @@
     gardenPlusIcon.src = `${getBaseUrl()}/images/icons/add_circle_off_black.png`;
     scanIcon.src = `${getBaseUrl()}/images/icons/indeterminate_question_box_off_black.png`;
     userIcon.src = `${getBaseUrl()}/images/icons/account_circle_off_black.png`;
+
+    function handleUserKeydown(event) {
+        if (event.key === 'ArrowDown' && event.target === userIcon) {
+            event.preventDefault();
+            const dropdownMenu = document.querySelector('.custom-dropdown-menu');
+            if (dropdownMenu) {
+                dropdownMenu.style.display = 'block';
+            }
+        } else if (event.key === 'Escape') {
+
+            const dropdownMenu = document.querySelector('.custom-dropdown-menu');
+            if (dropdownMenu) {
+                dropdownMenu.style.display = 'none';
+            }
+        }
+    }
+
+    document.getElementById("userIcon").addEventListener("keydown", handleUserKeydown)
+
+    function handleGardenKeydown(event) {
+        if (event.key === 'Enter') {
+            // enter
+            document.getElementById('gardenDropdown').click();
+        } else if (event.key === 'ArrowDown') {
+            // down arrow
+            event.preventDefault();
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            if (dropdownMenu) {
+                dropdownMenu.style.display = 'block';
+            }
+        } else if (event.key === 'Escape') {
+            // escape
+            const dropdownMenu = document.querySelector('.garden-dropdown-menu');
+            if (dropdownMenu) {
+                dropdownMenu.style.display = 'none';
+            }
+        }
+    }
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            // Close any open dropdowns
+            const openDropdowns = document.querySelectorAll('.dropdown-menu');
+            openDropdowns.forEach(function(dropdown) {
+                dropdown.style.display = 'none';
+            });
+        }
+    });
+
+
 </script>
 
 <div th:insert="~{modal/scanningModal.html}"></div>
