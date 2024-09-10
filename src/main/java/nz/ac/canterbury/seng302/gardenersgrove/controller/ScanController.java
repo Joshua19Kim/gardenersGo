@@ -1,10 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import java.util.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 /**
  * Controller responsible for handling requests related to plant identification.
  */
@@ -31,11 +29,15 @@ import java.util.Optional;
 public class ScanController {
     private final Logger logger = LoggerFactory.getLogger(ScanController.class);
     private final PlantIdentificationService plantIdentificationService;
+    private final IdentifiedPlantService identifiedPlantService;
     private final GardenerFormService gardenerFormService;
     private final ImageService imageService;
     private final Map<String, String> errorResponse;
     private final Map<String, Object> response;
+    private IdentifiedPlant identifiedPlant;
+
     private final String errorKey = "error";
+
     /**
      * Constructs a new ScanController with the services required for sending and storing identified plants.
      *
@@ -44,13 +46,13 @@ public class ScanController {
      * @param imageService               the service for checking image validation
      */
     @Autowired
-    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService) {
+    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService, IdentifiedPlantService identifiedPlantService) {
         this.plantIdentificationService = plantIdentificationService;
         this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
         errorResponse = new HashMap<>();
         response = new HashMap<>();
-
+        this.identifiedPlantService = identifiedPlantService;
     }
 
     /**
@@ -95,7 +97,7 @@ public class ScanController {
 
         if (gardener.isPresent()) {
             try {
-                IdentifiedPlant identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
+                identifiedPlant = plantIdentificationService.identifyPlant(image, gardener.get());
                 if (identifiedPlant.getScore() >= 0.3) {
                     response.put("bestMatch", identifiedPlant.getBestMatch());
                     response.put("score", identifiedPlant.getScore());
@@ -129,7 +131,6 @@ public class ScanController {
     /**
      * Handles POST requests to the /saveIdentifiedPlant endpoint.
      * Process the data of the identified plant
-     * @param plantData The data of the identified plant
      * @return ResponseEntity<?> with one of the following:
      *         - ResponseEntity.ok() with a success message if the plant data is saved successfully
      *         - ResponseEntity.badRequest() with an error message if saving the plant data fails
@@ -137,20 +138,40 @@ public class ScanController {
      */
     @PostMapping("/saveIdentifiedPlant")
     @ResponseBody
-    public ResponseEntity<?> saveIdentifiedPlant(@RequestBody Map<String, Object> plantData) {
+    public ResponseEntity<?> saveIdentifiedPlant( @RequestBody Map<String, String> extra) {
         logger.info("POST /saveIdentifiedPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
         if (gardener.isPresent()) {
             try {
-                Double score = (Double) plantData.get("score");
-                String bestMatch = (String) plantData.get("bestMatch");
-                List<String> commonNames = (List<String>) plantData.get("commonNames");
-                String imageUrl = (String) plantData.get("imageUrl");
-                String gbifId = (String) plantData.get("gbifId");
+                String name = extra.get("name");
+                String description = extra.get("description");
 
-                response.put("message", "Plant saved successfully");
-                return ResponseEntity.ok(response);
+                String validatedPlantName = ValidityChecker.validatePlantName(extra.get("name"));
+                String validatedPlantDescription = ValidityChecker.validatePlantDescription(extra.get("description"));
+                boolean isValid = true;
+                if (!Objects.equals(name, validatedPlantName)) {
+                    errorResponse.put("nameError", validatedPlantName);
+                    isValid = false;
+                }
+                if (!Objects.equals(description, validatedPlantDescription)) {
+                    errorResponse.put("descriptionError", validatedPlantDescription);
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    identifiedPlant.setName(validatedPlantName);
+                    boolean descriptionPresent = description != null && !validatedPlantDescription.trim().isEmpty();
+                    if (descriptionPresent) {
+                        identifiedPlant.setDescription(validatedPlantDescription);
+                    }
+                    response.put("message", "Plant saved successfully");
+                    identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
+                    return ResponseEntity.ok(response);
+
+                }
+                return ResponseEntity.badRequest().body(errorResponse);
+
             } catch (Exception e) {
                 errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
                 return ResponseEntity.badRequest().body(errorResponse);
