@@ -11,16 +11,21 @@
 <div class="browse-gardens-container">
     <div class="search-container d-flex justify-content-center">
         <form id="searchForm" class="form-inline" method="post" th:action="@{/browseGardens}">
-            <input class="form-control mr-2 mb-0 mt-0" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="12">
-            <div th:each="tag : ${tags}">
-                <input type="hidden" name="tags" th:value="${tag}" />
+            <input id="searchText" class="form-control mr-2 mb-0 mt-0" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="12">
+            <div id="selectedTagsInput">
+                <div  th:each="tag : ${tags}">
+                    <input type="hidden" name="tags" th:value="${tag}" />
+                </div>
             </div>
+
         </form>
         <div id="tag-container" class="d-flex flex-row mt-3">
             <strong>Tags:</strong>
-            <div th:if="${tags != null}" th:each="tag : ${tags}">
-                <div id="tag">
-                    <span th:text="${tag}"></span>
+            <div class="d-flex flex-row" th:if="${tags != null}" id="selectedTags" >
+                <div th:each="tag : ${tags}">
+                    <div id="tag">
+                        <span th:text="${tag}"></span>
+                    </div>
                 </div>
             </div>
             <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
@@ -34,8 +39,10 @@
                        th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}" tabindex="15">
                 <input type="hidden" name="pageNo" th:value="${gardensPage.number}" >
                 <input type="hidden" name="tag-input" id="hidden-tag-input">
-                <div th:each="tag : ${tags}">
-                    <input type="hidden" name="tags" th:value="${tag}" />
+                <div id="addingTagsInput" >
+                    <div th:each="tag : ${tags}">
+                        <input type="hidden" name="tags" th:value="${tag}" />
+                    </div>
                 </div>
                 <datalist id="tagList">
                     <option th:each="tag : ${allTags}" th:value="${tag}" th:text="${tag}"></option>
@@ -55,10 +62,7 @@
 
     <div class="d-flex justify-content-center flex-row">
         <button class="btn btn-outline-success mt-0 " style="max-width: fit-content" onclick="submitSearch()" tabindex="13">Search</button>
-        <form method="get" th:action="@{browseGardens/clearSearch}">
-            <button class="btn btn-outline-danger mt-0" style="max-width: fit-content; margin-left: 40px" type="submit" tabindex="13">Clear</button>
-            <input type="hidden" name="pageNo" th:value="${gardensPage.number}" >
-        </form>
+        <button class="btn btn-outline-danger mt-0" style="max-width: fit-content; margin-left: 40px" onclick="clearSearch()" tabindex="13">Clear</button>
     </div>
 
 
@@ -162,7 +166,12 @@
         document.getElementById("searchForm").submit()
     }
 
-
+    function clearSearch() {
+        document.getElementById("searchText").value = "";
+        document.getElementById("selectedTags").innerHTML = "";
+        document.getElementById("selectedTagsInput").innerHTML = "";
+        document.getElementById("addingTagsInput").innerHTML = "";
+    }
 
 </script>
 </html>
