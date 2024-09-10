@@ -74,14 +74,14 @@
                     <li class="nav-item flex-grow-1"></li>
 
                     <!-- Centered Scan Plant Item -->
-                    <li class="nav-item text-center" tabindex="6">
+                    <li class="nav-item text-center" >
                         <img id="scanIcon"
                                 class="nav-link modal-link"
                                 data-bs-target="#scanningModal"
                                 data-bs-toggle="modal"
                                 style="max-width: 50px; object-fit: contain; cursor: pointer;"
                                 alt="Scan Plant"
-                                title="Scan Plant"
+                                title="Scan Plant" tabindex="6"
                         >
                     </li>
 
@@ -103,10 +103,11 @@
                     <li class="nav-item flex-grow-1"></li>
 
                         <li class="nav-item-dropdown dropdown">
-                        <img id="userIcon" class="nav-link dropdown-toggle" style="max-width: 50px; object-fit: contain;" th:href="@{/user}" role="button" data-bs-hover="dropdown" aria-expanded="false" alt="Account" tabindex="9">
-                        <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/user}" tabindex="10">My Profile</a>
+                            <button class="btn btn-link p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img id="userIcon" class="dropdown-toggle" style="max-width: 50px; object-fit: contain;" th:href="@{/user}" alt="Account" tabindex="9">
+                            </button>                        <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li class="nav-item" tabindex="10">
+                                <a class="nav-link" th:href="@{/user}" >My Profile</a>
                             </li>
                             <div class="dropdown-divider"></div>
                             <li class="nav-item" sec:authorize="isAuthenticated()" tabindex="11">
