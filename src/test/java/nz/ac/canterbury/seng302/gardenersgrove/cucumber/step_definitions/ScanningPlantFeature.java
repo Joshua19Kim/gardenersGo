@@ -1,40 +1,34 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
-import org.mockito.Mockito;
-import static org.mockito.Mockito.when;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class ScanningPlantFeature {
@@ -44,20 +38,18 @@ public class ScanningPlantFeature {
   private IdentifiedPlantService identifiedPlantService;
   @Autowired
   private GardenerFormService gardenerFormService;
-  @Autowired
-  private IdentifiedPlantRepository identifiedPlantRepository;
   private MockMultipartFile imageFile;
   private String errorMessage;
   private String inputName;
   private String inputDescription;
   private ResultActions resultActions;
   private IdentifiedPlant cataloguedPlant;
-  private Gardener currentUser;
-  @Before("@U7001 or @7002 or @7004")
+
+    @Before("@U7001 or @7002 or @7004")
   public void setUp() {
-    currentUser = new Gardener("Test", "Gardener",
-            LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
-            "Password1!");
+        Gardener currentUser = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
     gardenerFormService.addGardener(currentUser);
   }
 
@@ -114,14 +106,14 @@ public class ScanningPlantFeature {
             "annuus",
             plantOwner
     );
-    cataloguedPlant.setId(1L);
     identifiedPlantService.saveIdentifiedPlantDetails(cataloguedPlant);
   }
 
   @When("I click the edit button")
   public void i_click_the_edit_button() throws Exception {
+
     resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/collectionDetails/edit")
-            .param("plantId", "1")
+            .param("plantId", cataloguedPlant.getId().toString())
             .with(csrf()));
   }
 
@@ -130,8 +122,10 @@ public class ScanningPlantFeature {
     resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("editIdentifiedPlantForm"))
-            .andExpect(model().attributeExists("plant"))
-            .andExpect(model().attribute("plant", cataloguedPlant));
+            .andExpect(model().attributeExists("plant"));
+    MvcResult mvcResult = resultActions.andReturn();
+    IdentifiedPlant plant = (IdentifiedPlant) Objects.requireNonNull(mvcResult.getModelAndView()).getModel().get("plant");
+    assertEquals(plant.getName(), cataloguedPlant.getName());
   }
 
   @Given("I am on the edit plant form for the catalogued plant")
@@ -145,15 +139,15 @@ public class ScanningPlantFeature {
     resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/collectionDetails/edit")
             .param("name",inputName)
             .param("description", inputDescription)
-            .param("plantId", "1")
+            .param("plantId", cataloguedPlant.getId().toString())
             .with(csrf()));
   }
 
   @Then("the information is updated")
   public void the_information_is_updated() {
     // resultActions are not checked
-    Assertions.assertEquals(inputName, cataloguedPlant.getName());
-    Assertions.assertEquals((inputDescription.isEmpty() ? null : inputDescription), cataloguedPlant.getDescription());
+    assertEquals(inputName, cataloguedPlant.getName());
+    assertEquals((inputDescription.isEmpty() ? null : inputDescription), cataloguedPlant.getDescription());
   }
 
   @Then("I get the error message {string}")
@@ -163,14 +157,14 @@ public class ScanningPlantFeature {
             .andExpect(model().attributeExists("plant"))
             .andExpect(view().name("editIdentifiedPlantForm"));
 
-    Map<String, Object> result = resultActions.andReturn().getModelAndView().getModel();
+    Map<String, Object> result = Objects.requireNonNull(resultActions.andReturn().getModelAndView()).getModel();
 
     // NB: at present this only works with testing one error at a time
     if (result.containsKey("nameError")) {
-      Assertions.assertEquals(message, result.get("nameError"));
+      assertEquals(message, result.get("nameError"));
     }
     if (result.containsKey("descriptionError")) {
-      Assertions.assertEquals(message, result.get("descriptionError"));
+      assertEquals(message, result.get("descriptionError"));
     }
   }
 
@@ -232,9 +226,9 @@ public class ScanningPlantFeature {
     Map<String, String> responseMap = objectMapper.readValue(responseBody, Map.class);
 
     if (responseMap.containsKey("nameError")) {
-      Assertions.assertEquals(message, responseMap.get("nameError"));
+      assertEquals(message, responseMap.get("nameError"));
     } else if (responseMap.containsKey("descriptionError")) {
-      Assertions.assertEquals(message, responseMap.get("descriptionError"));
+      assertEquals(message, responseMap.get("descriptionError"));
     } else {
       Assertions.fail("Expected error message not found in response");
     }

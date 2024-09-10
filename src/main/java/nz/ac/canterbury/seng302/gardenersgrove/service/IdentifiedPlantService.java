@@ -8,8 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class IdentifiedPlantService {
     private final IdentifiedPlantRepository identifiedPlantRepository;
@@ -55,4 +53,5 @@ public class IdentifiedPlantService {
         // TODO: DELETE
         return identifiedPlantRepository.findById(id);
     }
+
 }
