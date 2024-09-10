@@ -10,9 +10,9 @@
 
 <div class="garden-details-container">
     <div class="container" style="margin: 0; width: 1200px">
-        <div class="row w-100" >
+        <div class="row w-100" style="overflow-wrap: break-word;">
             <div class="col-6 flex-row d-flex">
-                <h1 class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;">
+                <h1 class="name text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;">
                     <span th:text="${garden.name}"></span>
                 </h1>
             </div>
@@ -41,15 +41,31 @@
 
 
         </div>
-        <div class="row w-100">
+        <div class="row w-100" style="overflow-wrap: break-word;">
 
-            <p><strong>Location:</strong> <span class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;" th:text="${garden.getFullLocation()}"></span></p>
-            <p>
-                <strong>Size:</strong> <span th:if="${garden.size != null}"
-                                             th:text="${garden.size + ' m&sup2;'}"></span>
-            </p>
-            <p><strong>Description:</strong> <span class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;" th:text="${garden.description}"></span></p>
+            <!-- Location -->
+            <div class="col-12">
+                <p id="location" class="location-text">
+                    <strong>Location:</strong>
+                    <span class="location-content" th:text="${garden.getFullLocation()}"></span>
+                </p>
+            </div>
 
+            <!-- Size -->
+            <div class="col-12">
+                <p>
+                    <strong>Size:</strong>
+                    <span th:if="${garden.size != null}" th:text="${garden.size + ' m&sup2;'}"></span>
+                </p>
+            </div>
+
+            <!-- Description -->
+            <div class="col-12">
+                <p class="description-text">
+                    <strong>Description:</strong>
+                    <span class="description-content" th:text="${garden.description}"></span>
+                </p>
+            </div>
             <div id="tag-container">
                 <strong>Tags:</strong>
                 <div th:if="${tags != null}" th:each="tag : ${tags}">
