@@ -59,15 +59,6 @@ public class BrowsePublicGardens {
     }
 
 
-    @Given("I am on the browse gardens page to search")
-    public void iAmOnTheBrowseGardensPageToSearch() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens"))
-                .andExpect(view().name("browseGardensTemplate"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-    }
-
     @Given("I input the search term {string}")
     public void iInputTheSearchTerm(String searchTerm) {
         this.searchTerm = searchTerm;
@@ -144,5 +135,10 @@ public class BrowsePublicGardens {
     }
 
 
-
+    @When("I follow a garden on the garden details page")
+    public void i_follow_a_garden_on_the_garden_details_page() throws Exception {
+        resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/follow")
+                .param("gardenToFollow", gardenToFollow.getId().toString())
+                .with(csrf()));
+    }
 }
