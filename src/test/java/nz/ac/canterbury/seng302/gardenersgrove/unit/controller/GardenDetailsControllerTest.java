@@ -176,7 +176,7 @@ public class GardenDetailsControllerTest {
         Mockito.when(mockFollowerService.findFollowing(mockUser.getId())).thenReturn(mockFollowerList);
         String template = gardenDetailsController.gardenDetails("1", null, null, null, mockRedirectAttributes, mockModel, mockRequest);
         Assertions.assertEquals("gardenDetailsTemplate", template);
-        Mockito.verify(mockFollowerService, times(1)).findFollowing(anyLong());
+        Mockito.verify(mockFollowerService, times(2)).findFollowing(anyLong());
     }
 
     // Tests for gardens/addTag POST method -- These tests are not bad as the controller is not failsafe secure

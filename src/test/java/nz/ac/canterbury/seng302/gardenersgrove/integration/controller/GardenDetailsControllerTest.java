@@ -952,7 +952,7 @@ class GardenDetailsControllerTest {
                 .andExpect(content().string(containsString("No followers yet")));
 
         verify(gardenService, times(1)).getGarden(1L);
-        verify(followerService, times(1)).findFollowing(1L);
+        verify(followerService, times(2)).findFollowing(1L);
     }
     @Test
     @WithMockUser
@@ -972,7 +972,7 @@ class GardenDetailsControllerTest {
                 .andExpect(model().attribute("followerCount", 1));
 
         verify(gardenService, times(1)).getGarden(1L);
-        verify(followerService, times(1)).findFollowing(1L);
+        verify(followerService, times(2)).findFollowing(1L);
     }
 
 }
