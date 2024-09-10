@@ -42,7 +42,6 @@ public class GardenDetailsController {
     private final WeatherService weatherService;
     private final LocationService locationService;
     private final GardenVisitService gardenVisitService;
-
     private final FollowerService followerService;
 
     /**
