@@ -51,13 +51,14 @@ body {
     text-align: center;
 }
 
+#collection-card-img {
+    max-width: max-content !important;
+}
 .card-img-top {
     max-width: 128px;
 }
 
-#collection-card-img {
-    max-width: max-content !important;
-}
+
 
 .current {
     background-color: var(--weather-colour) !important;
@@ -147,7 +148,6 @@ textarea#description.garden-form-control {
 
 
 .btn {
-    border: none;
     border-radius: 25px;
     padding: 10px 15px;
     width: 50%;
