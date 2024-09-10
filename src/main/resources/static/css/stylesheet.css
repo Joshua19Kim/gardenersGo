@@ -51,10 +51,6 @@ body {
     text-align: center;
 }
 
-.card-img-top {
-    max-width: 128px;
-}
-
 #collection-card-img {
     max-width: max-content !important;
 }
@@ -71,8 +67,7 @@ body {
     height: 400px;
     width: 200px;
     min-width: 100%;
-    margin-bottom: 0;
-
+    margin-bottom: 20px;
 }
 
 h1 {
