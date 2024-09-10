@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -51,7 +52,6 @@ public class CollectionsControllerTest {
     @MockBean
     private ImageService imageService;
 
-    @Autowired
     private IdentifiedPlantRepository identifiedPlantRepository;
 
     private Gardener gardener;
@@ -170,6 +170,7 @@ public class CollectionsControllerTest {
 //        );
 //        FirstTestIdentifiedPlant.setName("my sunflower");
 //        FirstTestIdentifiedPlant.setDescription("my beautiful sunflower");
+//
 //        IdentifiedPlant SecondTestIdentifiedPlant = new IdentifiedPlant(
 //                "Dahlia × cultorum Thorsrud & Reisaeter",
 //                0.44,
@@ -183,6 +184,7 @@ public class CollectionsControllerTest {
 //        );
 //        SecondTestIdentifiedPlant.setName("my red flower");
 //        SecondTestIdentifiedPlant.setDescription("my beautiful red flower");
+//
 //        IdentifiedPlant ThirdTestIdentifiedPlant = new IdentifiedPlant(
 //                "Capsicum annuum L.",
 //                0.33,
@@ -201,6 +203,9 @@ public class CollectionsControllerTest {
 //        plantIdentificationService.saveIdentifiedPlantDetails(SecondTestIdentifiedPlant);
 //        plantIdentificationService.saveIdentifiedPlantDetails(ThirdTestIdentifiedPlant);
 //
+//
+//        when(plantIdentificationService.getGardenerPlantSpeciesPaginated(ValidityChecker.validatePageNumber("2"), 12, gardener.getId() ))
+//                .thenReturn(identifiedPlantRepository.getSpeciesByGardenerId(gardener.getId(), ))
 //
 //        mockMvc.perform(MockMvcRequestBuilders.get("/myCollection")
 //                        .param("pageNo", "2")

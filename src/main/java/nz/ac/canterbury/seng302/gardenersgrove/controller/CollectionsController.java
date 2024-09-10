@@ -120,8 +120,6 @@ public class CollectionsController {
         // For Autocomplete
         List<String> plantScientificNames = plantIdentificationService.getAllSpeciesScientificNames();
         List<String> plantNames = plantIdentificationService.getAllPlantNames();
-        logger.info(plantScientificNames.toString());
-        logger.info(plantNames.toString());
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String plantNamesJson = objectMapper.writeValueAsString(plantNames);
