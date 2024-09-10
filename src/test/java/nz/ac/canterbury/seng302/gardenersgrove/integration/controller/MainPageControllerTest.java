@@ -82,6 +82,7 @@ public class MainPageControllerTest {
         mainPageLayout = new MainPageLayout(testGardener);
         when(mainPageLayoutService.getLayoutByGardenerId(any())).thenReturn(mainPageLayout);
     }
+
     @AfterEach
     public void tearDown() {
         gardenVisitRepository.deleteAllGardenVisitsByGardenerId(testGardener.getId());
@@ -105,7 +106,7 @@ public class MainPageControllerTest {
                 .andExpect(model().attributeExists("gardens"))
                 .andExpect(model().attribute("gardens", ownedGardens));
 
-        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(gardenerFormService, times(2)).findByEmail(anyString()); // This is increased to 2 because of the GlobalControllerAdvice
         verify(gardenService, times(1)).getGardensByGardenerId(anyLong());
     }
 
@@ -125,7 +126,7 @@ public class MainPageControllerTest {
                 .andExpect(model().attributeExists("recentGardens"))
                 .andExpect(model().attribute("recentGardens", recentlyVisitedGardens));
 
-        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(gardenerFormService, times(2)).findByEmail(anyString()); // This is increased to 2 because of the GlobalControllerAdvice
         verify(gardenVisitService, times(1)).findRecentGardensByGardenerId(anyLong());
     }
 
@@ -147,7 +148,7 @@ public class MainPageControllerTest {
                 .andExpect(model().attributeExists("newestPlants"))
                 .andExpect(model().attribute("newestPlants", recentlyAddedPlants));
 
-        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(gardenerFormService, times(2)).findByEmail(anyString()); // This is increased to 2 because of the GlobalControllerAdvice
         verify(plantService, times(1)).findNewestPlantsByGardenerId(anyLong());
 
     }
@@ -171,11 +172,9 @@ public class MainPageControllerTest {
                 .andExpect(model().attributeExists("friends"))
                 .andExpect(model().attribute("friends", friendsList));
 
-        verify(gardenerFormService, times(1)).findByEmail(anyString());
+        verify(gardenerFormService, times(2)).findByEmail(anyString()); // This is increased to 2 because of the GlobalControllerAdvice
         verify(relationshipService, times(1)).getCurrentUserRelationships(anyLong());
     }
-
-
 
 
     @Test
@@ -210,6 +209,7 @@ public class MainPageControllerTest {
                 .andExpect(view().name("mainPageTemplate"))
                 .andExpect(model().attribute("recentGardens", recentGardenList));
     }
+
     @Test
     @WithMockUser
     public void MainPageDisplayed_UserHasVisitedTwoGarden_ShowsTwoGardensInMostRecentOrder() throws Exception {
@@ -374,6 +374,7 @@ public class MainPageControllerTest {
                 .andExpect(model().attribute("friends", Matchers.empty()))
                 .andExpect(content().string(containsString("No friends added")));
     }
+
     @Test
     @WithMockUser
     public void MainPageDisplayed_UserHasFriends_ShowFriendsOnList() throws Exception {
@@ -403,7 +404,75 @@ public class MainPageControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("mainPageTemplate"))
-                .andExpect(model().attribute("friends",friendList));
+                .andExpect(model().attribute("friends", friendList));
     }
 
+    @Test
+    @WithMockUser
+    public void MainPageDisplayed_UserHidedRecentlyAccessedGardenList_ShowOtherThreeLists() throws Exception {
+        mainPageLayout.setWidgetsEnabled("0 1 1 1");
+        when(mainPageLayoutService.getLayoutByGardenerId(any())).thenReturn(mainPageLayout);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/home")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attribute("recentlyAccessedGardens", false))
+                .andExpect(model().attribute("newestPlantsList", true))
+                .andExpect(model().attribute("myGardensList", true))
+                .andExpect(model().attribute("friendsList", true));
+    }
+
+    @Test
+    @WithMockUser
+    public void MainPageDisplayed_UserHidedNewestPlantsList_ShowOtherThreeLists() throws Exception {
+        mainPageLayout.setWidgetsEnabled("1 0 1 1");
+        when(mainPageLayoutService.getLayoutByGardenerId(any())).thenReturn(mainPageLayout);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/home")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attribute("recentlyAccessedGardens", true))
+                .andExpect(model().attribute("newestPlantsList", false))
+                .andExpect(model().attribute("myGardensList", true))
+                .andExpect(model().attribute("friendsList", true));
+    }
+
+    @Test
+    @WithMockUser
+    public void MainPageDisplayed_UserHidedFriendsList_ShowOtherThreeLists() throws Exception {
+        mainPageLayout.setWidgetsEnabled("1 1 0 1");
+        when(mainPageLayoutService.getLayoutByGardenerId(any())).thenReturn(mainPageLayout);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/home")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attribute("recentlyAccessedGardens", true))
+                .andExpect(model().attribute("newestPlantsList", true))
+                .andExpect(model().attribute("myGardensList", false))
+                .andExpect(model().attribute("friendsList", true));
+
+    }
+
+    @Test
+    @WithMockUser
+    public void MainPageDisplayed_UserHidedMyGardensList_ShowOtherThreeLists() throws Exception {
+        mainPageLayout.setWidgetsEnabled("1 1 1 0");
+        when(mainPageLayoutService.getLayoutByGardenerId(any())).thenReturn(mainPageLayout);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/home")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attribute("recentlyAccessedGardens", true))
+                .andExpect(model().attribute("newestPlantsList", true))
+                .andExpect(model().attribute("myGardensList", true))
+                .andExpect(model().attribute("friendsList", false));
+    }
 }

@@ -1,0 +1,127 @@
+#scanningModal .modal-content {
+    background-color: var(--background-color);
+}
+
+#scanningAttribution {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+
+.input-modal {
+    color: #777777;
+}
+
+.identified-plant-image {
+    max-width: 300px;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.cancel-button {
+    background-color: var(--button-cancel-colour);
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+    background-color: var(--button-cancel-hover-colour);
+}
+
+.image-add-button {
+    background-color: var(--secondary-color);
+    padding: 5px 8px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.image-add-button:hover {
+    background-color: var(--primary-color);
+}
+
+.image-add-button:active {
+    background-color: var(--primary-color);
+}
+
+
+.extra-small {
+    font-size: 0.6em;
+    line-height: 1;
+}
+
+
+.detail-button {
+    background-color: var(--secondary-color);
+    padding: 5px 8px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.detail-button:hover {
+    background-color: var(--primary-color);
+}
+
+
+.new-plant-image-container {
+    position: relative;
+    width: 200px;
+    max-width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.new-plant-image-container img {
+    width: auto;
+    height: auto;
+    border-radius: inherit;
+    max-height: 300px;
+    max-width: 100%;
+    object-fit: contain;
+    transition: filter 0.3s ease;
+}
+
+.new-plant-image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.new-plant-image-container:hover::before {
+    opacity: 1;
+}
+
+.new-plant-image-container .image-button {
+    position: absolute;
+    top: 0;
+    right: 10%;
+    opacity: 0.5;
+    border: none;
+    background-color: transparent;
+    color: black;
+    font-size: 30px;
+    width: 10px;
+    height: 10px;
+    line-height: 1;
+    text-align: center;
+    vertical-align: top;
+    z-index: 2;
+    transition: opacity 0.3s ease;
+}
+.new-plant-image-container:hover .image-button {
+    opacity: 1;
+    color: white;
+}

@@ -10,6 +10,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Tag;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.TagRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.FollowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
@@ -24,7 +25,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
@@ -37,10 +37,6 @@ public class BrowseGardensByTagFeature {
 
     @Autowired
     private MockMvc mockMvc;
-
-    private Garden garden;
-
-    private Gardener gardener;
 
     @Autowired
     private GardenerFormService gardenerFormService;
@@ -57,18 +53,19 @@ public class BrowseGardensByTagFeature {
     @Autowired
     private GardenRepository gardenRepository;
 
+    @Autowired
+    private FollowerService followerService;
+
     private List<String> allTags;
 
     private ResultActions resultActions;
 
     private String tag;
 
-    private BrowseGardensController browseGardensControllerSpy;
-
     @Given("there is a garden with tags")
     public void there_is_a_garden_with_tags() {
-        gardener = gardenerFormService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
-        garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", gardener, "");
+        Gardener gardener = gardenerFormService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
+        Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", gardener, "");
         gardenService.addGarden(garden);
 
         allTags = new ArrayList<>();
@@ -78,10 +75,9 @@ public class BrowseGardensByTagFeature {
         for(String tag: allTags) {
             tagService.addTag(new Tag(tag, garden));
         }
-        browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, tagService));
+        BrowseGardensController browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, gardenerFormService, tagService, followerService));
         mockMvc = standaloneSetup(browseGardensControllerSpy).build();
         doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
-        doNothing().when(browseGardensControllerSpy).setTags(anyList());
     }
 
     @After("@U24")

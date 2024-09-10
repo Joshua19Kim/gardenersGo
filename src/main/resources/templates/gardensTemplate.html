@@ -7,15 +7,15 @@
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
-<div class="container">
-    <div class="card">
-        <h1 th:text="${gardener.firstName} + (${gardener.lastName != null}? ' ' + ${gardener.lastName} : '') + '\'s Gardens'"></h1>
-        <th:block th:each="garden : ${gardens}">
-            <div class="container card m-2">
-                <a th:text="${garden.name}" th:href="@{/gardens/details(gardenId=${garden.id})}"></a>
-            </div>
+<div class="d-flex flex-wrap justify-content-center mt-4 gap-3">
+    <div class="col-md-6 col-sm-6 col-lg-4 col-xl-4 col-xxl-3 mb-4 h-100" style="height:100%">
+        <div style="height: 100%;" th:insert="~{fragmentExample/fragments/myGardensWidget.html}">
+        </div>
+    </div>
 
-        </th:block>
+    <div th:if="${followedGardenList != null}" class="col-md-6 col-sm-6 col-lg-4 col-xl-4 col-xxl-3 mb-4 h-100" style="height:100%">
+        <div style="height: 100%;"  th:insert="~{fragmentExample/fragments/followedGardens.html}">
+        </div>
     </div>
 </div>
 </body>

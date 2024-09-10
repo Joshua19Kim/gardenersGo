@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.GardenControllers.GardenDetailsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -27,15 +28,19 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@WebMvcTest(controllers = GardenDetailsController.class)
-public class GardenDetailsControllerTest {
+@WebMvcTest(controllers = {GardenDetailsController.class, BrowseGardensController.class})
+class GardenDetailsControllerTest {
     Gardener testGardener = new Gardener("Test", "Gardener",
             LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
             "Password1!");
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private MockMvc browseMockMvc;
 
     @MockBean
     private GardenService gardenService;
@@ -64,6 +69,11 @@ public class GardenDetailsControllerTest {
     @MockBean
     private GardenVisitService gardenVisitService;
 
+    @MockBean
+    private FollowerService followerService;
+    
+    private MockMvc MOCK_MVC;
+
     @BeforeEach
     void setUp() throws IOException, InterruptedException {
         Mockito.reset(gardenerFormService);
@@ -75,12 +85,18 @@ public class GardenDetailsControllerTest {
         HttpResponse<String> response = Mockito.mock(HttpResponse.class);
         when(response.body()).thenReturn("test");
         when(locationService.sendRequest(Mockito.anyString())).thenReturn(response);
+        GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
+                relationshipService, requestService, weatherService, tagService, locationService, gardenVisitService, followerService);
+        MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
+        BrowseGardensController browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, gardenerFormService, tagService, followerService));
+        browseMockMvc = standaloneSetup(browseGardensControllerSpy).build();
+
 
     }
 
     @Test
     @WithMockUser
-    public void GardenDetailsRequested_ExistentIdGiven_GardenDetailsProvided() throws Exception {
+    void GardenDetailsRequested_ExistentIdGiven_GardenDetailsProvided() throws Exception {
         Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
@@ -96,7 +112,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GardenDetailsRequested_NonExistentIdGiven_StayOnMyGardens() throws Exception {
+    void GardenDetailsRequested_NonExistentIdGiven_StayOnMyGardens() throws Exception {
         when(gardenService.getGarden(anyLong())).thenReturn(Optional.empty());
 
         mockMvc
@@ -109,7 +125,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GardenPublicCheckboxTicked_GardenPublicityUpdated()
+    void GardenPublicCheckboxTicked_GardenPublicityUpdated()
             throws Exception {
         Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "100", testGardener, "");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
@@ -134,7 +150,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GardenPublicCheckboxUnticked_GardenPublicityUpdated()
+    void GardenPublicCheckboxUnticked_GardenPublicityUpdated()
             throws Exception {
         Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "100", testGardener, "");
         garden.setIsGardenPublic(true);
@@ -160,7 +176,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void NewTagSubmitted_ValidTagName_GardenDetailsUpdated() throws Exception {
+    void NewTagSubmitted_ValidTagName_GardenDetailsUpdated() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -201,7 +217,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void NewTagSubmitted_OffensiveTagName_TagNotAdded() throws Exception {
+    void NewTagSubmitted_OffensiveTagName_TagNotAdded() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -242,7 +258,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GardenDetailsRequested_TagExists_TagDisplayed() throws Exception {
+    void GardenDetailsRequested_TagExists_TagDisplayed() throws Exception {
         Gardener currentUser =
                 new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
         currentUser.setId(1L);
@@ -273,7 +289,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
+    void addTag_InvalidTagName_RedirectWithErrorMessage() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -311,7 +327,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
+    void addTag_InvalidLongTagName_RedirectWithErrorMessage() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -338,7 +354,7 @@ public class GardenDetailsControllerTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders.post("/gardens/addTag")
-                                .param("tag-input", "ThisTagNameIsWayTooLongAndInvalid")
+                                .param("tag-input", "ThisTagNameIsWayTooInvalid")
                                 .param("gardenId", "1")
                                 .with(csrf()))
                 .andExpect(status().isOk())
@@ -349,7 +365,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
+    void addTag_EmptyTagName_RedirectWithErrorMessage() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -387,7 +403,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void addTag_SameTagNameInDifferentGardens() throws Exception {
+    void addTag_SameTagNameInDifferentGardens() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMaxTemperatures = new Float[] {2f, 3f, 4f};
@@ -440,7 +456,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void NewTagSubmitted_ValidTagName_BadWordsCounterNotChanged() throws Exception {
+    void NewTagSubmitted_ValidTagName_BadWordsCounterNotChanged() throws Exception {
 
         Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
         Tag tag = new Tag("My tag", garden);
@@ -461,7 +477,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void NewTagSubmitted_OffensiveTagName_BadWordCounterIncreased() throws Exception {
+    void NewTagSubmitted_OffensiveTagName_BadWordCounterIncreased() throws Exception {
         Garden garden = new Garden("Test garden", "99 test address", "Ilam", "Christchurch", "New Zealand", "9999", "1.0", testGardener, "");
         Tag tag = new Tag("Fuck", garden);
 
@@ -515,7 +531,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
+    void GetTemperatureOfCity_CityExists_WeatherInformationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
@@ -551,9 +567,6 @@ public class GardenDetailsControllerTest {
         when(weatherService.getWeather(any())).thenReturn(currentWeather);
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
-        GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService, locationService, gardenVisitService);
-        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
                         .param("gardenId", "1")))
@@ -573,14 +586,12 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GetTemperatureOfCity_CityDoesntExist_WeatherInformationNotReturned() throws Exception {
+    void GetTemperatureOfCity_CityDoesntExist_WeatherInformationNotReturned() throws Exception {
         Garden garden = new Garden("Test garden", "FAKELOCATION!123", null, "Christchurch", "New Zealand", null, "9999", testGardener, "")
                 ;
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
 
-        GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService, locationService, gardenVisitService);
-        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
+
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
                         .param("gardenId", "1")))
@@ -602,7 +613,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GetWeather_WhenRaining_RainNotificationReturned() throws Exception {
+    void GetWeather_WhenRaining_RainNotificationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
@@ -638,9 +649,7 @@ public class GardenDetailsControllerTest {
         when(weatherService.getWeather(any())).thenReturn(currentWeather);
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
-        GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService, locationService, gardenVisitService);
-        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
+
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
                         .param("gardenId", "1")))
@@ -650,7 +659,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GetPrevWeather_WhenPrevSunny_DryNotificationReturned() throws Exception {
+    void GetPrevWeather_WhenPrevSunny_DryNotificationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
@@ -686,9 +695,7 @@ public class GardenDetailsControllerTest {
         when(weatherService.getWeather(any())).thenReturn(currentWeather);
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
-        GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService, locationService, gardenVisitService);
-        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
+
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
                         .param("gardenId", "1")))
@@ -698,7 +705,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void FifthTagSubmitted_OffensiveTagName_TagNotAddedWarningDisplayed() throws Exception {
+    void FifthTagSubmitted_OffensiveTagName_TagNotAddedWarningDisplayed() throws Exception {
         int initialBadWordCount = 4;
         testGardener.setBadWordCount(initialBadWordCount);
 
@@ -744,7 +751,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void GetDate_WhenNotificationClosed_NoNotificationReturned() throws Exception {
+    void GetDate_WhenNotificationClosed_NoNotificationReturned() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
@@ -782,9 +789,7 @@ public class GardenDetailsControllerTest {
         when(weatherService.getWeather(any())).thenReturn(currentWeather);
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
-        GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService, locationService, gardenVisitService);
-        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
+
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.get("/gardens/details")
                         .param("gardenId", "1")))
@@ -794,7 +799,7 @@ public class GardenDetailsControllerTest {
     }
     @Test
     @WithMockUser
-    public void GivenOnGardenDetails_WhenNotificationClosed_LastNotifiedDateUpdated() throws Exception {
+    void GivenOnGardenDetails_WhenNotificationClosed_LastNotifiedDateUpdated() throws Exception {
         String[] forecastDates = new String[] {"Date1", "Date2", "Date3"};
         Float[] forecastTemperatures = new Float[] {1f, 2f, 3f};
         Float[] forecastMinTemperatures = new Float[] {1f, 2f, 3f};
@@ -832,9 +837,7 @@ public class GardenDetailsControllerTest {
         when(weatherService.getWeather(any())).thenReturn(currentWeather);
         when(weatherService.getPrevWeather(any())).thenReturn(prevWeather);
 
-        GardenDetailsController gardenDetailsController = new GardenDetailsController(gardenService, gardenerFormService,
-                relationshipService, requestService, weatherService, tagService, locationService, gardenVisitService);
-        MockMvc MOCK_MVC = MockMvcBuilders.standaloneSetup(gardenDetailsController).build();
+
         MOCK_MVC
                 .perform((MockMvcRequestBuilders.post("/gardens/details/dismissNotification")
                         .param("gardenId", "1")))
@@ -845,7 +848,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void ViewFriendsGardensRequested_UserIsNotFriend_RedirectedToOwnGardens() throws Exception {
+    void ViewFriendsGardensRequested_UserIsNotFriend_RedirectedToOwnGardens() throws Exception {
         Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
         Gardener otherUser = new Gardener("Test", "Gardener 2", LocalDate.of(2000, 1, 1), "test2@test.com", "Password1!");
         currentUser.setId(1L);
@@ -870,7 +873,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void ViewFriendsGardensRequested_FriendDoesNotExist_RedirectedToOwnGardens() throws Exception {
+    void ViewFriendsGardensRequested_FriendDoesNotExist_RedirectedToOwnGardens() throws Exception {
         Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
         currentUser.setId(1L);
         gardenerFormService.addGardener(currentUser);
@@ -890,7 +893,7 @@ public class GardenDetailsControllerTest {
 
     @Test
     @WithMockUser
-    public void UserEntersSixthBadWord_UserIsBanned_UserIsLoggedOut() throws Exception {
+    void UserEntersSixthBadWord_UserIsBanned_UserIsLoggedOut() throws Exception {
         Gardener currentUser = new Gardener("Test", "Gardener", LocalDate.of(2000, 1, 1), "test@test.com", "Password1!");
         currentUser.setId(1L);
         currentUser.setBadWordCount(5);
@@ -910,4 +913,24 @@ public class GardenDetailsControllerTest {
                 .andExpect(redirectedUrl("/login?banned"));
     }
 
+
+    @Test
+    @WithMockUser
+    void FollowAGarden_UserIsAlreadyFollowing_FollowerRemoved() throws Exception {
+
+        when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.of(new Follower(1L, 1L)));
+        browseMockMvc.perform(MockMvcRequestBuilders.post("/follow")
+                .param("gardenToFollow", "1"));
+        verify(followerService, times(1)).deleteFollower(anyLong(), anyLong());
+    }
+
+    @Test
+    @WithMockUser
+    void FollowAGarden_UserIsNotFollowing_FollowerAdded() throws Exception {
+        when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.empty());
+
+        browseMockMvc.perform(MockMvcRequestBuilders.post("/follow")
+                .param("gardenToFollow", "1"));
+        verify(followerService, times(1)).addfollower(any(Follower.class));
+    }
 }

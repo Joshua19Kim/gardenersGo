@@ -58,6 +58,7 @@ public class Gardener {
     @Column(name = "ban_expiry_date")
     private Date banExpiryDate;
 
+
     /**
      * JPA required no-args constructor
      */

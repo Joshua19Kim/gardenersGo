@@ -57,7 +57,7 @@
             <div class="form-group field w-50">
                 <label class="input w-100">
                     <label style="margin-left: 20px;"> Date of Birth </label>
-                    <input id="DoB" class="form-control form-field" th:name="DoB" th:value="*{DoB}" type="date">
+                    <input id="DoB" class="form-control form-field" th:name="DoB" th:value="*{DoB}" type="date" max="9999-12-31">
                 </label>
             </div>
             <p id="DoBInvalid" class="errorMessage" th:utext="${DoBValid}"></p>
@@ -88,7 +88,7 @@
 
             <div class="form-group field">
                 <label class="input">
-                    <input name="passwordConfirm" placeholder="Confirm Password" type="password" maxlength="255" class="form-control form-field"
+                    <input name="passwordConfirm" id="passwordConfirm" placeholder="Confirm Password" type="password" maxlength="255" class="form-control form-field"
                            th:classappend="${(passwordsMatch != '' && passwordsMatch != null)|| (passwordStrong != '' && passwordStrong != null) ? 'is-invalid' : ''}">
                     <span class="form-label">Confirm Password</span>
                 </label>

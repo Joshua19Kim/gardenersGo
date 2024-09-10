@@ -1,12 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.config.GlobalControllerAdvice;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,15 +25,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@WebMvcTest(controllers = BrowseGardensController.class)
+@WebMvcTest(controllers = {BrowseGardensController.class, GlobalControllerAdvice.class})
 public class BrowseGardensControllerTest {
 
     @Autowired
@@ -43,10 +43,16 @@ public class BrowseGardensControllerTest {
     private GardenService gardenService;
 
     @MockBean
+    private GardenerFormService gardenerFormService;
+
+    @MockBean
     private TagService tagService;
 
     @MockBean
     private PlantService plantService;
+
+    @MockBean
+    private FollowerService followerService;
 
     private Gardener testGardener;
 
@@ -57,8 +63,6 @@ public class BrowseGardensControllerTest {
     private List<Garden> gardens;
 
     private List<String> allTags;
-
-    private BrowseGardensController browseGardensControllerSpy;
 
 
     @BeforeEach
@@ -76,11 +80,13 @@ public class BrowseGardensControllerTest {
         for (int i = 0; i < 8; i++) {
             allTags.add("tag" + i);
         }
-
-        browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, tagService));
+        Gardener mockedGardener = Mockito.mock(Gardener.class);
+        when(gardenerFormService.findByEmail(Mockito.anyString())).thenReturn(Optional.of(mockedGardener));
+        when(gardenService.getGardensByGardenerId(Mockito.anyLong())).thenReturn(new ArrayList<>());
+        when(followerService.findAllGardens(anyLong())).thenReturn(List.of());
+        BrowseGardensController browseGardensControllerSpy = spy(new BrowseGardensController(gardenService, gardenerFormService, tagService, followerService));
         mockMvc = standaloneSetup(browseGardensControllerSpy).build();
         doNothing().when(browseGardensControllerSpy).setSearchTerm(anyString());
-        doNothing().when(browseGardensControllerSpy).setTags(anyList());
         doNothing().when(browseGardensControllerSpy).setSearchTags((anyList()));
 
     }
@@ -91,7 +97,7 @@ public class BrowseGardensControllerTest {
     public void BrowseGardensPageRequested_NoPageNumberSpecified_DefaultPageReturned() throws Exception {
         Pageable pageable = PageRequest.of(defaultPageNumber, defaultPageSize);
         Page<Garden> gardenPage = new PageImpl<>(gardens, pageable, gardens.size());
-        Mockito.when(gardenService.getGardensPaginated(defaultPageNumber, defaultPageSize)).thenReturn(gardenPage);
+        when(gardenService.getGardensPaginated(defaultPageNumber, defaultPageSize)).thenReturn(gardenPage);
         List<Integer> expectedPageNumbers = List.of(1, 2);
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens"))
                 .andExpect(status().isOk())
@@ -107,7 +113,7 @@ public class BrowseGardensControllerTest {
         List<Integer> expectedPageNumbers = List.of(1,2);
         Pageable pageable = PageRequest.of(pageNumber, defaultPageSize);
         Page<Garden> gardenPage = new PageImpl<>(gardens.subList(defaultPageSize, gardens.size()), pageable, gardens.size());
-        Mockito.when(gardenService.getGardensPaginated(pageNumber, defaultPageSize)).thenReturn(gardenPage);
+        when(gardenService.getGardensPaginated(pageNumber, defaultPageSize)).thenReturn(gardenPage);
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens")
                         .param("pageNo", String.valueOf(pageNumber)))
                 .andExpect(status().isOk())
@@ -123,8 +129,8 @@ public class BrowseGardensControllerTest {
         int pageNumber = 1;
         Pageable pageable = PageRequest.of(pageNumber, defaultPageSize);
         List<Garden> emptyList = new ArrayList<>();
-        Page<Garden> gardenPage = new PageImpl<>(emptyList, pageable, emptyList.size());
-        Mockito.when(gardenService.getGardensPaginated(pageNumber, defaultPageSize)).thenReturn(gardenPage);
+        Page<Garden> gardenPage = new PageImpl<>(emptyList, pageable, 0);
+        when(gardenService.getGardensPaginated(pageNumber, defaultPageSize)).thenReturn(gardenPage);
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens")
                         .param("pageNo", String.valueOf(pageNumber)))
                 .andExpect(status().isOk())
@@ -139,7 +145,7 @@ public class BrowseGardensControllerTest {
         String tag = "tag2";
         List<String> updatedAllTags = new ArrayList<>(allTags);
         updatedAllTags.remove(tag);
-        Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
+        when(tagService.getAllTagNames()).thenReturn(allTags);
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
                 .param("tag-input", tag)
                         .with(csrf()))
@@ -152,9 +158,27 @@ public class BrowseGardensControllerTest {
 
     @Test
     @WithMockUser
-    public void TagAdded_InvalidTag_RedirectToBrowseGardens() throws Exception {
+    public void TagAdded_TagDoesNotExist_RedirectToBrowseGardens() throws Exception {
         String tag = "tag20";
-        String errorMessage = "No tag matching " + tag;
+        String errorMessage = "No tag matching " + tag+ " <br/>";
+        Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
+        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
+                        .param("tag-input", tag)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/browseGardens"))
+                .andExpect(flash().attribute("allTags", allTags))
+                .andExpect(flash().attribute("tags", List.of()))
+                .andExpect(flash().attribute("tag", tag))
+                .andExpect(flash().attribute("tagValid", errorMessage))
+                .andExpect(flash().attribute("pageNo", String.valueOf(defaultPageNumber)));
+
+    }
+    @Test
+    @WithMockUser
+    public void TagAdded_InvalidTag_RedirectToBrowseGardens() throws Exception {
+        String tag = "qwertyuiopasdfghjklzxcvbnm";
+        String errorMessage = "No tag matching " + tag+ " <br/>A tag cannot exceed 25 characters <br/>";
         Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
                         .param("tag-input", tag)
@@ -176,7 +200,7 @@ public class BrowseGardensControllerTest {
         int pageNo = 2;
         List<String> existingTags = new ArrayList<>(allTags.subList(0, 4));
         List<String> updatedAllTags = new ArrayList<>(allTags.subList(4, allTags.size()));
-        Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
+        when(tagService.getAllTagNames()).thenReturn(allTags);
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
                         .param("tag-input", tag)
                         .param("tags", existingTags.get(0))
@@ -200,7 +224,7 @@ public class BrowseGardensControllerTest {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Garden> emptyGardenPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
-        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(emptyGardenPage);
+        when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(emptyGardenPage);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
                         .param("pageNo", String.valueOf(pageNo))
@@ -228,7 +252,7 @@ public class BrowseGardensControllerTest {
         }
 
         Page<Garden> matchingGardenPage = new PageImpl<>(matchingGardens, pageable, matchingGardens.size());
-        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(matchingGardenPage);
+        when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(matchingGardenPage);
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
                         .param("pageNo", String.valueOf(pageNo))
                         .param("pageSize", String.valueOf(pageSize))
@@ -236,6 +260,7 @@ public class BrowseGardensControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", matchingGardenPage))
+                .andExpect(model().attribute("searchTerm", searchTerm))
                 .andExpect(view().name("browseGardensTemplate"));
     }
 
@@ -254,7 +279,7 @@ public class BrowseGardensControllerTest {
         List<Garden> matchingGardens = Collections.singletonList(testGarden);
         Page<Garden> matchingGardenPage = new PageImpl<>(matchingGardens, pageable, matchingGardens.size());
 
-        Mockito.when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(matchingGardenPage);
+        when(gardenService.getSearchResultsPaginated(pageNo, pageSize, searchTerm, null, 0L)).thenReturn(matchingGardenPage);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens")
                         .param("pageNo", String.valueOf(pageNo))
@@ -263,9 +288,31 @@ public class BrowseGardensControllerTest {
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("gardensPage", matchingGardenPage))
+                .andExpect(model().attribute("searchTerm", searchTerm))
                 .andExpect(view().name("browseGardensTemplate"));
 
     }
 
+    @Test
+    @WithMockUser
+    public void FollowAGarden_UserIsAlreadyFollowing_FollowerRemoved() throws Exception {
+
+        when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.of(new Follower(1L, 1L)));
+        mockMvc.perform(MockMvcRequestBuilders.post("/follow")
+                .param("pageNo", "1")
+                .param("gardenToFollow", "1"));
+        verify(followerService, times(1)).deleteFollower(anyLong(), anyLong());
+    }
+
+    @Test
+    @WithMockUser
+    public void FollowAGarden_UserIsNotFollowing_FollowerAdded() throws Exception {
+        when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/follow")
+                .param("pageNo", "1")
+                .param("gardenToFollow", "1"));
+        verify(followerService, times(1)).addfollower(any(Follower.class));
+    }
 
 }

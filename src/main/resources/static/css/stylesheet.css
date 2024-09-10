@@ -1,36 +1,3 @@
-/* Custom Navbar */
-#custom-navbar {
-    background-color: rgba(209, 220, 151, 0.8) !important;
-}
-
-/*@import*/
-/*url('https://rsms.me/inter/inter.css');*/
-
-/* Took the following code from my year 13 project
- * This code adds the white underline effect on hover
- */
-nav ul .nav-item a:after, nav ul .nav-item input[type="submit"]:after {
-    bottom: 0;
-    content: "";
-    display: block;
-    height: 2px;
-    left: 50%;
-    position: relative;
-    background: #fff;
-    transition: width 0.3s ease 0s, left 0.3s ease 0s;
-    width: 0;
-}
-
-nav ul .nav-item a:hover:after, nav ul .nav-item input[type="submit"]:after {
-    width: 100%;
-    left: 0;
-}
-
-nav ul .nav-item a:hover, nav ul .nav-item input[type="submit"]:hover {
-    color: #45a049;
-    transition: 0.3s ease;
-}
-
 * {
     box-sizing: border-box;
 }
@@ -49,13 +16,23 @@ nav ul .nav-item a:hover, nav ul .nav-item input[type="submit"]:hover {
     --size-bezel: .5rem;
     --weather-colour: #9dc7e1;
     --forecast-colour: #8fb6ce;
+    --button-cancel-colour: #ff5757;
+    --button-cancel-hover-colour: #cd4747;
 
+}
+
+.card-collection-body {
+    display: flex;
+    min-width: 100%;
 }
 
 body {
     background-color: var(--background-color);
     color: var(--text-color);
-    font-family: Arial, sans-serif;
+    font-family: "Nunito", sans-serif;
+    font-weight: 500;
+    font-optical-sizing: auto;
+    font-style: normal;
     height: 100%;
     margin: 0;
     align-items: center;
@@ -74,9 +51,14 @@ body {
     text-align: center;
 }
 
+#collection-card-img {
+    max-width: max-content !important;
+}
 .card-img-top {
     max-width: 128px;
 }
+
+
 
 .current {
     background-color: var(--weather-colour) !important;
@@ -97,10 +79,26 @@ body {
 h1 {
     margin-bottom: 20px;
     color: var(--text-color);
+    font-weight: bold;
+}
+
+.nav-title h1 {
+    margin-bottom: 20px;
+    color: var(--text-color);
+    font-family: 'Matemasie', sans-serif;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
 }
 
 .title {
     color: var(--primary-color);
+    font-family: 'Matemasie', sans-serif;
 }
 
 .form-group {
@@ -150,7 +148,6 @@ textarea#description.garden-form-control {
 
 
 .btn {
-    border: none;
     border-radius: 25px;
     padding: 10px 15px;
     width: 50%;
@@ -178,20 +175,13 @@ textarea#description.garden-form-control {
     display: block;
     text-align: center;
     margin-top: 10px;
+    font-style: italic;
 }
 
 .btn-link:hover {
     color: var(--button-hover-color);
 }
 
-/*.alert {*/
-/*    background-color: var(--alert-background-color);*/
-/*    border-left: 5px solid var(--primary-color);*/
-/*    color: var(--text-color);*/
-/*    margin-bottom: 15px;*/
-/*    padding: 10px;*/
-/*    text-align: center;*/
-/*}*/
 
 .logo {
     width: 75px;
@@ -219,6 +209,7 @@ textarea#description.garden-form-control {
     display: block;
     transition: 0.2s;
     color: white;
+    font-style: italic;
 }
 
 .form-field:focus {
@@ -240,6 +231,10 @@ textarea#description.garden-form-control {
     }
 }
 
+.is-invalid {
+    border: 1px solid red !important;
+}
+
 #autocomplete-results {
     align-items: baseline;
     max-height: 25vh;
@@ -255,77 +250,23 @@ textarea#description.garden-form-control {
     padding-left: 20px;
 }
 
-/*====================================================================================================================*/
-/* Rest of the CSS */
-/*====================================================================================================================*/
-
-
-#custom-navbar .navbar-nav .nav-link {
-    color: #000 !important;
-}
-
-#my-gardens {
-    /*border-bottom: 1px solid green;*/
-    /*border-radius: 1px;*/
-    font-weight: bold;
-}
-
-#custom-navbar .navbar-nav .nav-link:hover {
-    color: #45a049;
-}
-
-.dropdown-container {
-    position: relative; /* To position the dropdown menu */
+.ml-25p {
+    margin-left: 25%;
 }
 
 /* Dropdown Button */
-
 .dropbtn {
     color: #1c1c1a;
     background-color: rgba(209, 220, 151, 0.8) !important;
     font-size: 16px;
     border: none;
     cursor: pointer;
-    font-family: 'Roboto', sans-serif;
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
     display: flex;
     align-items: center; /* Aligns text and arrow vertically */
 }
-
-.dropdown-arrow {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 0.5rem; /* Space between text and arrow */
-    border-left: 0.4em solid transparent;
-    border-right: 0.4em solid transparent;
-    border-top: 0.4em solid #1c1c1a; /* Arrow color */
-}
-
-/* Dropdown Menu */
-
-.dropdown-menu-wrapper {
-    position: absolute;
-    top: 100%; /* Position it below the button */
-    left: 0; /* Align dropdown menu with the left edge of the button */
-    z-index: 100; /* Ensure it appears above other content */
-}
-
-.dropdown-menu {
-    background-color: rgba(209, 220, 151, 0.8) !important;
-    border: 1px solid #45a049;
-}
-
-/* Ensure dropdown item color and hover effects */
-
-#custom-navbar .dropdown-item {
-    color: #000 !important;
-}
-
-#custom-navbar .dropdown-item:hover {
-    background-color: rgba(209, 220, 151, 0.5) !important;
-    color: #45a049 !important;
-}
-
 
 img {
     width: 100%;
@@ -366,11 +307,12 @@ img {
     border-radius: 50%;
 }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-    z-index: 99; /* Always show on top of everything */
-}
+
+/*.dropdown {*/
+/*    position: relative;*/
+/*    display: inline-block;*/
+/*    z-index: 99; !* Always show on top of everything *!*/
+/*}*/
 
 .plant-item {
     display: flex;
@@ -390,11 +332,6 @@ img {
     margin-bottom: 0;
 }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-    z-index: 99; /* Always show on top of everything */
-}
 
 .dropdown-content {
     display: none;
@@ -414,10 +351,6 @@ img {
 .dropdown-content a:hover {
     background-color: var(--primary-color);
 
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
 }
 
 .error {
@@ -521,13 +454,39 @@ img {
     cursor: pointer;
 }
 
+
+/* Ensure the text wraps and breaks properly for long words */
+.location-text, .description-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+.location-content, .description-content {
+    word-break: break-word;  /* Break long words */
+    overflow-wrap: break-word;  /* Allow breaking if necessary */
+    display: inline-block;
+    max-width: 100%;  /* Ensure it takes up the full width of its container */
+}
+
+/* Optional styling to control margins, padding, and positioning */
+.location-text, .description-text {
+    margin-bottom: 15px;  /* Spacing between each section */
+}
+
+
 #tag-container {
     display: flex;
+    flex-wrap: wrap;
     width: auto;
     margin-bottom: 20px;
     align-items: center;
+    gap: 5px; /
+    max-width: 1200px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    white-space: normal;
 }
-
 
 #tag {
     width: fit-content;
@@ -537,40 +496,30 @@ img {
     margin-left: 5px;
     padding: 5px;
     color: #ffffff;
+    word-break: break-word;
 }
 
-#add-tag {
-    width: 22px;
-    height: 22px;
+
+#add-tag, #submit-tag {
+    width: 30px;
+    height: 30px;
     background-color: var(--primary-color);
     border-radius: 50%;
     display: flex;
-    margin-left: 5px;
-    padding-left: 6.5px;
-    color: #ffffff;
-    font-weight: bolder;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    margin-left: 5px;
+    padding: 0;
 }
 
-#submit-tag {
-    display: none;
-    width: 22px;
-    height: 22px;
-    background-color: var(--button-color);
+#add-tag img, #submit-tag img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 50%;
-    margin-left: 5px;
-    padding-top: 2px;
-    padding-right: 2px;
-    padding-bottom: 2px;
-    padding-left: 6px;
-    color: #ffffff;
-    font-weight: bolder;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
 }
+
 
 #add-tag:hover, #submit-tag:hover {
     cursor: pointer;
@@ -666,8 +615,9 @@ img {
 
 .plant-list-container {
     overflow-y: auto;
+    width: 100%;
     border-bottom: 1px solid #45a049;
-    max-height: 600px;
+    /*max-height: 600px;*/
 }
 
 
@@ -748,6 +698,8 @@ img {
 #form .plant-image-container .image-button:hover {
     cursor: pointer;
     opacity: 1;
+    color: transparent !important;
+
 }
 
 .return p {
@@ -835,7 +787,9 @@ img {
 
 
 body, h2, h3, h4, h5, h6, a {
-    font-family: 'Roboto', sans-serif;
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
     color: #1c1c1a;
 }
 
@@ -844,7 +798,9 @@ body, h2, h3, h4, h5, h6, a {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
     scrollbar-color: #8dab6e #e7f0dc;
 }
 
@@ -884,6 +840,10 @@ body, h2, h3, h4, h5, h6, a {
     z-index: 1;
 }
 
+button.image-button:hover {
+    background-color: transparent !important;
+}
+
 
 .UserProfilePicContainer .image-button:hover {
     cursor: pointer;
@@ -899,7 +859,6 @@ body, h2, h3, h4, h5, h6, a {
     flex-direction: column;
     align-items: center;
     width: 200px;
-    height: 130px;
     margin: 5px;
     text-decoration: none;
     color: inherit;
@@ -940,6 +899,7 @@ body, h2, h3, h4, h5, h6, a {
 .main-page2-card-title {
     font-size: 1.25rem;
     margin-bottom: 1rem;
+    font-weight: bold;
 }
 
 .main-page-avatar {
@@ -1011,6 +971,7 @@ body, h2, h3, h4, h5, h6, a {
     margin-bottom: 2%;
     justify-content: center;
     display: flex;
+    font-weight: bold;
 }
 
 .warningMessageContainer {
@@ -1187,6 +1148,12 @@ form.search-bar::after {
     max-width: 100px;
     max-height: 70px;
     border-radius: 4px;
+}
+
+.friend #manage-friends-pp {
+    height: 150px !important;
+    width: 150px !important;
+    object-fit: cover !important;
 }
 
 .friend a {
@@ -1621,7 +1588,18 @@ form.search-bar::after {
     max-width: 1800px;
     margin: 0 auto;
     padding: 0 20px;
+}
 
+.collection-container {
+    max-width: 1500px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+.collection-container {
+    max-width: 1800px;
+    margin: 20px auto;
+    padding: 0 20px;
 }
 
 
@@ -1641,6 +1619,38 @@ form.search-bar::after {
 .browse-gardens-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.collection-gardens-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.collection-gardens-card {
+    padding: 0 !important;
+    position: relative;
+}
+
+.plant-wiki-card {
+    padding: 0 !important;
+    min-height: 633px
+}
+
+.plant-wiki-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.plant-wiki-card .btn-wrapper {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.plant-wiki-card .btn-success {
+    padding: 2px 10px;
+    font-size: smaller;
+    min-width: fit-content;
 }
 
 .friend-modal-content {
@@ -1675,4 +1685,8 @@ table td {
 
 .selectable.selected {
     border: 2px solid green; /* Highlight border when selected */
+}
+
+.hidden, .hidden * {
+    display: none !important;
 }

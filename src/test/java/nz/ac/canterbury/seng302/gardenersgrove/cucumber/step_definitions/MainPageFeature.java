@@ -22,6 +22,7 @@ import java.time.LocalDate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,7 @@ public class MainPageFeature {
 
     private List<Gardener> friendList;
     private List<Garden> recentGardenList;
+
 
     @Given("I am a valid user")
     public void i_am_a_valid_user() {
@@ -127,10 +129,10 @@ public class MainPageFeature {
                 .andReturn();
 
         List<Plant> returnedPlants = (List<Plant>) mvcResult.getModelAndView().getModel().get("newestPlants");
-        List<Plant> reversedExpectedPlants = newestPlants.reversed();
+        Collections.reverse(newestPlants);
 
         for (int i = 0; i < returnedPlants.size(); i++) {
-            Assertions.assertEquals(returnedPlants.get(i).getName(), reversedExpectedPlants.get(i).getName());
+            Assertions.assertEquals(returnedPlants.get(i).getName(), newestPlants.get(i).getName());
 
         }
     }
@@ -186,6 +188,38 @@ public class MainPageFeature {
                 .andExpect(model().attribute("recentGardens", Matchers.hasToString(recentGardenList.toString())))
                 .andExpect(model().attribute("friends", Matchers.hasToString(friendList.toString())));
     }
+
+
+    @When("I unticked {string} on customise main page modal to hide the widget on the main page")
+    public void i_unticked_recently_accessed_gardens_on_customise_main_page_modal_to_hide_the_widget_on_the_main_page(String listName) throws Exception {
+        List<String> listOptions = new ArrayList<>(List.of(
+                "recentlyAccessedGardens",
+                "newestPlantsList",
+                "friendsList",
+                "myGardensList"
+        ));
+        listOptions.remove(listName);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/customiseLayout")
+                        .param("sections", listOptions.toString())
+                        .with(csrf())
+                .with(SecurityMockMvcRequestPostProcessors.user(gardener.getEmail())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/user"));
+
+    }
+    @Then("I cannot see {string} List on the main page")
+    public void i_cannot_see_recently_accessed_gardens_list_on_the_main_page(String listName) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/home")
+                        .with(SecurityMockMvcRequestPostProcessors.user(gardener.getEmail())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mainPageTemplate"))
+                .andExpect(model().attribute(listName, false));
+
+
+    }
+
+
 
 }
 

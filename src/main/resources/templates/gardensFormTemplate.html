@@ -11,10 +11,12 @@
 <div class="container mb-5">
   <div class="container card w-50 mb-5">
     <h1> Create New Garden </h1>
+    <label class="fst-italic">* Required</label>
+    <br/>
     <form class="w-100 d-flex flex-column" id="gardenForm" th:action="@{form(redirect=${requestURI})}" method="post">
       <div class="create-garden-row">
         <div>
-          <label for="name"> Name: </label>
+          <label for="name"> *Name: </label>
           <input type="text" class="form-control" id="name" maxlength="64" placeholder="Name"
                  th:name="name" th:value="*{name}" data-cy="name" autofocus
                  th:classappend="${nameError} ? 'is-invalid' : ''">
@@ -46,7 +48,7 @@
         <div style="display: flex;">
           <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
             <label for="location"> Address: </label>
-            <input class="form-control" type="text" id="location" placeholder="Start typing your address..."
+            <input class="form-control" type="text" id="location" autocomplete="off" placeholder="Start typing your address..."
                    th:name="location" th:value="*{location}" data-cy="location" autofocus
                    th:classappend="${locationError} ? 'is-invalid' : ''"
             >
@@ -67,7 +69,7 @@
 
           </div>
           <div>
-            <label for="city">City:</label>
+            <label for="city">*City:</label>
             <input class="form-control" type="text" id="city" th:name="city" th:value="*{city}"
                    th:classappend="${cityError} ? 'is-invalid' : ''">
             <span th:if="${cityError}" th:utext="${cityError}" class="smallErrorMessage"></span>
@@ -78,7 +80,7 @@
         <br/>
         <div class="create-garden-row">
           <div>
-            <label for="country">Country:</label>
+            <label for="country">*Country:</label>
             <input class="form-control" type="text" id="country" th:name="country" th:value="*{country}"
                    th:classappend="${countryError} ? 'is-invalid' : ''">
             <span th:if="${countryError}" th:utext="${countryError}" class="smallErrorMessage"></span>
@@ -106,7 +108,7 @@
     document.getElementById("gardenForm").addEventListener("keydown", function(event) {
       if (event.key === "Enter") {
         var activeElement = document.activeElement;
-        if (activeElement.id === "size" || activeElement.tagName === "BUTTON") {
+        if (activeElement.id === "postcode" || activeElement.tagName === "BUTTON") {
           return true;
         } else {
           event.preventDefault();

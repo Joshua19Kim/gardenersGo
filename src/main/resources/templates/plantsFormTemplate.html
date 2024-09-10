@@ -11,8 +11,10 @@
 <div class="container mb-5">
     <div class="card mb-5 w-50">
         <h1> Add New Plant </h1>
+        <label class="fst-italic">* Required</label>
+        <br/>
         <form id="plantForm" th:action="@{form(gardenId=${garden.id})}" method="post" enctype="multipart/form-data">
-            <label for="name"> Name: </label>
+            <label for="name"> *Name: </label>
             <input type="text" class="form-control" th:value="*{name}" id="name" name="name" maxlength="64" placeholder="Name"
                    th:classappend="${nameError} ? 'is-invalid' : ''">
             <p th:if="${nameError}" th:utext="${nameError}" class="smallErrorMessage"></p>
@@ -30,7 +32,7 @@
             <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
             <br/>
             <label for="datePlanted"> Date Planted: </label>
-            <input type="date" class="form-control" th:value="*{date}" id="datePlanted" name="date">
+            <input type="date" class="form-control" th:value="*{date}" id="datePlanted" name="date" max="9999-12-31">
             <span id="dateError" class="smallErrorMessage"></span>
             <script>
                 document.getElementById( "datePlanted" ).addEventListener( "invalid",

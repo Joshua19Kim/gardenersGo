@@ -18,14 +18,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -44,6 +43,7 @@ public class GardenDetailsController {
     private final WeatherService weatherService;
     private final LocationService locationService;
     private final GardenVisitService gardenVisitService;
+    private final FollowerService followerService;
 
     /**
      * Constructor used to create a new instance of the GardenDetailsController. Autowires a
@@ -65,7 +65,7 @@ public class GardenDetailsController {
             RelationshipService relationshipService,
             RequestService requestService,
             WeatherService weatherService,
-            TagService tagService, LocationService locationService, GardenVisitService gardenVisitService) {
+            TagService tagService, LocationService locationService, GardenVisitService gardenVisitService, FollowerService followerService) {
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
@@ -74,6 +74,7 @@ public class GardenDetailsController {
         this.tagService = tagService;
         this.locationService = locationService;
         this.gardenVisitService = gardenVisitService;
+        this.followerService = followerService;
     }
 
     /**
@@ -107,24 +108,19 @@ public class GardenDetailsController {
            @RequestParam(name = "uploadError", required = false) String uploadError,
            @RequestParam(name = "errorId", required = false) String errorId,
            @RequestParam(name = "tagValid", required = false) String tagValid,
+           RedirectAttributes redirectAttributes,
            Model model,
            HttpServletRequest request)
            throws IOException, URISyntaxException, InterruptedException {
        logger.info("GET /gardens/details");
 
        Optional<Gardener> currentUserOptional = getGardenerFromAuthentication();
-       List<Garden> gardens = new ArrayList<>();
-       if (currentUserOptional.isPresent()) {
-           gardener = currentUserOptional.get();
-           gardens = gardenService.getGardensByGardenerId(gardener.getId());
-       }
-
-       model.addAttribute("gardens", gardens);
 
        if (gardenId == null) {
            return "redirect:/gardens";
        }
-       model.addAttribute("gardenId", gardenId);
+       currentUserOptional.ifPresent(value -> gardener = value);
+           model.addAttribute("gardenId", gardenId);
        Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
        if (garden.isPresent()) {
            model.addAttribute("requestURI", requestService.getRequestURI(request));
@@ -181,7 +177,7 @@ public class GardenDetailsController {
                return "gardenDetailsTemplate";
            } else {
                Gardener gardenOwner = garden.get().getGardener();
-               Boolean isFriend = relationshipService
+               boolean isFriend = relationshipService
                        .getCurrentUserRelationships(gardenOwner.getId())
                        .contains(currentUserOptional.get());
                if (isFriend || garden.get().getIsGardenPublic()) {
@@ -190,6 +186,14 @@ public class GardenDetailsController {
 
                    GardenVisit gardenVisit = new GardenVisit(gardener, garden.get(), LocalDateTime.now());
                    gardenVisitService.addGardenVisit(gardenVisit);
+
+                   Optional<Follower> isFollower = followerService.findFollower(currentUserOptional.get().getId(), parseLong(gardenId));
+                   model.addAttribute("isFollowing", isFollower.isPresent());
+
+                   if (redirectAttributes.containsAttribute("gardenFollowUpdate")) {
+                       model.addAttribute("gardenFollowUpdate", redirectAttributes.getAttribute("gardenFollowUpdate"));
+                   }
+
                    return "unauthorizedGardenDetailsTemplate";
                } else {
                    return "redirect:/gardens";
@@ -227,8 +231,7 @@ public class GardenDetailsController {
         if (gardenId == null || gardenerOptional.isEmpty()) {
             return "redirect:/gardens";
         }
-        List<Garden> gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
-        model.addAttribute("gardens", gardens);
+
         Optional<Garden> garden = gardenService.getGarden(parseLong(gardenId));
         if (garden.isPresent()) {
 
@@ -314,13 +317,7 @@ public class GardenDetailsController {
         if (gardenOptional.isEmpty()) {
             return "redirect:/gardens";
         }
-        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-        List<Garden> gardens = new ArrayList<>();
-        if (gardenerOptional.isPresent()) {
-            gardener = gardenerOptional.get();
-            gardens = gardenService.getGardensByGardenerId(gardenerOptional.get().getId());
-        }
-        model.addAttribute("gardens", gardens);
+
         Garden garden = gardenOptional.get();
         Optional<String> validTagError = tagValidation.validateTag(tag);
         Optional<String> tagInUse = tagValidation.checkTagInUse(tag, garden);
@@ -373,6 +370,8 @@ public class GardenDetailsController {
                 tagService.addTag(newTag);
                 logger.info("Tag '{}' passes moderation checks", tag);
             } else {
+                Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+                gardenerOptional.ifPresent(value -> gardener = value);
                 String warningMessage = tagService.addBadWordCount(gardener);
                 // save the updated state of the gardener - either increased bad word count or if they are banned
                 gardenerFormService.addGardener(gardener);

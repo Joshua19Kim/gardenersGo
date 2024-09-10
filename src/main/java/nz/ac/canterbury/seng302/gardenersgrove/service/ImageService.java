@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,14 +32,18 @@ public class ImageService {
     private final Logger logger = LoggerFactory.getLogger(ImageService.class);
     private final GardenerFormService gardenerFormService;
     private final PlantService plantService;
-    private static final String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
+    private final IdentifiedPlantService identifiedPlantService;
     private static final int MAX_SIZE = 10*1024*1024;
     private final List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
+    private static final String UPLOADS_DIR = "/uploads/";
+    private static final String UPLOAD_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
 
+    private final String destinationErrorMessage = "Entry is outside of the target directory";
     @Autowired
-    public ImageService(GardenerFormService gardenerFormService, PlantService plantService) {
+    public ImageService(GardenerFormService gardenerFormService, PlantService plantService, IdentifiedPlantService identifiedPlantService) {
         this.gardenerFormService = gardenerFormService;
         this.plantService = plantService;
+        this.identifiedPlantService = identifiedPlantService;
     }
 
     /**
@@ -68,10 +75,10 @@ public class ImageService {
                     String canonicalDestinationPath = checkFile.getCanonicalPath();
 
                     if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
-                        throw new IOException("Entry is outside of the target directory");
+                        throw new IOException(destinationErrorMessage);
                     }
                     Files.write(filePath, file.getBytes());
-                    gardener.setProfilePicture("/uploads/" + newFileName);
+                    gardener.setProfilePicture(UPLOADS_DIR + newFileName);
                     gardenerFormService.addGardener(gardener);
                     return Optional.empty();
                 } else {
@@ -105,10 +112,16 @@ public class ImageService {
             assert fileName != null;
             String newFileName = "plant_" + plant.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
             Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);
-            logger.info("File location: " + filePath);
             if (checkValidImage(file).isEmpty()) {
+                File checkFile = new File(filePath.toString());
+                String canonicalDestinationPath = checkFile.getCanonicalPath();
+
+                if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
+                    throw new IOException(destinationErrorMessage);
+                }
                 Files.write(filePath, file.getBytes());
-                plant.setImage("/uploads/" + newFileName);
+                plant.setImage(UPLOADS_DIR + newFileName);
+                logger.info(UPLOADS_DIR + newFileName);
                 plantService.addPlant(plant);
                 return Optional.empty();
             } else {
@@ -148,4 +161,83 @@ public class ImageService {
                     "Image must be less than 10MB");
         }
     }
+
+
+    /**
+     * Saves the image locally and sets the image of the identified plant
+     * @param file the image file
+     * @param identifiedPlant the identified plant
+     */
+    public void saveCollectionPlantImage(MultipartFile file, IdentifiedPlant identifiedPlant) {
+
+        try {
+            Files.createDirectories(Paths.get(UPLOAD_DIRECTORY));
+            String fileName = file.getOriginalFilename();
+            //NullPointerException shouldn't affect below line as HTML form prevents an empty upload, i.e. file will never be null
+            assert fileName != null;
+            String newFileName = "identifiedPlant_" + identifiedPlant.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
+            Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);
+                File checkFile = new File(filePath.toString());
+                String canonicalDestinationPath = checkFile.getCanonicalPath();
+
+                if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
+                    throw new IOException(destinationErrorMessage);
+                }
+                Files.write(filePath, file.getBytes());
+                identifiedPlant.setUploadedImage(UPLOADS_DIR + newFileName);
+                identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+    }
+
+
+    /**
+     * Helper function to download the image from the api
+     * @param imageUrl location of image
+     * @param id id of the plant you want image for
+     * @return the location of the upload to store in the database
+     */
+    public String downloadImage(String imageUrl, Long id) {
+        String newFileName = "plant_" + id.toString() + ".png";
+
+        String destinationFile = Paths.get(UPLOAD_DIRECTORY, "plants", newFileName).toString();
+        try {
+            Files.createDirectories(Paths.get(UPLOAD_DIRECTORY, "plants"));
+
+            try (InputStream in = new BufferedInputStream(new URL(imageUrl).openStream());
+                 FileOutputStream out = new FileOutputStream(destinationFile)) {
+
+                byte[] dataBuffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+                    out.write(dataBuffer, 0, bytesRead);
+                }
+                logger.info("Image downloaded successfully to " + destinationFile);
+            }
+        } catch (IOException e) {
+            logger.error("Failed to download the image from {} to {}: {}", imageUrl, destinationFile, e.getMessage());
+            return null;
+        }
+        String keyword = "/uploads/";
+        String uploadLocation;
+        int startIndex = destinationFile.indexOf(keyword);
+
+        if (startIndex != -1) {
+            uploadLocation = destinationFile.substring(startIndex);
+        } else {
+            uploadLocation = "/images/placeholder.jpg";
+        }
+        return uploadLocation;
+    }
+
+
+
+
+
+
+
+
+
+
 }

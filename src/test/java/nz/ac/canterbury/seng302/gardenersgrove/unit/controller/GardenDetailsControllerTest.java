@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -34,6 +35,9 @@ public class GardenDetailsControllerTest {
     private TagService mockTagService;
     private LocationService mockLocationService;
     private GardenVisitService mockGardenVisitService;
+    private FollowerService mockFollowerService;
+
+    private RedirectAttributes mockRedirectAttributes;
     private Model mockModel;
     private Gardener mockUser;
     private Gardener mockOwner;
@@ -58,10 +62,12 @@ public class GardenDetailsControllerTest {
         mockTagService = Mockito.mock(TagService.class);
         mockLocationService = Mockito.mock(LocationService.class);
         mockGardenVisitService = Mockito.mock(GardenVisitService.class);
+        mockFollowerService = Mockito.mock(FollowerService.class);
+        mockRedirectAttributes = Mockito.mock(RedirectAttributes.class);
 
         gardenDetailsController = new GardenDetailsController(mockGardenService, mockGardenerFormService,
                 mockRelationshipService, requestService, mockWeatherService, mockTagService,
-                mockLocationService, mockGardenVisitService);
+                mockLocationService, mockGardenVisitService, mockFollowerService);
 
         mockModel = Mockito.mock(Model.class);
 
@@ -86,7 +92,7 @@ public class GardenDetailsControllerTest {
             throws IOException, URISyntaxException, InterruptedException {
         Mockito.when(mockGardenService.getGardensByGardenerId(any(long.class))).thenReturn(mockGardens);
         Mockito.when(mockGardenService.getGarden(any(long.class))).thenReturn(Optional.empty());
-        String template = gardenDetailsController.gardenDetails("1", null, null, null, mockModel, mockRequest);
+        String template = gardenDetailsController.gardenDetails("1", null, null, null, mockRedirectAttributes, mockModel, mockRequest);
         Mockito.verify(mockGardenService, times(0)).addGarden(any(Garden.class));
         Assertions.assertEquals("redirect:/gardens", template);
     }
@@ -94,7 +100,7 @@ public class GardenDetailsControllerTest {
     @Test
     void GivenGardenIDIsNull_WhenDetailsRequested_ControllerRedirects()
             throws IOException, URISyntaxException, InterruptedException {
-        String template = gardenDetailsController.gardenDetails(null, null, null, null, mockModel, mockRequest);
+        String template = gardenDetailsController.gardenDetails(null, null, null, null, mockRedirectAttributes,mockModel, mockRequest);
         Mockito.verify(mockGardenService, times(0)).getGarden(any(long.class));
         Assertions.assertEquals("redirect:/gardens", template);
     }
@@ -114,7 +120,7 @@ public class GardenDetailsControllerTest {
                 .thenReturn(mockFriends);
         Mockito.when(mockFriends.contains(any(Gardener.class))).thenReturn(false);
 
-        String template = gardenDetailsController.gardenDetails("1", null, null, null, mockModel, mockRequest);
+        String template = gardenDetailsController.gardenDetails("1", null, null, null, mockRedirectAttributes, mockModel, mockRequest);
         Mockito.verify(mockRelationshipService, times(1)).getCurrentUserRelationships(any(long.class));
         Assertions.assertEquals("redirect:/gardens", template);
     }
@@ -134,7 +140,7 @@ public class GardenDetailsControllerTest {
                 .thenReturn(mockFriends);
         Mockito.when(mockFriends.contains(any(Gardener.class))).thenReturn(true);
 
-        String template = gardenDetailsController.gardenDetails("1", null, null, null, mockModel, mockRequest);
+        String template = gardenDetailsController.gardenDetails("1", null, null, null, mockRedirectAttributes,mockModel, mockRequest);
         Assertions.assertEquals("unauthorizedGardenDetailsTemplate", template);
     }
 
@@ -152,7 +158,7 @@ public class GardenDetailsControllerTest {
         Mockito.when(mockLocationService.sendRequest(anyString())).thenReturn(mockLocation);
         Mockito.when(mockLocation.body()).thenReturn("error");
 
-        String template = gardenDetailsController.gardenDetails("1", null, null, null, mockModel, mockRequest);
+        String template = gardenDetailsController.gardenDetails("1", null, null, null, mockRedirectAttributes,mockModel, mockRequest);
         Mockito.verify(mockWeatherService, times(0)).getWeather(anyString());
         Mockito.verify(mockWeatherService, times(0)).getPrevWeather(anyString());
         Assertions.assertEquals("gardenDetailsTemplate", template);

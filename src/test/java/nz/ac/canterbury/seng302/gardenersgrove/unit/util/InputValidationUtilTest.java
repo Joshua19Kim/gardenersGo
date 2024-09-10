@@ -1,42 +1,45 @@
-package nz.ac.canterbury.seng302.gardenersgrove.integration.util;
+package nz.ac.canterbury.seng302.gardenersgrove.unit.util;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.ForgotPasswordFormController;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.LocationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.InputValidationUtil;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
 public class InputValidationUtilTest {
 
-    private final GardenerFormService gardenerFormService;
-
     @MockBean
-    private EmailUserService emailUserService;
-    @MockBean
-    private WeatherService weatherService;
-    @MockBean
-    private LocationService locationService;
+    private GardenerFormService gardenerFormService;
 
+    private InputValidationUtil inputValidationUtil;
 
-    @MockBean
-    private ForgotPasswordFormController forgotPasswordFormController;
+    @BeforeEach
+    public void setUp() {
+        inputValidationUtil = new InputValidationUtil(gardenerFormService);
+    }
 
-
-
-    @Autowired
-    public InputValidationUtilTest(GardenerFormService gardenerFormService) {
-        this.gardenerFormService = gardenerFormService;
+    @ParameterizedTest
+    @CsvSource(value = {
+            "😎@example.com: Email address must be in the form 'jane@doe.nz'",
+            "💌@mail.com: Email address must be in the form 'jane@doe.nz'",
+            "😊: Email address must be in the form 'jane@doe.nz'",
+            "user😜@domain.com: Email address must be in the form 'jane@doe.nz'",
+            "🤖@robotics.ai: Email address must be in the form 'jane@doe.nz'",
+            "💌💌💌💌💌💌💌💌💌💌💌💌: Email address must be in the form 'jane@doe.nz'"
+    }, delimiter = ':')
+    public void emailEmojiValidation(String email, String expectedMessage) {
+        Optional<String> actualMessage = inputValidationUtil.checkValidEmail(email);
+        Assertions.assertEquals(expectedMessage, actualMessage.get());
     }
 
     @Test

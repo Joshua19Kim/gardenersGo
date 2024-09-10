@@ -73,7 +73,13 @@ public class SecurityConfiguration {
                         .permitAll())
                 .headers(headers -> headers
                         .contentSecurityPolicy(csp -> csp
-                                .policyDirectives("default-src 'self'; img-src 'self' data: https://cdn.weatherapi.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'")
+                                // If you change this, you will need to ask for permission to add it to the VM as well
+                                .policyDirectives(
+                                        "default-src 'self'; " +
+                                        "img-src 'self' data: https://cdn.weatherapi.com https://perenual.com/storage/species_image/ https://bs.plantnet.org;" +
+                                        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+                                        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+                                        "font-src 'self' https://fonts.gstatic.com")
                         )
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
