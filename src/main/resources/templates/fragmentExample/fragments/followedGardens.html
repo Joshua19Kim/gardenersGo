@@ -1,0 +1,15 @@
+<div class="col" style="height: 100%;">
+    <div class="main-page2-card mt-0" style="height: 70vh;">
+        <div class="main-page2-card-title">Followed Gardens</div>
+        <div class="list-group" style="overflow-y: scroll; height: 100%;">
+            <p th:if="${errorMessage}" th:text="${errorMessage}" class="font-italic text-center"></p>
+            <th:block th:each="followedGarden : ${followedGardenList}">
+                <a class="list-group-item main-page-custom-hover text-dark main-page-custom-hover break-words overflow-wrap-anywhere text-break mb-2"
+                   style="transition: background-color 0.3s ease; min-width: 0;" th:href="@{/gardens/details(gardenId=${followedGarden.id})}">
+                    <p th:text="${followedGarden.name}"></p>
+                    <small th:text="${followedGarden.location}" ></small>
+                </a>
+            </th:block>
+        </div>
+    </div>
+</div>
