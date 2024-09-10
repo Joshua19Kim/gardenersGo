@@ -92,8 +92,6 @@ public class GardensController {
         gardenerOptional.ifPresent(value -> gardener = value);
 
 
-
-        List<Garden> gardens;
         if (user == null) {
             model.addAttribute("gardener", gardener);
             // Getting the gardens that users followed to show on the gardens page
@@ -115,10 +113,12 @@ public class GardensController {
                     .getCurrentUserRelationships(gardener.getId())
                     .contains(friend.get())) {
 
-                model.addAttribute("gardener", friend.get());
-                List<Garden> userGardens;
-                userGardens = gardenService.getGardensByGardenerId(gardener.getId());
+                List<Garden> userGardens = gardenService.getGardensByGardenerId(gardener.getId());
                 model.addAttribute("userGardens", userGardens);
+
+                model.addAttribute("gardener", friend.get());
+                List<Garden> gardens = gardenService.getGardensByGardenerId(friend.get().getId());
+                model.addAttribute("gardens", gardens);
             } else {
                 return "redirect:/gardens";
             }
