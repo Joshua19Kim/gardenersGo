@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,12 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Service to handle the validation and naming of images, before writing to file
@@ -26,14 +32,18 @@ public class ImageService {
     private final Logger logger = LoggerFactory.getLogger(ImageService.class);
     private final GardenerFormService gardenerFormService;
     private final PlantService plantService;
+    private final IdentifiedPlantService identifiedPlantService;
     private static final int MAX_SIZE = 10*1024*1024;
     private final List<String> validExtensions = new ArrayList<>(Arrays.asList("image/jpeg", "image/png", "image/svg+xml"));
     private static final String UPLOADS_DIR = "/uploads/";
     private static final String UPLOAD_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
+
+    private final String destinationErrorMessage = "Entry is outside of the target directory";
     @Autowired
-    public ImageService(GardenerFormService gardenerFormService, PlantService plantService) {
+    public ImageService(GardenerFormService gardenerFormService, PlantService plantService, IdentifiedPlantService identifiedPlantService) {
         this.gardenerFormService = gardenerFormService;
         this.plantService = plantService;
+        this.identifiedPlantService = identifiedPlantService;
     }
 
     /**
@@ -65,7 +75,7 @@ public class ImageService {
                     String canonicalDestinationPath = checkFile.getCanonicalPath();
 
                     if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
-                        throw new IOException("Entry is outside of the target directory");
+                        throw new IOException(destinationErrorMessage);
                     }
                     Files.write(filePath, file.getBytes());
                     gardener.setProfilePicture(UPLOADS_DIR + newFileName);
@@ -107,7 +117,7 @@ public class ImageService {
                 String canonicalDestinationPath = checkFile.getCanonicalPath();
 
                 if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
-                    throw new IOException("Entry is outside of the target directory");
+                    throw new IOException(destinationErrorMessage);
                 }
                 Files.write(filePath, file.getBytes());
                 plant.setImage(UPLOADS_DIR + newFileName);
@@ -152,6 +162,36 @@ public class ImageService {
         }
     }
 
+
+    /**
+     * Saves the image locally and sets the image of the identified plant
+     * @param file the image file
+     * @param identifiedPlant the identified plant
+     */
+    public void saveCollectionPlantImage(MultipartFile file, IdentifiedPlant identifiedPlant) {
+
+        try {
+            Files.createDirectories(Paths.get(UPLOAD_DIRECTORY));
+            String fileName = file.getOriginalFilename();
+            //NullPointerException shouldn't affect below line as HTML form prevents an empty upload, i.e. file will never be null
+            assert fileName != null;
+            String newFileName = "identifiedPlant_" + identifiedPlant.getId() + "." + fileName.substring(fileName.lastIndexOf(".")+1);
+            Path filePath = Paths.get(UPLOAD_DIRECTORY, newFileName);
+                File checkFile = new File(filePath.toString());
+                String canonicalDestinationPath = checkFile.getCanonicalPath();
+
+                if (!canonicalDestinationPath.startsWith(UPLOAD_DIRECTORY)) {
+                    throw new IOException(destinationErrorMessage);
+                }
+                Files.write(filePath, file.getBytes());
+                identifiedPlant.setUploadedImage(UPLOADS_DIR + newFileName);
+                identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+    }
+
+
     /**
      * Helper function to download the image from the api
      * @param imageUrl location of image
@@ -190,5 +230,14 @@ public class ImageService {
         }
         return uploadLocation;
     }
+
+
+
+
+
+
+
+
+
 
 }

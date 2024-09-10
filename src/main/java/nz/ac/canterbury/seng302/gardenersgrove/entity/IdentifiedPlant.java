@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -25,6 +27,14 @@ public class IdentifiedPlant {
     @Column(name = "score")
     private double score;
 
+    @Column(name = "species_scientific_name_without_author")
+    private String speciesScientificNameWithoutAuthor;
+
+
+    @Column(name = "family_scientific_name_without_author")
+    private String familyScientificNameWithoutAuthor;
+
+
     @ElementCollection
     @CollectionTable(name = "common_names", joinColumns = @JoinColumn(name = "identified_plant_id"))
     @Column(name = "common_name")
@@ -39,79 +49,107 @@ public class IdentifiedPlant {
     @Column(name = "uploaded_image")
     private String uploadedImage;
 
+    @Column(name = "date_uploaded")
+    private String dateUploaded;
 
-//    @Column(name = "species_scientific_name_without_author")
-//    private String speciesScientificNameWithoutAuthor;
-//
-//    @Column(name = "species_scientific_name_authorship")
-//    private String speciesScientificNameAuthorship;
-//
-//    @Column(name = "species_scientific_name")
-//    private String speciesScientificName;
-//
-//    @Column(name = "genus_scientific_name_without_author")
-//    private String genusScientificNameWithoutAuthor;
-//
-//    @Column(name = "genus_scientific_name_authorship")
-//    private String genusScientificNameAuthorship;
-//
-//    @Column(name = "genus_scientific_name")
-//    private String genusScientificName;
-//
-//    @Column(name = "family_scientific_name_without_author")
-//    private String familyScientificNameWithoutAuthor;
-//
-//    @Column(name = "family_scientific_name_authorship")
-//    private String familyScientificNameAuthorship;
-//
-//    @Column(name = "family_scientific_name")
-//    private String familyScientificName;
+    /**
+     * Name of the plant.
+     */
+    @Column(length=64)
+    private String name;
 
-//    @Column(name = "powo_id")
-//    private String powoId;
-//
-//    @Column(name = "iucn_id")
-//    private String iucnId;
-//
-//    @Column(name = "iucn_category")
-//    private String iucnCategory;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Description of the plant.
+     */
+    @Column(length=512)
+    private String description;
 
     /**
      * JPA required no-args constructor
      */
-    protected IdentifiedPlant() {}
+    public IdentifiedPlant() {}
 
     /**
      * Constructs an IdentifiedPlant with the specified identification details.
+     *
      * @param bestMatch the best match for the plant identification
-     * @param score the score of matching with uploaded plant
+     * @param score the matching score for the plant identified plant
      * @param commonNames the list of common names for the identified plant
-     * @param gbifId the plant id number of Global Biodiversity Information Facility
-     * @param imageUrl the path to the sample image of the identified plant
+     * @param speciesScientificNameWithoutAuthor The species Scientific name of the identified plant without Author
+     * @param familyScientificNameWithoutAuthor The family Scientific name of the identified plant without Author
      * @param imagePath the path to the uploaded image used for identification
      * @param gardener the gardener associated with the identified plant
      */
-    public IdentifiedPlant(String bestMatch, Double score, List<String> commonNames, String gbifId, String imageUrl, String imagePath, Gardener gardener) {
+    public IdentifiedPlant(String bestMatch, Double score, List<String> commonNames,
+                           String gbifId, String imageUrl, String imagePath,
+                           String speciesScientificNameWithoutAuthor, String familyScientificNameWithoutAuthor,
+                           Gardener gardener) {
         this.gardener = gardener;
         this.bestMatch = bestMatch;
         this.score = score;
+        this.speciesScientificNameWithoutAuthor = speciesScientificNameWithoutAuthor;
+        this.familyScientificNameWithoutAuthor = familyScientificNameWithoutAuthor;
         this.commonNames = commonNames;
         this.gbifId = gbifId;
         this.imageUrl = imageUrl;
         this.uploadedImage = imagePath;
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        this.dateUploaded = currentDate.format(formatter);
 
-//        this.powoId = result.get("powo").get("id").asText();
-//        this.speciesScientificNameWithoutAuthor = result.get("species").get("scientificNameWithoutAuthor").asText();
-//        this.speciesScientificNameAuthorship = result.get("species").get("scientificNameAuthorship").asText();
-//        this.speciesScientificName = result.get("species").get("scientificName").asText();
-//        this.genusScientificNameWithoutAuthor = result.get("species").get("genus").get("scientificNameWithoutAuthor").asText();
-//        this.genusScientificNameAuthorship = result.get("species").get("genus").get("scientificNameAuthorship").asText();
-//        this.genusScientificName = result.get("species").get("genus").get("scientificName").asText();
-//        this.familyScientificNameWithoutAuthor = result.get("species").get("family").get("scientificNameWithoutAuthor").asText();
-//        this.familyScientificNameAuthorship = result.get("species").get("family").get("scientificNameAuthorship").asText();
-//        this.familyScientificName = result.get("species").get("family").get("scientificName").asText();
     }
+
+
+    /**
+     * Constructs an IdentifiedPlant with the new plant details.
+     *
+     * @param plantName the name of the new plant
+     * @param description the description of the new plant
+     * @param speciesScientificNameWithoutAuthor the scientific name of the new plant
+     * @param uploadedDate the date of the plant uploaded
+     * @param gardener the gardener associated with the new plant
+     */
+    public IdentifiedPlant(String plantName, String description,
+                           String speciesScientificNameWithoutAuthor, LocalDate uploadedDate,
+                           Gardener gardener) {
+
+        this.name = plantName;
+        this.description = description;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        this.dateUploaded = uploadedDate.format(formatter);
+        this.speciesScientificNameWithoutAuthor = speciesScientificNameWithoutAuthor;
+        this.gardener = gardener;
+
+
+    }
+
+    /**
+     * A constructor for the required parameters of identified plant
+     * @param plantName the name of the plant
+     * @param gardener the gardener it belongs to
+     */
+    public IdentifiedPlant(String plantName, Gardener gardener) {
+        this.name = plantName;
+        this.gardener = gardener;
+    }
+
 
     public Long getId() {
         return id;
@@ -143,6 +181,23 @@ public class IdentifiedPlant {
 
     public void setScore(double score) {
         this.score = score;
+    }
+
+    public String getSpeciesScientificNameWithoutAuthor() {
+        return speciesScientificNameWithoutAuthor;
+    }
+
+    public void setSpeciesScientificNameWithoutAuthor(String speciesScientificNameWithoutAuthor) {
+        this.speciesScientificNameWithoutAuthor = speciesScientificNameWithoutAuthor;
+    }
+
+
+    public String getFamilyScientificNameWithoutAuthor() {
+        return familyScientificNameWithoutAuthor;
+    }
+
+    public void setFamilyScientificNameWithoutAuthor(String familyScientificNameWithoutAuthor) {
+        this.familyScientificNameWithoutAuthor = familyScientificNameWithoutAuthor;
     }
 
     public List<String> getCommonNames() {
@@ -177,101 +232,11 @@ public class IdentifiedPlant {
     public void setUploadedImage(String uploadedImage) {
         this.uploadedImage = uploadedImage;
     }
+    public String getDateUploaded() {
+        return dateUploaded;
+    }
 
-//    public String getSpeciesScientificNameWithoutAuthor() {
-//        return speciesScientificNameWithoutAuthor;
-//    }
-//
-//    public void setSpeciesScientificNameWithoutAuthor(String speciesScientificNameWithoutAuthor) {
-//        this.speciesScientificNameWithoutAuthor = speciesScientificNameWithoutAuthor;
-//    }
-//
-//    public String getSpeciesScientificNameAuthorship() {
-//        return speciesScientificNameAuthorship;
-//    }
-//
-//    public void setSpeciesScientificNameAuthorship(String speciesScientificNameAuthorship) {
-//        this.speciesScientificNameAuthorship = speciesScientificNameAuthorship;
-//    }
-//
-//    public String getSpeciesScientificName() {
-//        return speciesScientificName;
-//    }
-//
-//    public void setSpeciesScientificName(String speciesScientificName) {
-//        this.speciesScientificName = speciesScientificName;
-//    }
-//
-//    public String getGenusScientificNameWithoutAuthor() {
-//        return genusScientificNameWithoutAuthor;
-//    }
-//
-//    public void setGenusScientificNameWithoutAuthor(String genusScientificNameWithoutAuthor) {
-//        this.genusScientificNameWithoutAuthor = genusScientificNameWithoutAuthor;
-//    }
-//
-//    public String getGenusScientificNameAuthorship() {
-//        return genusScientificNameAuthorship;
-//    }
-//
-//    public void setGenusScientificNameAuthorship(String genusScientificNameAuthorship) {
-//        this.genusScientificNameAuthorship = genusScientificNameAuthorship;
-//    }
-//
-//    public String getGenusScientificName() {
-//        return genusScientificName;
-//    }
-//
-//    public void setGenusScientificName(String genusScientificName) {
-//        this.genusScientificName = genusScientificName;
-//    }
-//
-//    public String getFamilyScientificNameWithoutAuthor() {
-//        return familyScientificNameWithoutAuthor;
-//    }
-//
-//    public void setFamilyScientificNameWithoutAuthor(String familyScientificNameWithoutAuthor) {
-//        this.familyScientificNameWithoutAuthor = familyScientificNameWithoutAuthor;
-//    }
-//
-//    public String getFamilyScientificNameAuthorship() {
-//        return familyScientificNameAuthorship;
-//    }
-//
-//    public void setFamilyScientificNameAuthorship(String familyScientificNameAuthorship) {
-//        this.familyScientificNameAuthorship = familyScientificNameAuthorship;
-//    }
-//
-//    public String getFamilyScientificName() {
-//        return familyScientificName;
-//    }
-//
-//    public void setFamilyScientificName(String familyScientificName) {
-//        this.familyScientificName = familyScientificName;
-//    }
-//
-//    public String getPowoId() {
-//        return powoId;
-//    }
-//
-//    public void setPowoId(String powoId) {
-//        this.powoId = powoId;
-//    }
-//
-//    public String getIucnId() {
-//        return iucnId;
-//    }
-//
-//    public void setIucnId(String iucnId) {
-//        this.iucnId = iucnId;
-//    }
-//
-//    public String getIucnCategory() {
-//        return iucnCategory;
-//    }
-//
-//    public void setIucnCategory(String iucnCategory) {
-//        this.iucnCategory = iucnCategory;
-//    }
-
+    public void setDateUploaded(String dateUploaded) {
+        this.dateUploaded = dateUploaded;
+    }
 }

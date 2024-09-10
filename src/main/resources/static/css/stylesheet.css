@@ -54,6 +54,11 @@ body {
 #collection-card-img {
     max-width: max-content !important;
 }
+.card-img-top {
+    max-width: 128px;
+}
+
+
 
 .current {
     background-color: var(--weather-colour) !important;
@@ -67,7 +72,8 @@ body {
     height: 400px;
     width: 200px;
     min-width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 0;
+
 }
 
 h1 {

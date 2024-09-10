@@ -32,7 +32,7 @@
             <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
             <br/>
             <label for="datePlanted"> Date Planted: </label>
-            <input type="date" class="form-control" th:value="*{date}" id="datePlanted" name="date">
+            <input type="date" class="form-control" th:value="*{date}" id="datePlanted" name="date" max="9999-12-31">
             <span id="dateError" class="smallErrorMessage"></span>
             <script>
                 document.getElementById( "datePlanted" ).addEventListener( "invalid",

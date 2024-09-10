@@ -10,21 +10,33 @@
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="collection-container">
 
-    <div class="row">
-        <div th:each="plantSpecies : ${plantSpeciesList.content}" class="col-md-3 mb-4">
-            <div class="card collection-gardens-card">
-                <img id="collection-card-img" class="card-img-top" th:src="${plantSpecies.imageFilename}" alt="Plant Species image">
-                <div class="card-collection-body">
-                    <div class="card-body">
-                        <h5 style="color: #fffdf6" class="card-title" th:text="${plantSpecies.name}"></h5>
-                        <p style="color: #fffdf6" class="card-text" th:text="'Count: ' + ${plantSpecies.count}"></p>
-                    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+        <div id="addPlantButton" class="col-md-3 mb-4" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#addPlantModal">
+            <div class="card border-custom collection-gardens-card" style="align-items: center; display:flex; flex-direction: column;  height:100%; justify-content:center;">
+                <div class="add-button">
+                    <span class="icon">+</span>
+                    <span class="text">Add Plant</span>
                 </div>
-             </div>
+            </div>
+        </div>
+
+
+        <div th:each="species : ${speciesList.content}" class="col-md-3 mb-4">
+            <a th:href="@{/collectionDetails(speciesName=${species.speciesName})}" style="text-decoration: none;">
+                <div class="card collection-gardens-card" style="height:100%;">
+                    <img id="collection-card-img" class="card-img-top" th:src="${species.imageUrl} == null ? '/images/placeholder.jpg' : ${species.imageUrl}" alt="Plant Species image">
+                    <div class="card-collection-body">
+                        <div class="card-body">
+                            <h5 style="color: #fffdf6" class="card-title break-words overflow-wrap-anywhere text-break" th:text="${species.speciesName}"></h5>
+                            <p style="color: #fffdf6" class="card-text break-words overflow-wrap-anywhere text-break" th:text="'Number Identified: ' + ${species.count}"></p>
+                        </div>
+                    </div>
+                 </div>
+            </a>
         </div>
     </div>
 </div>
-<div th:if="${plantSpeciesList.totalPages > 0}" class="d-flex justify-content-center" aria-label="Page navigation example ">
+<div th:if="${speciesList.totalPages > 0}" class="d-flex justify-content-center" aria-label="Page navigation example ">
     <ul class = "pagination">
         <li class="page-item">
             <a class="page-link" th:href="@{/myCollection(pageNo=0)}"
@@ -32,24 +44,40 @@
                 <span aria-hidden="true">First</span>
             </a>
         </li>
-        <ul th:if="${plantSpeciesList.totalPages > 0}" class="pagination"
+        <ul th:if="${speciesList.totalPages > 0}" class="pagination"
             th:each="pageNumber : ${pageNumbers}">
             <li class="page-item"><a class="page-link" th:href="@{/myCollection(pageNo=${pageNumber - 1})}" th:text="${pageNumber}"></a></li>
         </ul>
         <li class="page-item">
-            <a class="page-link" th:href="@{/myCollection(pageNo=${plantSpeciesList.totalPages - 1})}" aria-label="Next">
+            <a class="page-link" th:href="@{/myCollection(pageNo=${speciesList.totalPages - 1})}" aria-label="Next">
                 <span aria-hidden="true">Last</span>
             </a>
         </li>
     </ul>
 </div>
 <div class="d-flex justify-content-center" aria-label="Navigation message">
-    <p th:text="'Page: ' + (${plantSpeciesList.number + 1})"></p>
+    <p th:text="'Page: ' + (${speciesList.number + 1})"></p>
 </div>
 <div class="d-flex justify-content-center" aria-label="Navigation message">
     <p th:text="${paginationMessage}"></p>
 </div>
+
+<div th:insert="~{modal/addPlantToCollectionModal.html}"></div>
+
+<!--This code below was created by Claud AI to open the modal instantly if there is an error-->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        var showModal = /*[[${showModal}]]*/ false;
+        var addPlantModal = new bootstrap.Modal(document.getElementById('addPlantModal'));
+
+        if (showModal) {
+            addPlantModal.show();
+        }
+    });
+    /*]]>*/
+</script>
 </body>
 
-</body>
 </html>
+
