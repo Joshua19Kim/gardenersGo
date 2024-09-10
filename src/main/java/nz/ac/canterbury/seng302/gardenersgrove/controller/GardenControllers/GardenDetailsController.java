@@ -129,6 +129,7 @@ public class GardenDetailsController {
            model.addAttribute("tags", tagService.getTags(parseLong(gardenId)));
            model.addAttribute("allTags", tagService.getUniqueTagNames(parseLong(gardenId)));
            model.addAttribute("followerCount", followerService.findFollowing(parseLong(gardenId)).size());
+           model.addAttribute("followerList", followerService.findFollowing(parseLong(gardenId)));
            if (uploadError != null) {
                model.addAttribute("uploadError", uploadError);
                model.addAttribute("errorId", errorId);

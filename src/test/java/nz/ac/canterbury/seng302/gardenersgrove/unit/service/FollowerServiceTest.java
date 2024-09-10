@@ -48,7 +48,7 @@ public class FollowerServiceTest {
 
     @Test
     void AddFollower_ValidValues_FollowerCreated() {
-        Follower follower = new Follower(testGardener2.getId(), garden.getId());
+        Follower follower = new Follower(testGardener2.getId(), garden.getId(), testGardener2.getFullName());
         followerService.addFollower(follower);
 
         Optional<Follower> followerOptional = followerService.findFollower(testGardener2.getId(), garden.getId());
@@ -57,18 +57,18 @@ public class FollowerServiceTest {
 
     @Test
     void AddFollower_FollowingOwnGarden_ErrorThrown() throws IllegalArgumentException {
-        Follower follower = new Follower(testGardener.getId(), garden.getId());
+        Follower follower = new Follower(testGardener.getId(), garden.getId(), testGardener.getFullName());
         assertThrows(IllegalArgumentException.class, () -> followerService.addFollower(follower));
     }
 
     @Test
     void AddFollower_FollowingPrivateGarden_ErrorThrown() throws IllegalArgumentException {
-        Follower follower = new Follower(testGardener2.getId(), privateGarden.getId());
+        Follower follower = new Follower(testGardener2.getId(), privateGarden.getId(), testGardener2.getFullName());
         assertThrows(IllegalArgumentException.class, () -> followerService.addFollower(follower));
     }
     @Test
     void AddFollower_FindGardenFollowers_FollowerFound() {
-        Follower follower = new Follower(testGardener2.getId(), garden.getId());
+        Follower follower = new Follower(testGardener2.getId(), garden.getId(), testGardener2.getFullName());
         followerService.addFollower(follower);
         List<Follower> followerList = followerService.findFollowing(garden.getId());
         assertEquals(followerList.get(0), follower);

@@ -918,7 +918,7 @@ class GardenDetailsControllerTest {
     @WithMockUser
     void FollowAGarden_UserIsAlreadyFollowing_FollowerRemoved() throws Exception {
 
-        when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.of(new Follower(1L, 1L)));
+        when(followerService.findFollower(anyLong(), anyLong())).thenReturn(Optional.of(new Follower(1L, 1L, "a name")));
         browseMockMvc.perform(MockMvcRequestBuilders.post("/follow")
                 .param("gardenToFollow", "1"));
         verify(followerService, times(1)).deleteFollower(anyLong(), anyLong());
@@ -931,7 +931,7 @@ class GardenDetailsControllerTest {
 
         browseMockMvc.perform(MockMvcRequestBuilders.post("/follow")
                 .param("gardenToFollow", "1"));
-        verify(followerService, times(1)).addfollower(any(Follower.class));
+        verify(followerService, times(1)).addFollower(any(Follower.class));
     }
 
     @Test
@@ -959,7 +959,7 @@ class GardenDetailsControllerTest {
     public void GardenDetailsRequested_HasOneFollower_FollowCountDisplays() throws Exception {
         Garden garden = new Garden("Test garden", "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         when(gardenService.getGarden(1L)).thenReturn(Optional.of(garden));
-        Follower mockFollower = new Follower(2L, 1L);
+        Follower mockFollower = new Follower(2L, 1L, "a name");
         List<Follower> mockFollowerList = List.of(mockFollower);
         when(followerService.findFollowing(testGardener.getId())).thenReturn(mockFollowerList);
 

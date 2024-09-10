@@ -78,7 +78,7 @@ public class BrowsePublicGardens {
         Garden garden = new Garden(gardenName, "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         garden.setIsGardenPublic(true);
         gardenService.addGarden(garden);
-        followerService.addFollower(new Follower(gardener.getId(), garden.getId()));
+        followerService.addFollower(new Follower(gardener.getId(), garden.getId(), gardener.getFullName()));
         gardenToFollow = garden;
     }
 
@@ -153,7 +153,7 @@ public class BrowsePublicGardens {
         testGardener = new Gardener("test", "test", null, "jane@doe.com", "Password1!");
         gardenerFormService.addGardener(testGardener);
 
-        followerService.addFollower(new Follower(testGardener.getId(), garden.getId()));
+        followerService.addFollower(new Follower(testGardener.getId(), garden.getId(), gardener.getFullName()));
     }
 
     @When("I navigate to the garden details page")

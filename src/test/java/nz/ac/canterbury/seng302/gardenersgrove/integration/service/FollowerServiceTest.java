@@ -63,7 +63,7 @@ public class FollowerServiceTest {
 
   @Test
   void FollowerAdded_ValidInputs_FollowerSaved() {
-    Follower newFollower = new Follower(testGardener1.getId(), testGarden.getId());
+    Follower newFollower = new Follower(testGardener1.getId(), testGarden.getId(), testGardener1.getFullName());
     followerService.addFollower(newFollower);
     Assertions.assertEquals(
         followerRepository.findByGardenerIdAndGardenId(testGardener1.getId(), testGarden.getId()),
@@ -72,7 +72,7 @@ public class FollowerServiceTest {
 
   @Test
   void AddFollower_ThrowsException_WhenFollowingOwnGarden() {
-    Follower newFollower = new Follower(testGardener2.getId(), testGarden.getId());
+    Follower newFollower = new Follower(testGardener2.getId(), testGarden.getId(), testGardener2.getFullName());
     IllegalArgumentException exception =
         Assertions.assertThrows(
             IllegalArgumentException.class, () -> followerService.addFollower(newFollower));
@@ -82,7 +82,7 @@ public class FollowerServiceTest {
 
   @Test
   void addFollower_ThrowsException_WhenGardenIsNotPublic() {
-    Follower newFollower = new Follower(testGardener1.getId(), testGarden.getId());
+    Follower newFollower = new Follower(testGardener1.getId(), testGarden.getId(), testGardener1.getFullName());
     testGarden.setIsGardenPublic(false);
     gardenRepository.save(testGarden);
 
@@ -95,7 +95,7 @@ public class FollowerServiceTest {
 
   @Test
   void addFollower_ThrowsException_WhenGardenDoesNotExist() {
-    Follower newFollower = new Follower(testGardener1.getId(), 99L);
+    Follower newFollower = new Follower(testGardener1.getId(), 99L, testGardener1.getFullName());
     IllegalArgumentException exception =
         Assertions.assertThrows(
             IllegalArgumentException.class, () -> followerService.addFollower(newFollower));

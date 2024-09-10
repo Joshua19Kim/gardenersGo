@@ -171,10 +171,10 @@ public class GardenDetailsControllerTest {
         HttpResponse<String> mockLocation = Mockito.mock(HttpResponse.class);
         Mockito.when(mockLocationService.sendRequest(anyString())).thenReturn(mockLocation);
         Mockito.when(mockLocation.body()).thenReturn("error");
-        Follower mockFollower = new Follower(2L, 1L);
+        Follower mockFollower = new Follower(2L, 1L, "a name");
         List<Follower> mockFollowerList = List.of(mockFollower);
         Mockito.when(mockFollowerService.findFollowing(mockUser.getId())).thenReturn(mockFollowerList);
-        String template = gardenDetailsController.gardenDetails("1", null, null, null, mockModel, mockRequest);
+        String template = gardenDetailsController.gardenDetails("1", null, null, null, mockRedirectAttributes, mockModel, mockRequest);
         Assertions.assertEquals("gardenDetailsTemplate", template);
         Mockito.verify(mockFollowerService, times(1)).findFollowing(anyLong());
     }

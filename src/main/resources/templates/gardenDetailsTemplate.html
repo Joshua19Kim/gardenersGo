@@ -59,7 +59,8 @@
             <p><strong>Description:</strong> <span class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;" th:text="${garden.description}"></span></p>
             <p>
                 <strong>Followers: </strong>
-                <a class="link-underline-dark" th:if="${followerCount != null and followerCount > 0}" th:text="${followerCount}"></a>
+                <a class="link-underline-dark modal-link" data-bs-target="#followersModal" data-bs-toggle="modal"
+                   th:if="${followerCount != null and followerCount > 0}" th:text="${followerCount}"></a>
                 <span id="noFollowers" th:if="${followerCount == null or followerCount == 0}">No followers yet</span>
             </p>
 
@@ -248,6 +249,22 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Ok!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="followersModal" class="modal fade" tabindex="-1" aria-labelledby="followersModal" aria-hidden="true" data-bs-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="followersModalLabel">Followers</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="followersModalBody">
+                    <div class="list-group scroll-vertical" th:each="follower: ${followerList}">
+                        <a class="link-underline-dark" th:text="${follower.getGardenerName()}" th:href="@{/user(user=${follower.getGardenerId()})}"></a>
+                    </div>
                 </div>
             </div>
         </div>
