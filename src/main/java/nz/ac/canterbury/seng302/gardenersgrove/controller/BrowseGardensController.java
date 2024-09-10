@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.TagValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -219,7 +221,6 @@ public class BrowseGardensController {
      * @param pageNo the page number
      * @param tag the tag the user typed in or selected
      * @param tags all the tags the user is filtering by
-     * @param model the model
      * @param redirectAttributes attributes used to add to the model of the url it is redirected to
      * @return redirects to the browse gardens page
      */
@@ -230,13 +231,25 @@ public class BrowseGardensController {
             @RequestParam(name="tags", required = false) List<String> tags,
             RedirectAttributes redirectAttributes
     ) {
-        redirectAttributes.addFlashAttribute("pageNo", pageNo);
-        if(tags == null) {
+        tag = tag.strip();
+
+        // Validate the tag
+        TagValidation tagValidation = new TagValidation(tagService);
+        Optional<String> validTagError = tagValidation.validateTag(tag);
+        if (validTagError.isPresent()) {
+            redirectAttributes.addFlashAttribute("tag", tag);
+            redirectAttributes.addFlashAttribute("tagValid", validTagError.get());
+        }
+
+        if (tags == null) {
             tags = new ArrayList<>();
         }
+
         List<String> allTags = tagService.getAllTagNames();
-        if(allTags.contains(tag)) {
-            if(tags.contains(tag)) {  // this checks if the typed in tag is already in the user selected tags
+
+        if (allTags.contains(tag)) {
+            // if the tag has already been selected
+            if (tags.contains(tag)) {
                 String errorMessage = "You have already selected " + tag;
                 redirectAttributes.addFlashAttribute("tag", tag);
                 redirectAttributes.addFlashAttribute("tagValid", errorMessage);
@@ -244,18 +257,18 @@ public class BrowseGardensController {
                 tags.add(tag);
             }
         } else {
-            // if the typed in tag does not exist
+            // if tag doesn't exist
             String errorMessage = "No tag matching " + tag;
             redirectAttributes.addFlashAttribute("tag", tag);
             redirectAttributes.addFlashAttribute("tagValid", errorMessage);
         }
-        // removes the tags from the autocomplete
-        for(String selectedTag: tags) {
-            allTags.remove(selectedTag);
-        }
+
+        // remove selected tags from the autocomplete options
+        allTags.removeAll(tags);
 
         redirectAttributes.addFlashAttribute("tags", tags);
         redirectAttributes.addFlashAttribute("allTags", allTags);
+        redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
 
         return "redirect:/browseGardens";
