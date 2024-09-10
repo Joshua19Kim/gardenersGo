@@ -5,16 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantResponse;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -40,7 +36,6 @@ import java.util.UUID;
  */
 @Service
 public class PlantIdentificationService {
-    Logger logger = LoggerFactory.getLogger(PlantIdentificationService.class);
     private static final String PROJECT = "all";
     private static final String API_URL = "https://my-api.plantnet.org/v2/identify/";
     private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
@@ -48,18 +43,15 @@ public class PlantIdentificationService {
     private final String apiKey;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
-    private final IdentifiedPlantRepository identifiedPlantRepository;
 
     /**
      * Constructs a new PlantIdentificationService with the specified API key and repository.
      *
      * @param apiKey                    the API key for authenticating with the external plant identification service
-     * @param identifiedPlantRepository the repository for saving identified plants
      */
     @Autowired
-    public PlantIdentificationService(@Value("${plantNet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository, IdentifiedPlantRepository identifiedPlantRepository1) {
+    public PlantIdentificationService(@Value("${plantNet.password}") String apiKey) {
         this.apiKey = apiKey;
-        this.identifiedPlantRepository = identifiedPlantRepository1;
         this.objectMapper = new ObjectMapper();
         this.restTemplate = new RestTemplate();
     }
@@ -162,63 +154,20 @@ public class PlantIdentificationService {
      * @return the identified plant entity
      */
     public IdentifiedPlant getIdentifiedPlantDetails(IdentifiedPlantResponse identifiedPlantResponse, Gardener gardener, String imagePath) {
+        String speciesAttribute = "species";
         JsonNode firstResult = identifiedPlantResponse.getResults().get(0);
         String bestMatch = identifiedPlantResponse.getBestMatch();
         Double score = firstResult.get("score").asDouble();
         List<String> commonNames = objectMapper.convertValue(
-                firstResult.get("species").get("commonNames"),
+                firstResult.get(speciesAttribute).get("commonNames"),
                 objectMapper.getTypeFactory().constructCollectionType(List.class, String.class)
         );
         String gbifId = firstResult.get("gbif").get("id").asText();
         String imageUrl = firstResult.get("images").get(0).get("url").get("o").asText();
-        String speciesScientificNameWithoutAuthor = firstResult.get("species").get("scientificNameWithoutAuthor").asText();
-        String familyScientificNameWithoutAuthor = firstResult.get("species").get("family").get("scientificNameWithoutAuthor").asText();
+        String speciesScientificNameWithoutAuthor = firstResult.get(speciesAttribute).get("scientificNameWithoutAuthor").asText();
+        String familyScientificNameWithoutAuthor = firstResult.get(speciesAttribute).get("family").get("scientificNameWithoutAuthor").asText();
 
         return new IdentifiedPlant(bestMatch, score, commonNames, gbifId, imageUrl, imagePath, speciesScientificNameWithoutAuthor, familyScientificNameWithoutAuthor, gardener);
     }
 
-
-    /**
-     * Saves the details of an identified plant entity in the database.
-     *
-     * @param identifiedPlant The entity containing the details to be saved.
-     * @return The saved IdentifiedPlant entity
-     */
-    public IdentifiedPlant saveIdentifiedPlantDetails(IdentifiedPlant identifiedPlant) {
-        return identifiedPlantRepository.save(identifiedPlant);
-    }
-
-    /**
-     * Gets the IdentifiedPlants by species name that are owned by the gardener in paginated form
-     * @param pageNo the page number
-     * @param pageSize the size of the page
-     * @param gardenerId the id of the gardener
-     * @param speciesName the name of the plant species
-     * @return the page of IdentifiedPlants matching the species name
-     */
-    public Page<IdentifiedPlant> getGardenerPlantsBySpeciesPaginated(int pageNo, int pageSize, Long gardenerId, String speciesName) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return identifiedPlantRepository.getPlantByGardenerIdAndSpecies(gardenerId, speciesName, pageable);
-    }
-
-    /**
-     * Gets the IdentifiedPlant by id
-     * @param plantId the id of the plant to be retrieved
-     * @return IdentifiedPlant matching the id
-     */
-    public Optional<IdentifiedPlant> getCollectionPlantById(Long plantId) {
-        return identifiedPlantRepository.findById(plantId);
-    }
-
-    /**
-     * Gets the IdentifiedPlant species that are owned by the gardener in paginated form
-     * @param pageNo the page number
-     * @param pageSize the size of the page
-     * @param gardenerId the id of the gardener
-     * @return the page of IdentifiedPlant species
-     */
-    public Page<IdentifiedPlantSpecies> getGardenerPlantSpeciesPaginated(int pageNo, int pageSize, Long gardenerId) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return identifiedPlantRepository.getSpeciesByGardenerId(gardenerId, pageable);
-    }
 }

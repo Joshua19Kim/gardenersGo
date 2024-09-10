@@ -84,7 +84,7 @@ public class IdentifiedPlant {
     /**
      * JPA required no-args constructor
      */
-    protected IdentifiedPlant() {}
+    public IdentifiedPlant() {}
 
     /**
      * Constructs an IdentifiedPlant with the specified identification details.
@@ -114,6 +114,40 @@ public class IdentifiedPlant {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         this.dateUploaded = currentDate.format(formatter);
 
+    }
+
+
+    /**
+     * Constructs an IdentifiedPlant with the new plant details.
+     *
+     * @param plantName the name of the new plant
+     * @param description the description of the new plant
+     * @param speciesScientificNameWithoutAuthor the scientific name of the new plant
+     * @param uploadedDate the date of the plant uploaded
+     * @param gardener the gardener associated with the new plant
+     */
+    public IdentifiedPlant(String plantName, String description,
+                           String speciesScientificNameWithoutAuthor, LocalDate uploadedDate,
+                           Gardener gardener) {
+
+        this.name = plantName;
+        this.description = description;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        this.dateUploaded = uploadedDate.format(formatter);
+        this.speciesScientificNameWithoutAuthor = speciesScientificNameWithoutAuthor;
+        this.gardener = gardener;
+
+
+    }
+
+    /**
+     * A constructor for the required parameters of identified plant
+     * @param plantName the name of the plant
+     * @param gardener the gardener it belongs to
+     */
+    public IdentifiedPlant(String plantName, Gardener gardener) {
+        this.name = plantName;
+        this.gardener = gardener;
     }
 
 

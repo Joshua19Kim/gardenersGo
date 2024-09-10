@@ -6,6 +6,10 @@ package nz.ac.canterbury.seng302.gardenersgrove.util;
  */
 public class ValidityChecker {
 
+    // https://stackoverflow.com/questions/24744375/regex-for-only-allowing-letters-numbers-space-commas-periods
+    // https://stackoverflow.com/questions/20690499/concrete-javascript-regular-expression-for-accented-characters-diacritics
+    private static final String genericRegex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+
     /**
      * Checks that the garden name complies with the required format
      * @param name the garden name
@@ -17,11 +21,7 @@ public class ValidityChecker {
         if (name == null || name.trim().isEmpty()) {
             return "Garden name cannot be empty";
         }
-
-        // https://stackoverflow.com/questions/24744375/regex-for-only-allowing-letters-numbers-space-commas-periods
-        // https://stackoverflow.com/questions/20690499/concrete-javascript-regular-expression-for-accented-characters-diacritics
-        String regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
-        if (!name.matches(regex)) {
+        if (!name.matches(genericRegex)) {
             result += "Garden name must only include letters, numbers, spaces, dots, hyphens, or apostrophes <br/>";
         }
         if(name.length() > 64) {
@@ -103,16 +103,40 @@ public class ValidityChecker {
      * @return Either an error message or the plant name
      */
     public static String validatePlantName(String name) {
-        String regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
         String result = "";
-        if (name == null || name.trim().isEmpty() || !name.matches(regex)) {
-            result += "Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>";
+        if (name == null || name.trim().isEmpty() || !name.matches(genericRegex)) {
+            result += "Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>";
         }
 
         if(name != null && name.length() > 64) {
             result += "Plant name must be less than or equal to 64 characters";
         }
 
+        if (!result.isEmpty()) {
+            return result;
+        }
+
+        return name;
+    }
+
+    /**
+     * Validates that the scientific plant name is of valid format
+     * @param name the scientific plant name
+     * @return Either an error message or the plant name
+     */
+    public static String validateScientificPlantName(String name) {
+        if(name == null || name.trim().isEmpty()) {
+            return name;
+        }
+
+        String result = "";
+        if (!name.matches(genericRegex)) {
+            result += "Scientific name must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>";
+        }
+
+        if(name.length() > 64) {
+            result += "Scientific name must be less than 64 characters";
+        }
         if (!result.isEmpty()) {
             return result;
         }
@@ -228,7 +252,7 @@ public class ValidityChecker {
         if(suburb != null && suburb.matches(regex)) {
             result = "Please enter a suburb without only numerical characters <br/>";
         }
-        regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        regex = genericRegex;
         if (suburb != null && !suburb.trim().isEmpty() && !suburb.matches(regex)) {
             result += "Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>";
         }
@@ -255,7 +279,7 @@ public class ValidityChecker {
         if(city.matches(regex)) {
             result += "Please enter a city without only numerical characters <br/>";
         }
-        regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        regex = genericRegex;
         if (!city.matches(regex)) {
             result += "City must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>";
         }
@@ -280,7 +304,7 @@ public class ValidityChecker {
         if(country.matches(regex)) {
             result += "Please enter a country without only numerical characters <br/>";
         }
-        regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        regex = genericRegex;
         if (!country.matches(regex)) {
             result += "Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>";
         }
@@ -320,7 +344,7 @@ public class ValidityChecker {
 
     }
     public static String validateGardenPostcode(String postcode) {
-        String regex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
+        String regex = genericRegex;
         String result ="";
         if (postcode != null && !postcode.trim().isEmpty() && !postcode.matches(regex)) {
             result = "Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes <br/>";

@@ -18,7 +18,7 @@
                     </div>
                     <div class="mb-3 text-center">
                         <div id="fileName" class="mt-2"></div>
-                        <label for="imageInput" class="btn image-button">
+                        <label for="imageInput" class="btn image-add-button">
                             Upload plant image..
                             <input type="file" id="imageInput" name="image" accept="image/*" required class="d-none">
                         </label>
@@ -73,9 +73,9 @@
                     <div id="commonNames"></div>
                     <p id="nameError" class="smallErrorMessage" th:utext="${nameError != null ? nameError : ''}"></p>
                     <br/>
-                    <label for="description"> Description (Optional): </label>
-                    <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
-                    <textarea class="form-control" th:value="*{description}" id="description" name="description"  maxlength="512"
+                    <label for="scanning-description"> Description (Optional): </label>
+                    <span id="scanningCharacterCountContainer"><span id="scanningCharacterCount">0</span> /512</span>
+                    <textarea class="form-control" th:value="*{description}" id="scanning-description" name="description"  maxlength="512"
                               th:classappend="${descriptionError} ? 'is-invalid' : ''">[[${description}]]</textarea>
                     <span id="descriptionError" class="smallErrorMessage" th:text="${descriptionError != null ? descriptionError : ''}"></span>
                 </form>

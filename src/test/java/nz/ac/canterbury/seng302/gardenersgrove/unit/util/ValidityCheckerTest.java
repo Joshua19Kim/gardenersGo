@@ -166,19 +166,19 @@ public class ValidityCheckerTest {
     public void PlantNameEntered_EmptyInput_ErrorMessageReturned() {
         String input = "";
         String returnedInput = ValidityChecker.validatePlantName(input);
-        Assertions.assertEquals("Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>", returnedInput);
+        Assertions.assertEquals("Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>", returnedInput);
     }
     @Test
     public void PlantNameEntered_EmptySpaceInput_ErrorMessageReturned() {
         String input = " ";
         String returnedInput = ValidityChecker.validatePlantName(input);
-        Assertions.assertEquals("Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>", returnedInput);
+        Assertions.assertEquals("Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>", returnedInput);
     }
     @Test
     public void PlantNameEntered_InvalidInput_ErrorMessageReturned() {
         String input = "J@(K_Er$K!^e";
         String returnedInput = ValidityChecker.validatePlantName(input);
-        Assertions.assertEquals("Plant name cannot by empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>", returnedInput);
+        Assertions.assertEquals("Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>", returnedInput);
     }
 
     @Test
@@ -402,6 +402,22 @@ public class ValidityCheckerTest {
     public void ValidatePageNumberTest(String pageNumber, int expectedNumber) {
         int actualNumber = ValidityChecker.validatePageNumber(pageNumber);
         Assertions.assertEquals(expectedNumber, actualNumber);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "@@@@@@@: Scientific name must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>",
+            "Science: Science",
+            "     :     ",
+            "@@@$$%^S^&&S&FBBNSJLKJNSLFNNSSKNKNY#^^#T*HFBSFBSKNOIH#&@Y(@*Y*(@HOFSIHF(*Y#)#H)HFONW*(*3*@B***@HG(H@: " +
+                    "Scientific name must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>" +
+                    "Scientific name must be less than 64 characters",
+            "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh: " +
+                    "Scientific name must be less than 64 characters"
+    }, delimiter = ':')
+    void ValidateScientificNameTest(String scientificName, String expectedMessage) {
+        String actualMessage = ValidityChecker.validateScientificPlantName(scientificName);
+        Assertions.assertEquals(expectedMessage, actualMessage);
     }
 
 }

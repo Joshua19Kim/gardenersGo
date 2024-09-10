@@ -174,7 +174,7 @@ goToCollectionButton.addEventListener('click', function() {
 
     var formData = new FormData(document.getElementById('identifiedPlantNameForm'));
     var name = formData.get('name');
-    var description = formData.get('description');
+    var description = formData.get('scanning-description');
 
     const saveUrl = `${getBaseUrl()}/saveIdentifiedPlant`;
     fetch(saveUrl, {
@@ -205,7 +205,7 @@ goToCollectionButton.addEventListener('click', function() {
         .then(data => {
             var modal = bootstrap.Modal.getInstance(successModal);
             document.getElementById('name').value = "";
-            document.getElementById('description').value = "";
+            document.getElementById('scanning-description').value = "";
             document.getElementById('nameError').innerText = '';
             document.getElementById('descriptionError').innerText = '';
             modal.hide();
@@ -218,33 +218,18 @@ goToCollectionButton.addEventListener('click', function() {
 
 // Character count section below
 
-const txHeight = 16;
-const tx = document.getElementsByTagName("textarea");
-for (let i = 0; i < tx.length; i++) {
-    if (tx[i].value === '') {
-        tx[i].setAttribute("style", "height:" + txHeight + "px;overflow-y:hidden;");
-    } else {
-        tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-    }
-    tx[i].addEventListener("input", OnInput, false);
-    document.addEventListener('DOMContentLoaded', function() {
-        updateCharacterCount();
-    });
-    document.addEventListener('input', function() {
-        updateCharacterCount();
-    });
+document.getElementById('scanning-description').addEventListener('input', updateScanningCharacterCount)
 
-}
-
-function OnInput() {
-    this.style.height = 'auto';
-    this.style.height = (this.scrollHeight) + "px";
-}
-function updateCharacterCount() {
-    var textarea = document.getElementById("description");
-    var characterCount = document.getElementById("characterCount");
+function updateScanningCharacterCount() {
+    var textarea = document.getElementById("scanning-description");
+    var characterCount = document.getElementById("scanningCharacterCount");
     characterCount.textContent = textarea.value.length;
 }
+
+window.onload = () => {
+    updateScanningCharacterCount()
+}
+
 
 document.getElementById("identifiedPlantNameForm").addEventListener("keydown", function(event) {
     if (event.key === "Enter") {
