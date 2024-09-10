@@ -157,6 +157,10 @@ public class BrowseGardensController {
             String paginationMessage = "Showing results 0 to 0 of 0";
             model.addAttribute("paginationMessage", paginationMessage);
         }
+        if(model.containsAttribute("clearSearch")) {
+            setSearchTerm("");
+            setSearchTags(new ArrayList<>());
+        }
 
         if(!model.containsAttribute("tags") && !model.containsAttribute("allTags")) {
             List<String> allTags = tagService.getAllTagNames();
@@ -337,6 +341,21 @@ public class BrowseGardensController {
         }
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
+        return "redirect:/browseGardens";
+    }
+
+    /**
+     * Clears the current search terms
+     * @param pageNo the page number
+     * @param redirectAttributes used to add attributes to the redirected model
+     * @return redirects to the browse gardens page
+     */
+    @GetMapping("/browseGardens/clearSearch")
+    public String clearSearch(@RequestParam(name="pageNo") String pageNo,
+                              RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("pageNo", pageNo);
+        redirectAttributes.addFlashAttribute("pageRequest", true);
+        redirectAttributes.addFlashAttribute("clearSearch", true);
         return "redirect:/browseGardens";
     }
 }
