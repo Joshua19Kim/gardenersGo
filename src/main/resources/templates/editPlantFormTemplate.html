@@ -30,16 +30,9 @@
             <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
             <br/>
             <label for="datePlanted"> Date Planted: </label>
-            <input type="date" class="form-control" th:value="${date != null ? date : formattedDate}" id="datePlanted" name="date" max="9999-12-31">
-            <span id="dateError" class="smallErrorMessage"></span>
-            <script>
-                document.getElementById( "datePlanted" ).addEventListener( "invalid",
-                    function( event ) {
-                        event.preventDefault();
-                        document.getElementById("datePlanted").style.border = "1px solid red";
-                        document.getElementById("dateError").textContent = "Date is not in valid format, DD/MM/YYYY";
-                    });
-            </script>
+            <input type="date" class="form-control" th:value="${date != null ? date : formattedDate}" id="datePlanted"
+                   name="date" max="9999-12-31">
+            <span th:if="${dateError}" th:text="${dateError}" class="smallErrorMessage"></span>
             <br/>
             <label for="image"> Image: </label>
             <div class="plant-image-container" id="image">
