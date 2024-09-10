@@ -158,10 +158,28 @@ public class BrowseGardensControllerTest {
 
     @Test
     @WithMockUser
-    public void TagAdded_InvalidTag_RedirectToBrowseGardens() throws Exception {
+    public void TagAdded_TagDoesNotExist_RedirectToBrowseGardens() throws Exception {
         String tag = "tag20";
-        String errorMessage = "No tag matching " + tag;
-        when(tagService.getAllTagNames()).thenReturn(allTags);
+        String errorMessage = "No tag matching " + tag+ " <br/>";
+        Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
+        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
+                        .param("tag-input", tag)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/browseGardens"))
+                .andExpect(flash().attribute("allTags", allTags))
+                .andExpect(flash().attribute("tags", List.of()))
+                .andExpect(flash().attribute("tag", tag))
+                .andExpect(flash().attribute("tagValid", errorMessage))
+                .andExpect(flash().attribute("pageNo", String.valueOf(defaultPageNumber)));
+
+    }
+    @Test
+    @WithMockUser
+    public void TagAdded_InvalidTag_RedirectToBrowseGardens() throws Exception {
+        String tag = "qwertyuiopasdfghjklzxcvbnm";
+        String errorMessage = "No tag matching " + tag+ " <br/>A tag cannot exceed 25 characters <br/>";
+        Mockito.when(tagService.getAllTagNames()).thenReturn(allTags);
         mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens/addTag")
                         .param("tag-input", tag)
                         .with(csrf()))

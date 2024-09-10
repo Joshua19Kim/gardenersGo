@@ -19,4 +19,4 @@ Feature: U24 As Inaya, I want to be able to browse gardens by different tags so 
     When I press the enter key
     Then the tag is not added to my current selection
     And the text field is not cleared
-    And an error message on the browse gardens page tells me "No tag matching spices"
+    And an error message on the browse gardens page tells me "No tag matching spices <br/>"
