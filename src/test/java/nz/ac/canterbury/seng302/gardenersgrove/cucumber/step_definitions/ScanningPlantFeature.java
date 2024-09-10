@@ -11,6 +11,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
@@ -39,11 +40,9 @@ public class ScanningPlantFeature {
   @Autowired
   private MockMvc mockMvc;
   @Autowired
-  private GardenerFormService gardenerFormService;
-  @Autowired
   private PlantIdentificationService plantIdentificationService;
   @Autowired
-  private RequestService requestService;
+  private GardenerFormService gardenerFormService;
   private MockMultipartFile imageFile;
   private String errorMessage;
   private String inputName;
@@ -56,14 +55,7 @@ public class ScanningPlantFeature {
     currentUser = new Gardener("Test", "Gardener",
             LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
             "Password1!");
-
-    plantIdentificationService = Mockito.mock(PlantIdentificationService.class);
-    GardenService gardenService = Mockito.mock(GardenService.class);
-    gardenerFormService = Mockito.mock(GardenerFormService.class);
-    requestService = Mockito.mock(RequestService.class);
-
-    when(gardenerFormService.findByEmail(anyString())).thenReturn(Optional.of(currentUser));
-    when(requestService.getRequestURI(any())).thenReturn("");
+    gardenerFormService.addGardener(currentUser);
   }
 
   @Given("I have an image of a plant")
@@ -115,11 +107,12 @@ public class ScanningPlantFeature {
             currentUser
     );
     cataloguedPlant.setId(1L);
+    plantIdentificationService.saveIdentifiedPlantDetails(cataloguedPlant);
+    System.out.println(plantIdentificationService.getCollectionPlantById(1L));
   }
 
   @When("I click the edit button")
   public void i_click_the_edit_button() throws Exception {
-    when(plantIdentificationService.getCollectionPlantById(anyLong())).thenReturn(Optional.of(cataloguedPlant));
     resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/collectionDetails/edit")
             .param("plantId", "1")
             .with(csrf()));
@@ -142,7 +135,6 @@ public class ScanningPlantFeature {
 
   @When("I submit the edit plant form")
   public void i_submit_the_edit_plant_form() throws Exception {
-    when(plantIdentificationService.getCollectionPlantById(anyLong())).thenReturn(Optional.of(cataloguedPlant));
     resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/collectionDetails/edit")
             .param("name",inputName)
             .param("description", inputDescription)
@@ -173,36 +165,6 @@ public class ScanningPlantFeature {
     if (result.containsKey("descriptionError")) {
       Assertions.assertEquals(message, result.get("descriptionError"));
     }
-//    Map<String, String> requestBody = new HashMap<>();
-//    requestBody.put("name", inputName);
-//    requestBody.put("description", inputDescription);
-//
-//
-//    String jsonBody = objectMapper.writeValueAsString(requestBody);
-//
-//    resultActions =
-//            mockMvc
-//                    .perform(
-//                            post("/saveIdentifiedPlant")
-//                                    .contentType(MediaType.APPLICATION_JSON)
-//                                    .content(jsonBody)
-//                                    .with(csrf()))
-//                    .andExpect(status().isBadRequest());
-//
-
-//    ObjectMapper objectMapper = new ObjectMapper();
-//
-//    MockHttpServletResponse response = resultActions.andReturn().getResponse();
-//    String responseBody = response.getContentAsString();
-//    Map<String, String> responseMap = objectMapper.readValue(responseBody, Map.class);
-//
-//    if (responseMap.containsKey("nameError")) {
-//      Assertions.assertEquals(message, responseMap.get("nameError"));
-//    } else if (responseMap.containsKey("descriptionError")) {
-//      Assertions.assertEquals(message, responseMap.get("descriptionError"));
-//    } else {
-//      Assertions.fail("Expected error message not found in response");
-//    }
   }
 
   @Then("I should be informed that the app failed to identify plant")
