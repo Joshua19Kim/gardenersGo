@@ -4,6 +4,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
@@ -26,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Import(PlantIdentificationService.class)
 public class PlantIdentificationServiceTest {
 
+    @Autowired
+    private IdentifiedPlantRepository identifiedPlantRepository;
     @Autowired
     private PlantIdentificationService plantIdentificationService;
     private GardenerFormService gardenerFormService;
@@ -87,9 +90,9 @@ public class PlantIdentificationServiceTest {
         ThirdTestIdentifiedPlant.setName("my red capsicum");
         ThirdTestIdentifiedPlant.setDescription("my beautiful red capsicum");
 
-        plantIdentificationService.saveIdentifiedPlantDetails(FirstTestIdentifiedPlant);
-        plantIdentificationService.saveIdentifiedPlantDetails(SecondTestIdentifiedPlant);
-        plantIdentificationService.saveIdentifiedPlantDetails(ThirdTestIdentifiedPlant);
+        identifiedPlantRepository.save(FirstTestIdentifiedPlant);
+        identifiedPlantRepository.save(SecondTestIdentifiedPlant);
+        identifiedPlantRepository.save(ThirdTestIdentifiedPlant);
 
 
         List<String> actualPlantNameList = plantIdentificationService.getAllPlantNames();
@@ -151,9 +154,9 @@ public class PlantIdentificationServiceTest {
         ThirdTestIdentifiedPlant.setName("my red capsicum");
         ThirdTestIdentifiedPlant.setDescription("my beautiful red capsicum");
 
-        plantIdentificationService.saveIdentifiedPlantDetails(FirstTestIdentifiedPlant);
-        plantIdentificationService.saveIdentifiedPlantDetails(SecondTestIdentifiedPlant);
-        plantIdentificationService.saveIdentifiedPlantDetails(ThirdTestIdentifiedPlant);
+        identifiedPlantRepository.save(FirstTestIdentifiedPlant);
+        identifiedPlantRepository.save(SecondTestIdentifiedPlant);
+        identifiedPlantRepository.save(ThirdTestIdentifiedPlant);
 
 
         List<String> actualPlantNameList = plantIdentificationService.getAllSpeciesScientificNames();

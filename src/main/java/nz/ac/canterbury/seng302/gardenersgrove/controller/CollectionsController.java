@@ -52,16 +52,19 @@ public class CollectionsController {
 
     private final String showModalAttribute = "showModal";
 
+    private final PlantIdentificationService plantIdentificationService;
+
     /**
      * Constructor to instantiate CollectionsController
      * @param gardenService used in conjunction with gardener form service to populate navbar
      * @param gardenerFormService used in conjunction with above to populate navbar
      */
-    public CollectionsController(ImageService imageService, GardenService gardenService, GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService) {
+    public CollectionsController(ImageService imageService, GardenService gardenService, GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService, PlantIdentificationService plantIdentificationService) {
         this.imageService = imageService;
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.identifiedPlantService = identifiedPlantService;
+        this.plantIdentificationService = plantIdentificationService;
         pageSize = 12;
     }
 
