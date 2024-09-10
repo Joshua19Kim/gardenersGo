@@ -85,7 +85,7 @@ public class IdentifiedPlant {
     /**
      * JPA required no-args constructor
      */
-    protected IdentifiedPlant() {}
+    public IdentifiedPlant() {}
 
     /**
      * Constructs an IdentifiedPlant with the specified identification details.

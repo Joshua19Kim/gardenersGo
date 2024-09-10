@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -35,13 +36,16 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = CollectionsController.class)
-public class CollectionsControllerTest {
+class CollectionsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private PlantIdentificationService plantIdentificationService;
+
+    @MockBean
+    private IdentifiedPlantService identifiedPlantService;
 
     @MockBean
     private GardenService gardenService;
@@ -69,7 +73,7 @@ public class CollectionsControllerTest {
 
     @Test
     @WithMockUser
-    public void AddPlantToCollection_ValidValues_PlantAdded() throws Exception {
+    void AddPlantToCollection_ValidValues_PlantAdded() throws Exception {
         String name = "My Plant";
         String species = "Plant Species";
         LocalDate date = LocalDate.of(2004, 5, 20);
@@ -83,7 +87,7 @@ public class CollectionsControllerTest {
         );
         IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
 
-        when(plantIdentificationService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
         doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
         when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
 
@@ -102,7 +106,7 @@ public class CollectionsControllerTest {
 
     @Test
     @WithMockUser
-    public void AddPlantToCollection_InvalidValues_PlantNotAddedAndErrorMessagesShown() throws Exception {
+    void AddPlantToCollection_InvalidValues_PlantNotAddedAndErrorMessagesShown() throws Exception {
         String name = "";
         String species = "Pl@nt Species";
         LocalDate date = LocalDate.of(2004, 3, 31);
@@ -126,7 +130,7 @@ public class CollectionsControllerTest {
         IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
         String uploadMessage = "Image must be of type png, jpg or svg";
 
-        when(plantIdentificationService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
         doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
         when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.of(uploadMessage));
 
@@ -142,7 +146,7 @@ public class CollectionsControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/myCollection"))
                 .andExpect(flash().attribute("dateError", "Date is not in valid format, DD/MM/YYYY"))
-                .andExpect(flash().attribute("plantNameError", "Plant name cannot by empty and must only " +
+                .andExpect(flash().attribute("plantNameError", "Plant name cannot be empty and must only " +
                         "include letters, numbers, spaces, dots, hyphens or apostrophes <br/>"))
                 .andExpect(flash().attribute("scientificNameError", "Scientific name must only include " +
                         "letters, numbers, spaces, dots, hyphens or apostrophes <br/>"))

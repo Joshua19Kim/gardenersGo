@@ -1,9 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.unit.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -17,7 +14,7 @@ public class ImageServiceValidationTest {
 
     @BeforeAll()
     public static void setUp() {
-        imageService = new ImageService(mock(GardenerFormService.class), mock(PlantService.class), mock(PlantIdentificationService.class));
+        imageService = new ImageService(mock(GardenerFormService.class), mock(PlantService.class), mock(IdentifiedPlantService.class));
     }
 
     @Test

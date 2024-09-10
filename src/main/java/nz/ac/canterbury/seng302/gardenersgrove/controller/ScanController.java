@@ -4,6 +4,7 @@ import java.util.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
@@ -28,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ScanController {
     private final Logger logger = LoggerFactory.getLogger(ScanController.class);
     private final PlantIdentificationService plantIdentificationService;
+    private final IdentifiedPlantService identifiedPlantService;
     private final GardenerFormService gardenerFormService;
     private final ImageService imageService;
     private final Map<String, String> errorResponse;
@@ -44,13 +46,13 @@ public class ScanController {
      * @param imageService               the service for checking image validation
      */
     @Autowired
-    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService) {
+    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService, IdentifiedPlantService identifiedPlantService) {
         this.plantIdentificationService = plantIdentificationService;
         this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
         errorResponse = new HashMap<>();
         response = new HashMap<>();
-
+        this.identifiedPlantService = identifiedPlantService;
     }
 
     /**
@@ -164,7 +166,7 @@ public class ScanController {
                         identifiedPlant.setDescription(validatedPlantDescription);
                     }
                     response.put("message", "Plant saved successfully");
-                    plantIdentificationService.saveIdentifiedPlantDetails(identifiedPlant);
+                    identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                     return ResponseEntity.ok(response);
 
                 }
