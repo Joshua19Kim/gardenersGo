@@ -7,8 +7,10 @@ const imageInput= document.getElementById('imageInput');
 const imagePreview= document.getElementById('imagePreview');
 const plantNetLogo = document.getElementById('plantNetLogo');
 const saveToCollectionButton= document.getElementById('saveToCollectionButton');
+const commonNames = document.getElementById('commonNames');
 const fileName= document.getElementById('fileName');
 const gbifInfo= document.getElementById('gbifInfo');
+
 
 let identifiedPlantData = null;
 var goToCollectionButton = document.getElementById('goToCollectionButton');
@@ -155,6 +157,8 @@ document.addEventListener('DOMContentLoaded', function() {
 //User got the plant identified and clicks save button for myCollection
 saveToCollectionButton.addEventListener('click', function() {
     if (identifiedPlantData) {
+        var nameResults = identifiedPlantData.commonNames && identifiedPlantData.commonNames.length > 0 ? 'Suggestions: ' + identifiedPlantData.commonNames.join(', ') : '';
+        commonNames.innerText = nameResults;
         var successModal = new bootstrap.Modal(document.getElementById('successModal'));
         successModal.show();
         var modal = bootstrap.Modal.getInstance(document.getElementById('scanningModal'));
@@ -166,11 +170,11 @@ saveToCollectionButton.addEventListener('click', function() {
 
 //button directs user to myCollection page
 goToCollectionButton.addEventListener('click', function() {
-    var modal = bootstrap.Modal.getInstance(successModal);
-    modal.hide();
-    setTimeout(function() {
-        window.location.href = goToCollectionButton.getAttribute('data-url');
-    }, 150);
+
+
+    var formData = new FormData(document.getElementById('identifiedPlantNameForm'));
+    var name = formData.get('name');
+    var description = formData.get('scanning-description');
 
     const saveUrl = `${getBaseUrl()}/saveIdentifiedPlant`;
     fetch(saveUrl, {
@@ -179,24 +183,61 @@ goToCollectionButton.addEventListener('click', function() {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
         },
-        body: JSON.stringify(identifiedPlantData)
+        body: JSON.stringify({ name: name, description: description })
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                return response.json().then(data => {
+                    if (data.nameError) {
+                        document.getElementById('name').classList.add('is-invalid');
+                        document.getElementById('nameError').booleanValue= true;
+                        document.getElementById('nameError').innerText= data.nameError;
+                    }
+                    if (data.descriptionError) {
+                        document.getElementById('description').classList.add('is-invalid');
+                        document.querySelector('[th\\:text="${descriptionError}"]').innerText = data.descriptionError;
+                    }
+                    throw new Error('Validation failed');
+                })
             }
             return response.json();
         })
         .then(data => {
             var modal = bootstrap.Modal.getInstance(successModal);
+            document.getElementById('name').value = "";
+            document.getElementById('scanning-description').value = "";
+            document.getElementById('nameError').innerText = '';
+            document.getElementById('descriptionError').innerText = '';
             modal.hide();
         })
         .catch((error) => {
             console.error('Error:', error);
-            alert('An error occurred while saving the plant.');
         });
 
+});
+
+// Character count section below
+
+document.getElementById('scanning-description').addEventListener('input', updateScanningCharacterCount)
+
+function updateScanningCharacterCount() {
+    var textarea = document.getElementById("scanning-description");
+    var characterCount = document.getElementById("scanningCharacterCount");
+    characterCount.textContent = textarea.value.length;
+}
+
+window.onload = () => {
+    updateScanningCharacterCount()
+}
 
 
-
+document.getElementById("identifiedPlantNameForm").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        var activeElement = document.activeElement;
+        if (activeElement.type === "date" || activeElement.tagName === "BUTTON") {
+            return true;
+        } else {
+            event.preventDefault();
+        }
+    }
 });

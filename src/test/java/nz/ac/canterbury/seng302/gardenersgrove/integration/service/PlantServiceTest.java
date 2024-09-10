@@ -3,10 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.MainPageLayoutRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +23,8 @@ public class PlantServiceTest {
     @Autowired
     private PlantRepository plantRepository;
     @Autowired
+    private IdentifiedPlantRepository identifiedPlantRepository;
+    @Autowired
     private GardenRepository gardenRepository;
     @Autowired
     private GardenerFormRepository gardenerFormRepository;
@@ -34,6 +33,7 @@ public class PlantServiceTest {
     Gardener testGardener;
     @BeforeEach
     public void setUp() {
+        identifiedPlantRepository.deleteAll();
         plantRepository.deleteAll();
         gardenRepository.deleteAll();
         mainPageLayoutRepository.deleteAll();
