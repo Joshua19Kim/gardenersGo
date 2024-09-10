@@ -23,7 +23,7 @@
             <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
             <textarea class="form-control" id="description" name="description" th:classappend="${descriptionError} ? 'is-invalid' : ''" maxlength="512">[[${description != null ? description : plant.description}]]</textarea>
 
-            <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
+            <p th:if="${descriptionError}" th:utext="${descriptionError}" class="smallErrorMessage"></p>
             <br/>
 
             <button class="btn btn-success w-100" type="submit">Submit</button>
