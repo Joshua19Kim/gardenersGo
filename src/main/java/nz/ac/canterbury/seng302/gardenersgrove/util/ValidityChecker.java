@@ -152,17 +152,19 @@ public class ValidityChecker {
      * @return input if no errors, else error string
      */
     public static String validateIdentifiedPlantName (String name) {
-        String nameRegex = "[\\p{L}]+((?:[-' ]?\\p{L}+)?)*";
+        String validNameRegex = "[\\p{L}]+((?:[-' ]?\\p{L}+)?)*";
         String result = "";
         if (name.length() > 64) {
             result = "Plant name must " +
                     "be 64 characters long or less <br/>";
-        } if (name == null || name.trim().isEmpty()) {
+        }
+        if (name.trim().isEmpty()) {
             result += "Plant name cannot be empty <br/>";
-        } else if (!name.matches(nameRegex)) {
+        } else if (!name.matches(validNameRegex)) {
             result += "Plant name cannot be empty and must only include letters, spaces, " +
                     "hyphens or apostrophes <br/>";
-        } if (!name.matches("\\p{L}.*")) {
+        }
+        if (!name.matches("\\p{L}.*")) {
             result += "Plant name must include at least one letter";
         }
         if (result.isEmpty()) {
