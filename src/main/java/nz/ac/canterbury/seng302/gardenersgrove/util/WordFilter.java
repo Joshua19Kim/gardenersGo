@@ -111,8 +111,8 @@ public class WordFilter {
         Set<String> badWords = new HashSet<>();
         input = input.toLowerCase(); // Convert to lower case to match case-insensitive words.
 
-        // Split the input into words based on non-alphabetic characters.
-        String[] wordsArray = input.split("[^a-zA-Z']+");
+        // Split the input into words
+        String[] wordsArray = input.split("\\s+");
 
         // Check each word against the list of banned words.
         for (String word : wordsArray) {
