@@ -57,7 +57,8 @@
             <div class="form-group field w-50">
                 <label class="input w-100">
                     <label style="margin-left: 20px;"> Date of Birth </label>
-                    <input id="DoB" class="form-control form-field" th:name="DoB" th:value="*{DoB}" type="date" max="9999-12-31">
+                    <input id="DoB" class="form-control form-field" th:name="DoB" th:value="*{DoB}" type="date" max="9999-12-31"
+                           th:classappend="${(DoBValid != '' && DoBValid != null) ? 'is-invalid' : ''}">
                 </label>
             </div>
             <p id="DoBInvalid" class="errorMessage" th:utext="${DoBValid}"></p>
