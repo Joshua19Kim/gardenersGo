@@ -11,7 +11,7 @@
 <div class="browse-gardens-container">
     <div class="search-container d-flex justify-content-center">
         <form id="searchForm" class="form-inline" method="post" th:action="@{/browseGardens}">
-            <input id="searchText" class="form-control mr-2 mb-0 mt-0" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="12">
+            <input id="searchText" class="form-control mr-2 mb-0 mt-0" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="13">
             <div id="selectedTagsInput">
                 <div  th:each="tag : ${tags}">
                     <input type="hidden" name="tags" th:value="${tag}" />
@@ -61,8 +61,8 @@
 
 
     <div class="d-flex justify-content-center flex-row">
-        <button class="btn btn-outline-success mt-0 " style="max-width: fit-content" onclick="submitSearch()" tabindex="13">Search</button>
-        <button class="btn btn-outline-danger mt-0" style="max-width: fit-content; margin-left: 40px" onclick="clearSearch()" tabindex="13">Clear</button>
+        <button class="btn btn-outline-success mt-0 " style="max-width: fit-content" onclick="submitSearch()" tabindex="17">Search</button>
+        <button class="btn btn-outline-danger mt-0" style="max-width: fit-content; margin-left: 40px" onclick="clearSearch()" tabindex="18">Clear</button>
     </div>
 
 
