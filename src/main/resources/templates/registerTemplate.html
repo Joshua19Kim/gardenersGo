@@ -51,6 +51,12 @@
                 document.getElementById('isLastNameOptional').onchange = function () {
                     document.getElementById('lastName').disabled = this.checked;
                 };
+                document.getElementById('isLastNameOptional').addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') {
+                        this.checked = !this.checked;
+                        document.getElementById('lastName').disabled = this.checked;
+                    }
+                });
             </script>
 
             <br/>
@@ -110,6 +116,7 @@
     </div>
 </div>
 <script type="text/javascript">
+    document.getElementById('lastName').disabled = document.getElementById('isLastNameOptional').checked;
     document.getElementById("registerForm").addEventListener("submit", function(event) {
         const dobInput = document.getElementById("DoB");
         if (!(dobInput.checkValidity())) {
@@ -135,6 +142,12 @@
     });
 
     document.getElementById('lastName').disabled = document.getElementById("isLastNameOptional").checked
+
+    document.getElementById("isLastNameOptional").addEventListener("keydown",function (event){
+        if(event.key == "Enter") {
+
+        }
+    });
 </script>
 </body>
 </html>

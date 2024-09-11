@@ -112,7 +112,7 @@ public class RegisterController {
         model.addAttribute("password", password);
 
         if (isLastNameOptional) {
-            model.addAttribute("isLastNameOptional", isLastNameOptional);
+            model.addAttribute("isLastNameOptional", true);
         }
 
         InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);

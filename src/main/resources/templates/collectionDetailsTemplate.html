@@ -16,6 +16,12 @@
                     <div class="card-body">
                         <h5 style="color: #fffdf6" class="card-title break-words overflow-wrap-anywhere text-break" th:text="${identifiedPlant.name}"></h5>
                         <p style="color: #fffdf6" class="card-text break-words overflow-wrap-anywhere text-break" th:text="'Scientific Name: ' + ${identifiedPlant.speciesScientificNameWithoutAuthor}"></p>
+                        <form method="get" th:action="@{../collectionDetails/edit}">
+                            <input th:name="plantId" th:value="${identifiedPlant.getId()}" type="hidden"/>
+                            <button class="btn btn-primary" role="button" style="min-width: 70px" type="submit">
+                                Edit
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

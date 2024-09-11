@@ -2,8 +2,8 @@ stages:
   - tagChecking
   - build
   - test
-  # - verification
-  # - sonarqube
+  - verification
+  - sonarqube
   - deploy
 
 workflow:
@@ -25,42 +25,51 @@ junit:
   stage: test
   script:
     - ./gradlew test
-    - ls ./build/jacoco/test.exec
+  artifacts:
+    paths:
+      - build/jacoco/test.exec
 
 integration-tests:
   stage: test
   script:
     - ./gradlew integration
-
+  artifacts:
+    paths:
+      - build/jacoco/integration.exec
 
 integration-cucumber:
   stage: test
   script:
     - ./gradlew cucumber
+  artifacts:
+    paths:
+      - build/jacoco/cucumber.exec
 
+generate-reports:
+  stage: verification
+  dependencies:
+    - integration-cucumber
+    - integration-tests
+    - junit
+  script:
+    ./gradlew jacocoTestReport
+  artifacts:
+    paths:
+      - build/jacoco/*
 
-# generate-reports:
-#   stage: verification
-#   dependencies:
-#     - integration-cucumber
-#     - integration-tests
-#     - junit
-#   script:
-#     ./gradlew jacocoTestReport
-#   artifacts:
-#     paths:
-#       - build/jacoco/*
-
-# sonarqube-report:
-#   stage: sonarqube
-#   script:
-#     ./gradlew sonarqube
+sonarqube-report:
+  stage: sonarqube
+  script:
+    ./gradlew sonarqube
 
 # builds all branches, except dev and main
 branch-build:
   stage: build
   script:
     - ./gradlew bootJar
+  artifacts:
+    paths:
+      - build/libs
   except:
     - tags
     - main
@@ -77,7 +86,7 @@ deploy-staging:
     - cp -r ./build/libs /home/gitlab-runner/staging
     - cp runner-scripts/staging.sh /home/gitlab-runner/staging.sh
     - chmod u+x /home/gitlab-runner/staging.sh
-    - echo "export DB_USERNAME=${DB_USERNAME}" > /home/gitlab-runner/staging/.env 
+    - echo "export DB_USERNAME=${DB_USERNAME}" > /home/gitlab-runner/staging/.env
     - echo "export DB_PASSWORD=${DB_PASSWORD}" >> /home/gitlab-runner/staging/.env
     - echo "export SJMP=${SJMP}" >> /home/gitlab-runner/staging/.env
     - echo "export WEATHER=${WEATHER}" >> /home/gitlab-runner/staging/.env
@@ -86,6 +95,9 @@ deploy-staging:
     - echo "export PLANTWIKI=${PLANTWIKI}" >> /home/gitlab-runner/staging/.env
     - echo "export DB_URL=${DB_URL_TEST}" >> /home/gitlab-runner/staging/.env
     - sudo systemctl restart staging
+  artifacts:
+    paths:
+      - build/libs
   only:
     - dev
 
@@ -107,5 +119,8 @@ deploy-production:
     - echo "export PLANTWIKI=${PLANTWIKI}" >> /home/gitlab-runner/production/.env
     - echo "export DB_URL=${DB_URL_PROD}" >> /home/gitlab-runner/production/.env
     - sudo systemctl restart production
+  artifacts:
+    paths:
+      - build/libs
   only:
     - tags

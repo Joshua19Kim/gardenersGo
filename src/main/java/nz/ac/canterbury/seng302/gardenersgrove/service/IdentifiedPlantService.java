@@ -49,4 +49,9 @@ public class IdentifiedPlantService {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         return identifiedPlantRepository.getSpeciesByGardenerId(gardenerId, pageable);
     }
+
+    public IdentifiedPlant getCollectionPlantById(long id) {
+        return identifiedPlantRepository.findById(id);
+    }
+
 }

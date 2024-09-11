@@ -112,7 +112,7 @@ public class ValidityChecker {
         }
 
         if(name != null && name.length() > 64) {
-            result += "Plant name must be less than 64 characters";
+            result += "Plant name must be less than or equal to 64 characters";
         }
 
         if (!result.isEmpty()) {
@@ -145,6 +145,66 @@ public class ValidityChecker {
         }
 
         return name;
+    }
+
+    /**
+     * Verify identified plant name passes conditions:
+     * - 0 < Name <= 64
+     * - Allows special characters umlauts, macrons, apostrophes, spaces
+     * @param name provided by user input
+     * @return input if no errors, else error string
+     */
+    public static String validateIdentifiedPlantName (String name) {
+        String validNameRegex = "[\\p{L}]+((?:[-' ]?\\p{L}+)?)*";
+        String result = "";
+        if (name.length() > 64) {
+            result = "Plant name must " +
+                    "be 64 characters long or less <br/>";
+        }
+        if (name.trim().isEmpty()) {
+            result += "Plant name cannot be empty <br/>";
+        } else if (!name.matches(validNameRegex)) {
+            result += "Plant name cannot be empty and must only include letters, spaces, " +
+                    "hyphens or apostrophes <br/>";
+        }
+        if (!name.matches("\\p{L}.*")) {
+            result += "Plant name must include at least one letter";
+        }
+        if (result.isEmpty()) {
+            return name;
+        }
+        return result;
+    }
+
+    /**
+     * Checks that the Identified Plant description complies with the required format
+     * @param description the garden description
+     * @return The description of the garden if it is valid, else returns an error message
+     */
+    public static String validateIdentifiedPlantDescription(String description) {
+        if (description == null || description.isEmpty()) {
+            return description;
+        }
+        String regex = "^(?=.*[\\p{L}]).+";
+        String result = "";
+        if (!description.matches(regex)) {
+            result = "Plant description must be 512 characters or less and contain some text <br/>";
+        }
+        if (description.length() > 512) {
+            result += "Plant description must be 512 characters or less <br/>";
+        }
+        String[] descriptionWords = description.split("\\s+");
+
+        for (String word : descriptionWords) {
+            if (WordFilter.doesContainBadWords(word)) {
+                result += "The description does not match the language standards of the app.";
+                break;
+            }
+        }
+        if(result.isEmpty()) {
+            return  description;
+        }
+        return result;
     }
 
     /**
