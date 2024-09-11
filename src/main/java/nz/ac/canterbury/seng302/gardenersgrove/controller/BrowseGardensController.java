@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -7,6 +8,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.FollowerService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.TagService;
+import nz.ac.canterbury.seng302.gardenersgrove.util.TagValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -279,33 +281,49 @@ public class BrowseGardensController {
             @RequestParam(name="tags", required = false) List<String> tags,
             RedirectAttributes redirectAttributes
     ) {
-        redirectAttributes.addFlashAttribute("pageNo", pageNo);
-        if(tags == null) {
+        String tagValid ="";
+        tag = tag.strip();
+
+        // Validate the tag
+
+
+        if (tags == null) {
             tags = new ArrayList<>();
         }
+
         List<String> allTags = tagService.getAllTagNames();
-        if(allTags.contains(tag)) {
-            if(tags.contains(tag)) {  // this checks if the typed in tag is already in the user selected tags
-                String errorMessage = "You have already selected " + tag;
+
+        if (allTags.contains(tag)) {
+            // if the tag has already been selected
+            if (tags.contains(tag)) {
+                String errorMessage = "You have already selected " + tag + " <br/>";
                 redirectAttributes.addFlashAttribute("tag", tag);
-                redirectAttributes.addFlashAttribute("tagValid", errorMessage);
+                tagValid += errorMessage;
             } else {
                 tags.add(tag);
             }
         } else {
-            // if the typed in tag does not exist
-            String errorMessage = "No tag matching " + tag;
+            // if tag doesn't exist
+            String errorMessage = "No tag matching " + tag + " <br/>";
             redirectAttributes.addFlashAttribute("tag", tag);
-            redirectAttributes.addFlashAttribute("tagValid", errorMessage);
+            tagValid += errorMessage;
         }
-        // removes the tags from the autocomplete
-        for(String selectedTag: tags) {
-            allTags.remove(selectedTag);
+
+        TagValidation tagValidation = new TagValidation(tagService);
+        Optional<String> validTagError = tagValidation.validateTag(tag);
+        if (validTagError.isPresent()) {
+            redirectAttributes.addFlashAttribute("tag", tag);
+            tagValid += validTagError.get();
         }
+
+        // remove selected tags from the autocomplete options
+        allTags.removeAll(tags);
 
         redirectAttributes.addFlashAttribute("tags", tags);
         redirectAttributes.addFlashAttribute("allTags", allTags);
+        redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
+        redirectAttributes.addFlashAttribute("tagValid", tagValid);
 
         return "redirect:/browseGardens";
     }
@@ -318,9 +336,10 @@ public class BrowseGardensController {
      * @return redirect to browseGardens get method
      */
     @PostMapping("/follow")
-    public String followUser(@RequestParam(name="pageNo") String pageNo,
+    public String followUser(@RequestParam(name="pageNo", required = false) String pageNo,
                              @RequestParam(name="gardenToFollow") Long gardenToFollow,
-                             RedirectAttributes redirectAttributes) throws IllegalArgumentException{
+                             RedirectAttributes redirectAttributes,
+                             HttpServletRequest requestHandler) throws IllegalArgumentException{
         Optional<Gardener> gardener = getGardenerFromAuthentication();
         if (gardener.isPresent()) {
             Long gardenerId = gardener.get().getId();
@@ -343,7 +362,10 @@ public class BrowseGardensController {
         }
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
-        return "redirect:/browseGardens";
+
+        String referer = requestHandler.getHeader("Referer");
+        return "redirect:" + referer;
+
     }
 
 }

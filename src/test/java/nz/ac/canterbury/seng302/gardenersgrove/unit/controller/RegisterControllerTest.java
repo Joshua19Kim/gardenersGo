@@ -51,19 +51,19 @@ public class RegisterControllerTest {
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
         Mockito.when(request.getSession()).thenReturn(sessionMock);
-        registerFormController.submitForm("Kush", "Desai", LocalDate.of(2004, 1, 15),"test@gmail.com", "Password1!", "Password1!", false, false, model);
+        registerFormController.submitForm("Kush", "Desai", LocalDate.of(2004, 1, 15).toString(),"test@gmail.com", "Password1!", "Password1!", false, false, model);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
     }
 
     @Test
     void GivenInvalidFirstName_WhenUserRegisters_NewGardenerNotCreated() {
-        registerFormController.submitForm("Kush1", "Desai", LocalDate.of(2004, 1, 15),"test@gmail.com", "Password1!", "Password1!", false, false, model);
+        registerFormController.submitForm("Kush1", "Desai", LocalDate.of(2004, 1, 15).toString(),"test@gmail.com", "Password1!", "Password1!", false, false, model);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
     }
 
     @Test
     void GivenInvalidLastName_WhenLastNameIsNotOptional_NewGardenerNotCreated() {
-        registerFormController.submitForm("Kush", "Desai1", LocalDate.of(2004, 1, 15),"test@gmail.com", "Password1!", "Password1!", false, false, model);
+        registerFormController.submitForm("Kush", "Desai1", LocalDate.of(2004, 1, 15).toString(),"test@gmail.com", "Password1!", "Password1!", false, false, model);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
     }
 
@@ -74,25 +74,37 @@ public class RegisterControllerTest {
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         Mockito.when(authentication.isAuthenticated()).thenReturn(true);
         Mockito.when(request.getSession()).thenReturn(sessionMock);
-        registerFormController.submitForm("Kush", "", LocalDate.of(2004, 1, 15),"test@gmail.com", "Password1!", "Password1!", true, false, model);
+        registerFormController.submitForm("Kush", "", LocalDate.of(2004, 1, 15).toString(),"test@gmail.com", "Password1!", "Password1!", true, false, model);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
     }
 
     @Test
     void GivenAgeTooLow_WhenUserRegisters_NewGardenerNotCreated() {
-        registerFormController.submitForm("Kush", "Desai", LocalDate.of(2024, 1, 15),"test@gmail.com", "Password1!", "Password1!", true, false, model);
+        registerFormController.submitForm("Kush", "Desai", LocalDate.of(2024, 1, 15).toString(),"test@gmail.com", "Password1!", "Password1!", true, false, model);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
     }
 
     @Test
     void GivenAgeTooHigh_WhenUserRegisters_NewGardenerNotCreated() {
-        registerFormController.submitForm("Kush", "Desai", LocalDate.of(1024, 1, 15),"test@gmail.com", "Password1!", "Password1!", true, false, model);
+        registerFormController.submitForm("Kush", "Desai", LocalDate.of(1024, 1, 15).toString(),"test@gmail.com", "Password1!", "Password1!", true, false, model);
+        Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
+    }
+
+    @Test
+    void GivenDateOverUpperBound_WhenUserRegisters_NewGardenerNotCreated() {
+        registerFormController.submitForm("Kush", "Desai", LocalDate.of(9999, 12, 31).toString(),"test@gmail.com", "Password1!", "Password1!", true, false, model);
+        Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
+    }
+
+    @Test
+    void GivenDateOutOfBounds_WhenUserRegisters_NewGardenerNotCreated() {
+        registerFormController.submitForm("Kush", "Desai", LocalDate.of(999999, 12, 31).toString(),"test@gmail.com", "Password1!", "Password1!", true, false, model);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
     }
 
     @Test
     void GivenPasswordsDontMatch_WhenUserRegisters_NewGardenerNotCreated() {
-        registerFormController.submitForm("Kush", "Desai", LocalDate.of(2024, 1, 15),"test@gmail.com", "Password1!", "Password2!", true, false, model);
+        registerFormController.submitForm("Kush", "Desai", LocalDate.of(2024, 1, 15).toString(),"test@gmail.com", "Password1!", "Password2!", true, false, model);
         Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
     }
 

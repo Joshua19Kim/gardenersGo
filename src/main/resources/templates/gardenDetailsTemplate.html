@@ -10,9 +10,9 @@
 
 <div class="garden-details-container">
     <div class="container" style="margin: 0; width: 1200px">
-        <div class="row w-100" >
+        <div class="row w-100" style="overflow-wrap: break-word;">
             <div class="col-6 flex-row d-flex">
-                <h1 class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;">
+                <h1 class="name text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;">
                     <span th:text="${garden.name}"></span>
                 </h1>
             </div>
@@ -41,15 +41,31 @@
 
 
         </div>
-        <div class="row w-100">
+        <div class="row w-100" style="overflow-wrap: break-word;">
 
-            <p><strong>Location:</strong> <span class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;" th:text="${garden.getFullLocation()}"></span></p>
-            <p>
-                <strong>Size:</strong> <span th:if="${garden.size != null}"
-                                             th:text="${garden.size + ' m&sup2;'}"></span>
-            </p>
-            <p><strong>Description:</strong> <span class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;" th:text="${garden.description}"></span></p>
+            <!-- Location -->
+            <div class="col-12">
+                <p id="location" class="location-text">
+                    <strong>Location:</strong>
+                    <span class="location-content" th:text="${garden.getFullLocation()}"></span>
+                </p>
+            </div>
 
+            <!-- Size -->
+            <div class="col-12">
+                <p>
+                    <strong>Size:</strong>
+                    <span th:if="${garden.size != null}" th:text="${garden.size + ' m&sup2;'}"></span>
+                </p>
+            </div>
+
+            <!-- Description -->
+            <div class="col-12">
+                <p class="description-text">
+                    <strong>Description:</strong>
+                    <span class="description-content" th:text="${garden.description}"></span>
+                </p>
+            </div>
             <div id="tag-container">
                 <strong>Tags:</strong>
                 <div th:if="${tags != null}" th:each="tag : ${tags}">
@@ -58,17 +74,17 @@
                     </div>
                 </div>
                 <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
-                   onclick="transformToInput()" tabindex="12">
-                    <img class="nav-link" src="/images/icons/add_circle_white.png" alt="Add Circle">
+                   onclick="transformToInput()" tabindex="13">
+                    <img class="nav-link" src="../images/icons/add_circle_white.png" alt="Add Circle">
                 </a>
                 <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{addTag}">
                     <input type="text" id="tag-input" list="tagList" autocomplete="off"
                            th:value="${tag != null ? tag : ''}"
                            th:style="${tag != null} ? 'display: block;' : 'display: none;'"
-                           placeholder="Add tag..."
-                           maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus class="form-control"
+                           placeholder="Add tag..." maxlength="50" onkeydown="submitTagOnEnter(event)" autofocus
+                           class="form-control"
                            th:classappend="${((tagValid != '' && tagValid != null) || (tagWarning != '' && tagWarning != null)) ? 'error' : ''}"
-                           tabindex="13">
+                           tabindex="14">
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
                     <input type="hidden" name="gardenId" th:value="${garden.id}">
                     <datalist id="tagList">
@@ -76,7 +92,7 @@
                     </datalist>
                 </form>
                 <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
-                   onclick="submitTag()" tabindex="14                   ">
+                   onclick="submitTag()" tabindex="15                   ">
                     <img class="nav-link" id="addTagIcon" alt="Add Circle">
                 </a>
             </div>
@@ -92,15 +108,15 @@
                 <div id="location-error" th:if="${date == null}">Location not found, please update your location to see
                     the weather
                 </div>
-                <ul class="list-group list-group-horizontal justify-content-evenly align-items-center d-flex">
+                <ul class="list-group list-group-horizontal justify-content-evenly align-items-center d-flex flex-wrap">
                     <li th:if="${date}">
-                        <div class="card current">
+                        <div class="card current col-md-6 col-sm-6 col-lg-6 col-xl-6 col-xxl-4 mb-4">
                             <div class="weather-display-row">
                                 <br/>
                                 <p th:text="${date}"></p>
                                 <h3  th:text="${garden.city + ', ' + garden.country}"></h3>
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                    <div class="col-6 col-md-6">
                                         <h4 id="currentDate"></h4>
 
                                         <div class="temperature-container">
@@ -115,8 +131,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
-                                        <img class="m-0" alt="No image available" th:src="'https:' + ${weatherImage}"/>
+                                    <div class="col-6 col-md-6">
+                                        <img class="card-img-top img-fluid" alt="No image available" th:src="'https:' + ${weatherImage}" />
                                     </div>
                                 </div>
                             </div>
@@ -125,8 +141,8 @@
                     </li>
 
 
-                    <li class="future-weather weather-display-container" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
-                        <div class="card forecast">
+                    <li class="future-weather weather-display-container d-flex flex-wrap" th:each="forecastMinTemp, iter: ${forecastMinTemperature}">
+                        <div class="card forecast col-md-6 col-sm-6 col-lg-4 col-xl-4 col-xxl-3 mb-4">
                             <img class="card-img-top" alt="No image available"
                                  th:src="'https:' + ${forecastWeatherImage.get(iter.index)}"/>
 
@@ -160,7 +176,7 @@
 
         </div>
 
-        <div class="row  w-100">
+        <div class="row w-100">
             <br/>
             <h4>Plants:</h4>
             <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="btn btn-primary m-2 w-auto"
@@ -304,7 +320,8 @@
         return '';
 
     }
-    addTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png
+
+    addTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
 
 
 </script>
