@@ -1,11 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.service.RateLimiterService;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.io.IOException;
 
-import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class LocationController {
-    private final Logger logger = LoggerFactory.getLogger(LocationController.class);
     private final RateLimiterService rateLimiterService;
 
     /**
