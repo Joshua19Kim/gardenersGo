@@ -227,13 +227,13 @@ public class GardensControllerTest {
         garden2.setId(2L);
         garden3.setId(3L);
 
-        Follower followGarden1 = new Follower(currentUser.getId(), garden1.getId());
-        Follower followGarden2 = new Follower(currentUser.getId(), garden2.getId());
-        Follower followGarden3 = new Follower(currentUser.getId(), garden3.getId());
+        Follower followGarden1 = new Follower(currentUser.getId(), garden1.getId(), currentUser.getFullName());
+        Follower followGarden2 = new Follower(currentUser.getId(), garden2.getId(), currentUser.getFullName());
+        Follower followGarden3 = new Follower(currentUser.getId(), garden3.getId(), currentUser.getFullName());
 
-        followerService.addfollower(followGarden1);
-        followerService.addfollower(followGarden2);
-        followerService.addfollower(followGarden3);
+        followerService.addFollower(followGarden1);
+        followerService.addFollower(followGarden2);
+        followerService.addFollower(followGarden3);
 
         List<Long> followedGardenIds = Arrays.asList(garden1.getId(), garden2.getId(), garden3.getId());
 

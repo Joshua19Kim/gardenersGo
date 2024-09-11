@@ -238,5 +238,13 @@ INSERT INTO identified_plant (score, gardener_id, name, description, best_match,
 
 
 
+INSERT INTO FOLLOWER(garden_id, gardener_id, gardener_name) VALUES (1,3, 'Black Widow');
+INSERT INTO FOLLOWER(garden_id, gardener_id, gardener_name) VALUES (1,4, 'LongestFirstNameLongestFirstNameLongestFirstNameLongestFirstName LongestLastNameLongestLastNameLongestLastNameLongestLastNameLong');
+INSERT INTO FOLLOWER(garden_id, gardener_id, gardener_name) VALUES (6,3, 'Black Widow');
+INSERT INTO FOLLOWER(garden_id, gardener_id, gardener_name) VALUES (6,4, 'LongestFirstNameLongestFirstNameLongestFirstNameLongestFirstName LongestLastNameLongestLastNameLongestLastNameLongestLastNameLong');
+INSERT INTO FOLLOWER(garden_id, gardener_id, gardener_name) VALUES (6,5, 'Thor');
+INSERT INTO FOLLOWER(garden_id, gardener_id, gardener_name) VALUES (8,1, 'Iron Man');
+INSERT INTO FOLLOWER(garden_id, gardener_id, gardener_name) VALUES (15,1, 'Iron Man');
+
 -- email: a@gmail.com
 -- password: Password1!

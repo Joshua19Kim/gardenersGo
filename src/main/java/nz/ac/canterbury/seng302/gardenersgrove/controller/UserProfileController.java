@@ -102,8 +102,7 @@ public class UserProfileController {
 
             if(user != null) {
                 Optional<Gardener> friend = gardenerFormService.findById(Long.parseLong(user, 10));
-                // If the current user is friends
-                if(friend.isPresent() && relationshipService.getCurrentUserRelationships(gardener.getId()).contains(friend.get())) {
+                if(friend.isPresent()) {
                     model.addAttribute("gardener", friend.get()); // add friend details to the model
                     return "unauthorizedUser";
                 } else {

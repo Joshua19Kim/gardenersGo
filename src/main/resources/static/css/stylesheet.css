@@ -146,6 +146,9 @@ textarea#description.garden-form-control {
     resize: vertical !important;
 }
 
+.scroll-vertical {
+    overflow-y: scroll;
+}
 
 .btn {
     border-radius: 25px;
