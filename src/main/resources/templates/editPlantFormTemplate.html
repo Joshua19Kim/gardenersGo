@@ -11,7 +11,7 @@
         <h1> Edit Plant </h1>
         <label class="fst-italic">* Required</label>
         <br/>
-        <form id="editPlantForm" th:action="@{edit(plantId=${plant.id})}" method="post" enctype="multipart/form-data">
+        <form id="editPlantForm" th:action="@{edit(plantId=${plant.id})}" method="post" enctype="multipart/form-data" novalidate>
             <label for="name"> *Name: </label>
             <input type="text" class="form-control" id="name" name="name" maxlength="64" th:value="${name != null ? name : plant.name}"
                    th:classappend="${nameError} ? 'is-invalid' : ''">
@@ -33,6 +33,7 @@
             <input type="date" class="form-control" th:value="${date != null ? date : formattedDate}" id="datePlanted"
                    name="date" max="9999-12-31">
             <span th:if="${dateError}" th:text="${dateError}" class="smallErrorMessage"></span>
+            <input type="hidden" id="isDateInvalid" th:name="isDateInvalid" th:value="false"/>
             <br/>
             <label for="image"> Image: </label>
             <div class="plant-image-container" id="image">
