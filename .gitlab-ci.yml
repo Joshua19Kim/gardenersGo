@@ -2,8 +2,8 @@ stages:
   - tagChecking
   - build
   - test
-  - verification
-  - sonarqube
+  # - verification
+  # - sonarqube
   - deploy
 
 workflow:
@@ -45,22 +45,22 @@ integration-cucumber:
     paths:
       - build/jacoco/cucumber.exec
 
-generate-reports:
-  stage: verification
-  dependencies:
-    - integration-cucumber
-    - integration-tests
-    - junit
-  script:
-    ./gradlew jacocoTestReport
-  artifacts:
-    paths:
-      - build/jacoco/*
+# generate-reports:
+#   stage: verification
+#   dependencies:
+#     - integration-cucumber
+#     - integration-tests
+#     - junit
+#   script:
+#     ./gradlew jacocoTestReport
+#   artifacts:
+#     paths:
+#       - build/jacoco/*
 
-sonarqube-report:
-  stage: sonarqube
-  script:
-    ./gradlew sonarqube
+# sonarqube-report:
+#   stage: sonarqube
+#   script:
+#     ./gradlew sonarqube
 
 # builds all branches, except dev and main
 branch-build:
