@@ -79,7 +79,7 @@ public class PlantAddFormController {
      * @param name The name of the plant.
      * @param count The count of the plant.
      * @param description The description of the plant.
-     * @param date The date the plant was planted.
+     * @param dateString The date the plant was planted.
      * @param gardenId The ID of the garden to which the plant belongs.
      * @param isDateInvalid Indication of existence of a partially inputted date e.g. "10/mm/yyyy"
      * @param model The model for passing data to the view.
@@ -90,7 +90,7 @@ public class PlantAddFormController {
             @RequestParam(name = "name") String name,
             @RequestParam(name = "count", required = false) String count,
             @RequestParam(name = "description", required = false) String description,
-            @RequestParam(name = "date", required = false) LocalDate date,
+            @RequestParam(name = "date", required = false) String dateString,
             @RequestParam(name = "isDateInvalid", required = false) boolean isDateInvalid,
             @RequestParam(name = "gardenId") String gardenId,
             @RequestParam("file") MultipartFile file,
@@ -109,8 +109,11 @@ public class PlantAddFormController {
         if (isDateInvalid) {
             dateError = Optional.of("Date is not in valid format, DD/MM/YYYY");
             isValid = false;
+        } else if (dateString != null) {
+            dateError = ValidityChecker.validateDate(dateString);
+            isValid = dateError.isEmpty();
         }
-        model.addAttribute("DateValid", dateError.orElse(""));
+        model.addAttribute("dateError", dateError.orElse(""));
 
         if (!Objects.equals(name, validatedPlantName)) {
             model.addAttribute("nameError", validatedPlantName);
@@ -136,7 +139,6 @@ public class PlantAddFormController {
             Plant plant = new Plant(name, garden);
             boolean countPresent = count != null && !validatedPlantCount.trim().isEmpty();
             boolean descriptionPresent = description != null && !validatedPlantDescription.trim().isEmpty();
-            boolean datePresent = date != null;
 
             if (countPresent) {
                 plant.setCount(new BigDecimal(validatedPlantCount).stripTrailingZeros().toPlainString());
@@ -144,10 +146,10 @@ public class PlantAddFormController {
             if (descriptionPresent) {
                 plant.setDescription(validatedPlantDescription);
             }
-            if (datePresent) {
-                String validatedDate = "";
+            if (dateString != null) {
+                LocalDate date = LocalDate.parse(dateString);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                validatedDate = date.format(formatter);
+                String validatedDate = date.format(formatter);
 
                 plant.setDatePlanted(validatedDate);
             }
@@ -164,7 +166,7 @@ public class PlantAddFormController {
             model.addAttribute("name", name);
             model.addAttribute("count", count);
             model.addAttribute("description", description);
-            model.addAttribute("date", date);
+            model.addAttribute("date", dateString);
             model.addAttribute("garden", garden);
             return "plantsFormTemplate";
         }
