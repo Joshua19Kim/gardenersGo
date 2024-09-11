@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const xmlRequest = new XMLHttpRequest();
 
     addressInput.addEventListener('input', function () {
-        const inputValue = this.value.trim();
+        getResult();
+    });
+
+    function getResult() {
+        const inputValue = addressInput.value.trim();
         if (inputValue.length > 0) {
             if (isValidInput(inputValue)) {
                 fetchAutocomplete(inputValue)
@@ -24,8 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             hideAutocompleteResults();
         }
-    });
-
+    }
     function fetchAutocomplete(query) {
         return new Promise((resolve, reject) => {
             xmlRequest.open('GET', '../sendRequest?query=' + encodeURIComponent(query));
@@ -34,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const responseData = JSON.parse(xmlRequest.responseText);
                     console.log('Response from Java:', responseData);
                     resolve(responseData);
-                    return responseData.json();
+                    return responseData.json;
                 } else {
                     console.error('Error:', xmlRequest.statusText);
                     reject(new Error('Network response was not ok'));
@@ -55,7 +58,14 @@ document.addEventListener('DOMContentLoaded', function () {
             item.textContent = "No matching location found, location-based services may not work"
             item.style.color = 'red';
             autocompleteResults.appendChild(item);
-        } else {
+        } else if (results.status === "Searching") {
+            const item = document.createElement('div');
+            item.classList.add('autocomplete-item');
+            item.textContent = "Searching..."
+            autocompleteResults.appendChild(item);
+            getResult();
+        }
+        else {
             results.forEach(result => {
                 const item = document.createElement('div');
                 item.classList.add('autocomplete-item');

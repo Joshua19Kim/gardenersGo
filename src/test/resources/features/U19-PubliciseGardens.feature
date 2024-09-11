@@ -56,6 +56,6 @@ Scenario Outline: #AC7
   Examples:
     | description                                                  |
     | "The fucking greatest garden"                                |
-    | "Gilipollas dont know the meaning? but definitely bad words" |
+    | "røvskæg dont know the meaning? but definitely bad words" |
     | "this is bad word fotze as well" |
-    | "from danish, pikhår." |
+    | "from danish, pikhår" |

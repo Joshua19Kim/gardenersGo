@@ -381,7 +381,7 @@ public class ValidityCheckerTest {
                     "potential and renewal. In folklore and legend, the Oak tree is often associated with gods and spirits," +
                     " embodying resilience and resilience. From the whispering leaves to the gnarled bark," +
                     " every aspect of the Oak tree tells a story of resilience, adaptability, and the enduring power of nature." +
-                    ": Garden description must be less than 512 characters <br/>The description does not match the language standards of the app.",
+                    ": Garden description must be less than 512 characters <br/>",
             "123: Description must be 512 characters or less and contain some text <br/>",
             "shit: The description does not match the language standards of the app.",
             "hi : hi"

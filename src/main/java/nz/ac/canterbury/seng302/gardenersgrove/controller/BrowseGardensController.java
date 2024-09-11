@@ -170,7 +170,9 @@ public class BrowseGardensController {
             }
             model.addAttribute("allTags", allTags);
         }
-        model.addAttribute("searchTerm", searchTerm);
+        if(searchTerm != null && !searchTerm.isEmpty() && !model.containsAttribute("searchTerm")) {
+            model.addAttribute("searchTerm", searchTerm);
+        }
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
@@ -184,6 +186,9 @@ public class BrowseGardensController {
         if (redirectAttributes.containsAttribute("gardenFollowUpdate")) {
             model.addAttribute("gardenFollowUpdate", redirectAttributes.getAttribute("gardenFollowUpdate"));
         }
+        List<String> everySingleTag  = tagService.getAllTagNames();
+        model.addAttribute("everySingleTag", everySingleTag );
+
         return "browseGardensTemplate";
     }
 
@@ -255,6 +260,9 @@ public class BrowseGardensController {
         List<Long> gardensFollowing = followerService.findAllGardens(gardener.getId());
         model.addAttribute("gardensFollowing", gardensFollowing);
 
+        List<String> everySingleTag  = tagService.getAllTagNames();
+        model.addAttribute("everySingleTag", everySingleTag);
+
         return "browseGardensTemplate";
     }
 
@@ -273,6 +281,7 @@ public class BrowseGardensController {
             @RequestParam(name="pageNo", defaultValue = "0") String pageNo,
             @RequestParam(name="tag-input") String tag,
             @RequestParam(name="tags", required = false) List<String> tags,
+            @RequestParam(name="searchTerm", required = false) String searchTerm,
             RedirectAttributes redirectAttributes
     ) {
         String tagValid ="";
@@ -318,7 +327,9 @@ public class BrowseGardensController {
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
         redirectAttributes.addFlashAttribute("tagValid", tagValid);
-
+        if(searchTerm != null) {
+            redirectAttributes.addFlashAttribute("searchTerm", searchTerm);
+        }
         return "redirect:/browseGardens";
     }
 
@@ -345,9 +356,9 @@ public class BrowseGardensController {
                 gardenOptional.ifPresent(garden -> redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You are no longer following " + garden.getName()));
 
             } else {
-                Follower follower = new Follower(gardenerId, gardenToFollow);
+                Follower follower = new Follower(gardenerId, gardenToFollow, gardener.get().getFullName());
                 try {
-                    followerService.addfollower(follower);
+                    followerService.addFollower(follower);
                     gardenOptional.ifPresent(garden -> redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You are now following " + garden.getName()));
                 } catch (IllegalArgumentException e) {
                     redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You cannot follow this garden");
@@ -361,4 +372,5 @@ public class BrowseGardensController {
         return "redirect:" + referer;
 
     }
+
 }

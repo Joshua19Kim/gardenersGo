@@ -1,7 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.slf4j.Logger;
+
 
 import java.util.Objects;
 import java.util.Optional;
@@ -11,6 +15,8 @@ import java.time.Period;
 public class InputValidationUtil {
 
     private final GardenerFormService gardenerFormService;
+    Logger logger = LoggerFactory.getLogger(InputValidationUtil.class);
+
 
     public InputValidationUtil(GardenerFormService gardenerFormService) {
         this.gardenerFormService = gardenerFormService;
@@ -130,13 +136,14 @@ public class InputValidationUtil {
         if (Period.between(DoB, LocalDate.now()).getYears() < 13) {
             result = "You must be 13 years or older to create an account <br/>";
         }
-        if(Period.between(DoB, LocalDate.now()).getYears() > 120) {
+        if (Period.between(DoB, LocalDate.now()).getYears() > 120) {
             result += "The maximum age allowed is 120 years";
         }
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(result);
+
     }
 
 

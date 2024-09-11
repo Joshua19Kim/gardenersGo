@@ -26,9 +26,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Service responsible for handling plant identification through an external API.
@@ -36,6 +39,7 @@ import java.util.UUID;
  */
 @Service
 public class PlantIdentificationService {
+    Logger logger = LoggerFactory.getLogger(PlantIdentificationService.class);
     private static final String PROJECT = "all";
     private static final String API_URL = "https://my-api.plantnet.org/v2/identify/";
     private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
@@ -43,6 +47,7 @@ public class PlantIdentificationService {
     private final String apiKey;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
+    private final IdentifiedPlantRepository identifiedPlantRepository;
 
     /**
      * Constructs a new PlantIdentificationService with the specified API key and repository.
@@ -50,8 +55,9 @@ public class PlantIdentificationService {
      * @param apiKey                    the API key for authenticating with the external plant identification service
      */
     @Autowired
-    public PlantIdentificationService(@Value("${plantNet.password}") String apiKey) {
+    public PlantIdentificationService(@Value("${plantNet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository) {
         this.apiKey = apiKey;
+        this.identifiedPlantRepository = identifiedPlantRepository;
         this.objectMapper = new ObjectMapper();
         this.restTemplate = new RestTemplate();
     }
@@ -169,5 +175,62 @@ public class PlantIdentificationService {
 
         return new IdentifiedPlant(bestMatch, score, commonNames, gbifId, imageUrl, imagePath, speciesScientificNameWithoutAuthor, familyScientificNameWithoutAuthor, gardener);
     }
+
+    /**
+     * Gets all the plant names for Identified plant in the database
+     * @return all the plant names in the database
+     */
+    public List<String> getAllPlantNames(Gardener gardener) {
+        return identifiedPlantRepository.getAllPlantNames(gardener.getId());
+    }
+
+    /**
+     * Gets all the scientific names for Identified plant in the database
+     * @return all the scientific names for Identified plant in the database
+     */
+    public List<String> getAllSpeciesScientificNames(Gardener gardener) {
+        return identifiedPlantRepository.getAllSpeciesScientificName(gardener.getId());
+    }
+
+    /**
+     * Gets the plant details according to plant name
+     * @param name the plant name to search
+     * @return the plant details in the database
+     */
+    public List<Map<String, String>> getPlantDetailsWithPlantNames(String name) {
+        return identifiedPlantRepository.getPlantDetailsWithPlantNames(name)
+                .stream()
+                .map(this::convertToMap)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the plant details according to Species Scientific Plant name
+     * @param name the specie scientific name to search
+     * @return the plant details in the database
+     */
+    public List<Map<String, String>> getPlantDetailsWithSpeciesScientificName(String name) {
+        return identifiedPlantRepository.getPlantDetailsWithSpeciesScientificName(name)
+                .stream()
+                .map(this::convertToMap)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Converts object IdentifiedPlant to the Map with string
+     * @param plant the plant to be converted to Map data style
+     * @return Map contains plant details
+     */
+    private Map<String, String> convertToMap(IdentifiedPlant plant) {
+        Map<String, String> map = new HashMap<>();
+        map.put("name", plant.getName());
+        map.put("scientificName", plant.getSpeciesScientificNameWithoutAuthor());
+        map.put("description", plant.getDescription());
+        map.put("dateUploaded", plant.getDateUploaded());
+        return map;
+    }
+
+
+
 
 }

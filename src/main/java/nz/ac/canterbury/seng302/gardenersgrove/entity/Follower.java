@@ -17,6 +17,9 @@ public class Follower {
     @Column(name = "gardener_id", nullable = false)
     private Long gardenerId;
 
+    @Column(name = "gardener_name", nullable = false)
+    private String gardenerName;
+
     @Column(name = "garden_id", nullable = false)
     private Long gardenId;
 
@@ -29,10 +32,12 @@ public class Follower {
      * Creates a new follower object
      * @param gardenerId the id of the logged-in user
      * @param gardenId the id of the garden to follow
+     * @param gardenerName the name of the logged-in user
      */
-    public Follower(Long gardenerId, Long gardenId) {
+    public Follower(Long gardenerId, Long gardenId, String gardenerName) {
         this.gardenerId = gardenerId;
         this.gardenId = gardenId;
+        this.gardenerName = gardenerName;
     }
 
     public Long getId() {
@@ -47,7 +52,19 @@ public class Follower {
         return gardenId;
     }
 
-    public void setGardenerId(Long gardenerId) { this.gardenerId = gardenerId; }
+    public String getGardenerName() {
+        return gardenerName;
+    }
 
-    public void setGardenId(Long gardenId) { this.gardenId = gardenId; }
+    public void setGardenerId(Long gardenerId) {
+        this.gardenerId = gardenerId;
+    }
+
+    public void setGardenId(Long gardenId) {
+        this.gardenId = gardenId;
+    }
+
+    public void setGardenerName(String gardenerName) {
+        this.gardenerName = gardenerName;
+    }
 }
