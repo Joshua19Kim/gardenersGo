@@ -170,7 +170,7 @@ public class BrowseGardensController {
             }
             model.addAttribute("allTags", allTags);
         }
-        if(searchTerm != null && !searchTerm.isEmpty()) {
+        if(searchTerm != null && !searchTerm.isEmpty() && !model.containsAttribute("searchTerm")) {
             model.addAttribute("searchTerm", searchTerm);
         }
 
@@ -327,7 +327,7 @@ public class BrowseGardensController {
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
         redirectAttributes.addFlashAttribute("tagValid", tagValid);
-        if(searchTerm != null && !searchTerm.isEmpty()) {
+        if(searchTerm != null) {
             redirectAttributes.addFlashAttribute("searchTerm", searchTerm);
         }
         return "redirect:/browseGardens";

@@ -39,7 +39,7 @@
                        th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}" tabindex="15">
                 <input type="hidden" name="pageNo" th:value="${gardensPage.number}" >
                 <input type="hidden" name="tag-input" id="hidden-tag-input">
-                <input type="hidden" name="searchTerm" id="hidden-search-term">
+                <input type="hidden" th:value="${searchTerm}" name="searchTerm" id="hidden-search-term">
                 <div id="addingTagsInput" >
                     <div th:each="tag : ${tags}">
                         <input type="hidden" name="tags" th:value="${tag}" />
@@ -177,6 +177,7 @@
         document.getElementById("selectedTags").innerHTML = "";
         document.getElementById("selectedTagsInput").innerHTML = "";
         document.getElementById("addingTagsInput").innerHTML = "";
+        document.getElementById("hidden-search-term").value = "";
 
         var everySingleTag = [[${everySingleTag}]];
         var tagOptions = document.getElementById('tagList')
