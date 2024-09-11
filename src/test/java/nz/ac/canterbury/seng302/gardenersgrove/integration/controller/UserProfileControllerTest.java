@@ -91,7 +91,7 @@ public class UserProfileControllerTest {
                 .andExpect(view().name("user"))
                 .andExpect(model().attribute("firstName", "testFirstName"))
                 .andExpect(model().attribute("lastName", "testLastName"))
-                .andExpect(model().attribute("DoB", LocalDate.of(1980, 1, 1)))
+                .andExpect(model().attribute("DoB", "1980-01-01"))
                 .andExpect(model().attribute("email", "testEmail@gmail.com"))
                 .andExpect(model().attribute("profilePic", "/images/defaultProfilePic.png"));
 
@@ -163,7 +163,7 @@ public class UserProfileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
                 .andExpect(model().attribute("isLastNameOptional", false))
-                .andExpect(model().attribute("DoB", LocalDate.of(1980,1,1)))
+                .andExpect(model().attribute("DoB", "1980-01-01"))
                 .andExpect(model().attribute("DoBValid", "You must be 13 years or older to create an account <br/>"));
     }
 
@@ -182,7 +182,7 @@ public class UserProfileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("user"))
                 .andExpect(model().attribute("isLastNameOptional", false))
-                .andExpect(model().attribute("DoB", LocalDate.of(1980,1,1)))
+                .andExpect(model().attribute("DoB", "1980-01-01"))
                 .andExpect(model().attribute("DoBValid", "The maximum age allowed is 120 years"));
     }
 
