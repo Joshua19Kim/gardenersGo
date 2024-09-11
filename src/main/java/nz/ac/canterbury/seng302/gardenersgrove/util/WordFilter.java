@@ -109,25 +109,26 @@ public class WordFilter {
      */
     private static Set<String> findBadWords(String input) {
         Set<String> badWords = new HashSet<>();
-        input = input.toLowerCase(); // Convert to lower case to match case-insensitive words.
+        input = input.toLowerCase().replaceAll("[^a-zA-Z]", "");
 
-        // Split the input into words
-        String[] wordsArray = input.split("\\s+");
-
-        // Check each word against the list of banned words.
-        for (String word : wordsArray) {
-            if (words.containsKey(word)) {
-                // Check whether the word should be ignored.
-                String[] ignoreCheck = words.get(word);
-                boolean ignore = false;
-                for (String s : ignoreCheck) {
-                    if (input.contains(s)) {
-                        ignore = true;
-                        break;
+        // Iterate over each letter in the word.
+        for (int start = 0; start < input.length(); start++) {
+            // From each letter, keep going to find bad words until either the end of the sentence is reached, or the max word length is reached.
+            for (int offset = 1; offset < (input.length() + 1 - start) && offset < largestWordLength; offset++) {
+                String wordToCheck = input.substring(start, start + offset);
+                if (words.containsKey(wordToCheck)) {
+                    // Check whether the word should be ignored.
+                    String[] ignoreCheck = words.get(wordToCheck);
+                    boolean ignore = false;
+                    for (String s : ignoreCheck) {
+                        if (input.contains(s)) {
+                            ignore = true;
+                            break;
+                        }
                     }
-                }
-                if (!ignore) {
-                    badWords.add(word);
+                    if (!ignore) {
+                        badWords.add(wordToCheck);
+                    }
                 }
             }
         }
