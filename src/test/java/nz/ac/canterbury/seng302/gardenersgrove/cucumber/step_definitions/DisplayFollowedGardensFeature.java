@@ -41,8 +41,8 @@ public class DisplayFollowedGardensFeature {
         gardenToFollow.setIsGardenPublic(true);
         gardenService.addGarden(gardenToFollow);
 
-        Follower followedGarden = new Follower(gardener.getId(), gardenToFollow.getId());
-        followerService.addfollower(followedGarden);
+        Follower followedGarden = new Follower(gardener.getId(), gardenToFollow.getId(), gardener.getFullName());
+        followerService.addFollower(followedGarden);
     }
 
     @Given("there are no followed gardens")

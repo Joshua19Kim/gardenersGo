@@ -98,7 +98,7 @@ public class WriteEmail {
      * @param gardener Gardener to get the email address
      */
     public void sendTagWarningEmail (Gardener gardener) {
-        String subject = "!! Warning for bad words !!";
+        String subject = "Warning for bad words";
         String emailMessage = "You have reached the maximum number of bad words on our web site. If you add another inappropriate tag, Your account will be blocked for one week.";
         emailService.sendEmail(gardener.getEmail(), subject, emailMessage);
     }
@@ -109,7 +109,7 @@ public class WriteEmail {
      * @param gardener The gardener to send the email to
      */
     public void sendBanUserEmail(Gardener gardener) {
-        String subject = "!! You have been banned from Gardeners Grove !!";
+        String subject = "You have been banned from Gardeners Grove";
         String emailMessage = "You have reached the maximum number of bad words on our web site. Your account has been blocked for one week (7 Calendar days).";
         emailService.sendEmail(gardener.getEmail(), subject, emailMessage);
     }
