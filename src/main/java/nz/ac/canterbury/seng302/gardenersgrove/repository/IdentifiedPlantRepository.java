@@ -24,6 +24,13 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
     Page<IdentifiedPlant> findAll(Pageable pageable);
 
     /**
+     * Retrieves an identified plant by id
+     * @param id id to retrieve
+     * @return IdentifiedPlant object
+     */
+    IdentifiedPlant findById(long id);
+
+    /**
      * Custom query to retrieve identified plants by gardener id and species name, with pagination
      *
      * @param gardenerId the id of the gardener
