@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.service;
 
+import java.time.LocalDate;
+import java.util.*;
+import java.util.function.Function;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
@@ -16,11 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
-
-import java.time.LocalDate;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @DataJpaTest
 @Import(GardenService.class)

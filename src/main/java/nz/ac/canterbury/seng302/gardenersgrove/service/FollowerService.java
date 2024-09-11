@@ -35,7 +35,7 @@ public class FollowerService {
      *
      * @param follower object to persist
      */
-    public void addfollower(Follower follower) throws IllegalArgumentException {
+    public void addFollower(Follower follower) throws IllegalArgumentException {
         // Check follower garden is public
         long gardenId = follower.getGardenId();
         Optional<Garden> garden = gardenRepository.findById(gardenId);
@@ -76,8 +76,14 @@ public class FollowerService {
         return List.of();
     }
 
+
+
     public Optional<Follower> findFollower(long gardenerId, long gardenId) {
         return followerRepository.findByGardenerIdAndGardenId(gardenerId, gardenId);
     }
 
+    public List<Follower> findFollowing(Long id) {
+        return followerRepository.findAllByGardenId(id);
+
+    }
 }

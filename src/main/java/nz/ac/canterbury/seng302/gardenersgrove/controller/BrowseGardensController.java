@@ -356,9 +356,9 @@ public class BrowseGardensController {
                 gardenOptional.ifPresent(garden -> redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You are no longer following " + garden.getName()));
 
             } else {
-                Follower follower = new Follower(gardenerId, gardenToFollow);
+                Follower follower = new Follower(gardenerId, gardenToFollow, gardener.get().getFullName());
                 try {
-                    followerService.addfollower(follower);
+                    followerService.addFollower(follower);
                     gardenOptional.ifPresent(garden -> redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You are now following " + garden.getName()));
                 } catch (IllegalArgumentException e) {
                     redirectAttributes.addFlashAttribute("gardenFollowUpdate", "You cannot follow this garden");
