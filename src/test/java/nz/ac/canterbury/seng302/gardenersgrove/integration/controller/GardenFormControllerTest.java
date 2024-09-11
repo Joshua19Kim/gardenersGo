@@ -224,7 +224,7 @@ public class GardenFormControllerTest {
         String country = "New Zealand";
         String postcode = "";
         String size = "1.0";
-        String badWordDescription = "This is fucking greatest garden";
+        String badWordDescription = "This is fuckking greatest garden";
 
         Garden garden = new Garden("Test garden", "", "", "Christchurch", "New Zealand", "", "1.0", testGardener, "The greatest garden.");
         garden.setId(1L);
