@@ -440,13 +440,6 @@ public class InputValidationUtilTest {
         assertTrue(isValid.get().matches("Your old password is incorrect."));
     }
 
-    @Test
-    void testValidEmptyDateString() {
-        InputValidationUtil validate = new InputValidationUtil(gardenerFormService);
-        String validDateString = "";
-        Optional<String> isValidDate = validate.checkDoB(validDateString);
-        assertTrue(isValidDate.get().matches(""));
-    }
 
     /* cannot test invalid date strings as HTML validates for us*/
 

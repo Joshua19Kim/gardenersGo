@@ -125,8 +125,6 @@ public class InputValidationUtil {
     public Optional<String> checkDoB (String DoBString) {
         LocalDate DoB;
         String result = "";
-        logger.info(DoBString + '*');
-        logger.info("IM TESTING DOB");
 
         try {
             DoB = LocalDate.parse(DoBString);

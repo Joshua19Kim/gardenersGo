@@ -134,7 +134,7 @@ public class RegisterController {
         if (isDoBInvalid) {
             DoBError = Optional.of("Date is not in valid format, DD/MM/YYYY");
         } else {
-            if(!DoBString.isEmpty()) {
+            if(DoBString != null && !DoBString.isEmpty()) {
                 DoBError = inputValidator.checkDoB(DoBString);
             }
         }
@@ -160,7 +160,7 @@ public class RegisterController {
                 passwordStrengthError.isEmpty()) {
 
             LocalDate DoB = null;
-            if (!DoBString.isEmpty()) {
+            if (DoBString != null && !DoBString.isEmpty()) {
                 DoB = LocalDate.parse(DoBString);
             }
 
