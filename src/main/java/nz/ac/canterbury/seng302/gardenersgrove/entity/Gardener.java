@@ -131,6 +131,10 @@ public class Gardener {
         return lastName;
     }
 
+    public String getFullName() {
+        return firstName + (lastName != null ? " " : "") + lastName;
+    }
+
     public LocalDate getDoB() {
         return DoB;
     }

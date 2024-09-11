@@ -19,4 +19,6 @@ public interface FollowerRepository extends CrudRepository<Follower, Long> {
     Optional<Follower> findByGardenerIdAndGardenId(long gardenerId, long gardenId);
 
     List<Follower> findAllByGardenerId(Long id);
+    List<Follower> findAllByGardenId(Long id);
+
 }
