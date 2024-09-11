@@ -10,53 +10,68 @@
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="browse-gardens-container">
     <div class="search-container d-flex justify-content-center">
-        <form class="form-inline" method="post" th:action="@{/browseGardens}">
-            <input class="form-control mr-2 mb-0 mt-0" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="13">
-            <button class="btn btn-outline-success mt-0" type="submit" tabindex="14">Search</button>
-            <div th:each="tag : ${tags}">
-                <input type="hidden" name="tags" th:value="${tag}" />
+        <form id="searchForm" class="form-inline" method="post" th:action="@{/browseGardens}">
+            <input id="searchText" class="form-control mr-2 mb-0 mt-0" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="13">
+            <div id="selectedTagsInput">
+                <div  th:each="tag : ${tags}">
+                    <input type="hidden" name="tags" th:value="${tag}" />
+                </div>
             </div>
+
         </form>
+        <div id="tag-container" class="d-flex flex-row mt-3">
+            <strong>Tags:</strong>
+            <div class="d-flex flex-row" th:if="${tags != null}" id="selectedTags" >
+                <div th:each="tag : ${tags}">
+                    <div id="tag">
+                        <span th:text="${tag}"></span>
+                    </div>
+                </div>
+            </div>
+            <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
+               onclick="transformToInput()" tabindex="14">
+                <img class="nav-link" id="addTagIcon" alt="Add Circle">
+            </a>
+            <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{browseGardens/addTag}">
+                <input type="text" id="tag-input" list="tagList" autocomplete="off" th:value="${tag != null ? tag : ''}"
+                       th:style="${tag != null} ? 'display: block;' : 'display: none;'" placeholder="Add tag..."
+                       maxlength="25" onkeydown="submitTagOnEnter(event)" autofocus
+                       th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}" tabindex="15">
+                <input type="hidden" name="pageNo" th:value="${gardensPage.number}" >
+                <input type="hidden" name="tag-input" id="hidden-tag-input">
+                <input type="hidden" th:value="${searchTerm}" name="searchTerm" id="hidden-search-term">
+                <div id="addingTagsInput" >
+                    <div th:each="tag : ${tags}">
+                        <input type="hidden" name="tags" th:value="${tag}" />
+                    </div>
+                </div>
+                <datalist id="tagList">
+                    <option th:each="tag : ${allTags}" th:value="${tag}" th:text="${tag}"></option>
+                </datalist>
+            </form>
+            <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
+               onclick="submitTag()" tabindex="16">
+                <img class="nav-link" id="submitTagIcon" alt="Add Circle">
+            </a>
+        </div>
     </div>
-    <div class="no-search-results-found-container">
+
+    <div th:if="${tagValid}" id="tag-error-container" class="d-flex justify-content-center">
+        <p id="tag-error-message"  th:if="${tagValid}" th:value="${tagValid}" th:utext="${tagValid}"></p>
+    </div>
+
+
+    <div class="d-flex justify-content-center flex-row">
+        <button class="btn btn-outline-success mt-0 " style="max-width: fit-content" onclick="submitSearch()" tabindex="17">Search</button>
+        <button class="btn btn-outline-danger mt-0" style="max-width: fit-content; margin-left: 40px" onclick="clearSearch()" tabindex="18">Clear</button>
+    </div>
+
+
+    <div th:if="${noSearchResults}" class="no-search-results-found-container">
         <span th:if="${noSearchResults}" th:text="${noSearchResults}"></span>
     </div>
 
-    <div id="tag-container">
-        <strong>Tags:</strong>
-        <div th:if="${tags != null}" th:each="tag : ${tags}">
-            <div id="tag">
-                <span th:text="${tag}"></span>
-            </div>
-        </div>
-        <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
-           onclick="transformToInput()" tabindex="15">
-            <img class="nav-link" id="addTagIcon" alt="Add Circle">
-        </a>
-        <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{browseGardens/addTag}">
-            <input type="text" id="tag-input" list="tagList" autocomplete="off"
-                   th:value="${tag != null ? tag : ''}"
-                   th:style="${tag != null ? 'display: block;' : 'display: none;'}"
-                   placeholder="Add tag..." maxlength="50" onkeydown="submitTagOnEnter(event)" autofocus
-                   th:classappend="${(tagValid != '' && tagValid != null) ? 'error' : ''}" tabindex="16">
 
-            <input type="hidden" name="pageNo" th:value="${gardensPage.number}" >
-            <input type="hidden" name="tag-input" id="hidden-tag-input">
-            <div th:each="tag : ${tags}">
-                <input type="hidden" name="tags" th:value="${tag}" />
-            </div>
-            <datalist id="tagList">
-                <option th:each="tag : ${allTags}" th:value="${tag}" th:text="${tag}"></option>
-            </datalist>
-        </form>
-        <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
-           onclick="submitTag()" tabindex="17">
-            <img class="nav-link" id="submitTagIcon" alt="Add Circle">
-        </a>
-    </div>
-    <div id="tag-error-container">
-        <p id="tag-error-message" th:value="${tagValid}" th:utext="${tagValid}"></p>
-    </div>
 
     <!-- Notification for any update on garden following stuff    -->
     <div th:if="${gardenFollowUpdate}" class="alert alert-warning alert-dismissible fade show w-50 m-auto text-center" role="alert">
@@ -126,7 +141,7 @@
 </div>
 </body>
 <script th:src="@{/javascript/tagAutocomplete.js}"></script>
-<script>
+<script th:inline="javascript">
     document.getElementById("add-tag").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -149,5 +164,33 @@
     }
     addTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
     submitTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
+
+    function submitSearch() {
+        document.getElementById("searchForm").submit()
+    }
+
+    const searchForm = document.getElementById("searchForm");
+    searchForm.addEventListener('input', (e) => {
+        document.getElementById("hidden-search-term").value = document.getElementById("searchText").value
+    });
+
+    function clearSearch() {
+        document.getElementById("searchText").value = "";
+        document.getElementById("selectedTags").innerHTML = "";
+        document.getElementById("selectedTagsInput").innerHTML = "";
+        document.getElementById("addingTagsInput").innerHTML = "";
+        document.getElementById("hidden-search-term").value = "";
+
+        var everySingleTag = [[${everySingleTag}]];
+        var tagOptions = document.getElementById('tagList')
+        tagOptions.innerHTML = '';
+        everySingleTag.forEach((tag) => {
+            var option = document.createElement('option');
+            option.value = tag;
+            tagOptions.appendChild(option);
+        })
+    }
+
+
 </script>
 </html>
