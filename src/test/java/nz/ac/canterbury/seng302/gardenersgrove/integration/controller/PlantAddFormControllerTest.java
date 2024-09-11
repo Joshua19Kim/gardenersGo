@@ -58,6 +58,8 @@ public class PlantAddFormControllerTest {
 
   @MockBean private LocationService locationService;
 
+  @MockBean private FollowerService followerService;
+
   @Test
   @WithMockUser
   public void GardenDetailsRequested_ExistentIdGiven_PlantDetailsProvided() throws Exception {
@@ -213,7 +215,7 @@ public class PlantAddFormControllerTest {
         .andExpect(model().attribute("name", name))
         .andExpect(model().attribute("count", "2.0"))
         .andExpect(model().attribute("description", description))
-        .andExpect(model().attribute("date", LocalDate.parse("2024-03-10")))
+        .andExpect(model().attribute("date", "2024-03-10"))
         .andExpect(
             model()
                 .attribute(
@@ -255,11 +257,11 @@ public class PlantAddFormControllerTest {
                             .with(csrf()))
             .andExpect(status().isOk())
             .andExpect(view().name("plantsFormTemplate"))
-            .andExpect(model().attributeExists("DateValid", "name", "count", "description"))
+            .andExpect(model().attributeExists("dateError", "name", "count", "description"))
             .andExpect(model().attribute("name", "tomato"))
             .andExpect(model().attribute("count", "2.0"))
             .andExpect(model().attribute("description", "yummy"))
-            .andExpect(model().attribute("DateValid", "Date is not in valid format, DD/MM/YYYY"));
+            .andExpect(model().attribute("dateError", "Date is not in valid format, DD/MM/YYYY"));
 
     verify(plantService, never()).addPlant(any(Plant.class));
   }
@@ -318,7 +320,7 @@ public class PlantAddFormControllerTest {
         .andExpect(model().attribute("name", name))
         .andExpect(model().attribute("count", count))
         .andExpect(model().attribute("description", description))
-        .andExpect(model().attribute("date", LocalDate.parse(date)))
+        .andExpect(model().attribute("date", date))
         .andExpect(model().attribute(errorName, errorMessage));
 
     verify(plantService, never()).addPlant(any(Plant.class));

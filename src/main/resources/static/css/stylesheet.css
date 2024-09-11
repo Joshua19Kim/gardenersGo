@@ -461,6 +461,26 @@ img {
 }
 
 
+/* Ensure the text wraps and breaks properly for long words */
+.location-text, .description-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+.location-content, .description-content {
+    word-break: break-word;  /* Break long words */
+    overflow-wrap: break-word;  /* Allow breaking if necessary */
+    display: inline-block;
+    max-width: 100%;  /* Ensure it takes up the full width of its container */
+}
+
+/* Optional styling to control margins, padding, and positioning */
+.location-text, .description-text {
+    margin-bottom: 15px;  /* Spacing between each section */
+}
+
+
 #tag-container {
     display: flex;
     flex-wrap: wrap;
@@ -601,8 +621,9 @@ img {
 
 .plant-list-container {
     overflow-y: auto;
+    width: 100%;
     border-bottom: 1px solid #45a049;
-    max-height: 600px;
+    /*max-height: 600px;*/
 }
 
 

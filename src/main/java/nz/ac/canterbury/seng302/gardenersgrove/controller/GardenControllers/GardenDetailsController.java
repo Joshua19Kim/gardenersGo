@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -42,6 +43,7 @@ public class GardenDetailsController {
     private final WeatherService weatherService;
     private final LocationService locationService;
     private final GardenVisitService gardenVisitService;
+    private final FollowerService followerService;
 
     /**
      * Constructor used to create a new instance of the GardenDetailsController. Autowires a
@@ -63,7 +65,7 @@ public class GardenDetailsController {
             RelationshipService relationshipService,
             RequestService requestService,
             WeatherService weatherService,
-            TagService tagService, LocationService locationService, GardenVisitService gardenVisitService) {
+            TagService tagService, LocationService locationService, GardenVisitService gardenVisitService, FollowerService followerService) {
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.relationshipService = relationshipService;
@@ -72,6 +74,7 @@ public class GardenDetailsController {
         this.tagService = tagService;
         this.locationService = locationService;
         this.gardenVisitService = gardenVisitService;
+        this.followerService = followerService;
     }
 
     /**
@@ -105,6 +108,7 @@ public class GardenDetailsController {
            @RequestParam(name = "uploadError", required = false) String uploadError,
            @RequestParam(name = "errorId", required = false) String errorId,
            @RequestParam(name = "tagValid", required = false) String tagValid,
+           RedirectAttributes redirectAttributes,
            Model model,
            HttpServletRequest request)
            throws IOException, URISyntaxException, InterruptedException {
@@ -182,6 +186,14 @@ public class GardenDetailsController {
 
                    GardenVisit gardenVisit = new GardenVisit(gardener, garden.get(), LocalDateTime.now());
                    gardenVisitService.addGardenVisit(gardenVisit);
+
+                   Optional<Follower> isFollower = followerService.findFollower(currentUserOptional.get().getId(), parseLong(gardenId));
+                   model.addAttribute("isFollowing", isFollower.isPresent());
+
+                   if (redirectAttributes.containsAttribute("gardenFollowUpdate")) {
+                       model.addAttribute("gardenFollowUpdate", redirectAttributes.getAttribute("gardenFollowUpdate"));
+                   }
+
                    return "unauthorizedGardenDetailsTemplate";
                } else {
                    return "redirect:/gardens";
