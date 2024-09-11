@@ -130,11 +130,15 @@ public class RegisterController {
 
         Optional<String> DoBError = Optional.empty();
 
+
         if (isDoBInvalid) {
             DoBError = Optional.of("Date is not in valid format, DD/MM/YYYY");
-        } else if (DoBString != null) {
-            DoBError = inputValidator.checkDoB(DoBString);
+        } else {
+            if(!DoBString.isEmpty()) {
+                DoBError = inputValidator.checkDoB(DoBString);
+            }
         }
+
         model.addAttribute("DoBValid", DoBError.orElse(""));
 
         Optional<String> validEmailError = inputValidator.checkValidEmail(email);
@@ -156,7 +160,7 @@ public class RegisterController {
                 passwordStrengthError.isEmpty()) {
 
             LocalDate DoB = null;
-            if (DoBString != null) {
+            if (!DoBString.isEmpty()) {
                 DoB = LocalDate.parse(DoBString);
             }
 

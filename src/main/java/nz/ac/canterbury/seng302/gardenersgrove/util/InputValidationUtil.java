@@ -128,23 +128,21 @@ public class InputValidationUtil {
         logger.info(DoBString + '*');
         logger.info("IM TESTING DOB");
 
-        if (!DoBString.isEmpty()) {
-            try {
-                DoB = LocalDate.parse(DoBString);
-            } catch (Exception e) {
-                result += "Date is not in valid format, DD/MM/YYYY";
-                return Optional.of(result);
-            }
+        try {
+            DoB = LocalDate.parse(DoBString);
+        } catch (Exception e) {
+            result += "Date is not in valid format, DD/MM/YYYY";
+            return Optional.of(result);
+        }
 
-            if (Period.between(DoB, LocalDate.now()).getYears() < 13) {
-                result = "You must be 13 years or older to create an account <br/>";
-            }
-            if (Period.between(DoB, LocalDate.now()).getYears() > 120) {
-                result += "The maximum age allowed is 120 years";
-            }
-            if (result.isEmpty()) {
-                return Optional.empty();
-            }
+        if (Period.between(DoB, LocalDate.now()).getYears() < 13) {
+            result = "You must be 13 years or older to create an account <br/>";
+        }
+        if (Period.between(DoB, LocalDate.now()).getYears() > 120) {
+            result += "The maximum age allowed is 120 years";
+        }
+        if (result.isEmpty()) {
+            return Optional.empty();
         }
         return Optional.of(result);
 
