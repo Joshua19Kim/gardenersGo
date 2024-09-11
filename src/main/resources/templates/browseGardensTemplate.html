@@ -51,7 +51,7 @@
         </form>
         <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
            onclick="submitTag()" tabindex="17">
-            <img class="nav-link" src="/images/icons/add_circle_white.png" alt="Add Circle">
+            <img class="nav-link" id="submitTagIcon" alt="Add Circle">
         </a>
     </div>
     <div id="tag-error-container">
@@ -135,6 +135,7 @@
     });
 
     const addTagIcon = document.getElementById("addTagIcon");
+    const submitTagIcon = document.getElementById("submitTagIcon");
 
     function getBaseUrl() {
         const path = window.location.pathname.split('/');
@@ -147,5 +148,6 @@
 
     }
     addTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
+    submitTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
 </script>
 </html>
