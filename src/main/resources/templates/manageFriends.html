@@ -49,7 +49,7 @@
                     <!-- Remove button aligned to the right -->
                     <div class="col-12 col-lg-2 text-center text-sm-right">
                         <button data-target="#remove-friend-modal" data-toggle="modal"
-                                class="button btn-danger btn-sm remove-friend-button"
+                                class="btn p-2 btn-danger btn-sm" style="max-width: fit-content"
                                 th:onclick="'displayConfirmRemove(\'' + ${friend.id} + '\');'" type="button">
                             Remove
                         </button>
@@ -70,7 +70,7 @@
                             <input id="friendInputId" name="friendId" type="hidden">
                             <button type=submit  class="decline-friend-req-btn button">Remove</button>
                         </form>
-                        <button class="cancel button" onclick="displayConfirmRemove()">Cancel</button>
+                        <button class="btn p-2 btn-danger" style="max-width: fit-content" onclick="displayConfirmRemove()">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -103,7 +103,7 @@
                                        th:name="${_csrf.parameterName}"
                                        th:value="${_csrf.token}"/>
                                 <input name="friendId" th:value="${pendingRequest.getId()}" type="hidden">
-                                <button class="button remove-friend-button">Cancel</button>
+                                <button class="btn p-2 btn-danger" style="max-width: fit-content">Cancel</button>
                             </form>
                         </div>
                         <div class="friend" th:each="declinedRequest : ${declined}">
@@ -134,7 +134,7 @@
                                            th:value="${_csrf.token}"/>
                                     <input name="friendId" th:value="${receivedRequest.getId()}" type="hidden">
                                     <input name="status" value="accepted" type="hidden">
-                                    <button class="accept-friend-req-btn button">Accept</button>
+                                    <button class="btn p-2 btn-success" style="max-width: fit-content">Accept</button>
                                 </form>
                                 <form method="post" th:action="@{/manageRequest}">
                                     <input type="hidden"
@@ -142,7 +142,7 @@
                                            th:value="${_csrf.token}"/>
                                     <input name="friendId" th:value="${receivedRequest.getId()}" type="hidden">
                                     <input name="status" value="declined" type="hidden">
-                                    <button class="decline-friend-req-btn button">Decline</button>
+                                    <button class="btn p-2 btn-danger" style="max-width: fit-content">Decline</button>
                                 </form>
                             </div>
                         </div>
@@ -178,7 +178,7 @@
                                              th:src="@{${search.getProfilePicture()}}">
                                         <p class="text-dark" th:text="${search.toString()}"></p>
                                     </div>
-                                    <button class="invite-friend-req-btn button">Invite Friend</button>
+                                    <button class="btn p-2 btn-success" style="max-width: fit-content">Invite Friend</button>
                                 </form>
                             </div>
                             <p class="text-dark" id="no-results-match-message"></p>
