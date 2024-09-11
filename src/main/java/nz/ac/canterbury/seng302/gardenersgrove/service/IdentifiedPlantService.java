@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpeciesImpl;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -44,7 +45,7 @@ public class IdentifiedPlantService {
      * @param gardenerId the id of the gardener
      * @return the page of IdentifiedPlant species
      */
-    public Page<IdentifiedPlantSpecies> getGardenerPlantSpeciesPaginated(int pageNo, int pageSize, Long gardenerId) {
+    public Page<IdentifiedPlantSpeciesImpl> getGardenerPlantSpeciesPaginated(int pageNo, int pageSize, Long gardenerId) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         return identifiedPlantRepository.getSpeciesByGardenerId(gardenerId, pageable);
     }
