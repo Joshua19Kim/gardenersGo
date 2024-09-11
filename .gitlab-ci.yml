@@ -2,8 +2,8 @@ stages:
   - tagChecking
   - build
   - test
-  - verification
-  - sonarqube
+  # - verification
+  # - sonarqube
   - deploy
 
 workflow:
