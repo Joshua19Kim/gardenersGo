@@ -234,6 +234,12 @@ textarea#description.garden-form-control {
     }
 }
 
+.required-label {
+    color: var(--button-cancel-colour);
+    font-size: 0.8rem;
+}
+
+
 .is-invalid {
     border: 1px solid red !important;
 }
@@ -635,7 +641,24 @@ img {
     height: auto;
     border-radius: inherit;
     max-height: 20vh;
-
+    transition: filter 0.3s ease;
+}
+.plant-image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.plant-image-container:hover::before {
+    border-radius: inherit;
+    opacity: 1;
 }
 
 .plant-image-container .image-button {
@@ -652,15 +675,19 @@ img {
     line-height: 1;
     text-align: center;
     vertical-align: top;
+    z-index: 2;
+    transition: opacity 0.3s ease;
+
+}
+.plant-image-container:hover .image-button {
+    opacity: 1;
+    color: white;
 }
 
 .table-primary td {
     background-color: var(--background-color);
 }
 
-.table-primary th {
-    background-color: var(--primary-color);
-}
 
 .plant-image-container .image-button:hover {
     cursor: pointer;
@@ -829,7 +856,28 @@ body, h2, h3, h4, h5, h6, a {
     height: 130px;
     border-radius: 12px;
     object-fit: cover;
+    transition: filter 0.3s ease;
 }
+
+.UserProfilePicContainer::before {
+    content: '';
+    position: absolute;
+    border-radius: 12px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.UserProfilePicContainer:hover::before {
+    border-radius: 12px;
+    opacity: 1;
+}
+
+
 
 .UserProfilePicContainer .image-button {
     position: absolute;
@@ -848,9 +896,10 @@ button.image-button:hover {
 }
 
 
-.UserProfilePicContainer .image-button:hover {
+.UserProfilePicContainer:hover .image-button {
     cursor: pointer;
     opacity: 1;
+    color: white;
 }
 
 .main-page-friends-list-item {
@@ -1633,7 +1682,14 @@ form.search-bar::after {
 .collection-gardens-card {
     padding: 0 !important;
     position: relative;
+    min-height: 400px;
 }
+
+#collection-card-img {
+    max-width: max-content !important;
+    height: 300px;
+}
+
 
 .plant-wiki-card {
     padding: 0 !important;
@@ -1693,4 +1749,44 @@ table td {
 
 .hidden, .hidden * {
     display: none !important;
+}
+
+
+
+/*my collection page*/
+.border-custom {
+    border: 3px dashed black !important;
+}
+
+.add-button {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    font-size: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    text-align: center;
+    padding: 0;
+    line-height: 1;
+    background-color: var(--button-color);
+    color: var(--text-color);
+}
+.add-button .icon {
+    font-size: 74px;
+    margin-bottom: -5px;
+    margin-top: -20px;
+}
+.add-button .text {
+    font-size: 20px;
+}
+
+input:focus::placeholder {
+    color: transparent;
+}
+
+textarea:focus::placeholder {
+    color: transparent;
 }

@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Repository interface for managing IdentifiedPlant entities
  */
@@ -42,4 +45,35 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
             "FROM IdentifiedPlant p WHERE p.gardener.id = :id " +
             "GROUP BY p.speciesScientificNameWithoutAuthor, p.imageUrl")
     Page<IdentifiedPlantSpecies> getSpeciesByGardenerId(long id, Pageable pageable);
+
+    /**
+     * Gets all the plant names for Identified plant in the database
+     * @return all the plant names in the database
+     */
+    @Query(value = "SELECT DISTINCT name FROM IdentifiedPlant WHERE gardener_id = :gardenerId", nativeQuery = true)
+    List<String> getAllPlantNames(Long gardenerId);
+
+    /**
+     * Gets all the scientific names for Identified plant in the database
+     * @return all the scientific names for Identified plant in the database
+     */
+    @Query(value = "SELECT DISTINCT species_scientific_name_without_author FROM IdentifiedPlant WHERE gardener_id = :gardenerId", nativeQuery = true)
+    List<String> getAllSpeciesScientificName(Long gardenerId);
+
+    /**
+     * Gets the plant details according to plant name
+     * @param name the plant name to search
+     * @return the plant details in the database
+     */
+    @Query(value = "SELECT * FROM IdentifiedPlant WHERE name = :name" , nativeQuery = true)
+    List<IdentifiedPlant> getPlantDetailsWithPlantNames(String name);
+
+    /**
+     * Gets the plant details according to Species Scientific Plant name
+     * @param name the specie scientific name to search
+     * @return the plant details in the database
+     */
+    @Query(value = "SELECT * FROM IdentifiedPlant WHERE species_scientific_name_without_author = :name", nativeQuery = true)
+    List<IdentifiedPlant> getPlantDetailsWithSpeciesScientificName(String name);
+
 }
