@@ -95,7 +95,7 @@ public class PlantIdentificationServiceTest {
         identifiedPlantRepository.save(ThirdTestIdentifiedPlant);
 
 
-        List<String> actualPlantNameList = plantIdentificationService.getAllPlantNames();
+        List<String> actualPlantNameList = plantIdentificationService.getAllPlantNames(testGardener);
 
         assertEquals(Arrays.asList(
                 ThirdTestIdentifiedPlant.getName(),
@@ -108,7 +108,7 @@ public class PlantIdentificationServiceTest {
     @Test
     @WithMockUser("testEmail@gmail.com")
     public void UserHasNoPlantsInCollection_TrysToGetAllPlantNames_ReturnNothing() {
-        List<String> actualPlantNameList = plantIdentificationService.getAllPlantNames();
+        List<String> actualPlantNameList = plantIdentificationService.getAllPlantNames(testGardener);
         assertTrue(actualPlantNameList.isEmpty());
     }
 
@@ -159,7 +159,7 @@ public class PlantIdentificationServiceTest {
         identifiedPlantRepository.save(ThirdTestIdentifiedPlant);
 
 
-        List<String> actualPlantNameList = plantIdentificationService.getAllSpeciesScientificNames();
+        List<String> actualPlantNameList = plantIdentificationService.getAllSpeciesScientificNames(testGardener);
 
         assertEquals(Arrays.asList(
                         ThirdTestIdentifiedPlant.getSpeciesScientificNameWithoutAuthor(),
@@ -172,7 +172,7 @@ public class PlantIdentificationServiceTest {
     @Test
     @WithMockUser("testEmail@gmail.com")
     public void UserHasNoPlantsInCollection_TrysToGetAllSpeciesScientificNames_ReturnNothing() {
-        List<String> actualSpeciesScientificNameList = plantIdentificationService.getAllSpeciesScientificNames();
+        List<String> actualSpeciesScientificNameList = plantIdentificationService.getAllSpeciesScientificNames(testGardener);
         assertTrue(actualSpeciesScientificNameList.isEmpty());
     }
 
