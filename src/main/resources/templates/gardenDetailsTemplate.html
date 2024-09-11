@@ -43,14 +43,6 @@
         </div>
         <div class="row w-100" style="overflow-wrap: break-word;">
 
-            <!-- Location -->
-            <div class="col-12">
-                <p id="location" class="location-text">
-                    <strong>Location:</strong>
-                    <span class="location-content" th:text="${garden.getFullLocation()}"></span>
-                </p>
-            </div>
-
             <p><strong>Location:</strong> <span class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;" th:text="${garden.getFullLocation()}"></span></p>
             <p>
                 <strong>Size:</strong> <span th:if="${garden.size != null}"
@@ -262,8 +254,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="followersModalBody">
-                    <div class="list-group scroll-vertical" th:each="follower: ${followerList}">
+                    <div class="list-group" style="overflow-wrap: break-word" th:each="follower: ${followerList}">
                         <a class="link-underline-dark" th:text="${follower.getGardenerName()}" th:href="@{/user(user=${follower.getGardenerId()})}"></a>
+                        <hr/>
                     </div>
                 </div>
             </div>
