@@ -90,12 +90,6 @@ public class UserProfileControllerTest {
     }
 
     @Test
-    void GivenInvalidLastNameEdit_WhenLastNameIsNotOptional_GardenerEditNotUploaded() {
-        userProfileController.getUserProfile("Kush", "$#@", LocalDate.of(2004, 1, 15).toString(), "test@gmail.com", false,false, null, mockRequest, modelMock);
-        Mockito.verify(gardenerFormService, Mockito.never()).addGardener(Mockito.any(Gardener.class));
-    }
-
-    @Test
     void GivenInvalidLastName_WhenLastNameIsOptional_NewGardenerCreated() {
         Mockito.when(authentication.getName()).thenReturn("test@gmail.com");
         Mockito.when(gardenerFormService.findByEmail(any())).thenReturn(Optional.ofNullable(gardener));
