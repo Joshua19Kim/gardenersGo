@@ -6,7 +6,6 @@
 </head>
 
 <body>
-
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="browse-gardens-container">
     <div class="search-container d-flex justify-content-center">
@@ -140,7 +139,7 @@
 </div>
 </body>
 <script th:src="@{/javascript/tagAutocomplete.js}"></script>
-<script>
+<script th:inline="javascript">
     document.getElementById("add-tag").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -166,11 +165,22 @@
         document.getElementById("searchForm").submit()
     }
 
+
+
     function clearSearch() {
         document.getElementById("searchText").value = "";
         document.getElementById("selectedTags").innerHTML = "";
         document.getElementById("selectedTagsInput").innerHTML = "";
         document.getElementById("addingTagsInput").innerHTML = "";
+
+        var everySingleTag = [[${everySingleTag}]];
+        var tagOptions = document.getElementById('tagList')
+        tagOptions.innerHTML = '';
+        everySingleTag.forEach((tag) => {
+            var option = document.createElement('option');
+            option.value = tag;
+            tagOptions.appendChild(option);
+        })
     }
 
 </script>

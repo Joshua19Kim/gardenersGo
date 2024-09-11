@@ -157,10 +157,6 @@ public class BrowseGardensController {
             String paginationMessage = "Showing results 0 to 0 of 0";
             model.addAttribute("paginationMessage", paginationMessage);
         }
-        if(model.containsAttribute("clearSearch")) {
-            setSearchTerm("");
-            setSearchTags(new ArrayList<>());
-        }
 
         if(!model.containsAttribute("tags") && !model.containsAttribute("allTags")) {
             List<String> allTags = tagService.getAllTagNames();
@@ -186,6 +182,9 @@ public class BrowseGardensController {
         if (redirectAttributes.containsAttribute("gardenFollowUpdate")) {
             model.addAttribute("gardenFollowUpdate", redirectAttributes.getAttribute("gardenFollowUpdate"));
         }
+        List<String> everySingleTag  = tagService.getAllTagNames();
+        model.addAttribute("everySingleTag", everySingleTag );
+
         return "browseGardensTemplate";
     }
 
@@ -256,6 +255,9 @@ public class BrowseGardensController {
         // Get a list of all gardens the user follows - required to determine if the page shows "follow" or "unfollow"
         List<Long> gardensFollowing = followerService.findAllGardens(gardener.getId());
         model.addAttribute("gardensFollowing", gardensFollowing);
+
+        List<String> everySingleTag  = tagService.getAllTagNames();
+        model.addAttribute("everySingleTag", everySingleTag);
 
         return "browseGardensTemplate";
     }
@@ -344,18 +346,4 @@ public class BrowseGardensController {
         return "redirect:/browseGardens";
     }
 
-    /**
-     * Clears the current search terms
-     * @param pageNo the page number
-     * @param redirectAttributes used to add attributes to the redirected model
-     * @return redirects to the browse gardens page
-     */
-    @GetMapping("/browseGardens/clearSearch")
-    public String clearSearch(@RequestParam(name="pageNo") String pageNo,
-                              RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("pageNo", pageNo);
-        redirectAttributes.addFlashAttribute("pageRequest", true);
-        redirectAttributes.addFlashAttribute("clearSearch", true);
-        return "redirect:/browseGardens";
-    }
 }
