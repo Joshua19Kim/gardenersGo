@@ -13,7 +13,7 @@
         <h1> Add New Plant </h1>
         <label class="fst-italic">* Required</label>
         <br/>
-        <form id="plantForm" th:action="@{form(gardenId=${garden.id})}" method="post" enctype="multipart/form-data">
+        <form id="plantForm" th:action="@{form(gardenId=${garden.id})}" method="post" enctype="multipart/form-data" novalidate>
             <label for="name"> *Name: </label>
             <input type="text" class="form-control" th:value="*{name}" id="name" name="name" maxlength="64" placeholder="Name"
                    th:classappend="${nameError} ? 'is-invalid' : ''">
@@ -33,6 +33,7 @@
             <br/>
             <label for="datePlanted"> Date Planted: </label>
             <input type="date" class="form-control" th:value="*{date}" id="datePlanted" name="date" max="9999-12-31">
+            <input type="hidden" id="isDateInvalid" th:name="isDateInvalid" th:value="false"/>
             <span th:if="${dateError}" th:text="${dateError}" class="smallErrorMessage"></span>
             <br/>
             <label for="image"> Image: </label>
