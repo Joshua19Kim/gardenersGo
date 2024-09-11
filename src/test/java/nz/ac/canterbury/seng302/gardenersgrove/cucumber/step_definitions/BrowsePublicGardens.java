@@ -22,6 +22,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.FlashMap;
 
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -153,7 +155,7 @@ public class BrowsePublicGardens {
         testGardener = new Gardener("test", "test", null, "jane@doe.com", "Password1!");
         gardenerFormService.addGardener(testGardener);
 
-        followerService.addFollower(new Follower(testGardener.getId(), garden.getId(), gardener.getFullName()));
+        followerService.addFollower(new Follower(testGardener.getId(), garden.getId(), testGardener.getFullName()));
     }
 
     @When("I navigate to the garden details page")
@@ -192,5 +194,14 @@ public class BrowsePublicGardens {
     public void it_should_display_a_message_indicating(String message) {
         MvcResult mvcResult = resultActions.andReturn();
         assertEquals(mvcResult.getModelAndView().getModel().get("followerCount"), 0);
+    }
+
+    @Then("There should be a followers section that lists the follower’s name")
+    public void there_should_be_a_followers_section_that_lists_the_follower_s_name() {
+        MvcResult mvcResult = resultActions.andReturn();
+        List<Follower> followerList = (List<Follower>) mvcResult.getModelAndView().getModel().get("followerList");
+        assertEquals(followerList.getFirst().getGardenerId(), testGardener.getId());
+        assertEquals(followerList.getFirst().getGardenerName(), testGardener.getFullName());
+
     }
 }
