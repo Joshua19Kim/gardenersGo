@@ -51,6 +51,12 @@
                 document.getElementById('isLastNameOptional').onchange = function () {
                     document.getElementById('lastName').disabled = this.checked;
                 };
+                document.getElementById('isLastNameOptional').addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') {
+                        this.checked = !this.checked;
+                        document.getElementById('lastName').disabled = this.checked;
+                    }
+                });
             </script>
 
             <br/>
@@ -130,6 +136,12 @@
             } else {
                 event.preventDefault();
             }
+        }
+    });
+
+    document.getElementById("isLastNameOptional").addEventListener("keydown",function (event){
+        if(event.key == "Enter") {
+
         }
     });
 </script>
