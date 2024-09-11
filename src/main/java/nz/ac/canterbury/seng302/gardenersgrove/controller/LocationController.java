@@ -38,7 +38,6 @@ public class LocationController {
      */
     @GetMapping("/sendRequest")
     public String getData(@RequestParam String query) throws IOException, InterruptedException {
-        logger.info("input");
         rateLimiterService.setQuery(query);
         return rateLimiterService.sendRequest();
     }
