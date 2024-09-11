@@ -170,7 +170,9 @@ public class BrowseGardensController {
             }
             model.addAttribute("allTags", allTags);
         }
-        model.addAttribute("searchTerm", searchTerm);
+        if(searchTerm != null && !searchTerm.isEmpty()) {
+            model.addAttribute("searchTerm", searchTerm);
+        }
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
@@ -279,6 +281,7 @@ public class BrowseGardensController {
             @RequestParam(name="pageNo", defaultValue = "0") String pageNo,
             @RequestParam(name="tag-input") String tag,
             @RequestParam(name="tags", required = false) List<String> tags,
+            @RequestParam(name="searchTerm", required = false) String searchTerm,
             RedirectAttributes redirectAttributes
     ) {
         String tagValid ="";
@@ -324,7 +327,9 @@ public class BrowseGardensController {
         redirectAttributes.addFlashAttribute("pageNo", pageNo);
         redirectAttributes.addFlashAttribute("pageRequest", true);
         redirectAttributes.addFlashAttribute("tagValid", tagValid);
-
+        if(searchTerm != null && !searchTerm.isEmpty()) {
+            redirectAttributes.addFlashAttribute("searchTerm", searchTerm);
+        }
         return "redirect:/browseGardens";
     }
 
