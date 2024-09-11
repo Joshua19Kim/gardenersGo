@@ -2,11 +2,12 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
+import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import static java.lang.Long.parseLong;
 
 /**
  * Controller class for handling HTTP requests for the Collections page
@@ -33,15 +35,17 @@ import java.util.stream.IntStream;
 @Controller
 public class CollectionsController {
     private final IdentifiedPlantService identifiedPlantService;
-    private final ImageService imageService;
     Logger logger = LoggerFactory.getLogger(CollectionsController.class);
 
     private int pageSize;
+
+    private final ImageService imageService;
 
     private final GardenService gardenService;
 
     private final GardenerFormService gardenerFormService;
 
+    private final RequestService requestService;
     private Gardener gardener;
 
     private final String paginationMessageAttribute = "paginationMessage";
@@ -61,7 +65,10 @@ public class CollectionsController {
      * @param gardenService used in conjunction with gardener form service to populate navbar
      * @param gardenerFormService used in conjunction with above to populate navbar
      */
-    public CollectionsController(ImageService imageService, GardenService gardenService, GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService, PlantIdentificationService plantIdentificationService) {
+    public CollectionsController(ImageService imageService, GardenService gardenService,
+                                 GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService,
+                                 RequestService requestService,
+                                 PlantIdentificationService plantIdentificationService) {
         this.imageService = imageService;
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
@@ -69,6 +76,7 @@ public class CollectionsController {
         this.plantIdentificationService = plantIdentificationService;
         errorResponse = new HashMap<>();
         response = new HashMap<>();
+        this.requestService = requestService;
         pageSize = 12;
     }
 
@@ -103,7 +111,7 @@ public class CollectionsController {
         gardenerOptional.ifPresent(value -> gardener = value);
 
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
-        Page<IdentifiedPlantSpecies> speciesList = identifiedPlantService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
+        Page<IdentifiedPlantSpeciesImpl> speciesList = identifiedPlantService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
         logger.info("GET /myCollection");
         model.addAttribute("speciesList", speciesList);
         int totalPages = speciesList.getTotalPages();
@@ -323,17 +331,106 @@ public class CollectionsController {
             String jsonResult = mapper.writeValueAsString(plantDetailsList);
 
             return ResponseEntity.ok(jsonResult);
-
         } catch (Exception e) {
             errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
             return ResponseEntity.badRequest().body(errorResponse);
         }
-
     }
 
+    /**
+     *
+     * @param plantIdString string version of id of plant being edited
+     * @param model used for passing attributes to the view
+     * @return edit form or redirect back to collection
+     */
+    @GetMapping("/collectionDetails/edit")
+    public String editIdentifiedPlant(
+            @RequestParam(name="plantId") String plantIdString,
+            Model model, HttpServletRequest request) {
 
+        logger.info("GET /collectionDetails/edit");
 
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
 
+        long plantId = parseLong(plantIdString, 10);
+        IdentifiedPlant plant = identifiedPlantService.getCollectionPlantById(plantId);
 
+        if (plant != null) {
+            model.addAttribute("requestURI", requestService.getRequestURI(request));
+            model.addAttribute("plant", plant);
+
+            // need to add to model so that the navbar can populate the dropdown
+            List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
+            model.addAttribute("gardens", gardens);
+
+            return "editIdentifiedPlantForm";
+        } else {
+            return "redirect:/collectionDetails";
+        }
+    }
+
+    /**
+     * Handles the submission of the edit plant form.
+     *
+     * @param name The updated name of the plant.
+     * @param description The updated description of the plant.
+     * @param plantIdString The string ID of the plant being edited.
+     * @param model The model for passing data to the view.
+     * @return The template for the edit plant form or redirects to the garden details page.
+     */
+    @PostMapping("collectionDetails/edit")
+    public String submitEditIdentifiedPlantForm(
+            @RequestParam(name = "name") String name,
+            @RequestParam(name = "description", required = false) String description,
+            @RequestParam(name = "plantId") String plantIdString,
+            HttpServletRequest request,
+            Model model) {
+
+        logger.info("POST /collectionDetails/edit");
+
+        long plantId = parseLong(plantIdString, 10);
+        IdentifiedPlant plantOptional = identifiedPlantService.getCollectionPlantById(plantId);
+
+        String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(name);
+        String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(description);
+
+        boolean isValid = true;
+
+        if (!Objects.equals(name, validatedPlantName)) {
+            model.addAttribute("nameError", validatedPlantName);
+            isValid = false;
+        }
+        if (!Objects.equals(description, validatedPlantDescription)) {
+            model.addAttribute("descriptionError", validatedPlantDescription);
+            isValid = false;
+        }
+
+        if (isValid && plantOptional != null) {
+            IdentifiedPlant plant = plantOptional;
+
+            plant.setName(validatedPlantName);
+            boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
+
+            if (descriptionPresent) {
+                plant.setDescription(validatedPlantDescription);
+            } else {
+                plant.setDescription(null);
+            }
+
+            identifiedPlantService.saveIdentifiedPlantDetails(plant);
+
+            return "redirect:/collectionDetails?speciesName=" + plant.getSpeciesScientificNameWithoutAuthor();
+        } else {
+            Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+            gardenerOptional.ifPresent(value -> gardener = value);
+            model.addAttribute("requestURI", requestService.getRequestURI(request));
+            model.addAttribute("name", name);
+            model.addAttribute("plant", plantOptional);
+            model.addAttribute("description", description);
+
+            return "editIdentifiedPlantForm";
+        }
+    }
 
 }

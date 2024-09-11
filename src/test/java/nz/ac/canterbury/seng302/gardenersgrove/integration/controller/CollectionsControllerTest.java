@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -49,6 +49,9 @@ class CollectionsControllerTest {
 
     @MockBean
     private GardenService gardenService;
+
+    @MockBean
+    private RequestService requestService;
 
     @MockBean
     private GardenerFormService gardenerFormService;

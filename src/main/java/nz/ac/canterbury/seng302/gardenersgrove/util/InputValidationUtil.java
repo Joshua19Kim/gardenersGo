@@ -60,7 +60,7 @@ public class InputValidationUtil {
 
     /**
      * Verify name user has input passes conditions:
-     * - 0 < Name < 64
+     * - 0 < Name <= 64
      * - Allows special characters umlauts, macrons, apostrophes, spaces
      * @param name provided by user input
      * @return empty optional if input is valid, otherwise return error string
@@ -92,7 +92,7 @@ public class InputValidationUtil {
     /**
      * Verifies that email matches IETF guidelines on acceptable addresses
      * @param email provided by user input
-     * @return string - empty if passes verification
+     * @return optional empty if passes verification, else optional with error messages
      */
     public Optional<String> checkValidEmail (String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";

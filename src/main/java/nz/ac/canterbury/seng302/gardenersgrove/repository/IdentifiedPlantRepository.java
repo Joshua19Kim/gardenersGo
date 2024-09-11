@@ -1,7 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
+import jakarta.persistence.ColumnResult;
+import jakarta.persistence.ConstructorResult;
+import jakarta.persistence.SqlResultSetMapping;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpeciesImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +28,13 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
     Page<IdentifiedPlant> findAll(Pageable pageable);
 
     /**
+     * Retrieves an identified plant by id
+     * @param id id to retrieve
+     * @return IdentifiedPlant object
+     */
+    IdentifiedPlant findById(long id);
+
+    /**
      * Custom query to retrieve identified plants by gardener id and species name, with pagination
      *
      * @param gardenerId the id of the gardener
@@ -31,7 +42,7 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
      * @param pageable object representing pagination
      * @return the identified plants matching the species name that the gardener has
      */
-    @Query("SELECT p FROM IdentifiedPlant p WHERE p.gardener.id = :gardenerId AND p.speciesScientificNameWithoutAuthor = :speciesName")
+    @Query(value = "SELECT *  FROM identifiedplant p WHERE p.gardener_id = :gardenerId AND p.species_scientific_name_without_author = :speciesName", nativeQuery = true)
     Page<IdentifiedPlant> getPlantByGardenerIdAndSpecies(long gardenerId, String speciesName, Pageable pageable);
 
     /**
@@ -41,23 +52,29 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
      * @param pageable object representing pagination
      * @return a page of species with count, species name, and image URL
      */
-    @Query("SELECT new nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies(p.speciesScientificNameWithoutAuthor, p.imageUrl, COUNT(p)) " +
-            "FROM IdentifiedPlant p WHERE p.gardener.id = :id " +
-            "GROUP BY p.speciesScientificNameWithoutAuthor, p.imageUrl")
-    Page<IdentifiedPlantSpecies> getSpeciesByGardenerId(long id, Pageable pageable);
+
+    @Query(value = "SELECT p.species_scientific_name_without_author AS speciesName, " +
+            "p.image_url AS imageUrl, COUNT(*) AS count " +
+            "FROM identifiedplant p " +
+            "JOIN gardener g ON p.gardener_id = g.gardener_id " +
+            "WHERE g.gardener_id = :id " +
+            "GROUP BY p.species_scientific_name_without_author, p.image_url",
+            nativeQuery = true)
+
+    Page<IdentifiedPlantSpeciesImpl> getSpeciesByGardenerId(long id, Pageable pageable);
 
     /**
      * Gets all the plant names for Identified plant in the database
      * @return all the plant names in the database
      */
-    @Query(value = "SELECT DISTINCT name FROM IdentifiedPlant WHERE gardener_id = :gardenerId", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT name FROM identifiedplant WHERE gardener_id = :gardenerId", nativeQuery = true)
     List<String> getAllPlantNames(Long gardenerId);
 
     /**
      * Gets all the scientific names for Identified plant in the database
      * @return all the scientific names for Identified plant in the database
      */
-    @Query(value = "SELECT DISTINCT species_scientific_name_without_author FROM IdentifiedPlant WHERE gardener_id = :gardenerId", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT species_scientific_name_without_author FROM identifiedplant WHERE gardener_id = :gardenerId", nativeQuery = true)
     List<String> getAllSpeciesScientificName(Long gardenerId);
 
     /**
@@ -65,7 +82,7 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
      * @param name the plant name to search
      * @return the plant details in the database
      */
-    @Query(value = "SELECT * FROM IdentifiedPlant WHERE name = :name" , nativeQuery = true)
+    @Query(value = "SELECT * FROM identifiedplant WHERE name = :name" , nativeQuery = true)
     List<IdentifiedPlant> getPlantDetailsWithPlantNames(String name);
 
     /**
@@ -73,7 +90,7 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
      * @param name the specie scientific name to search
      * @return the plant details in the database
      */
-    @Query(value = "SELECT * FROM IdentifiedPlant WHERE species_scientific_name_without_author = :name", nativeQuery = true)
+    @Query(value = "SELECT * FROM identifiedplant WHERE species_scientific_name_without_author = :name", nativeQuery = true)
     List<IdentifiedPlant> getPlantDetailsWithSpeciesScientificName(String name);
 
 }

@@ -185,7 +185,7 @@ public class ValidityCheckerTest {
     public void PlantNameEntered_NameTooLongAndInvalid_MultipleErrorMessagesReturned() {
         String input = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean@";
         String returnedInput = ValidityChecker.validatePlantName(input);
-        Assertions.assertEquals("Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>Plant name must be less than 64 characters", returnedInput);
+        Assertions.assertEquals("Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>Plant name must be less than or equal to 64 characters", returnedInput);
     }
 
     @Test
@@ -381,7 +381,7 @@ public class ValidityCheckerTest {
                     "potential and renewal. In folklore and legend, the Oak tree is often associated with gods and spirits," +
                     " embodying resilience and resilience. From the whispering leaves to the gnarled bark," +
                     " every aspect of the Oak tree tells a story of resilience, adaptability, and the enduring power of nature." +
-                    ": Garden description must be less than 512 characters <br/>",
+                    ": Garden description must be less than 512 characters <br/>The description does not match the language standards of the app.",
             "123: Description must be 512 characters or less and contain some text <br/>",
             "shit: The description does not match the language standards of the app.",
             "hi : hi"
