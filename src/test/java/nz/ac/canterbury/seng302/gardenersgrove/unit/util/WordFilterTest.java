@@ -19,22 +19,22 @@ public class WordFilterTest {
 
     @Test
     public void testUppercaseInput() {
-        assertTrue(WordFilter.doesContainBadWords("ASS"));
+        assertTrue(WordFilter.doesContainBadWords("SHIT"));
     }
 
     @Test
     public void testLowercaseInput() {
-        assertTrue(WordFilter.doesContainBadWords("ass"));
+        assertTrue(WordFilter.doesContainBadWords("shit"));
     }
 
     @Test
     public void testMixedCaseInput() {
-        assertTrue(WordFilter.doesContainBadWords("AsS"));
+        assertTrue(WordFilter.doesContainBadWords("ShiT"));
     }
 
     @Test
     public void testSentenceWithBadWord() {
-        assertTrue(WordFilter.doesContainBadWords("ass a bad word."));
+        assertTrue(WordFilter.doesContainBadWords("shit a bad word."));
     }
 
     @Test
@@ -49,6 +49,6 @@ public class WordFilterTest {
 
     @Test
     public void testLeetspeakInput() {
-        assertTrue(WordFilter.doesContainBadWords("4ss"));
+        assertTrue(WordFilter.doesContainBadWords("sh1t"));
     }
 }
