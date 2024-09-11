@@ -74,16 +74,21 @@
                     <!-- Spacer -->
                     <li class="nav-item flex-grow-1"></li>
 
-                    <!-- Centered Scan Plant Item -->
-                    <li class="nav-item text-center" >
-                        <img id="scanIcon"
-                                class="nav-link modal-link"
-                                data-bs-target="#scanningModal"
-                                data-bs-toggle="modal"
-                                style="max-width: 50px; object-fit: contain; cursor: pointer;"
-                                alt="Scan Plant"
-                                title="Scan Plant" tabindex="7"
-                        >
+                    <!-- Scan Plant Item -->
+                    <li class="nav-item d-flex align-items-center">
+                        <div class="d-flex flex-column align-items-center">
+                            <a class="nav-link modal-link" data-bs-target="#scanningModal" data-bs-toggle="modal" style="cursor: pointer;" tabindex="7">
+                                <img id="scanIcon"
+                                     class="nav-link modal-link"
+                                     data-bs-target="#scanningModal"
+                                     data-bs-toggle="modal"
+                                     style="max-width: 50px; object-fit: contain; cursor: pointer;"
+                                     alt="Scan Plant"
+                                     title="Scan Plant"
+                                >
+                                Scan Plant
+                            </a>
+                        </div>
                     </li>
 
                     <!-- Spacer -->
@@ -104,8 +109,8 @@
                     <li class="nav-item flex-grow-1"></li>
 
                         <li class="nav-item-dropdown dropdown">
-                            <button class="btn btn-link p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img id="userIcon" class="dropdown-toggle" style="max-width: 50px; object-fit: contain;" th:href="@{/user}" alt="Account" tabindex="10">
+                            <button class="btn btn-link p-0 mt-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img id="userIcon" class="dropdown-toggle" style="max-width: 30px; object-fit: contain;" th:href="@{/user}" alt="Account" tabindex="10">
                             </button>                        <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="navbarDropdown">
                             <li class="nav-item" tabindex="11">
                                 <a class="nav-link" th:href="@{/user}" >My Profile</a>
@@ -166,6 +171,17 @@
 
     document.getElementById("userIcon").addEventListener("keydown", handleUserKeydown)
 
+    // referenced from phind
+    document.querySelector('.nav-link.modal-link').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            // Prevent default action
+            e.preventDefault();
+
+            // Trigger the modal
+            var modal = new bootstrap.Modal(document.getElementById('scanningModal'));
+            modal.show();
+        }
+    });
     function handleGardenKeydown(event) {
         if (event.key === 'Enter') {
             // enter

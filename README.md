@@ -4,9 +4,9 @@ Gardener's Grove is an application designed to allow gardeners to record informa
 in their garden(s). This sprint's deliverable currently allows new users to register and log in to the application, 
 edit their profile, create/edit gardens and add plants to them, send friend requests to other users, 
 add tags to gardens, make gardens public, and view the weather for the garden location. Friends can view each other's 
-profile and garden details.
+profile and garden details. There is also the ability to browse public gardens, including searching for gardens/plants by name and filtering by tags. When you first log in you will be directed to the home page which is composed of some interesting and fun widgets.
 
-The project currently uses ```gradle```, ```Spring Boot```, ```Thymeleaf```, ```WeatherAPI```, ```LocationIQ``` and ```Simple Java Mail```.
+The project currently uses ```gradle```, ```Spring Boot```, ```Thymeleaf```, ```Bootstrap```,```WeatherAPI```, ```LocationIQ``` and ```Simple Java Mail```.
 ```GitLab CI``` is configured to build and run the project but for sprint 2 we request that the project not be 
 evaluated on the online VM.
 
@@ -64,6 +64,7 @@ email.password=${SJMP}
 locationIq.password=${LOCATIONIQ}
 weather.password=${WEATHER}
 caching.spring.currentWeatherTTL=3600000
+server.url=http://localhost:8080
 ```
 
 - You should now be able to run the application with the green button at the top of IntelliJ
@@ -93,12 +94,12 @@ From the root directory ...
 
 On Linux:
 ```
-./gradlew test
+./gradlew check
 ```
 
 On Windows:
 ```
-gradlew test
+gradlew check
 ```
 
 There are currently no built-in methods in the project for running tests with coverage.
