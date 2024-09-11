@@ -164,24 +164,6 @@ public class GardenDetailsControllerTest {
         Assertions.assertEquals("gardenDetailsTemplate", template);
     }
 
-    // Tests for gardens/addTag POST method -- These tests are not bad as the controller is not failsafe secure
-    // todo: Fix this test and add others after refactoring GardenDetails
 
-//    @Test
-//    void GivenUserOwnsGarden_WhenDetailsRequested_ControllerFindsDetails()
-//            throws IOException, URISyntaxException, InterruptedException {
-//        String tag = "MyNewTag";
-//        Mockito.when(mockGardenService.getGarden(any(long.class))).thenReturn(Optional.of(mockGarden));
-//        Mockito.when(mockGardenService.getGardensByGardenerId(any(long.class))).thenReturn(mockGardens);
-//        // tag validation -- NEED TO INJECT TAG VALIDATION
-////        Mockito.when(mockTagValidation.validate)
-//        // Location (bad location)
-//        HttpResponse<String> mockLocation = Mockito.mock(HttpResponse.class);
-//        Mockito.when(mockLocationService.sendRequest(anyString())).thenReturn(mockLocation);
-//        Mockito.when(mockLocation.body()).thenReturn(null);
-//
-//        String template = gardenDetailsController.addTag(tag, 1l, mockModel);
-//        Assertions.assertEquals("gardenDetailsTemplate", template);
-//    }
 
 }

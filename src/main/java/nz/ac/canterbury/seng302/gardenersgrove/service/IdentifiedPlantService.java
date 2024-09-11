@@ -50,7 +50,6 @@ public class IdentifiedPlantService {
     }
 
     public IdentifiedPlant getCollectionPlantById(long id) {
-        // TODO: DELETE
         return identifiedPlantRepository.findById(id);
     }
 

@@ -303,7 +303,6 @@ public class CollectionsController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        // TODO: put this in a validator
         long plantId = parseLong(plantIdString, 10);
         IdentifiedPlant plant = identifiedPlantService.getCollectionPlantById(plantId);
 
@@ -317,7 +316,6 @@ public class CollectionsController {
 
             return "editIdentifiedPlantForm";
         } else {
-            // TODO: change redirect?
             return "redirect:/collectionDetails";
         }
     }
@@ -341,7 +339,6 @@ public class CollectionsController {
 
         logger.info("POST /collectionDetails/edit");
 
-        // TODO: put this in a validator
         long plantId = parseLong(plantIdString, 10);
         IdentifiedPlant plantOptional = identifiedPlantService.getCollectionPlantById(plantId);
 
@@ -381,7 +378,7 @@ public class CollectionsController {
             model.addAttribute("name", name);
             model.addAttribute("plant", plantOptional);
             model.addAttribute("description", description);
-            // TODO: Fix css bug with error messages
+
             return "editIdentifiedPlantForm";
         }
     }
