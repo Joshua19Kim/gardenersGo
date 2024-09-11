@@ -118,8 +118,12 @@ public class UserProfileController {
         } else {
             model.addAttribute("firstName", "Not Registered");
         }
-        if(isLastNameOptional) {
+
+        if (isLastNameOptional) {
             lastName = null;
+        } if (gardener.getLastName() == null) {
+            model.addAttribute("isLastNameOptional", true);
+            isLastNameOptional = true;
         }
 
         InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
