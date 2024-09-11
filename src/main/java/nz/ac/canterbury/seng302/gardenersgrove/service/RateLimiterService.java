@@ -2,6 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -14,41 +17,32 @@ import java.time.Instant;
  */
 @Service
 public class RateLimiterService {
-    private final int CAPACITY = 7;
-    private final int REFILLRATE = 5;
-    private int tokens;
     private Instant lastRefillTime;
+    private String query;
+    private final LocationService locationService;
 
     /**
      * Constructor of RateLimiterService
      */
-    public RateLimiterService() {
-        this.tokens = CAPACITY;
+    public RateLimiterService(LocationService locationService) {
         this.lastRefillTime = Instant.now();
+        this.locationService = locationService;
     }
 
-    /**
-     * When a user wants to send a request, it consumes one token.
-     * @return If there is token(s) left in the bucket, consume the token and return true. Otherwise, false.
-     */
-    public synchronized boolean tryConsume() {
-        refillTokens();
-        if (tokens > 0) {
-            tokens--;
-            return true;
-        }
-        return false;
-    }
 
-    /**
-     * Refills tokens in the token bucket based on the elapsed time since the last refill.
-     */
-    private void refillTokens() {
+    public String sendRequest() throws IOException, InterruptedException {
         Instant now = Instant.now();
-        long elapsedSeconds = Duration.between(lastRefillTime, now).getSeconds();
-        int tokensToAdd = (int) (elapsedSeconds * REFILLRATE);
-        tokens = Math.min(CAPACITY, tokens + tokensToAdd);
-        lastRefillTime = now;
+        long elapsedSeconds = Duration.between(lastRefillTime, now).toSeconds();
+        if (elapsedSeconds >= 1) {
+            lastRefillTime = now;
+            HttpResponse<String> response = locationService.sendRequest(query);
+            return response.body();
+        }
+        return "{\"status\":\"Searching\"}"; // Return a valid JSON response
     }
+
+    public void setQuery(String query) {this.query = query;}
+
+    public String getQuery() {return this.query;}
 
 }
