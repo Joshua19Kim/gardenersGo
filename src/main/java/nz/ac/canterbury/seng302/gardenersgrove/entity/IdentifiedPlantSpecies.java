@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import jakarta.persistence.*;
+
 /**
  * This class represents a species of identified plants. It has a image for the species and keeps track of the number
  * of identified plants that are part of that species.
@@ -9,11 +11,15 @@ public class IdentifiedPlantSpecies {
     private String imageUrl;
     private Long count;
 
+
     public IdentifiedPlantSpecies(String speciesName, String imageUrl, Long count) {
         this.speciesName = speciesName;
         this.imageUrl = imageUrl;
         this.count = count;
     }
+
+    protected IdentifiedPlantSpecies() {}
+
 
     public String getSpeciesName() {
         return speciesName;
@@ -38,4 +44,5 @@ public class IdentifiedPlantSpecies {
     public void setCount(Long count) {
         this.count = count;
     }
+
 }
