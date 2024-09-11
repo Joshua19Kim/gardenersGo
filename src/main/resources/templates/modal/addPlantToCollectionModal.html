@@ -22,11 +22,14 @@
                         </div>
                     </div>
                     <br/>
+
+
                     <div class="d-flex justify-content-between align-items-center">
                         <label for="plantName"> Name: </label>
                         <label for="plantName" class="required-label"> *Required </label>
                     </div>
-                    <input type="text" class="form-control input-modal" th:value="${plantName}" id="plantName" name="plantName" autocomplete="off" placeholder="Plant Name" maxlength="64" list="plantNamesList"
+                    <input type="text" class="form-control input-modal" th:value="${plantName}"
+                           id="plantName" name="plantName" autocomplete="off" placeholder="Plant Name" maxlength="64" list="plantNamesList"
                            th:classappend="${plantNameError} ? 'is-invalid' : ''">
                     <datalist id="plantNamesList"></datalist>
                     <span th:if="${plantNameError}" th:utext="${plantNameError}" class="smallErrorMessage"></span>
@@ -34,7 +37,8 @@
 
 
                     <label for="scientificName"> Scientific Name: </label>
-                    <input type="text" class="form-control input-modal" th:value="${scientificName}" id="scientificName" name="scientificName" autocomplete="off" placeholder="Scientific Name" maxlength="64" list="scientificNamesList"
+                    <input type="text" class="form-control input-modal" th:value="${scientificName}"
+                           id="scientificName" name="scientificName" autocomplete="off" placeholder="Scientific Name" maxlength="64" list="scientificNamesList"
                            th:classappend="${scientificNameError} ? 'is-invalid' : ''">
                     <datalist id="scientificNamesList"></datalist>
                     <span th:if="${scientificNameError}" th:utext="${scientificNameError}" class="smallErrorMessage"></span>
@@ -44,14 +48,16 @@
                     <label for="description"> Description: </label>
                     <br/>
                     <span id="characterCountContainer"><span id="characterCount">0</span> /512</span>
-                    <textarea class="form-control input-modal" th:value="${description}" id="description" name="description" placeholder="Description"  maxlength="512"
+                    <textarea class="form-control input-modal" th:value="${description}"
+                              id="description" name="description" placeholder="Description"  maxlength="512"
                               th:classappend="${descriptionError} ? 'is-invalid' : ''">[[${description}]]</textarea>
                     <span th:if="${descriptionError}" th:text="${descriptionError}" class="smallErrorMessage"></span>
                     <br/>
 
 
                     <label for="plantDate"> Date Planted: </label>
-                    <input type="date" class="form-control" th:value="${uploadedDate}" id="plantDate" th:name="uploadedDate" style="color:#6c757d;" max="9999-12-31"
+                    <input type="date" class="form-control" th:value="${uploadedDate}"
+                           id="plantDate" th:name="uploadedDate" style="color:#6c757d;" max="9999-12-31"
                            th:classappend="${dateError} ? 'is-invalid' : ''">
                     <span id="dateError" class="smallErrorMessage" th:utext="${dateError}"></span>
                     <input type="hidden" id="isDateInvalid" th:name="isDateInvalid" th:value="false"/>
@@ -172,13 +178,24 @@
     }
 
 
+/////////////////////////////////////////////////////////////////////
     let plantNames = JSON.parse(document.getElementById('plantNamesJson').value || '[]');
     let scientificNames = JSON.parse(document.getElementById('plantScientificNamesJson').value || '[]');
+
+    const plantNameInput = document.getElementById('plantName');
+    const scientificNameInput = document.getElementById('scientificName');
+
+    let removedOption = "";
+    let keypress = false;
+
 
     const plantNamesList = document.getElementById('plantNamesList');
     plantNames.forEach(name => {
         let option = document.createElement('option');
         option.value = name;
+        option.addEventListener('click', function() {
+            getPlantDetails(name, true);
+        });
         plantNamesList.appendChild(option);
     });
 
@@ -189,10 +206,102 @@
         scientificNamesList.appendChild(option);
     });
 
-    // this bootstrap code was found from https://iqbalfn.github.io/bootstrap-autocomplete/
-    $('#plantName').autocomplete();
-    $('#scientificName').autocomplete();
 
+    plantNameInput.addEventListener('input', function() {
+        const selectedValue = this.value;
+        if (plantNames.includes(selectedValue)) {
+            getPlantDetails(selectedValue, true);
+        }
+    });
+
+    scientificNameInput.addEventListener('input', function() {
+        const selectedValue = this.value;
+        if (scientificNames.includes(selectedValue)) {
+            getPlantDetails(selectedValue, false);
+        }
+    });
+
+
+    plantNameInput.addEventListener("keydown", (e) => {
+        if(e.key) {
+            keypress = true;
+        }
+    });
+
+    scientificNameInput.addEventListener("keydown", (e) => {
+        if(e.key) {
+            keypress = true;
+        }
+    });
+
+
+    plantNameInput.addEventListener('change', (e) => {
+        const inputValue = tagInput.value;
+        const options = dataList.options
+        if (keypress === false) {
+            getPlantDetails(plantNameInput.value, true)
+        }
+        if(inputValue !== removedOption && removedOption !== "") {
+            let newOption = document.createElement("option");
+            newOption.value = removedOption;
+            newOption.text = removedOption;
+            dataList.appendChild(newOption);
+            removedOption = "";
+        }
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === inputValue) {
+                removedOption = options[i].value;
+                options[i].remove();
+                break;
+            }
+        }
+        keypress = false;
+    });
+
+
+    function getPlantDetails(selectedPlantName, isPlantName) {
+        const data = {
+            name: selectedPlantName,
+            isPlantName: isPlantName,
+            isSpecieScientificName: !isPlantName
+        };
+
+        fetch('/myCollection/autoPopulate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(plantDetailsList => {
+                if (plantDetailsList.length > 0) {
+                    const plantDetails = plantDetailsList[0];
+                    document.getElementById('plantName').value = plantDetails.name || '';
+                    document.getElementById('scientificName').value = plantDetails.scientificName || '';
+                    document.getElementById('description').value = plantDetails.description || '';
+                    updateCharacterCount()
+                    document.getElementById('plantDate').value = convertToHtmlDate(plantDetails.dateUploaded) || '';
+                } else {
+                    console.log('No plant details found');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function convertToHtmlDate(dateString) {
+        const [day, month, year] = dateString.split('/');
+        const date = new Date(year, month - 1, day);
+        return date.toISOString().split('T')[0];
+    }
 
 
 

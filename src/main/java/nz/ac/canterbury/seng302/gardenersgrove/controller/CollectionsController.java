@@ -11,21 +11,19 @@ import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -54,6 +52,10 @@ public class CollectionsController {
 
     private final PlantIdentificationService plantIdentificationService;
 
+    private final Map<String, String> errorResponse;
+    private final Map<String, Object> response;
+    private final String errorKey = "error";
+
     /**
      * Constructor to instantiate CollectionsController
      * @param gardenService used in conjunction with gardener form service to populate navbar
@@ -65,6 +67,8 @@ public class CollectionsController {
         this.gardenerFormService = gardenerFormService;
         this.identifiedPlantService = identifiedPlantService;
         this.plantIdentificationService = plantIdentificationService;
+        errorResponse = new HashMap<>();
+        response = new HashMap<>();
         pageSize = 12;
     }
 
@@ -123,8 +127,8 @@ public class CollectionsController {
 
 
         // For Autocomplete
-        List<String> plantScientificNames = plantIdentificationService.getAllSpeciesScientificNames();
-        List<String> plantNames = plantIdentificationService.getAllPlantNames();
+        List<String> plantScientificNames = plantIdentificationService.getAllSpeciesScientificNames(gardener);
+        List<String> plantNames = plantIdentificationService.getAllPlantNames(gardener);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String plantNamesJson = objectMapper.writeValueAsString(plantNames);
@@ -288,6 +292,46 @@ public class CollectionsController {
             return "redirect:/myCollection";
         }
     }
+
+    @PostMapping("/myCollection/autoPopulate")
+    @ResponseBody
+    public ResponseEntity<?> autoPopulateDetails(
+            @RequestBody Map<String, String> selectedInfo) {
+        logger.info("POST /myCollection/autoPopulate");
+        Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
+        gardenerOptional.ifPresent(value -> gardener = value);
+
+        try {
+            String name = selectedInfo.get("name");
+            boolean isPlantName = Boolean.parseBoolean(selectedInfo.get("isPlantName"));
+            boolean isSpecieScientificName = Boolean.parseBoolean(selectedInfo.get("isSpecieScientificName"));
+
+            List<Map<String, String>> plantDetailsList;
+            if (isPlantName) {
+                plantDetailsList = plantIdentificationService.getPlantDetailsWithPlantNames(name);
+            } else if (isSpecieScientificName) {
+                plantDetailsList = plantIdentificationService.getPlantDetailsWithSpeciesScientificName(name);
+            } else {
+                plantDetailsList = new ArrayList<>();
+            }
+
+            if (plantDetailsList.isEmpty()) {
+                errorResponse.put(errorKey, "Plant not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonResult = mapper.writeValueAsString(plantDetailsList);
+
+            return ResponseEntity.ok(jsonResult);
+
+        } catch (Exception e) {
+            errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+    }
+
+
 
 
 
