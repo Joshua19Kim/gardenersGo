@@ -43,29 +43,19 @@
         </div>
         <div class="row w-100" style="overflow-wrap: break-word;">
 
-            <!-- Location -->
-            <div class="col-12">
-                <p id="location" class="location-text">
-                    <strong>Location:</strong>
-                    <span class="location-content" th:text="${garden.getFullLocation()}"></span>
-                </p>
-            </div>
+            <p><strong>Location:</strong> <span class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;" th:text="${garden.getFullLocation()}"></span></p>
+            <p>
+                <strong>Size:</strong> <span th:if="${garden.size != null}"
+                                             th:text="${garden.size + ' m&sup2;'}"></span>
+            </p>
+            <p><strong>Description:</strong> <span class="text-black break-words overflow-wrap-anywhere text-break mb-2" style="min-width: 0;" th:text="${garden.description}"></span></p>
+            <p>
+                <strong>Followers: </strong>
+                <a id="follower-modal-trigger" class="link-underline-dark modal-link cursor-pointer" data-bs-target="#followersModal" data-bs-toggle="modal"
+                   th:if="${followerCount != null and followerCount > 0}" th:text="${followerCount}" style="cursor: pointer;" tabindex="13"></a>
+                <span id="noFollowers" th:if="${followerCount == null or followerCount == 0}">No followers yet</span>
+            </p>
 
-            <!-- Size -->
-            <div class="col-12">
-                <p>
-                    <strong>Size:</strong>
-                    <span th:if="${garden.size != null}" th:text="${garden.size + ' m&sup2;'}"></span>
-                </p>
-            </div>
-
-            <!-- Description -->
-            <div class="col-12">
-                <p class="description-text">
-                    <strong>Description:</strong>
-                    <span class="description-content" th:text="${garden.description}"></span>
-                </p>
-            </div>
             <div id="tag-container">
                 <strong>Tags:</strong>
                 <div th:if="${tags != null}" th:each="tag : ${tags}">
@@ -74,7 +64,7 @@
                     </div>
                 </div>
                 <a id="add-tag" th:style="${tag != null} ? 'display: none;' : 'display: block;'"
-                   onclick="transformToInput()" tabindex="13">
+                   onclick="transformToInput()" tabindex="14">
                     <img class="nav-link" src="../images/icons/add_circle_white.png" alt="Add Circle">
                 </a>
                 <form id="hidden-tag-form" method="post" autocomplete="off" th:action="@{addTag}">
@@ -84,7 +74,7 @@
                            placeholder="Add tag..." maxlength="50" onkeydown="submitTagOnEnter(event)" autofocus
                            class="form-control"
                            th:classappend="${((tagValid != '' && tagValid != null) || (tagWarning != '' && tagWarning != null)) ? 'error' : ''}"
-                           tabindex="14">
+                           tabindex="15">
                     <input type="hidden" name="tag-input" id="hidden-tag-input">
                     <input type="hidden" name="gardenId" th:value="${garden.id}">
                     <datalist id="tagList">
@@ -92,7 +82,7 @@
                     </datalist>
                 </form>
                 <a id="submit-tag" th:style="${tag != null} ? 'display: block;' : 'display: none;'"
-                   onclick="submitTag()" tabindex="15                   ">
+                   onclick="submitTag()" tabindex="16">
                     <img class="nav-link" id="addTagIcon" alt="Add Circle">
                 </a>
             </div>
@@ -256,6 +246,23 @@
         </div>
     </div>
 
+    <div id="followersModal" class="modal fade" tabindex="-1" aria-labelledby="followersModal" aria-hidden="true" data-bs-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="followersModalLabel">Followers</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="followersModalBody">
+                    <div class="list-group" style="overflow-wrap: break-word" th:each="follower: ${followerList}">
+                        <a class="link-underline-dark" th:text="${follower.getGardenerName()}" th:href="@{/user(user=${follower.getGardenerId()})}"></a>
+                        <hr/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script th:src="@{/javascript/tagAutocomplete.js}"></script>
@@ -323,6 +330,17 @@
 
     addTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
 
+
+    // referenced chatgpt
+    function openFollowersModalOnEnter(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent the default action
+            const followersModal = new bootstrap.Modal(document.getElementById('followersModal'));
+            followersModal.show(); // Show the modal
+        }
+    }
+
+    document.getElementById('follower-modal-trigger').addEventListener('keydown', openFollowersModalOnEnter);
 
 </script>
 
