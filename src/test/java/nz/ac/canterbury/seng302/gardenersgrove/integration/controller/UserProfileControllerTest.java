@@ -487,8 +487,8 @@ public class UserProfileControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/user")
                         .param("user", String.valueOf(friend.getId())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/user"));
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("unauthorizedUser"));
     }
 
     @Test
