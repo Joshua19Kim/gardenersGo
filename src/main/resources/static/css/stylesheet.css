@@ -900,6 +900,7 @@ button.image-button:hover {
     font-size: 1.25rem;
     margin-bottom: 1rem;
     font-weight: bold;
+    color: var(--text-color);
 }
 
 .main-page-avatar {

@@ -150,6 +150,7 @@
     });
 
     const addTagIcon = document.getElementById("addTagIcon");
+    const submitTagIcon = document.getElementById("submitTagIcon");
 
     function getBaseUrl() {
         const path = window.location.pathname.split('/');
@@ -189,5 +190,6 @@
         })
     }
 
+    submitTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
 </script>
 </html>
