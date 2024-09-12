@@ -204,7 +204,7 @@ goToCollectionButton.addEventListener('click', function() {
         })
         .then(data => {
             var modal = bootstrap.Modal.getInstance(successModal);
-            window.location.href = '/myCollection';
+            window.location.href = `${getBaseUrl()}/myCollection`;
             document.getElementById('name').value = "";
             document.getElementById('scanning-description').value = "";
             document.getElementById('nameError').innerText = '';
