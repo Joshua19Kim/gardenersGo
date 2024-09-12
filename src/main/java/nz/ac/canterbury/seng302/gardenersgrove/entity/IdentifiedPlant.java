@@ -37,7 +37,7 @@ public class IdentifiedPlant {
 
 
     @ElementCollection
-    @CollectionTable(name = "common_names", joinColumns = @JoinColumn(name = "identified_plant_id"))
+    @CollectionTable(name = "common_names", joinColumns = @JoinColumn(name = "IDENTIFIEDPLANT_id"))
     @Column(name = "common_name")
     private List<String> commonNames;
 
