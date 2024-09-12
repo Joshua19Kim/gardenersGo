@@ -108,11 +108,11 @@ public class ValidityChecker {
     public static String validatePlantName(String name) {
         String result = "";
         if (name == null || name.trim().isEmpty() || !name.matches(genericRegex)) {
-            result += "Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>";
+            result += "Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes. ";
         }
 
         if(name != null && name.length() > 64) {
-            result += "Plant name must be less than or equal to 64 characters";
+            result += "Plant name must be less than or equal to 64 characters.";
         }
 
         if (!result.isEmpty()) {
@@ -162,7 +162,7 @@ public class ValidityChecker {
                     "be 64 characters long or less <br/>";
         }
         if (name.trim().isEmpty()) {
-            result += "Plant name cannot be empty <br/>";
+            result += "Plant name cannot be empty. ";
         } else if (!name.matches(validNameRegex)) {
             result += "Plant name cannot be empty and must only include letters, spaces, " +
                     "hyphens or apostrophes <br/>";
