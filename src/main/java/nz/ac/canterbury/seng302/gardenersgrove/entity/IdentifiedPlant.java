@@ -36,7 +36,6 @@ public class IdentifiedPlant {
     @Column(name = "family_scientific_name_without_author")
     private String familyScientificNameWithoutAuthor;
 
-
     @ElementCollection
     @CollectionTable(name = "common_names", joinColumns = @JoinColumn(name = "identified_plants_id"))
     @Column(name = "common_name")
