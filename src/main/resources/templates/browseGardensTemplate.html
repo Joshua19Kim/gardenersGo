@@ -140,6 +140,7 @@
     <p th:text="${paginationMessage}"></p>
 </div>
 </body>
+<script th:src="@{/javascript/getBaseUrl.js}"></script>
 <script th:src="@{/javascript/tagAutocomplete.js}"></script>
 <script th:inline="javascript">
     document.getElementById("add-tag").addEventListener("keydown", function(event) {
@@ -158,16 +159,6 @@
     const addTagIcon = document.getElementById("addTagIcon");
     const submitTagIcon = document.getElementById("submitTagIcon");
 
-    function getBaseUrl() {
-        const path = window.location.pathname.split('/');
-        if (path[1] === 'test') {
-            return '/test';
-        } else if (path[1] === 'prod') {
-            return '/prod';
-        }
-        return '';
-
-    }
     addTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
     submitTagIcon.src = `${getBaseUrl()}/images/icons/add_circle_white.png`
 

@@ -15,16 +15,7 @@ const gbifInfo= document.getElementById('gbifInfo');
 let identifiedPlantData = null;
 var goToCollectionButton = document.getElementById('goToCollectionButton');
 
-function getBaseUrl() {
-    const path = window.location.pathname.split('/');
-    if (path[1] === 'test') {
-        return '/test';
-    } else if (path[1] === 'prod') {
-        return '/prod';
-    }
-    return '';
 
-}
 function openGbifDetails(gbifId) {
     window.open(`https://www.gbif.org/species/${gbifId}`, '_blank');
 }

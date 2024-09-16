@@ -1,5 +1,6 @@
 <link th:href="@{/css/modal.css}" rel="stylesheet">
 
+
 <div id="errorOccurred" th:attr="data-value=${errorOccurred}"></div>
 <div class="modal fade" id="addPlantModal" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
     <div class="modal-dialog">
@@ -87,6 +88,8 @@
     var addPlantModal = document.getElementById('addPlantModal');
     var plantDateInput = document.getElementById('plantDate');
     var today = new Date();
+
+    currentImage.src = `${getBaseUrl()}/images/placeholder.jpg`;
 
     var errorOccurred = document.getElementById("errorOccurred").getAttribute("data-value");
     window.onload = function() {
@@ -178,7 +181,7 @@
     }
 
 
-/////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     let plantNames = JSON.parse(document.getElementById('plantNamesJson').value || '[]');
     let scientificNames = JSON.parse(document.getElementById('plantScientificNamesJson').value || '[]');
 
@@ -266,7 +269,7 @@
             isSpecieScientificName: !isPlantName
         };
 
-        fetch('/myCollection/autoPopulate', {
+        fetch(`${getBaseUrl()}/myCollection/autoPopulate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -302,9 +305,6 @@
         const date = new Date(year, month - 1, day);
         return date.toISOString().split('T')[0];
     }
-
-
-
 
 
 </script>

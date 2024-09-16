@@ -133,21 +133,11 @@
         </div>
     </div>
 </nav>
-
+<script th:src="@{/javascript/getBaseUrl.js}"></script>
 <script>
     const gardenPlusIcon = document.getElementById("gardenPlusIcon")
     const scanIcon = document.getElementById("scanIcon")
     const userIcon = document.getElementById("userIcon")
-    function getBaseUrl() {
-        const path = window.location.pathname.split('/');
-        if (path[1] === 'test') {
-            return '/test';
-        } else if (path[1] === 'prod') {
-            return '/prod';
-        }
-        return '';
-
-    }
 
     gardenPlusIcon.src = `${getBaseUrl()}/images/icons/add_circle_off_black.png`;
     scanIcon.src = `${getBaseUrl()}/images/icons/indeterminate_question_box_off_black.png`;
