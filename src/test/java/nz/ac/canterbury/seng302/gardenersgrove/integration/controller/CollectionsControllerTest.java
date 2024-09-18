@@ -31,8 +31,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -97,6 +96,7 @@ class CollectionsControllerTest {
         when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
         doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
         when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
+        when(identifiedPlantService.getCollectionPlantCount(gardener.getId())).thenReturn(1);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/myCollection")
                 .file(mockMultipartFile)
@@ -109,6 +109,10 @@ class CollectionsControllerTest {
 
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/myCollection"));
+
+
+        verify(badgeService, times(1)).checkPlantBadgeToBeAdded(gardener, 1);
+        verify(identifiedPlantService, times(1)).getCollectionPlantCount(gardener.getId());
     }
 
     @Test
@@ -164,6 +168,9 @@ class CollectionsControllerTest {
                 .andExpect(flash().attribute("scientificName", species))
                 .andExpect(flash().attribute("uploadedDate", date))
                 .andExpect(flash().attribute("errorOccurred", true));
+
+        verify(badgeService, never()).checkPlantBadgeToBeAdded(eq(gardener), anyInt());
+        verify(identifiedPlantService, never()).getCollectionPlantCount(gardener.getId());
     }
 
 }
