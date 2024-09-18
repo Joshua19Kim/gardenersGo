@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 /**
  * Controller responsible for handling requests related to plant identification.
@@ -167,6 +169,8 @@ public class ScanController {
                     }
                     response.put("message", "Plant saved successfully");
                     identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
+                    response.put("successMessage", name + " has been added to species " + identifiedPlant.getSpeciesScientificNameWithoutAuthor());
+
                     return ResponseEntity.ok(response);
 
                 }
