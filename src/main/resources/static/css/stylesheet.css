@@ -428,15 +428,6 @@ img {
     resize: vertical;
 }
 
-#form .surnameCheck {
-    display: inline;
-    margin-top: 3px;
-}
-
-#form .surnameCheck input {
-    width: 50%;
-}
-
 #characterCountContainer {
     font-size: 0.8750em;
 }
