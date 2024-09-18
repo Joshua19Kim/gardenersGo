@@ -42,7 +42,7 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
      * @param name the name of the badge
      * @return the badge with the given name
      */
-    Optional<Badge> findByName(String name);
+    Optional<Badge> findByNameAndGardenerId(String name, Long gardenerId);
 
     /**
      * Finds the badges with the specified type
