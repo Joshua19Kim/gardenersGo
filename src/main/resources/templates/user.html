@@ -18,9 +18,9 @@
 
     <h1 class="text-dark mt-0">User Profile</h1>
 
-    <div class="container card w-75">
+    <div class="container card col-md-6 col-sm-8 col-lg-8 col-xl-8 col-xxl-8 mb-8">
         <div class="row">
-            <div class="col-2">
+            <div class="col-3">
                 <div class="UserProfilePicContainer">
                     <form th:action="@{user}" method="post" enctype="multipart/form-data" id="uploadImageForm">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -68,7 +68,9 @@
                             <p class="smallErrorMessage" th:utext="${lastNameError}"></p>
                             <br/>
 
-                            <label for="DoB"> Date of Birth: </label>
+                            <input class="form-control" style="display: none;">
+
+                            <label class="mt-3" for="DoB"> Date of Birth: </label>
                             <span id="DoB" th:text="${DoB}"></span>
                             <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;"
                                    th:classappend="${(DoBValid != '' && DoBValid != null) ? 'is-invalid' : ''}" max="9999-12-31">
