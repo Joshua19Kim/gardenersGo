@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -143,17 +144,7 @@ public class UserProfileController {
         model.addAttribute("isLastNameOptional", isLastNameOptional);
         model.addAttribute("lastNameValid", lastNameError.orElse(""));
 
-        Optional<String> DoBError = Optional.empty();
-        if (isDoBInvalid) {
-            if (!DoBString.isEmpty()) {
-                DoBError = Optional.of("Date is not in valid format, DD/MM/YYYY");
-            } else {
-                DoBError = inputValidator.checkDoB(DoBString);
-            }
-        } else if (DoBString != null) {
-            DoBError = inputValidator.checkDoB(DoBString);
-        }
-        model.addAttribute("DoBValid", DoBError.orElse(""));
+        // DoB
 
         Optional<String> validEmailError = Optional.empty();
         if (email != null) {
@@ -177,27 +168,6 @@ public class UserProfileController {
         }
 
         model.addAttribute("emailValid", validEmailError.orElse(emailInUseError.orElse("")));
-
-        if (firstNameError.isEmpty() &&
-                lastNameError.isEmpty() &&
-                DoBError.isEmpty() &&
-                validEmailError.isEmpty() &&
-                emailInUseError.isEmpty()) {
-            if (firstName != null || lastName != null || DoBString != null || email != null) {
-                gardener.setFirstName(firstName);
-                gardener.setLastName(lastName);
-                gardener.setEmail(email);
-                if (DoBString != null) {
-                    LocalDate DoB = LocalDate.parse(DoBString);
-                    gardener.setDoB(DoB);
-                }
-                gardenerFormService.addGardener(gardener);
-                // Re-authenticates user to catch case when they change their email
-                Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication((newAuth));
-                return "redirect:/user";
-            }
-        }
 
         MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
         String widgetsEnabled = mainPageLayout.getWidgetsEnabled();
@@ -272,6 +242,69 @@ public class UserProfileController {
         }
         return "loginForm";
     }
+
+
+    /**
+     * POST edit details of user
+     *
+     * @param firstName The first name of user
+     * @param lastName The last name of the user
+     * @param isLastNameOptional checkbox to see if lastname is optional
+     * @param DoB date of birth of the user
+     * @param email of the user
+     * @param redirectAttributes to repopulate the form on unsuccessful submission
+     * @return redirect to the /user page
+     */
+    @PostMapping("/user/editDetails")
+    public String editDetails(@RequestParam(name = "firstName", required = false) String firstName,
+                              @RequestParam(name = "lastName", required = false) String lastName,
+                              @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
+                              @RequestParam(name = "DoB", required = false) String DoB,
+                              @RequestParam(name = "email", required = false) String email, RedirectAttributes redirectAttributes) {
+
+        logger.info("POST editing details");
+        InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
+
+        logger.info(firstName);
+        logger.info(lastName);
+        logger.info(DoB);
+        logger.info(email);
+
+        Optional<String> firstNameError = inputValidator.checkValidName(firstName, "First", true);
+                Optional<String> lastNameError = inputValidator.checkValidName(lastName, "Last", isLastNameOptional);
+        Optional<String> DoBError = inputValidator.checkDoB(DoB);
+        Optional<String> emailError = inputValidator.checkValidEmail(email);
+        boolean emailInUse = ((inputValidator.checkEmailInUse(email)).isPresent() && !email.equals(gardener.getEmail()));
+
+        if (firstNameError.isPresent() ||
+                lastNameError.isPresent() ||
+                DoBError.isPresent() ||
+                emailError.isPresent() ||
+        emailInUse) {
+            redirectAttributes.addFlashAttribute("firstNameError", firstNameError.orElse(""));
+            redirectAttributes.addFlashAttribute("lastNameError", lastNameError.orElse(""));
+            redirectAttributes.addFlashAttribute("DoBError", DoBError.orElse(""));
+            if (emailInUse && !email.equals(gardener.getEmail())) {
+                redirectAttributes.addFlashAttribute("emailError", emailError.orElse("This email address is already in use"));
+            } else {
+                redirectAttributes.addFlashAttribute("emailError", emailError.orElse(""));
+            }
+            redirectAttributes.addFlashAttribute("errorEditingDetails", "Error editing details");
+
+            return "redirect:/user";
+        }
+
+        gardener.setFirstName(firstName);
+        gardener.setLastName(lastName);
+        gardener.setEmail(email);
+        gardener.setDoB(LocalDate.parse(DoB));
+        gardenerFormService.addGardener(gardener);
+
+        redirectAttributes.addFlashAttribute("errorEditingDetails", "");
+
+        return "redirect:/user";
+    };
+
 
     /**Check whether there is the authentication of current user to change the profile photo.
      * If yes, redirect user to 'user' page with photo uploading function

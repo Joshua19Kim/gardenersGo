@@ -7,6 +7,7 @@
 <body>
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
+<div id="errorEditingDetails" th:attr="data-error-occurred=${errorEditingDetails}"></div>
 
 
 <div class="mb-5" id="user_div">
@@ -35,7 +36,7 @@
             </div>
 
             <div class="col-6">
-                <form th:action="@{user}" method="get" id="userForm" class="w-100 text-center" novalidate>
+                <form th:action="@{user/editDetails}" method="post" id="userForm" class="w-100 text-center" novalidate>
                     <div class="row">
                         <div class="col d-flex flex-wrap">
 
@@ -45,7 +46,7 @@
                                    placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
                                    style="display: none;"
                                    th:classappend="${firstNameValid !=  '' ? 'is-invalid' : ''}">
-                            <p class="smallErrorMessage" th:utext="${firstNameValid}"></p>
+                            <p class="smallErrorMessage" th:utext="${firstNameError}"></p>
                             <br/>
 
                             <label for="lastName"> Last Name: </label>
@@ -64,14 +65,14 @@
                                        th:name="isLastNameOptional" type="checkbox" style="display: none;">
                             </div>
 
-                            <p class="smallErrorMessage" th:utext="${lastNameValid}"></p>
+                            <p class="smallErrorMessage" th:utext="${lastNameError}"></p>
                             <br/>
 
                             <label for="DoB"> Date of Birth: </label>
                             <span id="DoB" th:text="${DoB}"></span>
                             <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;"
                                    th:classappend="${(DoBValid != '' && DoBValid != null) ? 'is-invalid' : ''}" max="9999-12-31">
-                            <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
+                            <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBError}"></p>
                             <input type="hidden" id="isDoBInvalid" th:name="isDoBInvalid" th:value="false"/>
 
                             <br/>
@@ -80,7 +81,7 @@
                             <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email" maxlength="320"
                                    th:name="email" th:value="*{email}" type="text" style="display: none;"
                                    th:classappend="${emailValid != '' ? 'is-invalid' : ''}">
-                            <p class="smallErrorMessage" th:utext="${emailValid}"></p>
+                            <p class="smallErrorMessage" th:utext="${emailError}"></p>
                             <br/>
                         </div>
 
@@ -244,18 +245,7 @@
         document.getElementById('layoutForm').submit();
     }
 
-    document.getElementById("userForm").addEventListener("submit", function(event) {
-        const dobInput = document.getElementById("DoBEdit");
-        if (!(dobInput.checkValidity())) {
-            console.log("invalid date")
-            event.preventDefault();
-            document.getElementById("isDoBInvalid").value = true;
-            document.getElementById("userForm").submit();
-        } else {
-            console.log("valid date")
-            document.getElementById("isDoBInvalid").value = false;
-        }
-    });
+
     function handleImageClick() {
         document.getElementById('fileInput').click();
     }
@@ -277,7 +267,7 @@
         document.getElementById('isLastNameOptionalLabelEdit').style.display = 'inline';
         let lName = document.getElementById('lastNameEdit');
         let lNameError = document.getElementById("lastNameError")
-        if (lName.value.trim() === "" && lNameError.textContent === "") {
+        if (lName.value.trim() === "" && !lNameError === null && lNameError.textContent === "") {
             document.getElementById('isLastNameOptional').checked = true;
             document.getElementById('lastNameEdit').disabled = true;
         }
@@ -288,6 +278,7 @@
         document.getElementById('email').style.display = 'none';
         document.getElementById('emailEdit').style.display = 'inline';
 
+        console.log("Editing Enabled");
     }
 
     function disableEditing() {
@@ -309,7 +300,20 @@
         document.getElementById('emailEdit').style.display = 'none';
 
         window.location.href = '/user'
+
+        console.log("Editing Disabled");
     }
+
+    function checkIfError() {
+        const errorOccurred = document.getElementById("errorEditingDetails").getAttribute("data-error-occurred");
+        if (errorOccurred && errorOccurred === "Error editing details") {
+            enableEditing();
+        }
+    }
+
+    window.onload = function() {
+        checkIfError();
+    };
 </script>
 <script th:inline="javascript">
     /*<![CDATA[*/
@@ -319,7 +323,7 @@
     var emailValid = /*[[${emailValid}]]*/ '';
     var uploadMessage = /*[[${uploadMessage}]]*/ '';
 
-    if ((firstNameValid !== '' || lastNameValid !== '' || DoBValid !== '' || emailValid !== '')) {
+    if ((firstNameValid !== '' || lastNameValid !== '' || emailValid !== '')) {
         console.log("edit");
         enableEditing();
     }
