@@ -51,7 +51,7 @@ public class BadgeService {
      * @param id the gardener's id
      * @return all of the gardener's badges
      */
-     public List<Badge> getmyBadges(Long id) {
+     public List<Badge> getMyBadges(Long id) {
          return badgeRepository.findByGardenerId(id);
      }
 
@@ -60,8 +60,8 @@ public class BadgeService {
      * @param name the name of a badge
      * @return a badge if the name matches
      */
-     public Optional<Badge> getBadgeByName(String name){
-         return badgeRepository.findByName(name);
+     public Optional<Badge> getMyBadgeByName(String name, Long gardenerId){
+         return badgeRepository.findByNameAndGardenerId(name, gardenerId);
      }
 
 

@@ -30,6 +30,10 @@ public class ScanControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private GardenerFormService gardenerFormService;
+
+    @MockBean
+    private BadgeService badgeService;
+
     @MockBean
     private GardenService gardenService;
     @MockBean
