@@ -19,7 +19,7 @@
 
     <div class="container card w-75">
         <div class="row">
-            <div class="col">
+            <div class="col-2">
                 <div class="UserProfilePicContainer">
                     <form th:action="@{user}" method="post" enctype="multipart/form-data" id="uploadImageForm">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -34,7 +34,7 @@
                 </div>
             </div>
 
-            <div class="col">
+            <div class="col-6">
                 <form th:action="@{user}" method="get" id="userForm" class="w-100 text-center" novalidate>
                     <div class="row">
                         <div class="col d-flex flex-wrap">
@@ -56,8 +56,9 @@
                                    th:disabled="${isLastNameOptional}">
                             <br/>
 
-                            <div class="mb-3">
-                                <label id="isLastNameOptionalLabelEdit" for="isLastNameOptional" style="display: none;">I have no surname:</label>
+
+                            <label id="isLastNameOptionalLabelEdit" for="isLastNameOptional" style="display: none;">I have no surname:</label>
+                            <div class="form-check">
                                 <input class="form-check-input" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
                                        placeholder="Last Name Tick Box Check" th:checked="${isLastNameOptional}"
                                        th:name="isLastNameOptional" type="checkbox" style="display: none;">
