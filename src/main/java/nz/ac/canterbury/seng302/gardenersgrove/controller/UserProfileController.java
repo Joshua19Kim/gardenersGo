@@ -169,26 +169,6 @@ public class UserProfileController {
 
         model.addAttribute("emailValid", validEmailError.orElse(emailInUseError.orElse("")));
 
-        if (firstNameError.isEmpty() &&
-                lastNameError.isEmpty() &&
-//              && DoBError.isEmpty()
-                validEmailError.isEmpty() &&
-                emailInUseError.isEmpty()) {
-            if (firstName != null || lastName != null || DoBString != null || email != null) {
-                gardener.setFirstName(firstName);
-                gardener.setLastName(lastName);
-                gardener.setEmail(email);
-
-                //DoB
-
-                gardenerFormService.addGardener(gardener);
-                // Re-authenticates user to catch case when they change their email
-                Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication((newAuth));
-                return "redirect:/user";
-            }
-        }
-
         MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
         String widgetsEnabled = mainPageLayout.getWidgetsEnabled();
 
@@ -263,6 +243,18 @@ public class UserProfileController {
         return "loginForm";
     }
 
+
+    /**
+     * POST edit details of user
+     *
+     * @param firstName The first name of user
+     * @param lastName The last name of the user
+     * @param isLastNameOptional checkbox to see if lastname is optional
+     * @param DoB date of birth of the user
+     * @param email of the user
+     * @param redirectAttributes to repopulate the form on unsuccessful submission
+     * @return redirect to the /user page
+     */
     @PostMapping("/user/editDetails")
     public String editDetails(@RequestParam(name = "firstName", required = false) String firstName,
                               @RequestParam(name = "lastName", required = false) String lastName,
@@ -312,6 +304,7 @@ public class UserProfileController {
 
         return "redirect:/user";
     };
+
 
     /**Check whether there is the authentication of current user to change the profile photo.
      * If yes, redirect user to 'user' page with photo uploading function
