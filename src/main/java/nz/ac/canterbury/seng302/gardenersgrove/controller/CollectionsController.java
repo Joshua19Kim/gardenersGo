@@ -25,7 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
+
 import java.util.stream.IntStream;
 import static java.lang.Long.parseLong;
 
@@ -288,6 +288,7 @@ public class CollectionsController {
                 identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                 imageService.saveCollectionPlantImage(plantImage, identifiedPlant);
             }
+            redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species " + scientificName);
             return "redirect:/myCollection";
         } else {
             redirectAttributes.addFlashAttribute("plantName", plantName);

@@ -9,6 +9,11 @@
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="collection-container">
+    <!-- Notification for the update of successfully adding new plant    -->
+    <div th:if="${successMessage}" class="alert alert-warning alert-dismissible fade show w-50 m-auto text-center mb-3" role="alert">
+        <p class="m-auto" th:text="${successMessage}"></p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
         <div id="addPlantButton" class="col-md-3 mb-4" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#addPlantModal">
