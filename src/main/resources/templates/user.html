@@ -37,14 +37,14 @@
             <div class="col">
                 <form th:action="@{user}" method="get" id="userForm" class="w-100 text-center" novalidate>
                     <div class="row">
-                        <div class="col">
+                        <div class="col d-flex flex-wrap">
 
                             <label for="firstName"> First Name: </label>
                             <span id="firstName" th:text="${firstName}"></span>
                             <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
                                    placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
                                    style="display: none;"
-                                   th:classappend="${firstNameValid != '' ? 'is-invalid' : ''}">
+                                   th:classappend="${firstNameValid !=  '' ? 'is-invalid' : ''}">
                             <p class="smallErrorMessage" th:utext="${firstNameValid}"></p>
                             <br/>
 
