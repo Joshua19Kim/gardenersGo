@@ -45,6 +45,8 @@ public class CollectionsController {
 
     private final GardenerFormService gardenerFormService;
 
+    private final BadgeService badgeService;
+
     private final RequestService requestService;
     private Gardener gardener;
 
@@ -68,7 +70,7 @@ public class CollectionsController {
     public CollectionsController(ImageService imageService, GardenService gardenService,
                                  GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService,
                                  RequestService requestService,
-                                 PlantIdentificationService plantIdentificationService) {
+                                 PlantIdentificationService plantIdentificationService, BadgeService badgeService) {
         this.imageService = imageService;
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
@@ -78,6 +80,7 @@ public class CollectionsController {
         response = new HashMap<>();
         this.requestService = requestService;
         pageSize = 12;
+        this.badgeService = badgeService;
     }
 
     /**
@@ -288,6 +291,8 @@ public class CollectionsController {
                 identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                 imageService.saveCollectionPlantImage(plantImage, identifiedPlant);
             }
+            Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.getId());
+            badgeService.checkPlantBadgeToBeAdded(gardener, plantCount);
             return "redirect:/myCollection";
         } else {
             redirectAttributes.addFlashAttribute("plantName", plantName);
