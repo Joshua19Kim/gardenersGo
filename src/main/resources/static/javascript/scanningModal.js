@@ -195,16 +195,12 @@ goToCollectionButton.addEventListener('click', function() {
         })
         .then(data => {
             var modal = bootstrap.Modal.getInstance(successModal);
-            window.location.href = `${getBaseUrl()}/myCollection`;
+            window.location.href = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}`;
             document.getElementById('name').value = "";
             document.getElementById('scanning-description').value = "";
             document.getElementById('nameError').innerText = '';
             document.getElementById('descriptionError').innerText = '';
             modal.hide();
-            if (data.successMessage) {
-                document.getElementById('scanSuccess').style.display = 'block';
-                document.getElementById('scanSuccess').innerText = data.successMessage;
-            }
         })
         .catch((error) => {
             console.error('Error:', error);

@@ -168,9 +168,8 @@ public class ScanController {
                         identifiedPlant.setDescription(validatedPlantDescription);
                     }
                     response.put("message", "Plant saved successfully");
-                    identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
-                    response.put("successMessage", name + " has been added to species " + identifiedPlant.getSpeciesScientificNameWithoutAuthor());
-
+                    IdentifiedPlant savedPlant = identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
+                    response.put("savedPlant", savedPlant.getId());
                     return ResponseEntity.ok(response);
 
                 }

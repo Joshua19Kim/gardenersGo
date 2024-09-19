@@ -105,6 +105,7 @@ public class CollectionsController {
     @GetMapping("/myCollection")
     public String getMyCollection(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
+            @RequestParam(name="savedPlant", defaultValue = "") String savedPlantId,
             Model model) {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
@@ -152,6 +153,13 @@ public class CollectionsController {
         }
         if (!model.containsAttribute(showModalAttribute)) {
             model.addAttribute(showModalAttribute, false);
+        }
+
+        if (!savedPlantId.isEmpty()) {
+            IdentifiedPlant savedPlant = identifiedPlantService.getCollectionPlantById(Long.parseLong(savedPlantId));
+            if (savedPlant != null && savedPlant.getGardener().equals(gardener)) {
+                model.addAttribute("successMessage", savedPlant.getName() + " has been added to species " + savedPlant.getSpeciesScientificNameWithoutAuthor());
+            }
         }
 
         return "myCollectionTemplate";
