@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -138,7 +139,11 @@ public class ScanController {
      */
     @PostMapping("/saveIdentifiedPlant")
     @ResponseBody
-    public ResponseEntity<?> saveIdentifiedPlant( @RequestBody Map<String, String> extra) {
+    public ResponseEntity<?> saveIdentifiedPlant(
+            @RequestBody Map<String, String> extra,
+            @RequestParam(name = "location") String location,
+            Model model
+    ) {
         logger.info("POST /saveIdentifiedPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
@@ -149,6 +154,8 @@ public class ScanController {
 
                 String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(extra.get("name"));
                 String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(extra.get("description"));
+                String validatedAddress = ValidityChecker.validateGardenAddress(location);
+
                 boolean isValid = true;
                 if (!Objects.equals(name, validatedPlantName)) {
                     errorResponse.put("nameError", validatedPlantName);
@@ -156,6 +163,10 @@ public class ScanController {
                 }
                 if (!Objects.equals(description, validatedPlantDescription)) {
                     errorResponse.put("descriptionError", validatedPlantDescription);
+                    isValid = false;
+                }
+                if(!Objects.equals(location, validatedAddress)) {
+                    model.addAttribute("locationError", validatedAddress);
                     isValid = false;
                 }
 
@@ -173,6 +184,7 @@ public class ScanController {
                 return ResponseEntity.badRequest().body(errorResponse);
 
             } catch (Exception e) {
+                model.addAttribute("location", location);
                 errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
                 return ResponseEntity.badRequest().body(errorResponse);
             }
