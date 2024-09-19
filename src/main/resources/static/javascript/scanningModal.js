@@ -201,6 +201,10 @@ goToCollectionButton.addEventListener('click', function() {
             document.getElementById('nameError').innerText = '';
             document.getElementById('descriptionError').innerText = '';
             modal.hide();
+            if (data.successMessage) {
+                document.getElementById('scanSuccess').style.display = 'block';
+                document.getElementById('scanSuccess').innerText = data.successMessage;
+            }
         })
         .catch((error) => {
             console.error('Error:', error);

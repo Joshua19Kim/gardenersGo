@@ -15,11 +15,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
-<!--    &lt;!&ndash; Notification for successfully adding a new plant by scanning &ndash;&gt;-->
-<!--    <div id="" class="alert alert-warning alert-dismissible fade show w-50 m-auto text-center mb-3" role="alert">-->
-<!--        <p class="m-auto" th:text="${successMessage}"></p>-->
-<!--        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
-<!--    </div>-->
+    <!-- Notification for successfully adding a new plant by scanning -->
+    <div id="scanSuccess" style="display: none" class="alert alert-warning alert-dismissible fade show w-50 m-auto text-center mb-3" role="alert">
+        <p class="m-auto"></p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
         <div id="addPlantButton" class="col-md-3 mb-4" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#addPlantModal">
@@ -88,6 +88,7 @@
         }
     });
     /*]]>*/
+    console.log()
 </script>
 </body>
 
