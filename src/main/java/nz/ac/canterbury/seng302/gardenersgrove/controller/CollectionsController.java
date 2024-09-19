@@ -292,7 +292,10 @@ public class CollectionsController {
                 imageService.saveCollectionPlantImage(plantImage, identifiedPlant);
             }
             Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.getId());
-            badgeService.checkPlantBadgeToBeAdded(gardener, plantCount);
+            Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener, plantCount);
+            if(plantBadge.isPresent()) {
+                redirectAttributes.addFlashAttribute("plantBadge", plantBadge.get());
+            }
             return "redirect:/myCollection";
         } else {
             redirectAttributes.addFlashAttribute("plantName", plantName);

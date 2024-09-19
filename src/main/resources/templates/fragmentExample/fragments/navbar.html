@@ -17,6 +17,7 @@
 
 <!-- Navbar Section -->
 <nav class="navbar navbar-expand-lg bg-body-tertiary" id="custom-navbar">
+    <canvas style="display: none;"  id="canvas"></canvas>
     <div class="container-fluid d-flex flex-column align-items-center">
         <!-- Title Section -->
         <div class="my-3">
@@ -134,6 +135,7 @@
     </div>
 </nav>
 <script th:src="@{/javascript/getBaseUrl.js}"></script>
+<script th:src="@{/javascript/fireworks.js}"></script>
 <script>
     const gardenPlusIcon = document.getElementById("gardenPlusIcon")
     const scanIcon = document.getElementById("scanIcon")
@@ -206,3 +208,4 @@
 </script>
 
 <div th:insert="~{modal/scanningModal.html}"></div>
+<div th:insert="~{modal/plantBadgeModal.html}"></div>

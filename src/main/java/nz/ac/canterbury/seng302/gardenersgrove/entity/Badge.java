@@ -14,22 +14,32 @@ public class Badge {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private String name;
 
+    @Column
     private BadgeType badgeType;
 
+    @Column
     private LocalDate dateEarned;
+
+    @Column
+    private String imageFilename;
 
     @ManyToOne
     @JoinColumn(name = "gardener_id")
     private Gardener gardener;
 
     public Badge(){}
-    public Badge(String name, LocalDate dateEarned, BadgeType badgeType, Gardener gardener){
+
+
+
+    public Badge(String name, LocalDate dateEarned, BadgeType badgeType, Gardener gardener, String imageFilename){
         this.name = name;
         this.dateEarned = dateEarned;
         this.badgeType = badgeType;
         this.gardener= gardener;
+        this.imageFilename = imageFilename;
     }
     public Long getId() {
         return id;
@@ -69,5 +79,13 @@ public class Badge {
 
     public void setGardener(Gardener gardener) {
         this.gardener = gardener;
+    }
+
+    public String getImageFilename() {
+        return imageFilename;
+    }
+
+    public void setImageFilename(String imageFilename) {
+        this.imageFilename = imageFilename;
     }
 }

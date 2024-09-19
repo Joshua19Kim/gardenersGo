@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import java.util.*;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -169,7 +170,10 @@ public class ScanController {
                     response.put("message", "Plant saved successfully");
                     identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                     Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.get().getId());
-                    badgeService.checkPlantBadgeToBeAdded(gardener.get(), plantCount);
+                    Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener.get(), plantCount);
+                    if(plantBadge.isPresent()) {
+                        response.put("plantBadge", plantBadge);
+                    }
                     return ResponseEntity.ok(response);
 
                 }

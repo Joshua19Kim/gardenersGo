@@ -1,0 +1,41 @@
+<div id="plantBadgeModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Congratulations</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>You have earnt a new badge!</p>
+                <img id="plantBadgeImage" th:if="${plantBadge}" th:src="@{${plantBadge.imageFilename}}">
+            </div>
+            <div class="modal-footer">
+                <a th:href="@{/user}" class="btn btn-primary" role="button">
+                    View Badge in Profile
+                </a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script >
+    const plantBadgeModal = document.getElementById("plantBadgeModal");
+    const canvas = document.getElementById("canvas");
+    const plantBadgeImage = document.getElementById("plantBadgeImage");
+    plantBadgeModal.addEventListener('hide.bs.modal', function(event) {
+        canvas.style.display = 'none';
+    });
+    plantBadgeModal.addEventListener('show.bs.modal', function(event) {
+        canvas.style.display = 'block';
+    });
+    console.log(plantBadgeImage.src)
+    if(plantBadgeImage.src !== null) {
+        var modal = bootstrap.Modal.getOrCreateInstance(plantBadgeModal);
+        modal.show();
+    }
+
+
+</script>

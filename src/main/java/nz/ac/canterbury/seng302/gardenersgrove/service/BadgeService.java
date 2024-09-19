@@ -34,8 +34,8 @@ public class BadgeService {
      *  Add a badge to the repository
      * @param badge the badge being added
      */
-     public void addBadge(Badge badge){
-         badgeRepository.save(badge);
+     public Badge addBadge(Badge badge){
+         return badgeRepository.save(badge);
      }
 
     /**
@@ -70,30 +70,26 @@ public class BadgeService {
      * @param gardener the gardener
      * @param plantCount the plant count
      */
-    public void checkPlantBadgeToBeAdded(Gardener gardener, Integer plantCount) {
+    public Optional<Badge> checkPlantBadgeToBeAdded(Gardener gardener, Integer plantCount) {
          Badge badge;
          switch (plantCount) {
              case 1:
-                 badge = new Badge("1st Plant Found", LocalDate.now(), BadgeType.PLANTS, gardener );
-                 addBadge(badge);
-                 break;
+                 badge = new Badge("1st Plant Found", LocalDate.now(), BadgeType.PLANTS, gardener, "/images/badges/1PlantBadge.png");
+                 return Optional.of(addBadge(badge));
              case 10:
-                 badge = new Badge("10th Plant Found", LocalDate.now(), BadgeType.PLANTS, gardener );
-                 addBadge(badge);
-                 break;
+                 badge = new Badge("10th Plant Found", LocalDate.now(), BadgeType.PLANTS, gardener, "/images/badges/10PlantBadge.png" );
+                 return Optional.of(addBadge(badge));
              case 25:
-                 badge = new Badge("25th Plant Found", LocalDate.now(), BadgeType.PLANTS, gardener );
-                 addBadge(badge);
-                 break;
+                 badge = new Badge("25th Plant Found", LocalDate.now(), BadgeType.PLANTS, gardener, "/images/badges/25PlantBadge.png" );
+                 return Optional.of(addBadge(badge));
              case 50:
-                 badge = new Badge("50th Plant Found", LocalDate.now(), BadgeType.PLANTS, gardener );
-                 addBadge(badge);
-                 break;
+                 badge = new Badge("50th Plant Found", LocalDate.now(), BadgeType.PLANTS, gardener, "/images/badges/50PlantBadge.png" );
+                 return Optional.of(addBadge(badge));
              case 100:
-                 badge = new Badge("100th Plant Found", LocalDate.now(), BadgeType.PLANTS, gardener );
-                 addBadge(badge);
-                 break;
+                 badge = new Badge("100th Plant Found", LocalDate.now(), BadgeType.PLANTS, gardener, "/images/badges/100PlantBadge.png" );
+                 return Optional.of(addBadge(badge));
          }
+         return Optional.empty();
 
     }
 }

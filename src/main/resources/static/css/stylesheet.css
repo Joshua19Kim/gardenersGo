@@ -38,6 +38,15 @@ body {
     align-items: center;
 }
 
+/* got this from chatGPT */
+#canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
 .container {
     display: flex;
     flex-direction: column;
