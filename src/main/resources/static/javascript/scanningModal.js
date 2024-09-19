@@ -8,6 +8,10 @@ const imagePreview= document.getElementById('imagePreview');
 const plantNetLogo = document.getElementById('plantNetLogo');
 const saveToCollectionButton= document.getElementById('saveToCollectionButton');
 const commonNames = document.getElementById('commonNames');
+const scanningLocation = document.getElementById('scanningLocation');
+const scanningAutocompleteResults = document.getElementById('scanning-autocomplete-results');
+const plantLat = document.getElementById('plantLat');
+const plantLon = document.getElementById('plantLon');
 const fileName= document.getElementById('fileName');
 const gbifInfo= document.getElementById('gbifInfo');
 
@@ -165,7 +169,11 @@ goToCollectionButton.addEventListener('click', function() {
 
     var formData = new FormData(document.getElementById('identifiedPlantNameForm'));
     var name = formData.get('name');
-    var description = formData.get('scanning-description');
+    var description = formData.get('description');
+    if (scanningLocation.value === "") {
+        plantLon.value = "";
+        plantLat.value = "";
+    }
 
     const saveUrl = `${getBaseUrl()}/saveIdentifiedPlant`;
     fetch(saveUrl, {
@@ -174,7 +182,11 @@ goToCollectionButton.addEventListener('click', function() {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
         },
-        body: JSON.stringify({ name: name, description: description })
+        body: JSON.stringify({name: name,
+                                    description: description,
+                                    plantLatitude: plantLat.value,
+                                    plantLongitude: plantLon.value
+        })
     })
         .then(response => {
             if (!response.ok) {
@@ -233,3 +245,40 @@ document.getElementById("identifiedPlantNameForm").addEventListener("keydown", f
         }
     }
 });
+
+
+const geolocationUpdateMssg = document.getElementById("geolocationUpdateMssg");
+document.getElementById('locationToggle').addEventListener('change', function() {
+    if (this.checked) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(setCoordinates);
+            disableLocationInput(true);
+        } else {
+            geolocationUpdateMssg.innerHTML = "Geolocation is not supported by this browser.";
+            disableLocationInput(false);
+        }
+    } else {
+        geolocationUpdateMssg.innerHTML = '';
+        disableLocationInput(false);
+    }
+});
+
+
+
+function setCoordinates(position) {
+    plantLat.value = position.coords.latitude;
+    plantLon.value = position.coords.longitude;
+        geolocationUpdateMssg.innerHTML = "Latitude: " + position.coords.latitude +
+        "<br>Longitude: " + position.coords.longitude;
+}
+function disableLocationInput(disable) {
+    scanningLocation.disabled = disable;
+    if (disable) {
+        scanningLocation.value = "";
+        scanningAutocompleteResults.innerText = '';
+        scanningAutocompleteResults.classList.remove('visible');
+        scanningLocation.classList.add('disabled');
+    } else {
+        scanningLocation.classList.remove('disabled');
+    }
+}

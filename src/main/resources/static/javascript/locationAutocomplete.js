@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const postcodeInput = document.getElementById('postcode') || null;
     const autocompleteResults = document.getElementById('autocomplete-results') || null;
     const scanningAutocompleteResults = document.getElementById('scanning-autocomplete-results');
+    const plantLat = document.getElementById('plantLat') || null;
+    const plantLon = document.getElementById('plantLon') || null;
+
     const xmlRequest = new XMLHttpRequest();
     let address;
 
@@ -46,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function () {
             xmlRequest.onload = function () {
                 if (xmlRequest.status === 200) {
                     const responseData = JSON.parse(xmlRequest.responseText);
-                    console.log('Response from Java:', responseData);
                     resolve(responseData);
                     return responseData.json;
                 } else {
@@ -106,6 +108,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         fillAddressDetails(result);
                     } else {
                         const addressInputValue = `${result.address.house_number || ''} ${result.address.road || ''} ${result.address.city || ''} ${result.address.country || ''}`;
+                        plantLat.value = result.lat;
+                        plantLon.value = result.lon;
                         scanningAddressInput.value = addressInputValue.trim();
                     }
                     hideAutocompleteResults(resultBox);
@@ -135,6 +139,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const target = event.target;
             if (!target.closest('.autocomplete-container')) {
                 hideAutocompleteResults(autocompleteResults);
+            }
+        });
+    }
+    if (scanningAutocompleteResults) {
+        document.addEventListener('click', function (event) {
+            const target = event.target;
+            if (!target.closest('.autocomplete-container')) {
+                hideAutocompleteResults(scanningAutocompleteResults);
             }
         });
     }

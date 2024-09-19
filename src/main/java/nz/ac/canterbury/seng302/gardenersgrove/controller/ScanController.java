@@ -141,7 +141,6 @@ public class ScanController {
     @ResponseBody
     public ResponseEntity<?> saveIdentifiedPlant(
             @RequestBody Map<String, String> extra,
-            @RequestParam(name = "location") String location,
             Model model
     ) {
         logger.info("POST /saveIdentifiedPlant");
@@ -151,10 +150,12 @@ public class ScanController {
             try {
                 String name = extra.get("name");
                 String description = extra.get("description");
+                String plantLatitude = extra.get("plantLatitude");
+                String plantLongitude = extra.get("plantLongitude");
 
                 String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(extra.get("name"));
                 String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(extra.get("description"));
-                String validatedAddress = ValidityChecker.validateGardenAddress(location);
+
 
                 boolean isValid = true;
                 if (!Objects.equals(name, validatedPlantName)) {
@@ -165,10 +166,13 @@ public class ScanController {
                     errorResponse.put("descriptionError", validatedPlantDescription);
                     isValid = false;
                 }
-                if(!Objects.equals(location, validatedAddress)) {
-                    model.addAttribute("locationError", validatedAddress);
-                    isValid = false;
+                if (!Objects.equals(plantLatitude, "")) {
+                    identifiedPlant.setPlantLatitude(plantLatitude);
                 }
+                if (!Objects.equals(plantLongitude, "")) {
+                    identifiedPlant.setPlantLongitude(plantLongitude);
+                }
+
 
                 if (isValid) {
                     identifiedPlant.setName(validatedPlantName);
@@ -184,7 +188,6 @@ public class ScanController {
                 return ResponseEntity.badRequest().body(errorResponse);
 
             } catch (Exception e) {
-                model.addAttribute("location", location);
                 errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
                 return ResponseEntity.badRequest().body(errorResponse);
             }

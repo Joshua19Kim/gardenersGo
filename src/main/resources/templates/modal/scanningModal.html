@@ -84,15 +84,23 @@
                         <div style="display: flex; margin-top: 40px; justify-content: flex-end;">
                             <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
                         </div>
-                        <div style="display: flex;">
+                        <div style="display: flex; flex-direction: column;">
                             <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
-                                <label for="scanningLocation"> Address: </label>
-                                <input class="form-control" type="text" id="scanningLocation" autocomplete="off" placeholder="Start typing your address..."
+                                <label for="scanningLocation"> Plant location: </label>
+                                <input class="form-control" type="text" id="scanningLocation" autocomplete="off" placeholder="Start typing plant location..."
                                        th:name="location" th:value="*{location}" data-cy="location" autofocus
                                        th:classappend="${locationError} ? 'is-invalid' : ''"
                                 >
                                 <span th:if="${locationError}" th:utext="${locationError}" class="smallErrorMessage"></span>
                                 <div id="scanning-autocomplete-results"></div>
+                            </div>
+                            <div style="margin-top: 10px;">
+                                <div class="btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary">
+                                        <input type="checkbox" id="locationToggle"> Use current location
+                                    </label>
+                                </div>
+                                <p id="geolocationUpdateMssg"></p>
                             </div>
                         </div>
                         <br/>
@@ -109,6 +117,8 @@
             </div>
         </div>
     </div>
+    <input type="hidden" id="plantLat">
+    <input type="hidden" id="plantLon">
 </div>
 <script th:src="@{/javascript/locationAutocomplete.js}"></script>
 <script th:src="@{/javascript/getBaseUrl.js}"></script>
