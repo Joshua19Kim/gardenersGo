@@ -250,6 +250,10 @@ textarea#description.garden-form-control {
     overflow: scroll;
 }
 
+.left-align {
+    align-items: baseline !important;
+}
+
 .autocomplete-item {
     border: 1px solid white;
     border-radius: 25px;
