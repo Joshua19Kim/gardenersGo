@@ -72,15 +72,15 @@ public class SecurityConfiguration {
                                 AntPathRequestMatcher.antMatcher("/signup"))
                         .permitAll())
                 .headers(headers -> headers
-//                        .contentSecurityPolicy(csp -> csp
-//                                // If you change this, you will need to ask for permission to add it to the VM as well
-//                                .policyDirectives(
-//                                        "default-src 'self'; " +
-//                                        "img-src 'self' data: https://cdn.weatherapi.com https://perenual.com/storage/species_image/ https://bs.plantnet.org;" +
-//                                        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-//                                        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-//                                        "font-src 'self' https://fonts.gstatic.com")
-//                        )
+                        .contentSecurityPolicy(csp -> csp
+                                // If you change this, you will need to ask for permission to add it to the VM as well
+                                .policyDirectives(
+                                        "default-src 'self'; " +
+                                        "img-src 'self' data: https://cdn.weatherapi.com https://perenual.com/storage/species_image/ https://bs.plantnet.org https://tile.csse.canterbury.ac.nz; " +
+                                        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+                                        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+                                        "font-src 'self' https://fonts.gstatic.com")
+                        )
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
                 .authorizeHttpRequests(request -> request
