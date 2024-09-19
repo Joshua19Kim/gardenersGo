@@ -1,4 +1,5 @@
 <div id="plantBadgeModal" class="modal" tabindex="-1" role="dialog">
+    <canvas id="canvas"></canvas>
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -21,21 +22,29 @@
     </div>
 </div>
 
-<script >
-    const plantBadgeModal = document.getElementById("plantBadgeModal");
-    const canvas = document.getElementById("canvas");
-    const plantBadgeImage = document.getElementById("plantBadgeImage");
-    plantBadgeModal.addEventListener('hide.bs.modal', function(event) {
-        canvas.style.display = 'none';
-    });
-    plantBadgeModal.addEventListener('show.bs.modal', function(event) {
-        canvas.style.display = 'block';
-    });
-    console.log(plantBadgeImage.src)
-    if(plantBadgeImage.src !== null) {
-        var modal = bootstrap.Modal.getOrCreateInstance(plantBadgeModal);
-        modal.show();
-    }
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        var plantBadge = /*[[${plantBadge != null}]]*/ false;
+        var plantBadgeModal = document.getElementById("plantBadgeModal");
+        var canvas = document.getElementById("canvas");
 
 
+        var plantBadgeModalInstance = bootstrap.Modal.getOrCreateInstance(plantBadgeModal);
+
+        plantBadgeModal.addEventListener('show.bs.modal', function() {
+            console.log("Displaying Fireworks")
+            canvas.style.display = 'block';
+            onLoad();
+        });
+
+        plantBadgeModal.addEventListener('hide.bs.modal', function() {
+            canvas.style.display = 'none';
+        });
+        if (plantBadge) {
+            plantBadgeModalInstance.show();
+        }
+
+    });
+    /*]]>*/
 </script>
