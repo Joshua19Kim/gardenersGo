@@ -1,9 +1,7 @@
-
-// got this from https://codepen.io/judag/pen/XmXMOL
+// Got this from https://codepen.io/judag/pen/XmXMOL
 // Copyright (c) 2024 by Judith Neumann (https://codepen.io/judag/pen/XmXMOL)
 
 window.addEventListener("resize", resizeCanvas, false);
-// window.addEventListener("DOMContentLoaded", onLoad, false);
 
 window.requestAnimationFrame =
     window.requestAnimationFrame       ||
