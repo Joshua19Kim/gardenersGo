@@ -10,11 +10,17 @@ const saveToCollectionButton= document.getElementById('saveToCollectionButton');
 const commonNames = document.getElementById('commonNames');
 const scanningLocation = document.getElementById('scanningLocation');
 const scanningAutocompleteResults = document.getElementById('scanning-autocomplete-results');
-const plantLat = document.getElementById('plantLat');
-const plantLon = document.getElementById('plantLon');
 const fileName= document.getElementById('fileName');
 const gbifInfo= document.getElementById('gbifInfo');
 
+// waiting spinner used while identifying plant or checking current location
+const waitingSpinnerHtml = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
+
+// finding location
+const geolocationUpdateMssg = document.getElementById("geolocationUpdateMssg");
+const plantLat = document.getElementById('plantLat');
+const plantLon = document.getElementById('plantLon');
 
 let identifiedPlantData = null;
 var goToCollectionButton = document.getElementById('goToCollectionButton');
@@ -67,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
         var formData = new FormData(document.getElementById('scanForm'));
 
-        resultContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+        resultContainer.innerHTML = waitingSpinnerHtml;
         resultContainer.style.display = 'block';
         gbifInfo.style.display = 'block';
         errorContainer.style.display = 'none';
@@ -170,10 +176,12 @@ goToCollectionButton.addEventListener('click', function() {
     var formData = new FormData(document.getElementById('identifiedPlantNameForm'));
     var name = formData.get('name');
     var description = formData.get('description');
-    if (scanningLocation.value === "") {
+    if (scanningLocation.value === "" && !scanningLocation.disabled) {
         plantLon.value = "";
         plantLat.value = "";
     }
+    console.log(plantLon.value);
+    console.log(plantLat.value);
 
     const saveUrl = `${getBaseUrl()}/saveIdentifiedPlant`;
     fetch(saveUrl, {
@@ -209,7 +217,7 @@ goToCollectionButton.addEventListener('click', function() {
             var modal = bootstrap.Modal.getInstance(successModal);
             window.location.href = `${getBaseUrl()}/myCollection`;
             document.getElementById('name').value = "";
-            document.getElementById('scanning-description').value = "";
+            document.getElementById('description').value = "";
             document.getElementById('nameError').innerText = '';
             document.getElementById('descriptionError').innerText = '';
             modal.hide();
@@ -247,9 +255,9 @@ document.getElementById("identifiedPlantNameForm").addEventListener("keydown", f
 });
 
 
-const geolocationUpdateMssg = document.getElementById("geolocationUpdateMssg");
 document.getElementById('locationToggle').addEventListener('change', function() {
     if (this.checked) {
+        geolocationUpdateMssg.innerHTML = waitingSpinnerHtml;
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(setCoordinates);
             disableLocationInput(true);
@@ -261,16 +269,17 @@ document.getElementById('locationToggle').addEventListener('change', function() 
         geolocationUpdateMssg.innerHTML = '';
         disableLocationInput(false);
     }
+
 });
 
-
-
 function setCoordinates(position) {
-    plantLat.value = position.coords.latitude;
-    plantLon.value = position.coords.longitude;
-        geolocationUpdateMssg.innerHTML = "Latitude: " + position.coords.latitude +
-        "<br>Longitude: " + position.coords.longitude;
+    plantLat.value = position.coords.latitude.toString();
+    plantLon.value = position.coords.longitude.toString();
+    scanningLocation.placeholder = "Saved your current location.";
+    geolocationUpdateMssg.innerHTML = '';
 }
+
+// when user clicks 'use current location', disable the input field for searching location.
 function disableLocationInput(disable) {
     scanningLocation.disabled = disable;
     if (disable) {
@@ -280,5 +289,6 @@ function disableLocationInput(disable) {
         scanningLocation.classList.add('disabled');
     } else {
         scanningLocation.classList.remove('disabled');
+        scanningLocation.placeholder = "Start typing plant location..."
     }
 }
