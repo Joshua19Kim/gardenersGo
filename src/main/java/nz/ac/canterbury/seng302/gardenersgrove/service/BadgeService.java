@@ -27,7 +27,9 @@ public class BadgeService {
      @Autowired
         public BadgeService(BadgeRepository badgeRepository){
          this.badgeRepository= badgeRepository;
-         this.badgeNames = List.of("1st Plant Found", "10th Plant Found", "25th Plant Found", "50th Plant Found", "100th Plant Found");
+         this.badgeNames = List.of("1st Plant Found", "10th Plant Found", "25th Plant Found", "50th Plant Found", "100th Plant Found",
+                 "1st Species Found", "10th Species Found", "25th Species Found", "50th Species Found", "100th Species Found",
+                 "1st Region Found", "5th Region Found", "10th Region Found", "17th Region Found");
      }
 
     /**
