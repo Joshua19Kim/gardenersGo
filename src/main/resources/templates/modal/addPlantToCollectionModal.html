@@ -30,7 +30,7 @@
                         <label for="plantName" class="required-label"> *Required </label>
                     </div>
                     <input type="text" class="form-control input-modal" th:value="${plantName}"
-                           id="plantName" name="plantName" autocomplete="off" placeholder="Plant Name" maxlength="64" list="plantNamesList"
+                           id="plantName" name="plantName" autocomplete="off" placeholder="Plant Name" maxlength="100" list="plantNamesList"
                            th:classappend="${plantNameError} ? 'is-invalid' : ''">
                     <datalist id="plantNamesList"></datalist>
                     <span th:if="${plantNameError}" th:utext="${plantNameError}" class="smallErrorMessage"></span>
@@ -39,7 +39,7 @@
 
                     <label for="scientificName"> Scientific Name: </label>
                     <input type="text" class="form-control input-modal" th:value="${scientificName}"
-                           id="scientificName" name="scientificName" autocomplete="off" placeholder="Scientific Name" maxlength="64" list="scientificNamesList"
+                           id="scientificName" name="scientificName" autocomplete="off" placeholder="Scientific Name" maxlength="100" list="scientificNamesList"
                            th:classappend="${scientificNameError} ? 'is-invalid' : ''">
                     <datalist id="scientificNamesList"></datalist>
                     <span th:if="${scientificNameError}" th:utext="${scientificNameError}" class="smallErrorMessage"></span>
