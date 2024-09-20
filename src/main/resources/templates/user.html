@@ -12,9 +12,9 @@
 
 <div class="mb-5" id="user_div">
 
-    <h1 class="text-dark mt-0">User Profile</h1>
+    <h1 class="text-dark mt-4 mb-2">User Profile</h1>
 
-    <div class="container card col-md-6">
+    <div class="container card col-md-6 border-0">
         <div class="row">
             <div class="col-3">
                 <div class="UserProfilePicContainer">
@@ -66,7 +66,7 @@
 
                             <input class="form-control" style="display: none;">
 
-                            <label class="mt-3" for="DoB"> Date of Birth: </label>
+                            <label for="DoB"> Date of Birth: </label>
                             <span id="DoB" th:text="${DoB}"></span>
                             <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;"
                                    th:classappend="${(DoBValid != '' && DoBValid != null) ? 'is-invalid' : ''}" max="9999-12-31">
@@ -99,9 +99,9 @@
         </div>
     </div>
 
-    <div class="container col-md-6 left-align">
+    <div class="container col-md-6 left-align p-2">
         <div class="row">
-            <div class="col">
+            <div class="col p-0">
                 <button class="btn btn-primary w-auto m-2" data-bs-target="#customiseHomepageModal" data-bs-toggle="modal" type="button">
                     Edit Homepage
                 </button>
@@ -110,15 +110,45 @@
                     View all badges
                 </button>
             </div>
-            <div class="col-3">
+            <div class="col-9 p-0">
                 <div class="container card">
-                    <p>
-                        REPLACE THIS WITH BADGES
-                    </p>
-                    <div class="card">
-                        <p>
-                            AHHH
-                        </p>
+                    <p>My badges</p>
+                    <div class="col d-flex flex-wrap">
+                        <div class="row p-4">
+                            <div class="card">
+                                <p>
+                                    Badge 1
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row p-4">
+                            <div class="card">
+                                <p>
+                                    Badge 2
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row p-4">
+                            <div class="card">
+                                <p>
+                                    Badge 3
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row p-4">
+                            <div class="card">
+                                <p>
+                                    Badge 4
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row p-4">
+                            <div class="card">
+                                <p>
+                                    Badge 5
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
