@@ -92,4 +92,13 @@ public class BadgeService {
          return Optional.empty();
 
     }
+
+    /**
+     * Finds the badge by its id
+     * @param badgeId badge id
+     * @return the badge
+     */
+    public Optional<Badge> getBadgeById(Integer badgeId) {
+        return badgeRepository.findById(badgeId);
+    };
 }

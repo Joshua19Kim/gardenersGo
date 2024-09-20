@@ -108,6 +108,7 @@ public class CollectionsController {
     @GetMapping("/myCollection")
     public String getMyCollection(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
+            @RequestParam(name="badgeEarned", required = false) Integer badgeId,
             Model model) {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
@@ -155,6 +156,13 @@ public class CollectionsController {
         }
         if (!model.containsAttribute(showModalAttribute)) {
             model.addAttribute(showModalAttribute, false);
+        }
+
+        if(badgeId != null) {
+            Optional<Badge> badge = badgeService.getBadgeById(badgeId);
+            if(badge.isPresent()) {
+                model.addAttribute("plantBadge", badge.get());
+            }
         }
 
         return "myCollectionTemplate";

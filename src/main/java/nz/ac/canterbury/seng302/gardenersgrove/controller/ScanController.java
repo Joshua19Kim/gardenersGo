@@ -172,7 +172,7 @@ public class ScanController {
                     Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.get().getId());
                     Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener.get(), plantCount);
                     if(plantBadge.isPresent()) {
-                        response.put("plantBadge", plantBadge);
+                        response.put("plantBadge", plantBadge.get().getId());
                     }
                     return ResponseEntity.ok(response);
 

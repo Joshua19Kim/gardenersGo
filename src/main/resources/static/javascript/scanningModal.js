@@ -194,8 +194,13 @@ goToCollectionButton.addEventListener('click', function() {
             return response.json();
         })
         .then(data => {
+            var plantBadge = data.plantBadge;
             var modal = bootstrap.Modal.getInstance(successModal);
-            window.location.href = `${getBaseUrl()}/myCollection`;
+            if(plantBadge !== undefined) {
+                window.location.href = `${getBaseUrl()}/myCollection?badgeEarned=` + plantBadge;
+            } else {
+                window.location.href = `${getBaseUrl()}/myCollection`;
+            }
             document.getElementById('name').value = "";
             document.getElementById('scanning-description').value = "";
             document.getElementById('nameError').innerText = '';
