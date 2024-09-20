@@ -42,6 +42,15 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
     Page<IdentifiedPlant> getPlantByGardenerIdAndSpecies(long gardenerId, String speciesName, Pageable pageable);
 
     /**
+     * Custom query to retrieve identified plants by gardener id
+     *
+     * @param gardenerId the id of the gardener
+     * @return the identified plants that the gardener has
+     */
+    @Query(value = "SELECT *  FROM identifiedplant p WHERE p.gardener_id = :gardenerId", nativeQuery = true)
+    List<IdentifiedPlant> getPlantByGardenerId(long gardenerId);
+
+    /**
      * Custom query to retrieve species by gardener id, with pagination
      *
      * @param id the id of the gardener

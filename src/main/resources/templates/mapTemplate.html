@@ -20,26 +20,62 @@
     </style>
 </head>
 <body>
-<div id="map"></div>
-<script src="/webjars/leaflet/1.9.4/dist/leaflet.js"></script>
-<script src="/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js"></script>
-<script>
+    <div id="map"></div>
+<!--    <div style="display: none">-->
+<!--&lt;!&ndash;        hidden input to store scanned plants list&ndash;&gt;-->
+<!--        <ul>-->
+<!--&lt;!&ndash;            This may cause issues when scannedPlants is null ${scannedPlants != null ? scannedPlants :&ndash;&gt;-->
+<!--            <th:block th:each="plant : ${scannedPlants}">-->
+<!--                <li th:id="${plant.id}" class="dropdown-item" th:text="${garden.name}"></li>-->
+<!--            </th:block>-->
+<!--        </ul>-->
+<!--    </div>-->
+    <script src="/webjars/leaflet/1.9.4/dist/leaflet.js"></script>
+    <script src="/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js"></script>
+    <script>
 
 
-    /**
-     * creates and initialises the Google map, also defines on click event that calls java code
-     */
+        /**
+         * creates and initialises the Google map, also defines on click event that calls java code
+         */
 
 
-    var map = L.map('map').setView([-40.9, 174.88], 5.2);
-    new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
-        attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
-    }).addTo(map);
+        var map = L.map('map').setView([-40.9, 174.88], 5.2);
+        new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
+            attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
+        }).addTo(map);
 
-    var markers = new L.MarkerClusterGroup();
-    markers.addLayer(L.marker([-43.522897, 172.579027]));
-    markers.addLayer(L.marker([-43.520474, 172.577027]));
-    map.addLayer(markers);
-</script>
+        var markers = new L.MarkerClusterGroup();
+
+        var plants = [[${scannedPlants}]];
+        // markers.addLayer(L.marker(plants));
+        plants.forEach(addMarker);
+        function addMarker(plant) {
+            // markers.addLayer(L.marker(plant));
+            // myMarker = new L.marker(plant);
+            // markers.addLayer(myMarker);
+            // myMarker.bindPopup('<p>HEY! I am a guy</p>');
+                // .addTo(map).on('click', onclick));
+        // .bindPopup('<p>You are here ' + username + '</p>');
+
+        }
+
+        myMarker = new L.marker([-43.522897, 172.579027]);
+        markers.addLayer(myMarker);
+        myMarker.bindPopup('<p>HEY! I am a guy</p>');
+
+        // function onClick(e) {
+        //
+        // }
+
+        // Code to help with showing plant details, from https://stackoverflow.com/questions/16927793/marker-in-leaflet-click-event
+        // Also look into Marker options field
+        // var map = L.map('map');
+        // var marker = L.marker([10.496093,-66.881935]).on('click', onClick);
+        // function onClick(e) {alert(e.latlng);}
+        // marker.addTo(map)
+
+        map.addLayer(markers);
+    </script>
 </body>
 </html>
