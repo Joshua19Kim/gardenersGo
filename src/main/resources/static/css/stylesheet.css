@@ -843,7 +843,7 @@ body, h2, h3, h4, h5, h6, a {
     margin: 0 auto;
     border-radius: 4px;
     position: relative;
-    display: inline-block;
+    display: flex;
 }
 
 .UserProfilePicContainer img {
@@ -1629,6 +1629,15 @@ form.search-bar::after {
 
 .form-control {
     margin-right: 10px;
+}
+
+.user-profile-details {
+    opacity: 80%;
+    color: gray;
+    font-style: italic;
+    border-style: solid;
+    border-color: #fffdf6;
+    border-width: 2px;
 }
 
 .browse-gardens-container {

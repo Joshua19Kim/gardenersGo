@@ -37,7 +37,7 @@
                         <div class="col d-flex flex-wrap">
 
                             <label for="firstName"> First Name: </label>
-                            <span class="mx-2" id="firstName" th:text="${firstName}"></span>
+                            <span class="form-control user-profile-details mx-2" id="firstName" th:text="${firstName}"></span>
                             <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
                                    placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
                                    style="display: none;"
@@ -46,7 +46,7 @@
                             <br/>
 
                             <label for="lastName"> Last Name: </label>
-                            <span class="mx-2" id="lastName" th:text="${lastName}"></span>
+                            <span class="form-control user-profile-details mx-2" id="lastName" th:text="${lastName}"></span>
                             <input class="form-control" data-cy="lastName" id="lastNameEdit" placeholder="Last Name" maxlength="255"
                                    th:name="lastName" th:value="*{lastName}" type="text" style="display: none"
                                    th:classappend="${lastNameValid != '' ? 'is-invalid' : ''}"
@@ -55,7 +55,7 @@
 
 
                             <label class="mb-3" id="isLastNameOptionalLabelEdit" for="isLastNameOptional" style="display: none;">I have no surname:</label>
-                            <div class="form-check mb-3">
+                            <div class="form-check mb-3 p-0">
                                 <input class="form-check-input mx-2" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
                                        placeholder="Last Name Tick Box Check" th:checked="${isLastNameOptional}"
                                        th:name="isLastNameOptional" type="checkbox" style="display: none;">
@@ -67,7 +67,7 @@
                             <input class="form-control" style="display: none;">
 
                             <label for="DoB"> Date of Birth: </label>
-                            <span class="mx-2" id="DoB" th:text="${DoB}"></span>
+                            <span class="form-control user-profile-details mx-2" id="DoB" th:text="${DoB}"></span>
                             <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;"
                                    th:classappend="${(DoBValid != '' && DoBValid != null) ? 'is-invalid' : ''}" max="9999-12-31">
                             <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBError}"></p>
@@ -75,7 +75,7 @@
 
                             <br/>
                             <label for="email"> Email: </label>
-                            <span class="mx-2" id="email" th:text="${email}"></span>
+                            <span class="form-control user-profile-details mx-2" id="email" th:text="${email}"></span>
                             <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email" maxlength="320"
                                    th:name="email" th:value="*{email}" type="text" style="display: none;"
                                    th:classappend="${emailValid != '' ? 'is-invalid' : ''}">
