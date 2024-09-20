@@ -418,16 +418,15 @@ public class ValidityChecker {
 
     public static boolean validatePlantCoordinates(String plantLatitude, String plantLongitude) {
         try {
+            if (plantLongitude.isBlank() && plantLatitude.isBlank()) {
+                return true;
+            }
             double plantLat = Double.parseDouble(plantLatitude);
             double plantLon = Double.parseDouble(plantLongitude);
             return plantLat <= 90 && plantLat >= -90 && plantLon >= -180 && plantLon <= 180;
         } catch (Exception e) {
             return false;
         }
-
-
-
-
     }
 
 
