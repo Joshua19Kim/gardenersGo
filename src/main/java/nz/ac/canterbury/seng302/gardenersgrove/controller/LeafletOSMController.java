@@ -19,7 +19,7 @@ public class LeafletOSMController {
 
 
     @GetMapping("/map")
-    private String map() {
+    public String map() {
         return "mapTemplate";
     }
 
