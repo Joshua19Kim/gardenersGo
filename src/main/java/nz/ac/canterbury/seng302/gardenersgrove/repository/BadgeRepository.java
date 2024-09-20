@@ -24,6 +24,14 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
     Optional<Badge> findById(long id);
 
     /**
+     * Gets the badge with the id and gardener id
+     * @param id the id of the badge
+     * @param gardenerId the id of the gardener
+     * @return the badge
+     */
+    Optional<Badge> findByIdAndGardenerId(long id, long gardenerId);
+
+    /**
      * gets all the badges
      * @return all the badges
      */

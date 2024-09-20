@@ -10,7 +10,7 @@
             <div class="modal-body">
                 <canvas id="canvas"></canvas>
                 <p>You have earned a new badge!</p>
-                <img id="plantBadgeImage" th:if="${plantBadge}" th:src="@{${plantBadge.imageFilename}}" alt="${plantBadge.name}">
+                <img id="plantBadgeImage" th:if="${plantBadge}" th:src="@{${plantBadge.imageFilename}}" th:alt="${plantBadge.name}">
             </div>
             <div class="modal-footer d-flex flex-column justify-content-center">
                 <a th:href="@{/user}" class="btn btn-primary" role="button">

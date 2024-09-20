@@ -98,7 +98,7 @@ public class BadgeService {
      * @param badgeId badge id
      * @return the badge
      */
-    public Optional<Badge> getBadgeById(Integer badgeId) {
-        return badgeRepository.findById(badgeId);
+    public Optional<Badge> getMyBadgeById(long badgeId, long gardenerId) {
+        return badgeRepository.findByIdAndGardenerId(badgeId, gardenerId);
     };
 }
