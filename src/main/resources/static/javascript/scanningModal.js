@@ -202,11 +202,12 @@ goToCollectionButton.addEventListener('click', function() {
                     if (data.nameError) {
                         document.getElementById('name').classList.add('is-invalid');
                         document.getElementById('nameError').booleanValue= true;
-                        document.getElementById('nameError').innerText= data.nameError;
+                        document.getElementById('nameError').innerHTML= data.nameError;
                     }
                     if (data.descriptionError) {
-                        document.getElementById('description').classList.add('is-invalid');
-                        document.querySelector('[th\\:text="${descriptionError}"]').innerText = data.descriptionError;
+                        console.log(data.descriptionError);
+                        document.getElementById('scanning-description').classList.add('is-invalid');
+                        document.getElementById('descriptionError').innerHTML = data.descriptionError;
                     }
                     throw new Error('Validation failed');
                 })
@@ -216,10 +217,7 @@ goToCollectionButton.addEventListener('click', function() {
         .then(data => {
             var modal = bootstrap.Modal.getInstance(successModal);
             window.location.href = `${getBaseUrl()}/myCollection`;
-            document.getElementById('name').value = "";
-            document.getElementById('description').value = "";
-            document.getElementById('nameError').innerText = '';
-            document.getElementById('descriptionError').innerText = '';
+            refreshFields()
             modal.hide();
         })
         .catch((error) => {
@@ -227,6 +225,26 @@ goToCollectionButton.addEventListener('click', function() {
         });
 
 });
+
+
+
+function refreshFields() {
+    document.getElementById('name').value = "";
+    document.getElementById('scanning-description').value = "";
+    document.getElementById('nameError').innerText = '';
+    document.getElementById('descriptionError').innerText = '';
+    disableLocationInput(false);
+    scanningLocation.value = "";
+    scanningLocation.placeholder = "Start typing plant location..."
+    geolocationUpdateMssg.innerHTML = '';
+    document.getElementById('locationToggle').checked = false;
+    geolocationUpdateMssg.innerHTML = "";
+    document.getElementById('scanningCharacterCount').innerText = '0';
+    plantLat.value = "";
+    plantLon.value = "";
+}
+
+
 
 // Character count section below
 
@@ -258,8 +276,9 @@ document.getElementById("identifiedPlantNameForm").addEventListener("keydown", f
 document.getElementById('locationToggle').addEventListener('change', function() {
     if (this.checked) {
         geolocationUpdateMssg.innerHTML = waitingSpinnerHtml;
+
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(setCoordinates);
+            navigator.geolocation.getCurrentPosition(setCoordinates, showError);
             disableLocationInput(true);
         } else {
             geolocationUpdateMssg.innerHTML = "Geolocation is not supported by this browser.";
@@ -268,15 +287,36 @@ document.getElementById('locationToggle').addEventListener('change', function() 
     } else {
         geolocationUpdateMssg.innerHTML = '';
         disableLocationInput(false);
+        scanningAutocompleteResults.style.display = 'block';
     }
-
 });
 
+function showError(error) {
+    document.getElementById('locationToggle').checked = false;
+    disableLocationInput(false);
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            geolocationUpdateMssg.innerHTML = "Location permission denied."
+            break;
+        case error.POSITION_UNAVAILABLE:
+            geolocationUpdateMssg.innerHTML = "Location information is unavailable."
+            break;
+        case error.TIMEOUT:
+            geolocationUpdateMssg.innerHTML = "The request to get user location timed out."
+            break;
+        case error.UNKNOWN_ERROR:
+            geolocationUpdateMssg.innerHTML = "An unknown error occurred."
+            break;
+    }
+}
+
 function setCoordinates(position) {
-    plantLat.value = position.coords.latitude.toString();
-    plantLon.value = position.coords.longitude.toString();
-    scanningLocation.placeholder = "Saved your current location.";
-    geolocationUpdateMssg.innerHTML = '';
+    if (document.getElementById("successModal").classList.contains("show")) {
+        plantLat.value = position.coords.latitude.toString();
+        plantLon.value = position.coords.longitude.toString();
+        scanningLocation.placeholder = "Saved your current location.";
+        geolocationUpdateMssg.innerHTML = '';
+    }
 }
 
 // when user clicks 'use current location', disable the input field for searching location.
@@ -284,7 +324,7 @@ function disableLocationInput(disable) {
     scanningLocation.disabled = disable;
     if (disable) {
         scanningLocation.value = "";
-        scanningAutocompleteResults.innerText = '';
+        scanningAutocompleteResults.style.display = 'none';
         scanningAutocompleteResults.classList.remove('visible');
         scanningLocation.classList.add('disabled');
     } else {

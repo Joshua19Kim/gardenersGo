@@ -156,8 +156,8 @@ public class ScanController {
                 String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(extra.get("name"));
                 String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(extra.get("description"));
 
+                boolean isValid = ValidityChecker.validatePlantCoordinates(extra.get("plantLatitude"), extra.get("plantLongitude"));
 
-                boolean isValid = true;
                 if (!Objects.equals(name, validatedPlantName)) {
                     errorResponse.put("nameError", validatedPlantName);
                     isValid = false;
@@ -166,13 +166,6 @@ public class ScanController {
                     errorResponse.put("descriptionError", validatedPlantDescription);
                     isValid = false;
                 }
-                if (!Objects.equals(plantLatitude, "")) {
-                    identifiedPlant.setPlantLatitude(plantLatitude);
-                }
-                if (!Objects.equals(plantLongitude, "")) {
-                    identifiedPlant.setPlantLongitude(plantLongitude);
-                }
-
 
                 if (isValid) {
                     identifiedPlant.setName(validatedPlantName);
@@ -180,6 +173,8 @@ public class ScanController {
                     if (descriptionPresent) {
                         identifiedPlant.setDescription(validatedPlantDescription);
                     }
+                    identifiedPlant.setPlantLatitude(plantLatitude);
+                    identifiedPlant.setPlantLongitude(plantLongitude);
                     response.put("message", "Plant saved successfully");
                     identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                     return ResponseEntity.ok(response);
