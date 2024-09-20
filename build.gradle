@@ -45,6 +45,13 @@ dependencies {
 
 	//Bootstrap dependencies
 	implementation 'org.webjars:bootstrap:5.3.3'
+
+	// Leaflet Mapping dependencies
+	implementation 'org.webjars.npm:leaflet:1.9.4'
+	// Clustering dependencies
+	implementation 'org.webjars:leaflet-markercluster:1.4.1'
+
+
 }
 
 jacoco {
