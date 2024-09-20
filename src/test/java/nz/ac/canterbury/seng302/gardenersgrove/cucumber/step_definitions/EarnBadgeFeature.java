@@ -1,12 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.BadgeRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.BadgeService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -41,14 +43,20 @@ public class EarnBadgeFeature {
     @Autowired
     private IdentifiedPlantService identifiedPlantService;
     @Autowired
+    private BadgeRepository badgeRepository;
+    @Autowired
     private BadgeService badgeService;
     private ResultActions resultActions;
     private Gardener testGardener;
 
 
+    @Before("@U7009A")
+    public void setUp() {        badgeRepository.deleteAll();
+    }
     @After("@U7009A")
     public void tearDown() {
         identifiedPlantRepository.deleteAll();
+        badgeRepository.deleteAll();
     }
 
     @Given("I have collected {int} plants,")
