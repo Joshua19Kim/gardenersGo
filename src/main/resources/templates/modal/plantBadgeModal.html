@@ -1,5 +1,4 @@
 <div id="plantBadgeModal" class="modal" tabindex="-1" role="dialog">
-    <canvas id="canvas"></canvas>
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,6 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
+                <canvas id="canvas"></canvas>
                 <p>You have earnt a new badge!</p>
                 <img id="plantBadgeImage" th:if="${plantBadge}" th:src="@{${plantBadge.imageFilename}}">
             </div>
@@ -48,3 +48,4 @@
     });
     /*]]>*/
 </script>
+<script th:src="@{/javascript/fireworks.js}"></script>

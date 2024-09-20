@@ -3,7 +3,7 @@
 // Copyright (c) 2024 by Judith Neumann (https://codepen.io/judag/pen/XmXMOL)
 
 window.addEventListener("resize", resizeCanvas, false);
-window.addEventListener("DOMContentLoaded", onLoad, false);
+// window.addEventListener("DOMContentLoaded", onLoad, false);
 
 window.requestAnimationFrame =
     window.requestAnimationFrame       ||
@@ -38,8 +38,7 @@ function updateWorld() {
     paint();
     window.requestAnimationFrame(updateWorld);
 }
-ctx.fillStyle = "rgba(0,0,0,0.2)";
-    ctx.fillRect(0, 0, w, h);
+
 function update() {
     if (particles.length < 500 && Math.random() < probability) {
         createFirework();
