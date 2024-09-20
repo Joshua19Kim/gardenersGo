@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -53,6 +54,7 @@ public class Gardener {
 
     /** The list of gardens belonging to the gardener. */
     @OneToMany(mappedBy = "gardener")
+    @JsonIgnore
     private List<Garden> gardens;
 
     @Column(name = "ban_expiry_date")
@@ -60,6 +62,7 @@ public class Gardener {
 
     /** The list of badges belonging to the gardener. */
     @OneToMany(mappedBy = "gardener")
+    @JsonIgnore
     private List<Badge> badges;
 
 

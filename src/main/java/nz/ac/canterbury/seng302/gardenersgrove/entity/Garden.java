@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -50,6 +51,7 @@ public class Garden {
 
   /** The list of plants in the garden. */
   @OneToMany(mappedBy = "garden")
+  @JsonIgnore
   private List<Plant> plants;
 
   /** The gardener to which the garden belongs. */
