@@ -14,7 +14,7 @@ const fileName= document.getElementById('fileName');
 const gbifInfo= document.getElementById('gbifInfo');
 
 // waiting spinner used while identifying plant or checking current location
-const waitingSpinnerHtml = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+const waitingSpinnerHtml = '<div class="text-center"><div class="spinner-border" role="status" style="color: black"><span class="visually-hidden">Loading...</span></div></div>';
 
 
 // finding location
@@ -201,7 +201,6 @@ goToCollectionButton.addEventListener('click', function() {
                 return response.json().then(data => {
                     if (data.nameError) {
                         document.getElementById('name').classList.add('is-invalid');
-                        document.getElementById('nameError').booleanValue= true;
                         document.getElementById('nameError').innerHTML= data.nameError;
                     }
                     if (data.descriptionError) {
@@ -235,11 +234,12 @@ function refreshFields() {
     document.getElementById('descriptionError').innerText = '';
     disableLocationInput(false);
     scanningLocation.value = "";
-    scanningLocation.placeholder = "Start typing plant location..."
     geolocationUpdateMssg.innerHTML = '';
     document.getElementById('locationToggle').checked = false;
     geolocationUpdateMssg.innerHTML = "";
     document.getElementById('scanningCharacterCount').innerText = '0';
+    document.getElementById('name').classList.remove('is-invalid');
+    document.getElementById('scanning-description').classList.remove('is-invalid');
     plantLat.value = "";
     plantLon.value = "";
 }
@@ -289,11 +289,14 @@ document.getElementById('locationToggle').addEventListener('change', function() 
         disableLocationInput(false);
         scanningAutocompleteResults.style.display = 'block';
     }
+    geolocationUpdateMssg.style.color = "green";
+
 });
 
 function showError(error) {
     document.getElementById('locationToggle').checked = false;
     disableLocationInput(false);
+    geolocationUpdateMssg.style.color = "red";
     switch(error.code) {
         case error.PERMISSION_DENIED:
             geolocationUpdateMssg.innerHTML = "Location permission denied."
@@ -314,8 +317,8 @@ function setCoordinates(position) {
     if (document.getElementById("successModal").classList.contains("show")) {
         plantLat.value = position.coords.latitude.toString();
         plantLon.value = position.coords.longitude.toString();
-        scanningLocation.placeholder = "Saved your current location.";
-        geolocationUpdateMssg.innerHTML = '';
+        geolocationUpdateMssg.innerHTML = 'Current location saved.';
+
     }
 }
 
@@ -329,6 +332,5 @@ function disableLocationInput(disable) {
         scanningLocation.classList.add('disabled');
     } else {
         scanningLocation.classList.remove('disabled');
-        scanningLocation.placeholder = "Start typing plant location..."
     }
 }

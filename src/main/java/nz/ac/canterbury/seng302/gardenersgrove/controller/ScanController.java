@@ -140,8 +140,7 @@ public class ScanController {
     @PostMapping("/saveIdentifiedPlant")
     @ResponseBody
     public ResponseEntity<?> saveIdentifiedPlant(
-            @RequestBody Map<String, String> extra,
-            Model model
+            @RequestBody Map<String, String> extra
     ) {
         logger.info("POST /saveIdentifiedPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
@@ -178,8 +177,8 @@ public class ScanController {
                     response.put("message", "Plant saved successfully");
                     identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                     return ResponseEntity.ok(response);
-
                 }
+                errorResponse.put("message", "Invalid Field");
                 return ResponseEntity.badRequest().body(errorResponse);
 
             } catch (Exception e) {
