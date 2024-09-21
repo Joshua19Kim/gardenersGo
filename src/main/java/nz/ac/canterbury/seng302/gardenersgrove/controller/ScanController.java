@@ -80,7 +80,7 @@ public class ScanController {
      */
     @PostMapping("/identifyPlant")
     @ResponseBody
-    public ResponseEntity identifyPlant(@RequestParam("image") MultipartFile image) {
+    public ResponseEntity<?> identifyPlant(@RequestParam("image") MultipartFile image) {
         logger.info("POST /identifyPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
@@ -138,7 +138,7 @@ public class ScanController {
      */
     @PostMapping("/saveIdentifiedPlant")
     @ResponseBody
-    public ResponseEntity saveIdentifiedPlant(
+    public ResponseEntity<?> saveIdentifiedPlant(
             @RequestBody Map<String, String> extra
     ) {
         logger.info("POST /saveIdentifiedPlant");
