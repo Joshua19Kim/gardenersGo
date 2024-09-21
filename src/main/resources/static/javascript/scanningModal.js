@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
         var formData = new FormData(document.getElementById('scanForm'));
 
-        resultContainer.innerHTML = waitingSpinnerHtml;
+        resultContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
         resultContainer.style.display = 'block';
         gbifInfo.style.display = 'block';
         errorContainer.style.display = 'none';
@@ -215,7 +215,7 @@ goToCollectionButton.addEventListener('click', function() {
         })
         .then(data => {
             var modal = bootstrap.Modal.getInstance(successModal);
-            window.location.href = `${getBaseUrl()}/myCollection`;
+            window.location.href = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}`;
             refreshFields()
             modal.hide();
         })
@@ -224,8 +224,6 @@ goToCollectionButton.addEventListener('click', function() {
         });
 
 });
-
-
 
 function refreshFields() {
     document.getElementById('name').value = "";
@@ -243,8 +241,6 @@ function refreshFields() {
     plantLat.value = "";
     plantLon.value = "";
 }
-
-
 
 // Character count section below
 

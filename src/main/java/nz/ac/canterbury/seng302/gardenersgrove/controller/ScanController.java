@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+
 /**
  * Controller responsible for handling requests related to plant identification.
  */
@@ -174,7 +175,8 @@ public class ScanController {
                     identifiedPlant.setPlantLatitude(plantLatitude);
                     identifiedPlant.setPlantLongitude(plantLongitude);
                     response.put("message", "Plant saved successfully");
-                    identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
+                    IdentifiedPlant savedPlant = identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
+                    response.put("savedPlant", savedPlant.getId());
                     return ResponseEntity.ok(response);
                 }
                 errorResponse.put("message", "Invalid Field");
