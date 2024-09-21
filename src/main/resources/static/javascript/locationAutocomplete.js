@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const postcodeInput = document.getElementById('postcode') || null;
     const autocompleteResults = document.getElementById('autocomplete-results') || null;
     const scanningAutocompleteResults = document.getElementById('scanning-autocomplete-results');
+    const locationUpdateMssg = document.getElementById("locationUpdateMssg") || null;
     const plantLat = document.getElementById('plantLat') || null;
     const plantLon = document.getElementById('plantLon') || null;
 
@@ -24,8 +25,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     scanningAddressInput.addEventListener('input', function () {
         address = scanningAddressInput;
+        if (this.value.trim() === '') {
+            plantLat.value = '';
+            plantLon.value = '';
+            locationUpdateMssg.innerHTML = "";
+        } else {
+            if (plantLat.value === '' && plantLon.value === '') {
+                locationUpdateMssg.innerHTML = "Please select one of the options to verify the plant location."
+                locationUpdateMssg.style.color = "blue";
+            }
+        }
         getResult(scanningAutocompleteResults);
+
     });
+
+
 
     function getResult(resultBox) {
         const inputValue = address.value.trim();
@@ -108,8 +122,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         fillAddressDetails(result);
                     } else {
                         const addressInputValue = `${result.address.house_number || ''} ${result.address.road || ''} ${result.address.city || ''} ${result.address.country || ''}`;
-                        plantLat.value = result.lat;
-                        plantLon.value = result.lon;
+                        if (scanningAddressInput.value !== '') {
+                            plantLat.value = result.lat;
+                            plantLon.value = result.lon;
+                            locationUpdateMssg.innerHTML = "The location has been verified : <br/>" + addressInputValue;
+                            locationUpdateMssg.style.color = "green";
+                        }
                         scanningAddressInput.value = addressInputValue.trim();
                     }
                     hideAutocompleteResults(resultBox);

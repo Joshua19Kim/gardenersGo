@@ -56,7 +56,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true" data-bs-backdrop="static" >
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -67,7 +67,10 @@
                 <p>Add a name to your discovery</p>
 
                 <form id="identifiedPlantNameForm">
-                    <label for="name"> Name: </label>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label for="name"> Name: </label>
+                        <label for="name" class="required-label"> *Required </label>
+                    </div>
                     <input type="text" class="form-control" th:value="*{name}" id="name" name="name" maxlength="64" placeholder="Name"
                            th:classappend="${nameError} ? 'is-invalid' : ''">
                     <div id="commonNames"></div>
@@ -87,15 +90,16 @@
                         <div style="display: flex; flex-direction: column;">
                             <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
                                 <label for="scanningLocation"> Plant location: </label>
-                                <input class="form-control" type="text" id="scanningLocation" autocomplete="off" placeholder="Start typing plant location..."
+                                <input class="form-control" type="text" id="scanningLocation" autocomplete="off" placeholder="Search the address here..."
                                        th:name="location" th:value="*{location}" data-cy="location" autofocus
                                        th:classappend="${locationError} ? 'is-invalid' : ''"
                                 >
                                 <span th:if="${locationError}" th:utext="${locationError}" class="smallErrorMessage"></span>
-                                <div id="scanning-autocomplete-results"></div>
+                                <p id="locationUpdateMssg" class="smallErrorMessage"></p>
+                                <div id="scanning-autocomplete-results" style="margin-top: -1rem; " ></div>
                             </div>
                             <div>
-                                <div class="form-check form-switch">
+                                <div class="form-check form-switch" style="margin-top: 1rem; " >
                                     <input class="form-check-input" type="checkbox" role="switch" id="locationToggle">
                                     <label class="form-check-label" for="locationToggle">Use current location</label>
                                 </div>

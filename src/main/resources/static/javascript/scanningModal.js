@@ -18,6 +18,7 @@ const waitingSpinnerHtml = '<div class="text-center"><div class="spinner-border"
 
 
 // finding location
+const locationUpdateMssg = document.getElementById("locationUpdateMssg") || null;
 const geolocationUpdateMssg = document.getElementById("geolocationUpdateMssg");
 const plantLat = document.getElementById('plantLat');
 const plantLon = document.getElementById('plantLon');
@@ -172,7 +173,6 @@ saveToCollectionButton.addEventListener('click', function() {
 //button directs user to myCollection page
 goToCollectionButton.addEventListener('click', function() {
 
-
     var formData = new FormData(document.getElementById('identifiedPlantNameForm'));
     var name = formData.get('name');
     var description = formData.get('description');
@@ -235,6 +235,7 @@ function refreshFields() {
     scanningLocation.value = "";
     geolocationUpdateMssg.innerHTML = '';
     document.getElementById('locationToggle').checked = false;
+    locationUpdateMssg.innerHTML = "";
     geolocationUpdateMssg.innerHTML = "";
     document.getElementById('scanningCharacterCount').innerText = '0';
     document.getElementById('name').classList.remove('is-invalid');
@@ -297,7 +298,7 @@ function showError(error) {
     geolocationUpdateMssg.style.color = "red";
     switch(error.code) {
         case error.PERMISSION_DENIED:
-            geolocationUpdateMssg.innerHTML = "Location permission denied."
+            geolocationUpdateMssg.innerHTML = "Current Location permission denied."
             break;
         case error.POSITION_UNAVAILABLE:
             geolocationUpdateMssg.innerHTML = "Location information is unavailable."
@@ -324,11 +325,14 @@ function setCoordinates(position) {
 function disableLocationInput(disable) {
     scanningLocation.disabled = disable;
     if (disable) {
+        locationUpdateMssg.innerHTML = "";
         scanningLocation.value = "";
         scanningAutocompleteResults.style.display = 'none';
         scanningAutocompleteResults.classList.remove('visible');
         scanningLocation.classList.add('disabled');
     } else {
         scanningLocation.classList.remove('disabled');
+        plantLat.value = '';
+        plantLon.value = '';
     }
 }
