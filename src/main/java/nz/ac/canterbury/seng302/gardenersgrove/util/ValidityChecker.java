@@ -418,7 +418,7 @@ public class ValidityChecker {
 
     public static boolean validatePlantCoordinates(String plantLatitude, String plantLongitude) {
         try {
-            if (plantLongitude.isBlank() && plantLatitude.isBlank()) {
+            if ((plantLongitude == null || plantLatitude == null  || (plantLongitude.isBlank() && plantLatitude.isBlank()))) {
                 return true;
             }
             double plantLat = Double.parseDouble(plantLatitude);
