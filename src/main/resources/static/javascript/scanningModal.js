@@ -231,6 +231,7 @@ function refreshFields() {
     document.getElementById('nameError').innerText = '';
     document.getElementById('descriptionError').innerText = '';
     disableLocationInput(false);
+    scanningAutocompleteResults.style.display = 'block';
     scanningLocation.value = "";
     geolocationUpdateMssg.innerHTML = '';
     document.getElementById('locationToggle').checked = false;
@@ -292,6 +293,7 @@ document.getElementById('locationToggle').addEventListener('change', function() 
 function showError(error) {
     document.getElementById('locationToggle').checked = false;
     disableLocationInput(false);
+    scanningAutocompleteResults.style.display = 'block';
     geolocationUpdateMssg.style.color = "red";
     switch(error.code) {
         case error.PERMISSION_DENIED:
