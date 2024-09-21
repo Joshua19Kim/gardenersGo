@@ -110,7 +110,7 @@ public class ValidityChecker {
      */
     public static String validatePlantName(String name) {
         String result = "";
-        if (name == null || name.trim().isEmpty() || !name.matches(validNameRegex)) {
+        if (name == null || name.trim().isEmpty() || !name.matches(genericRegex)) {
             result += "Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>";
         }
 
