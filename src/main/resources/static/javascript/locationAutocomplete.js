@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
             locationUpdateMssg.innerHTML = "";
         } else {
             if (plantLat.value === '' && plantLon.value === '') {
-                locationUpdateMssg.innerHTML = "Please select one of the options to verify the plant location."
+                locationUpdateMssg.innerHTML = "Search and select a verified address from the list to show it on map."
                 locationUpdateMssg.style.color = "blue";
             }
         }
