@@ -144,7 +144,7 @@ class CollectionsControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/myCollection"))
                 .andExpect(flash().attributeExists("successMessage"))
-                .andExpect(flash().attribute("successMessage", "My Plant has been added to species Plant Species"));
+                .andExpect(flash().attribute("successMessage", "My Plant has been added to species: Plant Species"));
     }
 
     @Test
@@ -167,7 +167,7 @@ class CollectionsControllerTest {
                 .param("savedPlant", identifiedPlant.getId().toString()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(model().attributeExists("successMessage"))
-                .andExpect(model().attribute("successMessage", "My Plant has been added to species Plant Species"));
+                .andExpect(model().attribute("successMessage", "My Plant has been added to species: Plant Species"));
     }
 
     @Test
