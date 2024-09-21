@@ -291,11 +291,21 @@ public class ScanControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonBody = objectMapper.writeValueAsString(requestBody);
+
+        Gardener gardener = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
         this.mockMvc
-                .perform(MockMvcRequestBuilders.multipart("/identifyPlant")
-                        .file(imageFile)
-                        .with(csrf()))
+                .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
                 .andExpect(status().isOk());
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
 
         this.mockMvc
                 .perform(
@@ -341,12 +351,21 @@ public class ScanControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonBody = objectMapper.writeValueAsString(requestBody);
+
+        Gardener gardener = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
         this.mockMvc
-                .perform(MockMvcRequestBuilders.multipart("/identifyPlant")
-                        .file(imageFile)
-                        .with(csrf()))
+                .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
                 .andExpect(status().isOk());
 
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
         this.mockMvc
                 .perform(
                         MockMvcRequestBuilders.post("/saveIdentifiedPlant")
