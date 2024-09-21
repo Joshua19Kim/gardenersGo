@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -81,7 +80,7 @@ public class ScanController {
      */
     @PostMapping("/identifyPlant")
     @ResponseBody
-    public ResponseEntity<?> identifyPlant(@RequestParam("image") MultipartFile image) {
+    public ResponseEntity identifyPlant(@RequestParam("image") MultipartFile image) {
         logger.info("POST /identifyPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
@@ -139,7 +138,7 @@ public class ScanController {
      */
     @PostMapping("/saveIdentifiedPlant")
     @ResponseBody
-    public ResponseEntity<?> saveIdentifiedPlant(
+    public ResponseEntity saveIdentifiedPlant(
             @RequestBody Map<String, String> extra
     ) {
         logger.info("POST /saveIdentifiedPlant");
