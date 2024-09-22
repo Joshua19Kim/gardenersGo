@@ -29,7 +29,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -42,7 +41,7 @@ public class PlantIdentificationService {
     Logger logger = LoggerFactory.getLogger(PlantIdentificationService.class);
     private static final String PROJECT = "all";
     private static final String API_URL = "https://my-api.plantnet.org/v2/identify/";
-    private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
+    private static final String IMAGE_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
 
     private final String apiKey;
     private final ObjectMapper objectMapper;
