@@ -12,9 +12,6 @@ public class ValidityChecker {
     // https://stackoverflow.com/questions/24744375/regex-for-only-allowing-letters-numbers-space-commas-periods
     // https://stackoverflow.com/questions/20690499/concrete-javascript-regular-expression-for-accented-characters-diacritics
     private static final String genericRegex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
-    private static final String validNameRegex = "[\\p{L}]+((?:[-' ]?\\p{L}+)?)*";
-    private static final String validDescriptionRegex = "^(?=.*[\\p{L}]).+";
-
 
     /**
      * Checks that the garden name complies with the required format
@@ -158,6 +155,7 @@ public class ValidityChecker {
      * @return input if no errors, else error string
      */
     public static String validateIdentifiedPlantName (String name) {
+        String validNameRegex = "[\\p{L}]+((?:[-' ]?\\p{L}+)?)*";
         String result = "";
         if (name.length() > 64) {
             result = "Plant name must " +
@@ -187,8 +185,9 @@ public class ValidityChecker {
         if (description == null || description.isEmpty()) {
             return description;
         }
+        String regex = "^(?=.*[\\p{L}]).+";
         String result = "";
-        if (!description.matches(validDescriptionRegex)) {
+        if (!description.matches(regex)) {
             result = "Plant description must be 512 characters or less and contain some text <br/>";
         }
         if (description.length() > 512) {
