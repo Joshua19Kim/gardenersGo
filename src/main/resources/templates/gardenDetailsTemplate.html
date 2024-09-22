@@ -172,7 +172,7 @@
             <a th:href="@{../gardens/details/plants/form(gardenId=${garden.id})}" class="btn btn-primary m-2 w-auto"
                role="button">Add New Plant</a>
             <div class="plant-list-container" th:if="${not #lists.isEmpty(garden.plants)}">
-                <table class="table table-primary">
+                <table class="table table-primary" style="--bs-table-bg: #8dab6e;">
                     <thead class="thead-light">
                     <tr>
                         <th>NAME</th>
