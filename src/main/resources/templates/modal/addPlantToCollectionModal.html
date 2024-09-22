@@ -56,7 +56,7 @@
                     <br/>
 
 
-                    <label for="plantDate"> Date Planted: </label>
+                    <label for="plantDate"> Date of Addition: </label>
                     <input type="date" class="form-control" th:value="${uploadedDate}"
                            id="plantDate" th:name="uploadedDate" style="color:#6c757d;" max="9999-12-31"
                            th:classappend="${dateError} ? 'is-invalid' : ''">
@@ -87,6 +87,7 @@
     var currentImage = document.getElementById('currentImage');
     var addPlantModal = document.getElementById('addPlantModal');
     var plantDateInput = document.getElementById('plantDate');
+    const successAlert = document.getElementById('successAlert');
     var today = new Date();
 
     currentImage.src = `${getBaseUrl()}/images/placeholder.jpg`;
