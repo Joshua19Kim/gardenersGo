@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -13,6 +14,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -21,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -67,6 +71,9 @@ public class ScanControllerTest {
                 Mockito.any(MultipartFile.class),
                 Mockito.any(Gardener.class)))
                 .thenReturn(testIdentifiedPlant);
+
+
+
 
     }
 
@@ -171,19 +178,74 @@ public class ScanControllerTest {
     ObjectMapper objectMapper = new ObjectMapper();
     String jsonBody = objectMapper.writeValueAsString(requestBody);
 
+    Gardener gardener = new Gardener("Test", "Gardener",
+          LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+          "Password1!");
+    String name = "My Plant";
+    String species = "Plant Species";
+    LocalDate date = LocalDate.of(2004, 5, 20);
+    String description = "Cool plant";
+    IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
     this.mockMvc
         .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
         .andExpect(status().isOk());
 
+    when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+
+
     this.mockMvc
-        .perform(
-            MockMvcRequestBuilders.multipart("/saveIdentifiedPlant")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonBody)
-                .with(csrf()))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.message").value("Plant saved successfully"));
+    .perform(
+        MockMvcRequestBuilders.multipart("/saveIdentifiedPlant")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonBody)
+            .with(csrf()))
+    .andExpect(status().isOk())
+    .andExpect(jsonPath("$.message").value("Plant saved successfully"));
   }
+
+    @Test
+    @WithMockUser
+    void AfterValidScan_UserEntersValidInputsAndClicksAddButton_ShowSuccessMessage()
+            throws Exception {
+
+        // mock image content
+        byte[] imageContent = new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0};
+
+        imageFile = new MockMultipartFile("image", "test_image.jpg", "image/jpeg", imageContent);
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("name", "Tomato");
+        requestBody.put("description", "Vegetable");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonBody = objectMapper.writeValueAsString(requestBody);
+
+        Gardener gardener = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
+                .andExpect(status().isOk());
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+
+
+        this.mockMvc
+                .perform(
+                        MockMvcRequestBuilders.multipart("/saveIdentifiedPlant")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonBody)
+                                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.savedPlant").value(identifiedPlant.getId()))
+                .andExpect(jsonPath("$.message").value("Plant saved successfully"));
+    }
 
     @Test
     @WithMockUser
@@ -215,6 +277,108 @@ public class ScanControllerTest {
                                 .with(csrf()))
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.nameError").value("Plant name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>"));
     }
+
+    @Test
+    @WithMockUser
+    void UserUsesCurrentLocationForPlant_SystemFindsCoordinates_ReturnCoordinatesToController() throws Exception {
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("name", "Plant test name");
+        requestBody.put("plantLatitude", "-40");
+        requestBody.put("plantLongitude", "70");
+
+        byte[] imageContent = new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0};
+        imageFile = new MockMultipartFile("image", "test_image.jpg", "image/jpeg", imageContent);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonBody = objectMapper.writeValueAsString(requestBody);
+
+        Gardener gardener = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
+                .andExpect(status().isOk());
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+
+        this.mockMvc
+                .perform(
+                        MockMvcRequestBuilders.post("/saveIdentifiedPlant")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonBody)
+                                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Plant saved successfully"));
+    }
+
+    @WithMockUser
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0 : 0 : true",
+            "-90 : -180 : true",
+            "90 : 180 : true",
+            "89 : 179 : true",
+            "-91 : -181 : false",
+            "-91 : 0 : false",
+            "0, : -181 : false",
+            "0 : 181 : false",
+            "91 : 0 : false",
+            "-90 : 0 : true",
+            "0 : -180 : true",
+            "0 : 180 : true",
+            "90 : 0 : true",
+            "'' : '' : true",
+            "'' : 0 : false",
+            "0 : '' : false"
+
+    }, delimiter = ':')
+    void UserUsesCurrentLocationForPlant_HasInvalidCoordinates_DoesNotReturn(String plantLatitude, String plantLongitude, boolean expectedResult) throws Exception {
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("name", "Plant test name");
+        requestBody.put("plantLatitude", plantLatitude);
+        requestBody.put("plantLongitude", plantLongitude);
+        ResultMatcher status = expectedResult ? status().isOk() : status().isBadRequest();
+        String expectedMessage = expectedResult ? "Plant saved successfully" : "Invalid Field";
+
+        byte[] imageContent = new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0};
+        imageFile = new MockMultipartFile("image", "test_image.jpg", "image/jpeg", imageContent);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonBody = objectMapper.writeValueAsString(requestBody);
+
+        Gardener gardener = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
+                .andExpect(status().isOk());
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        this.mockMvc
+                .perform(
+                        MockMvcRequestBuilders.post("/saveIdentifiedPlant")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonBody)
+                                .with(csrf()))
+                .andExpect(status)
+                .andExpect(jsonPath("$.message").value(expectedMessage));
+    }
+
+
+
+
 }
 
 

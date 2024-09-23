@@ -26,7 +26,7 @@
                     <div class="text-center warningMessageContainer mb-2" id="errorContainer" style="display: none;"></div>
                 </form>
                 <div class="d-flex justify-content-around mb-2">
-                    <button id="identifyButton" class="btn btn-success" type="button">Identify</button>
+                    <button id="identifyButton" class="btn btn-primary" type="button">Identify</button>
                 </div>
                 <div id="resultContainer" style="display: none;"></div>
 
@@ -56,7 +56,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true" data-bs-backdrop="static" >
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -67,7 +67,10 @@
                 <p>Add a name to your discovery</p>
 
                 <form id="identifiedPlantNameForm">
-                    <label for="name"> Name: </label>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label for="name"> Name: </label>
+                        <label for="name" class="required-label"> *Required </label>
+                    </div>
                     <input type="text" class="form-control" th:value="*{name}" id="name" name="name" maxlength="64" placeholder="Name"
                            th:classappend="${nameError} ? 'is-invalid' : ''">
                     <div id="commonNames"></div>
@@ -77,18 +80,61 @@
                     <span id="scanningCharacterCountContainer"><span id="scanningCharacterCount">0</span> /512</span>
                     <textarea class="form-control" th:value="*{description}" id="scanning-description" name="description"  maxlength="512"
                               th:classappend="${descriptionError} ? 'is-invalid' : ''">[[${description}]]</textarea>
-                    <span id="descriptionError" class="smallErrorMessage" th:text="${descriptionError != null ? descriptionError : ''}"></span>
+                    <span id="descriptionError" class="smallErrorMessage" th:utext="${descriptionError != null ? descriptionError : ''}"></span>
+
+
+                    <div>
+                        <div style="display: flex; margin-top: 40px; justify-content: flex-end;">
+                            <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
+                                <label for="scanningLocation"> Plant location: </label>
+                                <input class="form-control" type="text" id="scanningLocation" autocomplete="off" placeholder="Search the address here..."
+                                       th:name="location" th:value="*{location}" data-cy="location" autofocus
+                                       th:classappend="${locationError} ? 'is-invalid' : ''"
+                                >
+                                <span th:if="${locationError}" th:utext="${locationError}" class="smallErrorMessage"></span>
+                                <p id="locationUpdateMssg" class="smallErrorMessage"></p>
+                                <div id="scanning-autocomplete-results" style="margin-top: -1rem; " ></div>
+                            </div>
+                            <div>
+                                <div class="form-check form-switch" style="margin-top: 1rem; " >
+                                    <input class="form-check-input" type="checkbox" role="switch" id="locationToggle">
+                                    <label class="form-check-label" for="locationToggle">Use current location</label>
+                                </div>
+                                <p id="geolocationUpdateMssg" class="smallErrorMessage"></p>
+
+                            </div>
+                        </div>
+                        <br/>
+                    </div>
+
+
                 </form>
             </div>
 
 
             <div class="modal-footer d-flex justify-content-center" >
                 <button type="button" class="btn btn-primary" id="goToCollectionButton">Save to my collection</button>
-                <button type="button" class="btn cancel-button text-white" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn cancel-button text-white" data-bs-dismiss="modal" onclick="refreshFields()">Cancel</button>
             </div>
         </div>
     </div>
+    <input type="hidden" id="plantLat">
+    <input type="hidden" id="plantLon">
 </div>
+<script th:src="@{/javascript/locationAutocomplete.js}"></script>
 <script th:src="@{/javascript/getBaseUrl.js}"></script>
 <script th:src="@{/javascript/scanningModal.js}"></script>
+<script type="text/javascript">
+    document.getElementById("locationToggle").addEventListener("keydown", function(event) {
+        console.log("button pressed");
+        if (event.key === "Enter") {
+            console.log("toggle");
+            this.checked = !this.checked;
+            this.dispatchEvent(new Event('change'));
+        }
+    })
+</script>
 

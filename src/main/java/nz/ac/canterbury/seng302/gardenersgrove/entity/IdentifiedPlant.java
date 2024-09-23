@@ -56,6 +56,11 @@ public class IdentifiedPlant {
     @Column(name = "date_uploaded")
     private String dateUploaded;
 
+    @Column(name = "plant_lat")
+    private String plantLatitude;
+    @Column(name = "plant_lon")
+    private String plantLongitude;
+
     /**
      * Name of the plant.
      */
@@ -243,4 +248,13 @@ public class IdentifiedPlant {
     public void setDateUploaded(String dateUploaded) {
         this.dateUploaded = dateUploaded;
     }
+
+    public String getPlantLatitude() {return plantLatitude;}
+
+    public void setPlantLatitude(String plantLatitude) {this.plantLatitude = plantLatitude;}
+
+    public String getPlantLongitude() {return plantLongitude;}
+
+    public void setPlantLongitude(String plantLongitude) {this.plantLongitude = plantLongitude;}
+
 }
