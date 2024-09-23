@@ -41,7 +41,6 @@
     document.addEventListener("DOMContentLoaded", function() {
         /*<![CDATA[*/
         var scannedPlants = /*[[${scannedPlants}]]*/ [];
-        console.log(scannedPlants);
         scannedPlants.forEach(function (scannedPlant) {
             if (scannedPlant.plantLatitude != null && scannedPlant.plantLongitude != null && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
                 L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
