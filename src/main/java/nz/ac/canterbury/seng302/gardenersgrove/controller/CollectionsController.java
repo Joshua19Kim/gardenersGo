@@ -25,7 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
+
 import java.util.stream.IntStream;
 import static java.lang.Long.parseLong;
 
@@ -109,6 +109,7 @@ public class CollectionsController {
     public String getMyCollection(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
             @RequestParam(name="badgeEarned", required = false) String badgeId,
+            @RequestParam(name="savedPlant", defaultValue = "") String savedPlantId,
             Model model) {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
@@ -169,6 +170,17 @@ public class CollectionsController {
                 logger.info(e.getMessage());
             }
 
+        }
+
+        if (!savedPlantId.isEmpty()) {
+            IdentifiedPlant savedPlant = identifiedPlantService.getCollectionPlantById(Long.parseLong(savedPlantId));
+            if (savedPlant != null && savedPlant.getGardener().equals(gardener)) {
+                if (savedPlant.getSpeciesScientificNameWithoutAuthor().isEmpty()) {
+                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to species: No Species");
+                } else {
+                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to species: " + savedPlant.getSpeciesScientificNameWithoutAuthor());
+                }
+            }
         }
 
         return "myCollectionTemplate";
@@ -309,6 +321,11 @@ public class CollectionsController {
             Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener, plantCount);
             if(plantBadge.isPresent()) {
                 redirectAttributes.addFlashAttribute("plantBadge", plantBadge.get());
+            }
+            if (scientificName.isEmpty()) {
+                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species: No Species");
+            } else {
+                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species: " + scientificName);
             }
             return "redirect:/myCollection";
         } else {

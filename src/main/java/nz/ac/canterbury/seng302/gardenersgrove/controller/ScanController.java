@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+
 /**
  * Controller responsible for handling requests related to plant identification.
  */
@@ -174,6 +175,8 @@ public class ScanController {
                     if(plantBadge.isPresent()) {
                         response.put("plantBadge", plantBadge.get().getId());
                     }
+                    IdentifiedPlant savedPlant = identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
+                    response.put("savedPlant", savedPlant.getId());
                     return ResponseEntity.ok(response);
 
                 }

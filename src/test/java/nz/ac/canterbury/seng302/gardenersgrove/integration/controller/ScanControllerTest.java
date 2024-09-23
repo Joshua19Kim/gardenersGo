@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -177,11 +179,23 @@ public class ScanControllerTest {
     ObjectMapper objectMapper = new ObjectMapper();
     String jsonBody = objectMapper.writeValueAsString(requestBody);
 
+    Gardener gardener = new Gardener("Test", "Gardener",
+          LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+          "Password1!");
+    String name = "My Plant";
+    String species = "Plant Species";
+    LocalDate date = LocalDate.of(2004, 5, 20);
+    String description = "Cool plant";
+    IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
       when(identifiedPlantService.getCollectionPlantCount(testGardener.getId())).thenReturn(1);
 
     this.mockMvc
         .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
         .andExpect(status().isOk());
+
+    when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+
 
     this.mockMvc
         .perform(
@@ -195,6 +209,49 @@ public class ScanControllerTest {
       verify(badgeService, times(1)).checkPlantBadgeToBeAdded(testGardener, 1);
       verify(identifiedPlantService, times(1)).getCollectionPlantCount(testGardener.getId());
   }
+
+    @Test
+    @WithMockUser
+    void AfterValidScan_UserEntersValidInputsAndClicksAddButton_ShowSuccessMessage()
+            throws Exception {
+
+        // mock image content
+        byte[] imageContent = new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0};
+
+        imageFile = new MockMultipartFile("image", "test_image.jpg", "image/jpeg", imageContent);
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("name", "Tomato");
+        requestBody.put("description", "Vegetable");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonBody = objectMapper.writeValueAsString(requestBody);
+
+        Gardener gardener = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
+                .andExpect(status().isOk());
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+
+
+        this.mockMvc
+                .perform(
+                        MockMvcRequestBuilders.multipart("/saveIdentifiedPlant")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonBody)
+                                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.savedPlant").value(identifiedPlant.getId()))
+                .andExpect(jsonPath("$.message").value("Plant saved successfully"));
+    }
 
     @Test
     @WithMockUser

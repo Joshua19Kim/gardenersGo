@@ -4,6 +4,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpeciesImpl;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
@@ -18,7 +20,10 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +31,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,6 +119,64 @@ class CollectionsControllerTest {
 
         verify(badgeService, times(1)).checkPlantBadgeToBeAdded(gardener, 1);
         verify(identifiedPlantService, times(1)).getCollectionPlantCount(gardener.getId());
+    }
+
+    @Test
+    @WithMockUser
+    void AddPlantToCollection_ValidValues_PlantAddedAndSuccessMessageShown() throws Exception {
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        boolean isDateInvalid = false;
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "plantImage",
+                "image.jpg",
+                "image/jpeg",
+                "image content".getBytes()
+        );
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
+        when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/myCollection")
+                        .file(mockMultipartFile)
+                        .param("plantName", name)
+                        .param("description", description)
+                        .param("scientificName", species)
+                        .param("uploadedDate", String.valueOf(date))
+                        .param("isDateInvalid", String.valueOf(isDateInvalid))
+                        .with(csrf()))
+
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/myCollection"))
+                .andExpect(flash().attributeExists("successMessage"))
+                .andExpect(flash().attribute("successMessage", "My Plant has been added to species: Plant Species"));
+    }
+
+    @Test
+    @WithMockUser
+    void GetCollection_SavedPlantInURL_SuccessMessageShown() throws Exception {
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+        identifiedPlant.setId(1L);
+
+        IdentifiedPlantSpeciesImpl plantSpecies = mock(IdentifiedPlantSpeciesImpl.class);
+        Page<IdentifiedPlantSpeciesImpl> speciesList = new PageImpl<>(List.of(plantSpecies), PageRequest.of(0, 12), 1);
+        when(identifiedPlantService.getGardenerPlantSpeciesPaginated(eq(0), eq(12), any(Long.class))).thenReturn(speciesList);
+        when(identifiedPlantService.getCollectionPlantById(anyLong())).thenReturn(identifiedPlant);
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/myCollection")
+                .param("savedPlant", identifiedPlant.getId().toString()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().attributeExists("successMessage"))
+                .andExpect(model().attribute("successMessage", "My Plant has been added to species: Plant Species"));
     }
 
     @Test

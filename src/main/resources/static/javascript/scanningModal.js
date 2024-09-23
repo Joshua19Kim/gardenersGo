@@ -197,9 +197,9 @@ goToCollectionButton.addEventListener('click', function() {
             var plantBadge = data.plantBadge;
             var modal = bootstrap.Modal.getInstance(successModal);
             if(plantBadge !== undefined) {
-                window.location.href = `${getBaseUrl()}/myCollection?badgeEarned=` + plantBadge;
+                window.location.href = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}&badgeEarned=` + plantBadge;
             } else {
-                window.location.href = `${getBaseUrl()}/myCollection`;
+                window.location.href = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}`;
             }
             document.getElementById('name').value = "";
             document.getElementById('scanning-description').value = "";
