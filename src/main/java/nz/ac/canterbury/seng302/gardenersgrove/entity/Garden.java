@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
