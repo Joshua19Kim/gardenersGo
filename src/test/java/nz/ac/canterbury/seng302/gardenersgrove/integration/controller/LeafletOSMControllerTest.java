@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = LeafletOSMController.class)
-public class LeafletOSMControllerTest {
+class LeafletOSMControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -48,7 +48,7 @@ public class LeafletOSMControllerTest {
 
     @Test
     @WithMockUser
-    public void ViewMap_UserHasScannedPlants_ScannedPlantsVisible() throws Exception {
+    void ViewMap_UserHasScannedPlants_ScannedPlantsVisible() throws Exception {
         String name = "My Plant";
         String species = "Plant Species";
         LocalDate date = LocalDate.of(2004, 5, 20);
