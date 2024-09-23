@@ -60,8 +60,20 @@ public class IdentifiedPlantService {
         return identifiedPlantRepository.getSpeciesByGardenerId(gardenerId, pageable);
     }
 
+    /**
+     * Gets a plant by its id
+     * @param id the id of the plant
+     * @return a plant if found
+     */
     public IdentifiedPlant getCollectionPlantById(long id) {
         return identifiedPlantRepository.findById(id);
     }
+
+    /**
+     * Gets all plants for a gardener
+     * @param id gardener's id
+     * @return returns the count for a gardener
+     */
+    public Integer getCollectionPlantCount(long id) { return identifiedPlantRepository.getIdentifiedPlantByGardenerId(id).size();}
 
 }
