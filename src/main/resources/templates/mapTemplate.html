@@ -23,15 +23,23 @@
 <div id="map"></div>
 <script src="/webjars/leaflet/1.9.4/dist/leaflet.js"></script>
 <script src="/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js"></script>
-<script>
+<script >
 
 
     /**
      * creates and initialises the Google map, also defines on click event that calls java code
      */
 
-
-    var map = L.map('map').setView([-40.9, 174.88], 5.2);
+    var southWest = L.latLng(-55, 148.038821);
+    var northEast = L.latLng(-28,200);
+    var maxBoundArea = L.latLngBounds(southWest, northEast)
+    var map = L.map('map', {
+        center: [-40.9, 174.88],
+        zoom: 5.2,
+        maxBounds: maxBoundArea,
+        minZoom: 5.2,
+        maxZoom: 18
+    });
     new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
         attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
     }).addTo(map);
