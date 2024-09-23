@@ -140,7 +140,9 @@ public class ScanController {
      */
     @PostMapping("/saveIdentifiedPlant")
     @ResponseBody
-    public ResponseEntity<?> saveIdentifiedPlant( @RequestBody Map<String, String> extra) {
+    public ResponseEntity<?> saveIdentifiedPlant(
+            @RequestBody Map<String, String> extra
+    ) {
         logger.info("POST /saveIdentifiedPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
@@ -148,16 +150,25 @@ public class ScanController {
             try {
                 String name = extra.get("name");
                 String description = extra.get("description");
+                String plantLatitude = extra.get("plantLatitude");
+                String plantLongitude = extra.get("plantLongitude");
 
                 String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(extra.get("name"));
                 String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(extra.get("description"));
+                boolean validLocation = ValidityChecker.validatePlantCoordinates(extra.get("plantLatitude"), extra.get("plantLongitude"));
+
                 boolean isValid = true;
+
                 if (!Objects.equals(name, validatedPlantName)) {
                     errorResponse.put("nameError", validatedPlantName);
                     isValid = false;
                 }
                 if (!Objects.equals(description, validatedPlantDescription)) {
                     errorResponse.put("descriptionError", validatedPlantDescription);
+                    isValid = false;
+                }
+                if (!validLocation) {
+                    errorResponse.put("locationError", "Invalid Location");
                     isValid = false;
                 }
 
@@ -167,6 +178,8 @@ public class ScanController {
                     if (descriptionPresent) {
                         identifiedPlant.setDescription(validatedPlantDescription);
                     }
+                    identifiedPlant.setPlantLatitude(plantLatitude);
+                    identifiedPlant.setPlantLongitude(plantLongitude);
                     response.put("message", "Plant saved successfully");
                     IdentifiedPlant savedPlant = identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                     Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.get().getId());
@@ -176,8 +189,8 @@ public class ScanController {
                     }
                     response.put("savedPlant", savedPlant.getId());
                     return ResponseEntity.ok(response);
-
                 }
+                errorResponse.put("message", "Invalid Field");
                 return ResponseEntity.badRequest().body(errorResponse);
 
             } catch (Exception e) {

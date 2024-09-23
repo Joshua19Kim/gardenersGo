@@ -420,4 +420,35 @@ public class ValidityCheckerTest {
         Assertions.assertEquals(expectedMessage, actualMessage);
     }
 
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0 : 0 : true",
+            "-90 : -180 : true",
+            "90 : 180 : true",
+            "89 : 179 : true",
+            "-91 : -181 : false",
+            "-91 : 0 : false",
+            "0, : -181 : false",
+            "0 : 181 : false",
+            "91 : 0 : false",
+            "-90 : 0 : true",
+            "0 : -180 : true",
+            "0 : 180 : true",
+            "90 : 0 : true",
+            "'' : '' : true",
+            "'' : 0 : false",
+            "0 : '' : false"
+
+    }, delimiter = ':')
+    void ValidateCoordinates(String plantLatitude, String plantLongitude, boolean expectedResult) {
+
+        boolean result = ValidityChecker.validatePlantCoordinates(plantLatitude, plantLongitude);
+
+        Assertions.assertEquals(result, expectedResult);
+    }
+
+
+
+
 }
