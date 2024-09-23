@@ -1,10 +1,16 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import static java.lang.Long.parseLong;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.IntStream;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
@@ -21,13 +27,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-
-import java.util.stream.IntStream;
-import static java.lang.Long.parseLong;
 
 /**
  * Controller class for handling HTTP requests for the Collections page
@@ -48,17 +47,17 @@ public class CollectionsController {
     private final RequestService requestService;
     private Gardener gardener;
 
-    private final String paginationMessageAttribute = "paginationMessage";
-
-    private final String errorOccurredAttribute = "errorOccurred";
-
-    private final String showModalAttribute = "showModal";
+    private static final String paginationMessageAttribute = "paginationMessage";
+    private static final String errorOccurredAttribute = "errorOccurred";
+    private static final String showModalAttribute = "showModal";
+    private static final String successMessageAttribute = "successMessage";
+    private static final String errorKey = "error";
 
     private final PlantIdentificationService plantIdentificationService;
 
     private final Map<String, String> errorResponse;
     private final Map<String, Object> response;
-    private final String errorKey = "error";
+
 
     /**
      * Constructor to instantiate CollectionsController
@@ -159,9 +158,15 @@ public class CollectionsController {
             IdentifiedPlant savedPlant = identifiedPlantService.getCollectionPlantById(Long.parseLong(savedPlantId));
             if (savedPlant != null && savedPlant.getGardener().equals(gardener)) {
                 if (savedPlant.getSpeciesScientificNameWithoutAuthor().isEmpty()) {
-                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to species: No Species");
+          model.addAttribute(
+              successMessageAttribute,
+              savedPlant.getName() + " has been added to species: No Species");
                 } else {
-                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to species: " + savedPlant.getSpeciesScientificNameWithoutAuthor());
+          model.addAttribute(
+              successMessageAttribute,
+              savedPlant.getName()
+                  + " has been added to species: "
+                  + savedPlant.getSpeciesScientificNameWithoutAuthor());
                 }
             }
         }
@@ -301,9 +306,11 @@ public class CollectionsController {
                 imageService.saveCollectionPlantImage(plantImage, identifiedPlant);
             }
             if (scientificName.isEmpty()) {
-                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species: No Species");
+        redirectAttributes.addFlashAttribute(
+            successMessageAttribute, plantName + " has been added to species: No Species");
             } else {
-                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species: " + scientificName);
+        redirectAttributes.addFlashAttribute(
+            successMessageAttribute, plantName + " has been added to species: " + scientificName);
             }
             return "redirect:/myCollection";
         } else {
