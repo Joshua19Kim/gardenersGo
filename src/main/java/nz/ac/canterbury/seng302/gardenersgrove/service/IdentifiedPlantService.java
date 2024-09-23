@@ -66,4 +66,11 @@ public class IdentifiedPlantService {
      */
     public Integer getCollectionPlantCount(long id) { return identifiedPlantRepository.getIdentifiedPlantByGardenerId(id).size();}
 
+    /**
+     * Gets a count of all the species in the database
+     * @param id the id of the gardener
+     * @return a count of all the species
+     */
+    public int getSpeciesCount(long id) { return identifiedPlantRepository.getSpeciesCountByGardenerId(id);}
+
 }

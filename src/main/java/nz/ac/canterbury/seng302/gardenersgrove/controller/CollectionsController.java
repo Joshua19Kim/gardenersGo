@@ -108,7 +108,8 @@ public class CollectionsController {
     @GetMapping("/myCollection")
     public String getMyCollection(
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
-            @RequestParam(name="badgeEarned", required = false) String badgeId,
+            @RequestParam(name="plantBadgeId", required = false) String plantBadgeId,
+            @RequestParam(name="speciesBadgeId", required = false) String speciesBadgeId,
             @RequestParam(name="savedPlant", defaultValue = "") String savedPlantId,
             Model model) {
 
@@ -158,18 +159,36 @@ public class CollectionsController {
         if (!model.containsAttribute(showModalAttribute)) {
             model.addAttribute(showModalAttribute, false);
         }
-
-        if(badgeId != null && !badgeId.isEmpty()) {
+        int badgeCount = 0;
+        if(speciesBadgeId != null && !speciesBadgeId.isEmpty()) {
             try {
-                long badgeIdLong = parseLong(badgeId, 10);
+                long badgeIdLong = parseLong(speciesBadgeId, 10);
+                Optional<Badge> badge = badgeService.getMyBadgeById(badgeIdLong, gardener.getId());
+                if(badge.isPresent()) {
+                    model.addAttribute("speciesBadge", badge.get());
+                    badgeCount += 1;
+                }
+
+            } catch (Exception e) {
+                logger.info(e.getMessage());
+            }
+
+        }
+        if(plantBadgeId != null && !plantBadgeId.isEmpty()) {
+            try {
+                long badgeIdLong = parseLong(plantBadgeId, 10);
                 Optional<Badge> badge = badgeService.getMyBadgeById(badgeIdLong, gardener.getId());
                 if(badge.isPresent()) {
                     model.addAttribute("plantBadge", badge.get());
+                    badgeCount += 1;
                 }
             } catch (Exception e) {
                 logger.info(e.getMessage());
             }
 
+        }
+        if(!model.containsAttribute("badgeCount")) {
+            model.addAttribute("badgeCount", badgeCount);
         }
 
         if (!savedPlantId.isEmpty()) {
@@ -310,6 +329,8 @@ public class CollectionsController {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 identifiedPlant.setDateUploaded(uploadedDate.format(formatter));
             }
+            int originalSpeciesCount = identifiedPlantService.getSpeciesCount(gardener.getId());
+
             if(plantImage.isEmpty()) {
                 identifiedPlant.setUploadedImage("/images/placeholder.jpg");
                 identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
@@ -317,16 +338,29 @@ public class CollectionsController {
                 identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                 imageService.saveCollectionPlantImage(plantImage, identifiedPlant);
             }
+            int badgeCount = 0;
             Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.getId());
             Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener, plantCount);
             if(plantBadge.isPresent()) {
                 redirectAttributes.addFlashAttribute("plantBadge", plantBadge.get());
+                badgeCount += 1;
             }
             if (scientificName.isEmpty()) {
                 redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species: No Species");
             } else {
                 redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species: " + scientificName);
             }
+            int speciesCount = identifiedPlantService.getSpeciesCount(gardener.getId());
+            if(speciesCount != originalSpeciesCount) {
+                Optional<Badge> speciesBadge = badgeService.checkSpeciesBadgeToBeAdded(gardener, speciesCount);
+                if(speciesBadge.isPresent()) {
+                    redirectAttributes.addFlashAttribute("speciesBadge", speciesBadge.get());
+                    badgeCount += 1;
+                }
+            }
+
+            redirectAttributes.addFlashAttribute("badgeCount", badgeCount);
+
             return "redirect:/myCollection";
         } else {
             redirectAttributes.addFlashAttribute("plantName", plantName);

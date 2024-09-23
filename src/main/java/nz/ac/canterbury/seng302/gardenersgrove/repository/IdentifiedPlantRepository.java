@@ -59,6 +59,9 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
 
     Page<IdentifiedPlantSpeciesImpl> getSpeciesByGardenerId(long id, Pageable pageable);
 
+    @Query(value = "select count (distinct species_scientific_name_without_author) from identifiedplant where gardener_id = ?1", nativeQuery = true)
+    Integer getSpeciesCountByGardenerId(long id);
+
     /**
      * Gets all the plant names for Identified plant in the database
      * @return all the plant names in the database

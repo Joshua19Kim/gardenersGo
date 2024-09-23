@@ -168,13 +168,23 @@ public class ScanController {
                         identifiedPlant.setDescription(validatedPlantDescription);
                     }
                     response.put("message", "Plant saved successfully");
+                    int originalSpeciesCount = identifiedPlantService.getSpeciesCount(gardener.get().getId());
                     IdentifiedPlant savedPlant = identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                     Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.get().getId());
                     Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener.get(), plantCount);
                     if(plantBadge.isPresent()) {
                         response.put("plantBadge", plantBadge.get().getId());
+                    } else {
+                        response.remove("plantBadge");
                     }
                     response.put("savedPlant", savedPlant.getId());
+                    int speciesCount = identifiedPlantService.getSpeciesCount(gardener.get().getId());
+                    if(speciesCount != originalSpeciesCount) {
+                        Optional<Badge> speciesBadge = badgeService.checkSpeciesBadgeToBeAdded(gardener.get(), speciesCount);
+                        speciesBadge.ifPresent(badge -> response.put("speciesBadge", speciesBadge.get().getId()));
+                    } else {
+                        response.remove("speciesBadge");
+                    }
                     return ResponseEntity.ok(response);
 
                 }
