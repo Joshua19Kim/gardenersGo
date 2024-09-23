@@ -10,30 +10,59 @@ import java.time.LocalDate;
 @Entity
 public class Badge {
 
+
+    /**
+     * Auto generated id used as a primary key in the database
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * The name of the badge
+     */
     @Column
     private String name;
 
+    /**
+     * The type of badge it is, either Plants, Species, or Region
+     */
     @Column
     private BadgeType badgeType;
 
+    /**
+     * The date the badge was earned
+     */
     @Column
     private LocalDate dateEarned;
 
+    /**
+     * The filename of the image for the badge
+     */
     @Column
     private String imageFilename;
 
+    /**
+     * The gardener that has the badge
+     */
     @ManyToOne
     @JoinColumn(name = "gardener_id")
     private Gardener gardener;
 
+    /**
+     * Default constructor for JPA
+     */
     public Badge(){}
 
 
-
+    /**
+     * Constructs a Badge object.
+     * @param name the name of the badge
+     * @param dateEarned the date earned of the badge
+     * @param badgeType the type of the badge
+     * @param gardener the gardener that the badge belongs to
+     * @param imageFilename the filename of the image
+     */
     public Badge(String name, LocalDate dateEarned, BadgeType badgeType, Gardener gardener, String imageFilename){
         this.name = name;
         this.dateEarned = dateEarned;

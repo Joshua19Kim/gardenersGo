@@ -54,7 +54,6 @@ public class Gardener {
 
     /** The list of gardens belonging to the gardener. */
     @OneToMany(mappedBy = "gardener")
-    @JsonIgnore
     private List<Garden> gardens;
 
     @Column(name = "ban_expiry_date")
@@ -62,7 +61,6 @@ public class Gardener {
 
     /** The list of badges belonging to the gardener. */
     @OneToMany(mappedBy = "gardener")
-    @JsonIgnore
     private List<Badge> badges;
 
 

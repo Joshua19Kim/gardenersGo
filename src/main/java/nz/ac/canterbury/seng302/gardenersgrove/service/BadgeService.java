@@ -90,8 +90,9 @@ public class BadgeService {
              case 100:
                  badge = new Badge("100th Plant Found", LocalDate.now(), BadgeType.PLANTS, gardener, "/images/badges/100PlantBadge.png" );
                  return Optional.of(addBadge(badge));
+             default:
+                 return Optional.empty();
          }
-         return Optional.empty();
 
     }
 
@@ -102,5 +103,5 @@ public class BadgeService {
      */
     public Optional<Badge> getMyBadgeById(long badgeId, long gardenerId) {
         return badgeRepository.findByIdAndGardenerId(badgeId, gardenerId);
-    };
+    }
 }

@@ -49,9 +49,8 @@ public class Garden {
   @Column(length=512)
   private String description;
 
-  /** The list of plants in the garden. */
+  /** The list of plants in the garden.*/
   @OneToMany(mappedBy = "garden")
-  @JsonIgnore
   private List<Plant> plants;
 
   /** The gardener to which the garden belongs. */

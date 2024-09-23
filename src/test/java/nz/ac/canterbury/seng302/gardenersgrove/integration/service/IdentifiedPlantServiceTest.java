@@ -19,7 +19,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.time.LocalDate;
 
 @DataJpaTest
-public class IdentifiedPlantServiceTest {
+class IdentifiedPlantServiceTest {
 
     @Autowired
     private IdentifiedPlantRepository identifiedPlantRepository;
@@ -60,7 +60,7 @@ public class IdentifiedPlantServiceTest {
     }
 
     @Test
-    public void getCollectionCountTest() {
+    void getCollectionCountTest() {
         int count = identifiedPlantService.getCollectionPlantCount(gardener.getId());
         Assertions.assertEquals(totalPlants, count);
     }

@@ -23,7 +23,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-public class BadgeServiceTest {
+class BadgeServiceTest {
 
     @Autowired
     private BadgeRepository badgeRepository;
@@ -66,7 +66,7 @@ public class BadgeServiceTest {
             "50, 50th Plant Found",
             "100, 100th Plant Found",
     })
-    public void checkPlantBadgeToBeAddedTest(int plantCount, String expectedName) {
+    void checkPlantBadgeToBeAddedTest(int plantCount, String expectedName) {
         badgeService.checkPlantBadgeToBeAdded(gardener, plantCount);
         Optional<Badge> expectedBadge = badgeService.getMyBadgeByName(expectedName, gardener.getId());
         assertTrue(expectedBadge.isPresent());
@@ -75,7 +75,7 @@ public class BadgeServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 11, 24, 49, 99, 101
     })
-    public void checkPlantBadgeToBeAddedTest(int plantCount) {
+    void checkPlantBadgeToBeAddedTest(int plantCount) {
         badgeService.checkPlantBadgeToBeAdded(gardener, plantCount);
         List<Badge> badges = badgeService.getMyBadges(gardener.getId());
         assertTrue(badges.isEmpty());
