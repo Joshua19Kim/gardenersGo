@@ -1,12 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import java.util.*;
+
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +32,7 @@ public class ScanController {
     private final IdentifiedPlantService identifiedPlantService;
     private final GardenerFormService gardenerFormService;
     private final ImageService imageService;
+    private  final BadgeService badgeService;
     private final Map<String, String> errorResponse;
     private final Map<String, Object> response;
     private IdentifiedPlant identifiedPlant;
@@ -47,13 +47,14 @@ public class ScanController {
      * @param imageService               the service for checking image validation
      */
     @Autowired
-    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService, IdentifiedPlantService identifiedPlantService) {
+    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService, IdentifiedPlantService identifiedPlantService, BadgeService badgeService) {
         this.plantIdentificationService = plantIdentificationService;
         this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
         errorResponse = new HashMap<>();
         response = new HashMap<>();
         this.identifiedPlantService = identifiedPlantService;
+        this.badgeService = badgeService;
     }
 
     /**
@@ -139,7 +140,9 @@ public class ScanController {
      */
     @PostMapping("/saveIdentifiedPlant")
     @ResponseBody
-    public ResponseEntity<?> saveIdentifiedPlant( @RequestBody Map<String, String> extra) {
+    public ResponseEntity<?> saveIdentifiedPlant(
+            @RequestBody Map<String, String> extra
+    ) {
         logger.info("POST /saveIdentifiedPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
@@ -147,16 +150,25 @@ public class ScanController {
             try {
                 String name = extra.get("name");
                 String description = extra.get("description");
+                String plantLatitude = extra.get("plantLatitude");
+                String plantLongitude = extra.get("plantLongitude");
 
                 String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(extra.get("name"));
                 String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(extra.get("description"));
+                boolean validLocation = ValidityChecker.validatePlantCoordinates(extra.get("plantLatitude"), extra.get("plantLongitude"));
+
                 boolean isValid = true;
+
                 if (!Objects.equals(name, validatedPlantName)) {
                     errorResponse.put("nameError", validatedPlantName);
                     isValid = false;
                 }
                 if (!Objects.equals(description, validatedPlantDescription)) {
                     errorResponse.put("descriptionError", validatedPlantDescription);
+                    isValid = false;
+                }
+                if (!validLocation) {
+                    errorResponse.put("locationError", "Invalid Location");
                     isValid = false;
                 }
 
@@ -166,12 +178,19 @@ public class ScanController {
                     if (descriptionPresent) {
                         identifiedPlant.setDescription(validatedPlantDescription);
                     }
+                    identifiedPlant.setPlantLatitude(plantLatitude);
+                    identifiedPlant.setPlantLongitude(plantLongitude);
                     response.put("message", "Plant saved successfully");
                     IdentifiedPlant savedPlant = identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
+                    Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.get().getId());
+                    Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener.get(), plantCount);
+                    if(plantBadge.isPresent()) {
+                        response.put("plantBadge", plantBadge.get().getId());
+                    }
                     response.put("savedPlant", savedPlant.getId());
                     return ResponseEntity.ok(response);
-
                 }
+                errorResponse.put("message", "Invalid Field");
                 return ResponseEntity.badRequest().body(errorResponse);
 
             } catch (Exception e) {
