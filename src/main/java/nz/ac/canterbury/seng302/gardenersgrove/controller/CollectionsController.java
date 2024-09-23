@@ -2,12 +2,9 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +22,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
 import java.util.stream.IntStream;
+
 import static java.lang.Long.parseLong;
 
 /**
@@ -37,13 +34,15 @@ public class CollectionsController {
     private final IdentifiedPlantService identifiedPlantService;
     Logger logger = LoggerFactory.getLogger(CollectionsController.class);
 
-    private int pageSize;
+    private final int pageSize;
 
     private final ImageService imageService;
 
     private final GardenService gardenService;
 
     private final GardenerFormService gardenerFormService;
+
+    private final BadgeService badgeService;
 
     private final RequestService requestService;
     private Gardener gardener;
@@ -62,13 +61,14 @@ public class CollectionsController {
 
     /**
      * Constructor to instantiate CollectionsController
-     * @param gardenService used in conjunction with gardener form service to populate navbar
+     *
+     * @param gardenService       used in conjunction with gardener form service to populate navbar
      * @param gardenerFormService used in conjunction with above to populate navbar
      */
     public CollectionsController(ImageService imageService, GardenService gardenService,
                                  GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService,
                                  RequestService requestService,
-                                 PlantIdentificationService plantIdentificationService) {
+                                 PlantIdentificationService plantIdentificationService, BadgeService badgeService) {
         this.imageService = imageService;
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
@@ -78,6 +78,7 @@ public class CollectionsController {
         response = new HashMap<>();
         this.requestService = requestService;
         pageSize = 12;
+        this.badgeService = badgeService;
     }
 
     /**
@@ -99,13 +100,14 @@ public class CollectionsController {
      *
      * @param pageNoString string representation of the page number used for
      *                     pagination
-     * @param model used for passing attributes to the view
+     * @param model        used for passing attributes to the view
      * @return myCollectionTemplate
      */
     @GetMapping("/myCollection")
     public String getMyCollection(
-            @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
-            @RequestParam(name="savedPlant", defaultValue = "") String savedPlantId,
+            @RequestParam(name = "pageNo", defaultValue = "0") String pageNoString,
+            @RequestParam(name = "badgeEarned", required = false) String badgeId,
+            @RequestParam(name = "savedPlant", defaultValue = "") String savedPlantId,
             Model model) {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
@@ -116,7 +118,7 @@ public class CollectionsController {
         logger.info("GET /myCollection");
         model.addAttribute("speciesList", speciesList);
         int totalPages = speciesList.getTotalPages();
-        if(totalPages > 0) {
+        if (totalPages > 0) {
             int lowerBound = Math.max(pageNo - 1, 1);
             int upperBound = Math.min(pageNo + 3, totalPages);
             List<Integer> pageNumbers = IntStream.rangeClosed(lowerBound, upperBound)
@@ -148,11 +150,24 @@ public class CollectionsController {
             logger.error("Error converting lists to JSON", e);
         }
 
-        if(!model.containsAttribute(errorOccurredAttribute)) {
+        if (!model.containsAttribute(errorOccurredAttribute)) {
             model.addAttribute(errorOccurredAttribute, false);
         }
         if (!model.containsAttribute(showModalAttribute)) {
             model.addAttribute(showModalAttribute, false);
+        }
+
+        if (badgeId != null && !badgeId.isEmpty()) {
+            try {
+                long badgeIdLong = parseLong(badgeId, 10);
+                Optional<Badge> badge = badgeService.getMyBadgeById(badgeIdLong, gardener.getId());
+                if (badge.isPresent()) {
+                    model.addAttribute("plantBadge", badge.get());
+                }
+            } catch (Exception e) {
+                logger.info(e.getMessage());
+            }
+
         }
 
         if (!savedPlantId.isEmpty()) {
@@ -172,15 +187,16 @@ public class CollectionsController {
 
     /**
      * Displays all the plants that have been added to the collection that are a part of the specified species
-     * @param speciesName the name of the species
+     *
+     * @param speciesName  the name of the species
      * @param pageNoString the page number
-     * @param model the model
+     * @param model        the model
      * @return the collection details template
      */
     @GetMapping("/collectionDetails")
     public String getSpeciesDetails(
             @RequestParam(name = "speciesName") String speciesName,
-            @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
+            @RequestParam(name = "pageNo", defaultValue = "0") String pageNoString,
             Model model) {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
@@ -191,7 +207,7 @@ public class CollectionsController {
         model.addAttribute("speciesName", speciesName);
 
         int totalPages = collectionsList.getTotalPages();
-        if(totalPages > 0) {
+        if (totalPages > 0) {
             int lowerBound = Math.max(pageNo - 1, 1);
             int upperBound = Math.min(pageNo + 3, totalPages);
             List<Integer> pageNumbers = IntStream.rangeClosed(lowerBound, upperBound)
@@ -221,23 +237,23 @@ public class CollectionsController {
      * This post method is used when the user manually adds a plant to their collection. It validates all the user inputs
      * and adds error messages where appropriate.
      *
-     * @param plantName the name of the plant
-     * @param description the description of the plant
-     * @param scientificName the scientific name of the plant
-     * @param uploadedDate the date uploaded
-     * @param isDateInvalid whether HTML picked up a date error or not
-     * @param plantImage the image uploaded for the plant
+     * @param plantName          the name of the plant
+     * @param description        the description of the plant
+     * @param scientificName     the scientific name of the plant
+     * @param uploadedDate       the date uploaded
+     * @param isDateInvalid      whether HTML picked up a date error or not
+     * @param plantImage         the image uploaded for the plant
      * @param redirectAttributes used to add flash attributes for redirection.
      * @return returns the my collection template
      */
     @PostMapping("/myCollection")
     public String addPlantToCollection(
-            @RequestParam (name="plantName") String plantName,
-            @RequestParam (name="description", required = false) String description,
-            @RequestParam (name="scientificName", required = false) String scientificName,
-            @RequestParam (name="uploadedDate", required = false) LocalDate uploadedDate,
+            @RequestParam(name = "plantName") String plantName,
+            @RequestParam(name = "description", required = false) String description,
+            @RequestParam(name = "scientificName", required = false) String scientificName,
+            @RequestParam(name = "uploadedDate", required = false) LocalDate uploadedDate,
             @RequestParam(name = "isDateInvalid", required = false) boolean isDateInvalid,
-            @RequestParam ("plantImage") MultipartFile plantImage,
+            @RequestParam("plantImage") MultipartFile plantImage,
             RedirectAttributes redirectAttributes,
             Model model
     ) {
@@ -270,35 +286,40 @@ public class CollectionsController {
             isValid = false;
         }
 
-        if(!plantImage.isEmpty()) {
+        if (!plantImage.isEmpty()) {
             Optional<String> uploadMessage = imageService.checkValidImage(plantImage);
-            if(uploadMessage.isPresent()) {
+            if (uploadMessage.isPresent()) {
                 redirectAttributes.addFlashAttribute("uploadError", uploadMessage.get());
                 isValid = false;
             }
         }
 
-        if(isValid) {
+        if (isValid) {
             IdentifiedPlant identifiedPlant = new IdentifiedPlant(plantName, gardener);
 
-            if(description != null && !description.trim().isEmpty()) {
+            if (description != null && !description.trim().isEmpty()) {
                 identifiedPlant.setDescription(description);
             }
-            if(scientificName != null && !scientificName.trim().isEmpty()) {
+            if (scientificName != null && !scientificName.trim().isEmpty()) {
                 identifiedPlant.setSpeciesScientificNameWithoutAuthor(scientificName);
             } else {
                 identifiedPlant.setSpeciesScientificNameWithoutAuthor("No Species");
             }
-            if(uploadedDate != null) {
+            if (uploadedDate != null) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 identifiedPlant.setDateUploaded(uploadedDate.format(formatter));
             }
-            if(plantImage.isEmpty()) {
+            if (plantImage.isEmpty()) {
                 identifiedPlant.setUploadedImage("/images/placeholder.jpg");
                 identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
             } else {
                 identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                 imageService.saveCollectionPlantImage(plantImage, identifiedPlant);
+            }
+            Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.getId());
+            Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener, plantCount);
+            if (plantBadge.isPresent()) {
+                redirectAttributes.addFlashAttribute("plantBadge", plantBadge.get());
             }
             if (scientificName.isEmpty()) {
                 redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species: No Species");
@@ -355,14 +376,13 @@ public class CollectionsController {
     }
 
     /**
-     *
      * @param plantIdString string version of id of plant being edited
-     * @param model used for passing attributes to the view
+     * @param model         used for passing attributes to the view
      * @return edit form or redirect back to collection
      */
     @GetMapping("/collectionDetails/edit")
     public String editIdentifiedPlant(
-            @RequestParam(name="plantId") String plantIdString,
+            @RequestParam(name = "plantId") String plantIdString,
             Model model, HttpServletRequest request) {
 
         logger.info("GET /collectionDetails/edit");
@@ -390,10 +410,10 @@ public class CollectionsController {
     /**
      * Handles the submission of the edit plant form.
      *
-     * @param name The updated name of the plant.
-     * @param description The updated description of the plant.
+     * @param name          The updated name of the plant.
+     * @param description   The updated description of the plant.
      * @param plantIdString The string ID of the plant being edited.
-     * @param model The model for passing data to the view.
+     * @param model         The model for passing data to the view.
      * @return The template for the edit plant form or redirects to the garden details page.
      */
     @PostMapping("collectionDetails/edit")

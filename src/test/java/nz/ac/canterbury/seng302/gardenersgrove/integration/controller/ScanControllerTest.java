@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
+import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -34,6 +35,10 @@ public class ScanControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private GardenerFormService gardenerFormService;
+
+    @MockBean
+    private BadgeService badgeService;
+
     @MockBean
     private GardenService gardenService;
     @MockBean
@@ -44,9 +49,11 @@ public class ScanControllerTest {
     private ImageService imageService;
     private MockMultipartFile imageFile;
 
+    Gardener testGardener;
+
     @BeforeEach
     void setUp() throws IOException {
-        Gardener testGardener = new Gardener("Test", "Gardener",
+        testGardener = new Gardener("Test", "Gardener",
                 LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
                 "Password1!");
         Mockito.reset(gardenerFormService);
@@ -187,6 +194,8 @@ public class ScanControllerTest {
     String description = "Cool plant";
     IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
 
+      when(identifiedPlantService.getCollectionPlantCount(testGardener.getId())).thenReturn(1);
+
     this.mockMvc
         .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
         .andExpect(status().isOk());
@@ -195,13 +204,16 @@ public class ScanControllerTest {
 
 
     this.mockMvc
-    .perform(
-        MockMvcRequestBuilders.multipart("/saveIdentifiedPlant")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonBody)
-            .with(csrf()))
-    .andExpect(status().isOk())
-    .andExpect(jsonPath("$.message").value("Plant saved successfully"));
+        .perform(
+            MockMvcRequestBuilders.multipart("/saveIdentifiedPlant")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody)
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message").value("Plant saved successfully"));
+
+      verify(badgeService, times(1)).checkPlantBadgeToBeAdded(testGardener, 1);
+      verify(identifiedPlantService, times(1)).getCollectionPlantCount(testGardener.getId());
   }
 
     @Test
@@ -265,6 +277,7 @@ public class ScanControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonBody = objectMapper.writeValueAsString(requestBody);
 
+
         this.mockMvc
                 .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
                 .andExpect(status().isOk());
@@ -276,6 +289,9 @@ public class ScanControllerTest {
                                 .content(jsonBody)
                                 .with(csrf()))
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.nameError").value("Plant name cannot be empty and must only include letters, spaces, hyphens or apostrophes <br/>"));
+
+        verify(badgeService, never()).checkPlantBadgeToBeAdded(eq(testGardener), anyInt());
+        verify(identifiedPlantService, never()).getCollectionPlantCount(testGardener.getId());
     }
 
     @Test

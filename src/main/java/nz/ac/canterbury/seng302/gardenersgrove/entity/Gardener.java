@@ -58,6 +58,10 @@ public class Gardener {
     @Column(name = "ban_expiry_date")
     private Date banExpiryDate;
 
+    /** The list of badges belonging to the gardener. */
+    @OneToMany(mappedBy = "gardener")
+    private List<Badge> badges;
+
 
     /**
      * JPA required no-args constructor

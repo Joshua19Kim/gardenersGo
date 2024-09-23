@@ -214,8 +214,13 @@ goToCollectionButton.addEventListener('click', function() {
             return response.json();
         })
         .then(data => {
+            var plantBadge = data.plantBadge;
             var modal = bootstrap.Modal.getInstance(successModal);
-            window.location.href = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}`;
+            if(plantBadge !== undefined) {
+                window.location.href = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}&badgeEarned=` + plantBadge;
+            } else {
+                window.location.href = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}`;
+            }
             refreshFields()
             modal.hide();
         })
