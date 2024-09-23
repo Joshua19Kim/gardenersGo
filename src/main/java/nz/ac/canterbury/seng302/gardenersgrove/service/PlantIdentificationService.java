@@ -41,7 +41,7 @@ public class PlantIdentificationService {
     Logger logger = LoggerFactory.getLogger(PlantIdentificationService.class);
     private static final String PROJECT = "all";
     private static final String API_URL = "https://my-api.plantnet.org/v2/identify/";
-    private static final String IMAGE_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
+    private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
 
     private final String apiKey;
     private final ObjectMapper objectMapper;
