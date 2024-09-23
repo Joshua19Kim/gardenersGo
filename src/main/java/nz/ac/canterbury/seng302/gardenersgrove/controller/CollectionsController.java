@@ -174,9 +174,9 @@ public class CollectionsController {
             IdentifiedPlant savedPlant = identifiedPlantService.getCollectionPlantById(Long.parseLong(savedPlantId));
             if (savedPlant != null && savedPlant.getGardener().equals(gardener)) {
                 if (savedPlant.getSpeciesScientificNameWithoutAuthor().isEmpty()) {
-                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to species: No Species");
+                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to collection");
                 } else {
-                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to species: " + savedPlant.getSpeciesScientificNameWithoutAuthor());
+                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to collection: " + savedPlant.getSpeciesScientificNameWithoutAuthor());
                 }
             }
         }
@@ -244,7 +244,7 @@ public class CollectionsController {
      * @param isDateInvalid      whether HTML picked up a date error or not
      * @param plantImage         the image uploaded for the plant
      * @param redirectAttributes used to add flash attributes for redirection.
-     * @return returns the my collection template
+     * @return returns my collection template
      */
     @PostMapping("/myCollection")
     public String addPlantToCollection(
@@ -322,9 +322,9 @@ public class CollectionsController {
                 redirectAttributes.addFlashAttribute("plantBadge", plantBadge.get());
             }
             if (scientificName.isEmpty()) {
-                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species: No Species");
+                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to collection");
             } else {
-                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species: " + scientificName);
+                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to collection: " + scientificName);
             }
             return "redirect:/myCollection";
         } else {
