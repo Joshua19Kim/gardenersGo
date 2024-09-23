@@ -10,7 +10,7 @@
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="collection-container">
     <!-- Notification for successfully adding a new plant manually -->
-    <div th:if="${successMessage}" class="alert alert-warning alert-dismissible fade show w-50 m-auto text-center mb-3" role="alert">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show w-50 m-auto text-center mb-3" role="alert">
         <p class="m-auto" th:text="${successMessage}"></p>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
