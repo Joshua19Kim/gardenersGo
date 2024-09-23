@@ -1,18 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-import netscape.javascript.JSObject;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -23,10 +19,6 @@ import java.util.Optional;
  */
 @Controller
 public class LeafletOSMController {
-    private static final Logger log = LogManager.getLogger(LeafletOSMController.class);
-//    private JavaScriptBridge javaScriptBridge;
-    private JSObject javaScriptConnector;
-
     private GardenerFormService gardenerFormService;
     private IdentifiedPlantService identifiedPlantService;
     private Gardener gardener;
@@ -57,20 +49,11 @@ public class LeafletOSMController {
      **/
     @GetMapping("/map")
     public String map(Model model) {
-
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
         List<IdentifiedPlant> scannedPlants = identifiedPlantService.getGardenerPlants(gardener.getId());
-
-//        model.addAttribute("scannedPlants", scannedPlants);
-        // Plant coords must be a list of doubles, as seen below
-        List<Double> testData = List.of(-43.522897, 172.579027);
-
-        model.addAttribute("scannedPlants", testData);
-
+        model.addAttribute("scannedPlants", scannedPlants);
         return "mapTemplate";
     }
-
 }
-
