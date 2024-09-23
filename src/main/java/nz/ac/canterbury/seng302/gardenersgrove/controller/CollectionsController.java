@@ -174,7 +174,7 @@ public class CollectionsController {
             IdentifiedPlant savedPlant = identifiedPlantService.getCollectionPlantById(Long.parseLong(savedPlantId));
             if (savedPlant != null && savedPlant.getGardener().equals(gardener)) {
                 if (savedPlant.getSpeciesScientificNameWithoutAuthor().isEmpty()) {
-                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to species: No Species");
+                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to collection");
                 } else {
                     model.addAttribute("successMessage", savedPlant.getName() + " has been added to species: " + savedPlant.getSpeciesScientificNameWithoutAuthor());
                 }
@@ -322,7 +322,7 @@ public class CollectionsController {
                 redirectAttributes.addFlashAttribute("plantBadge", plantBadge.get());
             }
             if (scientificName.isEmpty()) {
-                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species: No Species");
+                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to collection");
             } else {
                 redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to species: " + scientificName);
             }
