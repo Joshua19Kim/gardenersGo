@@ -14,11 +14,13 @@ import java.util.Optional;
 @Repository
 public interface FollowerRepository extends CrudRepository<Follower, Long> {
     Optional<Follower> findById(long id);
+
     List<Follower> findAll();
 
     Optional<Follower> findByGardenerIdAndGardenId(long gardenerId, long gardenId);
 
     List<Follower> findAllByGardenerId(Long id);
+
     List<Follower> findAllByGardenId(Long id);
 
 }

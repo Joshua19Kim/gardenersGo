@@ -52,24 +52,27 @@ public class Badge {
     /**
      * Default constructor for JPA
      */
-    public Badge(){}
+    public Badge() {
+    }
 
 
     /**
      * Constructs a Badge object.
-     * @param name the name of the badge
-     * @param dateEarned the date earned of the badge
-     * @param badgeType the type of the badge
-     * @param gardener the gardener that the badge belongs to
+     *
+     * @param name          the name of the badge
+     * @param dateEarned    the date earned of the badge
+     * @param badgeType     the type of the badge
+     * @param gardener      the gardener that the badge belongs to
      * @param imageFilename the filename of the image
      */
-    public Badge(String name, LocalDate dateEarned, BadgeType badgeType, Gardener gardener, String imageFilename){
+    public Badge(String name, LocalDate dateEarned, BadgeType badgeType, Gardener gardener, String imageFilename) {
         this.name = name;
         this.dateEarned = dateEarned;
         this.badgeType = badgeType;
-        this.gardener= gardener;
+        this.gardener = gardener;
         this.imageFilename = imageFilename;
     }
+
     public Long getId() {
         return id;
     }
