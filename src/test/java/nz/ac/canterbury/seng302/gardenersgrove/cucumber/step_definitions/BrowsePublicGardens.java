@@ -1,8 +1,17 @@
 package nz.ac.canterbury.seng302.gardenersgrove.cucumber.step_definitions;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import java.net.http.HttpResponse;
+import java.util.List;
+import java.util.Optional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -20,17 +29,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.FlashMap;
-
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class BrowsePublicGardens {
@@ -86,7 +84,7 @@ public class BrowsePublicGardens {
 
     @Given("I want to follow a garden with the name {string}")
     public void I_want_to_follow_a_garden_with_the_name(String gardenName) {
-        Garden garden = new Garden(gardenName, "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
+        garden = new Garden(gardenName, "99 test address", null, "Christchurch", "New Zealand", null, "9999", testGardener, "");
         garden.setIsGardenPublic(true);
         gardenService.addGarden(garden);
         gardenToFollow = garden;
@@ -179,7 +177,7 @@ public class BrowsePublicGardens {
     @Then("It should display the correct follower count")
     public void it_should_display_the_correct_follower_count() {
         MvcResult mvcResult = resultActions.andReturn();
-        assertEquals(mvcResult.getModelAndView().getModel().get("followerCount"), 1);
+        assertEquals(1,mvcResult.getModelAndView().getModel().get("followerCount"));
     }
 
     @Given("I have a public garden with the name {string} that has no followers")
@@ -193,15 +191,14 @@ public class BrowsePublicGardens {
     @Then("It should display a message indicating {string}")
     public void it_should_display_a_message_indicating(String message) {
         MvcResult mvcResult = resultActions.andReturn();
-        assertEquals(mvcResult.getModelAndView().getModel().get("followerCount"), 0);
+        assertEquals(0,mvcResult.getModelAndView().getModel().get("followerCount"));
     }
 
     @Then("There should be a followers section that lists the follower’s name")
     public void there_should_be_a_followers_section_that_lists_the_follower_s_name() {
         MvcResult mvcResult = resultActions.andReturn();
         List<Follower> followerList = (List<Follower>) mvcResult.getModelAndView().getModel().get("followerList");
-        assertEquals(followerList.getFirst().getGardenerId(), testGardener.getId());
-        assertEquals(followerList.getFirst().getGardenerName(), testGardener.getFullName());
-
+    assertEquals(followerList.get(0).getGardenerId(), testGardener.getId());
+    assertEquals(followerList.get(0).getGardenerName(), testGardener.getFullName());
     }
 }

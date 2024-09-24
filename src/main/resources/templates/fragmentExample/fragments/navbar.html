@@ -108,6 +108,13 @@
                     <!-- Spacer -->
                     <li class="nav-item flex-grow-1"></li>
 
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/map}" tabindex="10">Map</a>
+                    </li>
+
+                    <!-- Spacer -->
+                    <li class="nav-item flex-grow-1"></li>
+
                         <li class="nav-item-dropdown dropdown">
                             <button class="btn btn-link p-0 mt-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" tabindex="10">
                                 <img id="userIcon" class="dropdown-toggle" style="max-width: 30px; object-fit: contain;" th:href="@{/user}" alt="Account">
@@ -117,7 +124,7 @@
                                 <a class="nav-link" th:href="@{/user}" >My Profile</a>
                             </li>
                             <div class="dropdown-divider"></div>
-                            <li class="nav-item" sec:authorize="isAuthenticated()" tabindex="12">
+                            <li class="nav-item" sec:authorize="isAuthenticated()" tabindex="13">
                                 <a class="nav-link" href="#" onclick="logout(event)">Logout</a>
                                 <form id="logoutForm" method="POST" style="display: none;" th:action="@{/logout}">
                                     <input type="submit" value="Logout"/>
