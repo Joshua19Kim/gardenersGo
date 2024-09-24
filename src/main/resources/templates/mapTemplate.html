@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Leaflet & OSM Map Demo</title>
+    <link rel="stylesheet" href="/webjars/leaflet/1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="/webjars/leaflet-markercluster/1.4.1/MarkerCluster.css" />
+    <link rel="stylesheet" href="/webjars/leaflet-markercluster/1.4.1/MarkerCluster.Default.css" />
+
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script src="/webjars/leaflet/1.9.4/dist/leaflet.js"></script>
+<script src="/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js"></script>
+<script >
+
+
+    /**
+     * creates and initialises the Google map, also defines on click event that calls java code
+     */
+
+    var southWest = L.latLng(-55, 148.038821);
+    var northEast = L.latLng(-28,200);
+    var maxBoundArea = L.latLngBounds(southWest, northEast)
+    var map = L.map('map', {
+        center: [-40.9, 174.88],
+        zoom: 5.2,
+        maxBounds: maxBoundArea,
+        minZoom: 5.2,
+        maxZoom: 18
+    });
+    new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
+        attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
+    }).addTo(map);
+
+    var markers = new L.MarkerClusterGroup();
+    markers.addLayer(L.marker([-43.522897, 172.579027]));
+    markers.addLayer(L.marker([-43.520474, 172.577027]));
+    map.addLayer(markers);
+</script>
+</body>
+</html>

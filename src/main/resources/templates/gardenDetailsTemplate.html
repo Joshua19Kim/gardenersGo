@@ -16,8 +16,8 @@
                     <span th:text="${garden.name}"></span>
                 </h1>
             </div>
-            <div class="col-6 flex-row-reverse d-flex">
-                <div>
+            <div class="col-6 flex-row-reverse d-flex justify-content-center align-items-center">
+                <div class="d-flex flex-column">
                     <a th:href="@{../gardens/edit(gardenId=${garden.id})}" class="btn btn-primary m-2 mw-50 min-w-25 h-60" style="width:100%;" role="button">Edit
                         Garden</a>
                 </div>
@@ -34,9 +34,6 @@
                         </script>
                     </form>
                 </div>
-
-
-
             </div>
 
 

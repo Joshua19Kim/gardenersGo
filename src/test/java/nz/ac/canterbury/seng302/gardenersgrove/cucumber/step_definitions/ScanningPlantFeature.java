@@ -7,6 +7,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
+import nz.ac.canterbury.seng302.gardenersgrove.service.BadgeService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
 import org.junit.jupiter.api.Assertions;
@@ -38,6 +39,8 @@ public class ScanningPlantFeature {
   private IdentifiedPlantService identifiedPlantService;
   @Autowired
   private GardenerFormService gardenerFormService;
+  @Autowired
+  private BadgeService badgeService;
   private MockMultipartFile imageFile;
   private String errorMessage;
   private String inputName;

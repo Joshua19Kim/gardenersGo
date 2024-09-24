@@ -416,4 +416,27 @@ public class ValidityChecker {
         return Optional.of(result);
     }
 
+    /**
+     * Check validation of latitude and longitude of plant location
+     * @param plantLatitude Latitude of plant location
+     * @param plantLongitude Longitude of plant location
+     * @return if valid coordinates, return true. Otherwise, return false
+     */
+
+    public static boolean validatePlantCoordinates(String plantLatitude, String plantLongitude) {
+        try {
+            if ((plantLongitude == null || plantLatitude == null  || (plantLongitude.isBlank() && plantLatitude.isBlank()))) {
+                return true;
+            }
+            double plantLat = Double.parseDouble(plantLatitude);
+            double plantLon = Double.parseDouble(plantLongitude);
+            return plantLat <= 90 && plantLat >= -90 && plantLon >= -180 && plantLon <= 180;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+
+
 }

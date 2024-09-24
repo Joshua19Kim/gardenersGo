@@ -50,11 +50,11 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
      */
 
     @Query(value = "SELECT p.species_scientific_name_without_author AS speciesName, " +
-            "p.image_url AS imageUrl, COUNT(*) AS count " +
+            "MIN(p.image_url) AS imageUrl, COUNT(*) AS count " +
             "FROM identifiedplant p " +
             "JOIN gardener g ON p.gardener_id = g.gardener_id " +
             "WHERE g.gardener_id = :id " +
-            "GROUP BY p.species_scientific_name_without_author, p.image_url",
+            "GROUP BY p.species_scientific_name_without_author",
             nativeQuery = true)
 
     Page<IdentifiedPlantSpeciesImpl> getSpeciesByGardenerId(long id, Pageable pageable);
@@ -89,4 +89,5 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
     @Query(value = "SELECT * FROM identifiedplant WHERE species_scientific_name_without_author = :name", nativeQuery = true)
     List<IdentifiedPlant> getPlantDetailsWithSpeciesScientificName(String name);
 
+    List<IdentifiedPlant> getIdentifiedPlantByGardenerId(long id);
 }
