@@ -43,10 +43,11 @@
         var scannedPlants = /*[[${scannedPlants}]]*/ [];
         scannedPlants.forEach(function (scannedPlant) {
             if (scannedPlant.plantLatitude != null && scannedPlant.plantLongitude != null && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
+                var image = '<img src="' + scannedPlant.imageUrl + '" alt="" height="150px" width="150px"/>';
                 L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
                     .addTo(map)
                     .bindPopup('<b>Plant name: </b>' + scannedPlant.name + '<br>' + '<b>Date scanned: </b>' + scannedPlant.dateUploaded + '<br>' +
-                        "<img src='uploads/plant_1.jpeg'"
+                        image
                     );
             }
         /*]]>*/
