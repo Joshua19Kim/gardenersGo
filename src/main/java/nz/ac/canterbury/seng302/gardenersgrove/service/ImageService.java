@@ -122,7 +122,6 @@ public class ImageService {
                 }
                 Files.write(filePath, file.getBytes());
                 plant.setImage(UPLOADS_DIR + newFileName);
-                logger.info(UPLOADS_DIR + newFileName);
                 plantService.addPlant(plant);
                 return Optional.empty();
             } else {
