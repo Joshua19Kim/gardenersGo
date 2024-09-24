@@ -1,14 +1,20 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpeciesImpl;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+
+/**
+ * Service responsible for saving identified plants to the repository and retrieve them for us in
+ * the My Collections page
+ */
+
 
 @Service
 public class IdentifiedPlantService {
@@ -60,12 +66,13 @@ public class IdentifiedPlantService {
         return identifiedPlantRepository.getSpeciesByGardenerId(gardenerId, pageable);
     }
 
-    /**
-     * Gets a plant by its id
-     * @param id the id of the plant
-     * @return a plant if found
-     */
-    public IdentifiedPlant getCollectionPlantById(long id) {
+  /**
+   * Gets the IdentifiedPlant by ID specifically
+   *
+   * @param id the ID of the specific plant in the collection
+   * @return the related IdentifiedPlant if found
+   */
+  public IdentifiedPlant getCollectionPlantById(long id) {
         return identifiedPlantRepository.findById(id);
     }
 
