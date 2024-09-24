@@ -165,33 +165,8 @@ public class CollectionsController {
             model.addAttribute(showModalAttribute, false);
         }
         int badgeCount = 0;
-        if(speciesBadgeId != null && !speciesBadgeId.isEmpty()) {
-            try {
-                long badgeIdLong = parseLong(speciesBadgeId, 10);
-                Optional<Badge> badge = badgeService.getMyBadgeById(badgeIdLong, gardener.getId());
-                if(badge.isPresent()) {
-                    model.addAttribute("speciesBadge", badge.get());
-                    badgeCount += 1;
-                }
-
-            } catch (Exception e) {
-                logger.info(e.getMessage());
-            }
-
-        }
-        if(plantBadgeId != null && !plantBadgeId.isEmpty()) {
-            try {
-                long badgeIdLong = parseLong(plantBadgeId, 10);
-                Optional<Badge> badge = badgeService.getMyBadgeById(badgeIdLong, gardener.getId());
-                if(badge.isPresent()) {
-                    model.addAttribute("plantBadge", badge.get());
-                    badgeCount += 1;
-                }
-            } catch (Exception e) {
-                logger.info(e.getMessage());
-            }
-
-        }
+        badgeCount = badgeService.addBadgeToModel(plantBadgeId, "plantBadge", gardener, badgeCount, model);
+        badgeCount = badgeService.addBadgeToModel(speciesBadgeId, "speciesBadge", gardener, badgeCount, model);
         if(!model.containsAttribute("badgeCount")) {
             model.addAttribute("badgeCount", badgeCount);
         }

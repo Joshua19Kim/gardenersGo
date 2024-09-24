@@ -1,21 +1,29 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BadgeType;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.BadgeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static java.lang.Long.parseLong;
 
 /**
  *  Service class for the badge repository
  */
 @Service
 public class BadgeService {
+
+    Logger logger = LoggerFactory.getLogger(BadgeService.class);
 
     private List<String> badgeNames;
     private BadgeRepository badgeRepository;
@@ -132,5 +140,23 @@ public class BadgeService {
                 return Optional.empty();
         }
 
+    }
+
+    public int addBadgeToModel(String badgeId, String badgeName,  Gardener gardener, int badgeCount, Model model) {
+        if(badgeId != null && !badgeId.isEmpty()) {
+            try {
+                long badgeIdLong = parseLong(badgeId, 10);
+                Optional<Badge> badge = getMyBadgeById(badgeIdLong, gardener.getId());
+                if(badge.isPresent()) {
+                    model.addAttribute(badgeName, badge.get());
+                    badgeCount += 1;
+                }
+
+            } catch (Exception e) {
+                logger.info(e.getMessage());
+            }
+
+        }
+        return badgeCount;
     }
 }
