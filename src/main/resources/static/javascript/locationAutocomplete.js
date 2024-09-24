@@ -2,16 +2,23 @@
 
 document.addEventListener('DOMContentLoaded', function () {
     const scanningAddressInput = document.getElementById('scanningLocation');
+    const manualAddAddressInput = document.getElementById('manualAddLocation');
     const addressInput = document.getElementById('location') || null;
     const suburbInput = document.getElementById('suburb') || null;
     const cityInput = document.getElementById('city') || null;
     const countryInput = document.getElementById('country') || null;
     const postcodeInput = document.getElementById('postcode') || null;
     const autocompleteResults = document.getElementById('autocomplete-results') || null;
+    const manualAddAutocompleteResults = document.getElementById('manual-add-autocomplete-results') || null;
     const scanningAutocompleteResults = document.getElementById('scanning-autocomplete-results');
     const locationUpdateMssg = document.getElementById("locationUpdateMssg") || null;
+    const manualAddLocationUpdateMssg = document.getElementById("manualAddLocationUpdateMssg") || null;
+
     const plantLat = document.getElementById('plantLat') || null;
     const plantLon = document.getElementById('plantLon') || null;
+
+    const manualPlantLat = document.getElementById('plantLat') || null;
+    const manualPlantLon = document.getElementById('plantLon') || null;
 
     const xmlRequest = new XMLHttpRequest();
     let address;
@@ -23,7 +30,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    manualAddAddressInput.addEventListener('input', function () {
+        address = manualAddAddressInput;
+        if (this.value.trim() === '') {
+            manualPlantLat.value = '';
+            manualPlantLon.value = '';
+            manualAddLocationUpdateMssg.innerHTML = "";
+        } else {
+            if (manualPlantLat.value === '' && manualPlantLon.value === '') {
+                manualAddLocationUpdateMssg.innerHTML = "Search and select a verified address from the list to show it on map."
+                manualAddLocationUpdateMssg.style.color = "blue";
+            }
+        }
+        getResult(manualAddAutocompleteResults);
+    });
+
     scanningAddressInput.addEventListener('input', function () {
+        console.log("working!");
         address = scanningAddressInput;
         if (this.value.trim() === '') {
             plantLat.value = '';
@@ -36,10 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         getResult(scanningAutocompleteResults);
-
     });
-
-
 
     function getResult(resultBox) {
         const inputValue = address.value.trim();
@@ -122,13 +142,24 @@ document.addEventListener('DOMContentLoaded', function () {
                         fillAddressDetails(result);
                     } else {
                         const addressInputValue = `${result.address.house_number || ''} ${result.address.road || ''} ${result.address.city || ''} ${result.address.country || ''}`;
+
+                        if (manualAddAddressInput.value !== '') {
+                            plantLat.value = result.lat;
+                            plantLon.value = result.lon;
+                            manualAddLocationUpdateMssg.innerHTML = "The location has been verified : <br/>" + addressInputValue;
+                            manualAddLocationUpdateMssg.style.color = "green";
+                            manualAddAddressInput.value = addressInputValue.trim();
+                        }
+
+
                         if (scanningAddressInput.value !== '') {
                             plantLat.value = result.lat;
                             plantLon.value = result.lon;
                             locationUpdateMssg.innerHTML = "The location has been verified : <br/>" + addressInputValue;
                             locationUpdateMssg.style.color = "green";
+                            scanningAddressInput.value = addressInputValue.trim();
                         }
-                        scanningAddressInput.value = addressInputValue.trim();
+
                     }
                     hideAutocompleteResults(resultBox);
                 });

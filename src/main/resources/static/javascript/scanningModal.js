@@ -19,7 +19,6 @@ const waitingSpinnerHtml = '<div class="text-center"><div class="spinner-border"
 
 // finding location
 const locationUpdateMssg = document.getElementById("locationUpdateMssg") || null;
-const geolocationUpdateMssg = document.getElementById("geolocationUpdateMssg");
 const plantLat = document.getElementById('plantLat');
 const plantLon = document.getElementById('plantLon');
 
@@ -276,68 +275,3 @@ document.getElementById("identifiedPlantNameForm").addEventListener("keydown", f
 });
 
 
-document.getElementById('locationToggle').addEventListener('change', function() {
-    if (this.checked) {
-        geolocationUpdateMssg.innerHTML = waitingSpinnerHtml;
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(setCoordinates, showError);
-            disableLocationInput(true);
-        } else {
-            geolocationUpdateMssg.innerHTML = "Geolocation is not supported by this browser.";
-            disableLocationInput(false);
-        }
-    } else {
-        geolocationUpdateMssg.innerHTML = '';
-        disableLocationInput(false);
-        scanningAutocompleteResults.style.display = 'block';
-    }
-    geolocationUpdateMssg.style.color = "green";
-
-});
-
-function showError(error) {
-    document.getElementById('locationToggle').checked = false;
-    disableLocationInput(false);
-    scanningAutocompleteResults.style.display = 'block';
-    geolocationUpdateMssg.style.color = "red";
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            geolocationUpdateMssg.innerHTML = "Current Location permission denied."
-            break;
-        case error.POSITION_UNAVAILABLE:
-            geolocationUpdateMssg.innerHTML = "Location information is unavailable."
-            break;
-        case error.TIMEOUT:
-            geolocationUpdateMssg.innerHTML = "The request to get user location timed out."
-            break;
-        case error.UNKNOWN_ERROR:
-            geolocationUpdateMssg.innerHTML = "An unknown error occurred."
-            break;
-    }
-}
-
-function setCoordinates(position) {
-    if (document.getElementById("successModal").classList.contains("show")) {
-        plantLat.value = position.coords.latitude.toString();
-        plantLon.value = position.coords.longitude.toString();
-        geolocationUpdateMssg.innerHTML = 'Current location saved.';
-
-    }
-}
-
-// when user clicks 'use current location', disable the input field for searching location.
-function disableLocationInput(disable) {
-    scanningLocation.disabled = disable;
-    if (disable) {
-        locationUpdateMssg.innerHTML = "";
-        scanningLocation.value = "";
-        scanningAutocompleteResults.style.display = 'none';
-        scanningAutocompleteResults.classList.remove('visible');
-        scanningLocation.classList.add('disabled');
-    } else {
-        scanningLocation.classList.remove('disabled');
-        plantLat.value = '';
-        plantLon.value = '';
-    }
-}
