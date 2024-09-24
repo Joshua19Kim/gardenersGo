@@ -33,11 +33,10 @@
 
 <script src="/webjars/leaflet/1.9.4/dist/leaflet.js"></script>
 <script src="/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js"></script>
-<script >
+<script th:inline="javascript">
     /**
-     * creates and initialises the Google map, also defines on click event that calls java code
+     * creates and initialises the map, also defines on click event that calls java code
      */
-
     var southWest = L.latLng(-55, 148.038821);
     var northEast = L.latLng(-28,200);
     var maxBoundArea = L.latLngBounds(southWest, northEast)
@@ -52,21 +51,17 @@
         attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
     }).addTo(map);
 
-    var markers = new L.MarkerClusterGroup();
-    markers.addLayer(L.marker([-43.522897, 172.579027]));
-    markers.addLayer(L.marker([-43.520474, 172.577027]));
-    map.addLayer(markers);
-
-    // Dynamically adjust map height based on the navbar height - need to do this because navbar does not have a set height
-    function resizeMap() {
-        const navbarHeight = document.querySelector('nav').offsetHeight;
-        const map = document.getElementById('map');
-        map.style.height = `calc(100vh - ${navbarHeight}px)`;
-    }
-
-    // Adjust the map height on window resize
-    window.addEventListener('resize', resizeMap);
-    window.addEventListener('load', resizeMap);
+    document.addEventListener("DOMContentLoaded", function() {
+        /*<![CDATA[*/
+        var scannedPlants = /*[[${scannedPlants}]]*/ [];
+        scannedPlants.forEach(function (scannedPlant) {
+            if (scannedPlant.plantLatitude != null && scannedPlant.plantLongitude != null && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
+                L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
+                    .addTo(map)
+            }
+        /*]]>*/
+        });
+    });
 </script>
 </body>
 </html>
