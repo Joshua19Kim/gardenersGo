@@ -142,6 +142,15 @@ public class BadgeService {
 
     }
 
+    /**
+     * Adds the badge to the specific model if it exists
+     * @param badgeId the badge id
+     * @param badgeName the badge name
+     * @param gardener the gardener
+     * @param badgeCount the badge count
+     * @param model the model
+     * @return the badge count
+     */
     public int addBadgeToModel(String badgeId, String badgeName,  Gardener gardener, int badgeCount, Model model) {
         if(badgeId != null && !badgeId.isEmpty()) {
             try {
