@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpeciesImpl;
@@ -48,6 +49,9 @@ class CollectionsControllerTest {
 
     @MockBean
     private PlantIdentificationService plantIdentificationService;
+
+    @MockBean
+    private BadgeService badgeService;
 
     @MockBean
     private IdentifiedPlantService identifiedPlantService;
@@ -98,6 +102,7 @@ class CollectionsControllerTest {
         when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
         doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
         when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
+        when(identifiedPlantService.getCollectionPlantCount(gardener.getId())).thenReturn(1);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/myCollection")
                 .file(mockMultipartFile)
@@ -110,6 +115,10 @@ class CollectionsControllerTest {
 
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/myCollection"));
+
+
+        verify(badgeService, times(1)).checkPlantBadgeToBeAdded(gardener, 1);
+        verify(identifiedPlantService, times(1)).getCollectionPlantCount(gardener.getId());
     }
 
     @Test
@@ -144,7 +153,7 @@ class CollectionsControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/myCollection"))
                 .andExpect(flash().attributeExists("successMessage"))
-                .andExpect(flash().attribute("successMessage", "My Plant has been added to species: Plant Species"));
+                .andExpect(flash().attribute("successMessage", "My Plant has been added to collection: Plant Species"));
     }
 
     @Test
@@ -167,7 +176,7 @@ class CollectionsControllerTest {
                 .param("savedPlant", identifiedPlant.getId().toString()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(model().attributeExists("successMessage"))
-                .andExpect(model().attribute("successMessage", "My Plant has been added to species: Plant Species"));
+                .andExpect(model().attribute("successMessage", "My Plant has been added to collection: Plant Species"));
     }
 
     @Test
@@ -223,6 +232,9 @@ class CollectionsControllerTest {
                 .andExpect(flash().attribute("scientificName", species))
                 .andExpect(flash().attribute("uploadedDate", date))
                 .andExpect(flash().attribute("errorOccurred", true));
+
+        verify(badgeService, never()).checkPlantBadgeToBeAdded(eq(gardener), anyInt());
+        verify(identifiedPlantService, never()).getCollectionPlantCount(gardener.getId());
     }
 
 }

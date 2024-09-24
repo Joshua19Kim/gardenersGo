@@ -57,10 +57,17 @@ public class IdentifiedPlantService {
    * Gets the IdentifiedPlant by ID specifically
    *
    * @param id the ID of the specific plant in the collection
-   * @return the related IdentifiedPlant
+   * @return the related IdentifiedPlant if found
    */
   public IdentifiedPlant getCollectionPlantById(long id) {
         return identifiedPlantRepository.findById(id);
     }
+
+    /**
+     * Gets all plants for a gardener
+     * @param id gardener's id
+     * @return returns the count for a gardener
+     */
+    public Integer getCollectionPlantCount(long id) { return identifiedPlantRepository.getIdentifiedPlantByGardenerId(id).size();}
 
 }
