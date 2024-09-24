@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.PrevWeather;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Weather;
 
 /**
  * Utility class for generating notifications and tips related to garden care based on weather conditions.

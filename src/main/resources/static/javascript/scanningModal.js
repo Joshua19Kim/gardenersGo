@@ -215,12 +215,16 @@ goToCollectionButton.addEventListener('click', function() {
         })
         .then(data => {
             var plantBadge = data.plantBadge;
+            var speciesBadge = data.speciesBadge;
             var modal = bootstrap.Modal.getInstance(successModal);
+            var windowLocation = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}`;
             if(plantBadge !== undefined) {
-                window.location.href = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}&badgeEarned=` + plantBadge;
-            } else {
-                window.location.href = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}`;
+                windowLocation += `&plantBadgeId=` + plantBadge;
             }
+            if(speciesBadge !== undefined) {
+                windowLocation += `&speciesBadgeId=` + speciesBadge;
+            }
+            window.location.href = windowLocation;
             refreshFields()
             modal.hide();
         })

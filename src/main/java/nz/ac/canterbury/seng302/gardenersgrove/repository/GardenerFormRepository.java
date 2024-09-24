@@ -18,7 +18,9 @@ import java.util.Optional;
 @Repository
 public interface GardenerFormRepository extends CrudRepository<Gardener, Long> {
     Optional<Gardener> findById(long id);
+
     List<Gardener> findAll();
+
     Optional<Gardener> findByEmail(String email);
 
     // The following method is only used when testing the ban functionality

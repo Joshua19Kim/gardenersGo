@@ -1,8 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 /**
  * Entity class representing a visit of a user to a garden.
@@ -12,33 +12,44 @@ import java.util.Optional;
 @Table(name = "garden_visit")
 public class GardenVisit {
 
-    /** The unique identifier for the visit to the garden. */
+    /**
+     * The unique identifier for the visit to the garden.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** The gardener who visited the garden. */
+    /**
+     * The gardener who visited the garden.
+     */
     @ManyToOne
     @JoinColumn(name = "gardener_id", nullable = false)
     private Gardener gardener;
 
-    /** The garden that was visited. */
+    /**
+     * The garden that was visited.
+     */
     @ManyToOne
     @JoinColumn(name = "garden_id", nullable = false)
     private Garden garden;
 
-    /** The timestamp when the garden was visited. */
+    /**
+     * The timestamp when the garden was visited.
+     */
     @Column(name = "access_time", nullable = false)
     private LocalDateTime accessTime;
 
-    /** Default constructor required by JPA. */
-    protected GardenVisit() {}
+    /**
+     * Default constructor required by JPA.
+     */
+    protected GardenVisit() {
+    }
 
     /**
      * Constructs a garden visit entry with the given gardener, garden, and access time.
      *
-     * @param gardener The gardener who visited the garden.
-     * @param garden The garden that was visited.
+     * @param gardener   The gardener who visited the garden.
+     * @param garden     The garden that was visited.
      * @param accessTime The timestamp when the garden was visited.
      */
     public GardenVisit(Gardener gardener, Garden garden, LocalDateTime accessTime) {

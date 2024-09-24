@@ -15,10 +15,10 @@ import java.util.Optional;
 @Repository
 public interface RelationshipRepository extends CrudRepository<Relationships, Long> {
     Optional<Relationships> findById(long id);
+
     List<Relationships> findAll();
 
     /**
-     *
      * @param id find all friends of gardener given gardener id
      * @return a list of all the accepted relationships of the user
      */

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import jakarta.transaction.Transactional;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +9,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,6 +36,7 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
 
     /**
      * Retrieves a page of gardens
+     *
      * @param pageable a pageable object
      * @return a page of gardens
      */
@@ -48,6 +49,7 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
      * @return A list of all gardens with the specified owner stored in the repository.
      */
     List<Garden> findByGardenerId(Long gardenerId);
+
     /**
      * Updates the last notified date of a garden by its id
      *
@@ -64,16 +66,16 @@ public interface GardenRepository extends JpaRepository<Garden, Long> {
      *
      * @param pageable The pageable specifying relevant information for pagination
      */
-    @Query(value= "select * from garden where public_garden is true", nativeQuery = true)
+    @Query(value = "select * from garden where public_garden is true", nativeQuery = true)
     Page<Garden> findAllPublicGardens(Pageable pageable);
 
     /**
      * Gets all public gardens that have a name or plant name matching the search term paginated
      *
-     * @param pageable The pageable specifying relevant information for pagination
+     * @param pageable   The pageable specifying relevant information for pagination
      * @param searchTerm the term to search garden and plant names for
-     * @param tags the list of tags to filter gardens by
-     * @param tagCount the number of tags in the search query
+     * @param tags       the list of tags to filter gardens by
+     * @param tagCount   the number of tags in the search query
      */
     @Query(value = "SELECT DISTINCT g.* FROM garden g " +
             "LEFT JOIN plant p ON g.id = p.garden_id " +

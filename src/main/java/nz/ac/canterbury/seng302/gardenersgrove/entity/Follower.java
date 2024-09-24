@@ -26,12 +26,14 @@ public class Follower {
     /**
      * JPA required no-args constructor
      */
-    protected Follower() {}
+    protected Follower() {
+    }
 
     /**
      * Creates a new follower object
-     * @param gardenerId the id of the logged-in user
-     * @param gardenId the id of the garden to follow
+     *
+     * @param gardenerId   the id of the logged-in user
+     * @param gardenId     the id of the garden to follow
      * @param gardenerName the name of the logged-in user
      */
     public Follower(Long gardenerId, Long gardenId, String gardenerName) {
