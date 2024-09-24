@@ -4,10 +4,16 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpeciesImpl;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @Service
 public class IdentifiedPlantService {
@@ -72,5 +78,67 @@ public class IdentifiedPlantService {
      * @return a count of all the species
      */
     public int getSpeciesCount(long id) { return identifiedPlantRepository.getSpeciesCountByGardenerId(id);}
+
+    /**
+     * This validates all the details of a plant that is manually added to the collection
+     * @param plantName the plant name
+     * @param scientificName the scientific name (species)
+     * @param description the description
+     * @param isDateInvalid indicates whether the date is valid or not from HTML
+     * @param redirectAttributes used to add flash attributes when the page is redirected
+     * @return a boolean value indicating whether the plant is added or not
+     */
+    public boolean validateManuallyAddedPlantDetails(String plantName, String scientificName, String description, boolean isDateInvalid, RedirectAttributes redirectAttributes) {
+        String validatedPlantName = ValidityChecker.validatePlantName(plantName);
+        String validatedScientificName = ValidityChecker.validateScientificPlantName(scientificName);
+        String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
+
+        boolean isValid = true;
+
+        if (isDateInvalid) {
+            String dateError = "Date is not in valid format, DD/MM/YYYY";
+            redirectAttributes.addFlashAttribute("dateError", dateError);
+            isValid = false;
+        }
+
+        if (!Objects.equals(plantName, validatedPlantName)) {
+            redirectAttributes.addFlashAttribute("plantNameError", validatedPlantName);
+            isValid = false;
+        }
+        if (!Objects.equals(scientificName, validatedScientificName)) {
+            redirectAttributes.addFlashAttribute("scientificNameError", validatedScientificName);
+            isValid = false;
+        }
+        if (!Objects.equals(description, validatedPlantDescription)) {
+            redirectAttributes.addFlashAttribute("descriptionError", validatedPlantDescription);
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    /**
+     * Adds all the optional details to a manually added plant
+     * @param identifiedPlant the identified plant
+     * @param description description
+     * @param scientificName species
+     * @param uploadedDate uploaded date
+     * @return the identified plant
+     */
+    public IdentifiedPlant createManuallyAddedPlant(IdentifiedPlant identifiedPlant, String description, String scientificName, LocalDate uploadedDate) {
+        if (description != null && !description.trim().isEmpty()) {
+            identifiedPlant.setDescription(description);
+        }
+        if (scientificName != null && !scientificName.trim().isEmpty()) {
+            identifiedPlant.setSpeciesScientificNameWithoutAuthor(scientificName);
+        } else {
+            identifiedPlant.setSpeciesScientificNameWithoutAuthor("No Species");
+        }
+        if (uploadedDate != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            identifiedPlant.setDateUploaded(uploadedDate.format(formatter));
+        }
+        return identifiedPlant;
+    }
 
 }

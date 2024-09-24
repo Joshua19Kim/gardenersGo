@@ -59,10 +59,16 @@ public class CollectionsController {
     private final Map<String, Object> response;
     private final String errorKey = "error";
 
+
     /**
-     * Constructor to instantiate CollectionsController
-     * @param gardenService used in conjunction with gardener form service to populate navbar
-     * @param gardenerFormService used in conjunction with above to populate navbar
+     * Constructor to create a collections controller object
+     * @param imageService service class used to save images
+     * @param gardenService service class used to interact with the garden database
+     * @param gardenerFormService service class used to interact with the user (gardener) database
+     * @param identifiedPlantService service class used to interact with the identified plants database
+     * @param requestService service class used to get the request URI
+     * @param plantIdentificationService service used to identify plants
+     * @param badgeService service class used to interact with the badge database
      */
     public CollectionsController(ImageService imageService, GardenService gardenService,
                                  GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService,
@@ -97,8 +103,10 @@ public class CollectionsController {
      * Handles GET requests for /myCollection stub and returns the template for
      * my collections page
      *
-     * @param pageNoString string representation of the page number used for
-     *                     pagination
+     * @param pageNoString string representation of the page number used for pagination
+     * @param plantBadgeId this is the id of a plant badge that the user has just earned
+     * @param speciesBadgeId this is the id of a species badge that the user has just earned
+     * @param savedPlantId this is the id of the plant that you save so that a notification appears
      * @param model        used for passing attributes to the view
      * @return myCollectionTemplate
      */
@@ -272,37 +280,13 @@ public class CollectionsController {
             @RequestParam(name = "uploadedDate", required = false) LocalDate uploadedDate,
             @RequestParam(name = "isDateInvalid", required = false) boolean isDateInvalid,
             @RequestParam("plantImage") MultipartFile plantImage,
-            RedirectAttributes redirectAttributes,
-            Model model
+            RedirectAttributes redirectAttributes
     ) {
         logger.info("/myCollection/addNewPlantToMyCollection");
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        String validatedPlantName = ValidityChecker.validatePlantName(plantName);
-        String validatedScientificName = ValidityChecker.validateScientificPlantName(scientificName);
-        String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
-
-        boolean isValid = true;
-
-        if (isDateInvalid) {
-            String dateError = "Date is not in valid format, DD/MM/YYYY";
-            redirectAttributes.addFlashAttribute("dateError", dateError);
-            isValid = false;
-        }
-
-        if (!Objects.equals(plantName, validatedPlantName)) {
-            redirectAttributes.addFlashAttribute("plantNameError", validatedPlantName);
-            isValid = false;
-        }
-        if (!Objects.equals(scientificName, validatedScientificName)) {
-            redirectAttributes.addFlashAttribute("scientificNameError", validatedScientificName);
-            isValid = false;
-        }
-        if (!Objects.equals(description, validatedPlantDescription)) {
-            redirectAttributes.addFlashAttribute("descriptionError", validatedPlantDescription);
-            isValid = false;
-        }
+        boolean isValid = identifiedPlantService.validateManuallyAddedPlantDetails(plantName, scientificName, description, isDateInvalid, redirectAttributes);
 
         if (!plantImage.isEmpty()) {
             Optional<String> uploadMessage = imageService.checkValidImage(plantImage);
@@ -315,18 +299,8 @@ public class CollectionsController {
         if (isValid) {
             IdentifiedPlant identifiedPlant = new IdentifiedPlant(plantName, gardener);
 
-            if (description != null && !description.trim().isEmpty()) {
-                identifiedPlant.setDescription(description);
-            }
-            if (scientificName != null && !scientificName.trim().isEmpty()) {
-                identifiedPlant.setSpeciesScientificNameWithoutAuthor(scientificName);
-            } else {
-                identifiedPlant.setSpeciesScientificNameWithoutAuthor("No Species");
-            }
-            if (uploadedDate != null) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                identifiedPlant.setDateUploaded(uploadedDate.format(formatter));
-            }
+            identifiedPlant = identifiedPlantService.createManuallyAddedPlant(identifiedPlant, description, scientificName, uploadedDate);
+
             int originalSpeciesCount = identifiedPlantService.getSpeciesCount(gardener.getId());
 
             if (plantImage.isEmpty()) {
