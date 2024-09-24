@@ -8,6 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import java.util.List;
+
+/**
+ * Service responsible for saving identified plants to the repository and retrieve them for us in
+ * the My Collections page
+ */
+
 
 @Service
 public class IdentifiedPlantService {
@@ -39,6 +46,15 @@ public class IdentifiedPlantService {
     }
 
     /**
+     * Gets the IdentifiedPlants that are owned by the gardener in list form
+     * @param gardenerId the id of the gardener
+     * @return all the IdentifiedPlants the gardener owns/ has scanned
+     */
+    public List<IdentifiedPlant> getGardenerPlants(Long gardenerId) {
+        return identifiedPlantRepository.getPlantByGardenerId(gardenerId);
+    }
+
+    /**
      * Gets the IdentifiedPlant species that are owned by the gardener in paginated form
      * @param pageNo the page number
      * @param pageSize the size of the page
@@ -50,12 +66,13 @@ public class IdentifiedPlantService {
         return identifiedPlantRepository.getSpeciesByGardenerId(gardenerId, pageable);
     }
 
-    /**
-     * Gets a plant by its id
-     * @param id the id of the plant
-     * @return a plant if found
-     */
-    public IdentifiedPlant getCollectionPlantById(long id) {
+  /**
+   * Gets the IdentifiedPlant by ID specifically
+   *
+   * @param id the ID of the specific plant in the collection
+   * @return the related IdentifiedPlant if found
+   */
+  public IdentifiedPlant getCollectionPlantById(long id) {
         return identifiedPlantRepository.findById(id);
     }
 

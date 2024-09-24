@@ -138,7 +138,7 @@ public class ValidityChecker {
         }
 
         if(name.length() > 64) {
-            result += "Scientific name must be less than 64 characters";
+            result += "Scientific name must be less than or equal to 64 characters";
         }
         if (!result.isEmpty()) {
             return result;

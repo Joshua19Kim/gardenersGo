@@ -2,23 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantResponse;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -31,6 +14,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantResponse;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Service responsible for handling plant identification through an external API.
@@ -38,10 +35,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PlantIdentificationService {
-    Logger logger = LoggerFactory.getLogger(PlantIdentificationService.class);
     private static final String PROJECT = "all";
     private static final String API_URL = "https://my-api.plantnet.org/v2/identify/";
-    private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
+    private static final String IMAGE_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
 
     private final String apiKey;
     private final ObjectMapper objectMapper;
@@ -51,7 +47,7 @@ public class PlantIdentificationService {
     /**
      * Constructs a new PlantIdentificationService with the specified API key and repository.
      *
-     * @param apiKey                    the API key for authenticating with the external plant identification service
+     * @param apiKey  the API key for authenticating with the external plant identification service
      */
     @Autowired
     public PlantIdentificationService(@Value("${plantNet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository) {
@@ -121,7 +117,7 @@ public class PlantIdentificationService {
         String extension = StringUtils.getFilenameExtension(originalFileName);
         String newFileName = UUID.randomUUID() + "." + extension;
 
-        String filePath = IMAGE_DIRECTORY + newFileName;
+        String filePath = Path.of(IMAGE_DIRECTORY).resolve(newFileName).toString();
         Path file = Paths.get(filePath);
 
         // The following code checks to make sure the user has not messed with the file path
@@ -133,7 +129,7 @@ public class PlantIdentificationService {
 
         // If everything is all good, then create the file
         Files.write(file, image.getBytes());
-        return "/uploads/" + newFileName;
+        return Path.of("uploads").resolve(newFileName).toString();
     }
 
     /**

@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ public class IdentifiedPlant {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "gardener_id", nullable = false)
     private Gardener gardener;
 

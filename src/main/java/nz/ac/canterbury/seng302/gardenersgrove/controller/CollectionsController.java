@@ -1,10 +1,20 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import static java.lang.Long.parseLong;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.IntStream;
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,17 +57,17 @@ public class CollectionsController {
     private final RequestService requestService;
     private Gardener gardener;
 
-    private final String paginationMessageAttribute = "paginationMessage";
-
-    private final String errorOccurredAttribute = "errorOccurred";
-
-    private final String showModalAttribute = "showModal";
+    private static final String PAGINATION_MESSAGE_ATTRIBUTE = "paginationMessage";
+    private static final String ERROR_OCCURRED_ATTRIBUTE = "errorOccurred";
+    private static final String SHOW_MODAL_ATTRIBUTE = "showModal";
+    private static final String SUCCESS_MESSAGE_ATTRIBUTE = "successMessage";
+    private static final String ERROR_KEY = "error";
 
     private final PlantIdentificationService plantIdentificationService;
 
     private final Map<String, String> errorResponse;
     private final Map<String, Object> response;
-    private final String errorKey = "error";
+
 
     /**
      * Constructor to instantiate CollectionsController
@@ -130,10 +140,10 @@ public class CollectionsController {
             int startIndex = pageSize * pageNo + 1;
             long endIndex = Math.min((long) pageSize * (pageNo + 1), totalItems);
             String paginationMessage = "Showing results " + startIndex + " to " + endIndex + " of " + totalItems;
-            model.addAttribute(paginationMessageAttribute, paginationMessage);
+            model.addAttribute(PAGINATION_MESSAGE_ATTRIBUTE, paginationMessage);
         } else {
             String paginationMessage = "Showing results 0 to 0 of 0";
-            model.addAttribute(paginationMessageAttribute, paginationMessage);
+            model.addAttribute(PAGINATION_MESSAGE_ATTRIBUTE, paginationMessage);
         }
 
 
@@ -150,11 +160,11 @@ public class CollectionsController {
             logger.error("Error converting lists to JSON", e);
         }
 
-        if (!model.containsAttribute(errorOccurredAttribute)) {
-            model.addAttribute(errorOccurredAttribute, false);
+        if(!model.containsAttribute(ERROR_OCCURRED_ATTRIBUTE)) {
+            model.addAttribute(ERROR_OCCURRED_ATTRIBUTE, false);
         }
-        if (!model.containsAttribute(showModalAttribute)) {
-            model.addAttribute(showModalAttribute, false);
+        if (!model.containsAttribute(SHOW_MODAL_ATTRIBUTE)) {
+            model.addAttribute(SHOW_MODAL_ATTRIBUTE, false);
         }
 
         if (badgeId != null && !badgeId.isEmpty()) {
@@ -174,9 +184,9 @@ public class CollectionsController {
             IdentifiedPlant savedPlant = identifiedPlantService.getCollectionPlantById(Long.parseLong(savedPlantId));
             if (savedPlant != null && savedPlant.getGardener().equals(gardener)) {
                 if (savedPlant.getSpeciesScientificNameWithoutAuthor().isEmpty()) {
-                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to collection");
+                    model.addAttribute(SUCCESS_MESSAGE_ATTRIBUTE, savedPlant.getName() + " has been added to collection");
                 } else {
-                    model.addAttribute("successMessage", savedPlant.getName() + " has been added to collection: " + savedPlant.getSpeciesScientificNameWithoutAuthor());
+                    model.addAttribute(SUCCESS_MESSAGE_ATTRIBUTE, savedPlant.getName() + " has been added to collection: " + savedPlant.getSpeciesScientificNameWithoutAuthor());
                 }
             }
         }
@@ -219,10 +229,10 @@ public class CollectionsController {
             int startIndex = pageSize * pageNo + 1;
             long endIndex = Math.min((long) pageSize * (pageNo + 1), totalItems);
             String paginationMessage = "Showing results " + startIndex + " to " + endIndex + " of " + totalItems;
-            model.addAttribute(paginationMessageAttribute, paginationMessage);
+            model.addAttribute(PAGINATION_MESSAGE_ATTRIBUTE, paginationMessage);
         } else {
             String paginationMessage = "Showing results 0 to 0 of 0";
-            model.addAttribute(paginationMessageAttribute, paginationMessage);
+            model.addAttribute(PAGINATION_MESSAGE_ATTRIBUTE, paginationMessage);
         }
 
         // Add gardens to the model for the navbar
@@ -322,9 +332,9 @@ public class CollectionsController {
                 redirectAttributes.addFlashAttribute("plantBadge", plantBadge.get());
             }
             if (scientificName.isEmpty()) {
-                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to collection");
+                redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE_ATTRIBUTE, plantName + " has been added to collection");
             } else {
-                redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to collection: " + scientificName);
+                redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE_ATTRIBUTE, plantName + " has been added to collection: " + scientificName);
             }
             return "redirect:/myCollection";
         } else {
@@ -332,8 +342,8 @@ public class CollectionsController {
             redirectAttributes.addFlashAttribute("description", description);
             redirectAttributes.addFlashAttribute("scientificName", scientificName);
             redirectAttributes.addFlashAttribute("uploadedDate", uploadedDate);
-            redirectAttributes.addFlashAttribute(errorOccurredAttribute, true);
-            redirectAttributes.addFlashAttribute(showModalAttribute, true);
+            redirectAttributes.addFlashAttribute(ERROR_OCCURRED_ATTRIBUTE, true);
+            redirectAttributes.addFlashAttribute(SHOW_MODAL_ATTRIBUTE, true);
 
             return "redirect:/myCollection";
         }
@@ -362,7 +372,7 @@ public class CollectionsController {
             }
 
             if (plantDetailsList.isEmpty()) {
-                errorResponse.put(errorKey, "Plant not found");
+                errorResponse.put(ERROR_KEY, "Plant not found");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
             }
             ObjectMapper mapper = new ObjectMapper();
@@ -370,7 +380,7 @@ public class CollectionsController {
 
             return ResponseEntity.ok(jsonResult);
         } catch (Exception e) {
-            errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
+            errorResponse.put(ERROR_KEY, "Failed to save the identified plant: " + e.getMessage());
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
