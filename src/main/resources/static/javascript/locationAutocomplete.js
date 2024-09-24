@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function fetchAutocomplete(query) {
         return new Promise((resolve, reject) => {
-            xmlRequest.open('GET', '../sendRequest?query=' + encodeURIComponent(query));
+            xmlRequest.open('GET', `${getBaseUrl()}/sendRequest?query=` + encodeURIComponent(query));
             xmlRequest.onload = function () {
                 if (xmlRequest.status === 200) {
                     const responseData = JSON.parse(xmlRequest.responseText);
