@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 public class PlantIdentificationService {
     private static final String PROJECT = "all";
     private static final String API_URL = "https://my-api.plantnet.org/v2/identify/";
-    private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
+    private static final String IMAGE_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
 
     private final String apiKey;
     private final ObjectMapper objectMapper;
@@ -118,7 +118,7 @@ public class PlantIdentificationService {
         String extension = StringUtils.getFilenameExtension(originalFileName);
         String newFileName = UUID.randomUUID() + "." + extension;
 
-        String filePath = IMAGE_DIRECTORY + newFileName;
+        String filePath = Path.of(IMAGE_DIRECTORY).resolve(newFileName).toString();
         Path file = Paths.get(filePath);
 
         // The following code checks to make sure the user has not messed with the file path
@@ -130,7 +130,7 @@ public class PlantIdentificationService {
 
         // If everything is all good, then create the file
         Files.write(file, image.getBytes());
-        return "/uploads/" + newFileName;
+        return Path.of("uploads").resolve(newFileName).toString();
     }
 
     /**
