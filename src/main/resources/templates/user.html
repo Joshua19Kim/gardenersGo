@@ -114,25 +114,17 @@
                 <div class="container card">
                     <p>My badges</p>
 
-                    <div class="col d-flex flex-wrap">
-
-                        <div class="list-group" style="overflow-y: scroll; height: 100%;">
-                            <p th:class="${earnedBadges.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No gardens created </p>
-                            <th:block th:each="badge : ${earnedBadges}">
-                                <div class="row p-4">
-                                    <div class="card">
-            <!--                            <a class="list-group-item main-page-custom-hover text-dark main-page-custom-hover break-words overflow-wrap-anywhere text-break mb-2"-->
-            <!--                               style="transition: background-color 0.3s ease; min-width: 0;" th:href="@{/gardens/details(gardenId=${garden.id})}">-->
-                                        <img id="plantBadgeImage" th:src="@{${badge.imageFilename}}" th:alt="${badge.name}">
-                                        <p th:text="${badge.name}"></p>
-            <!--                            </a>-->
-                                    </div>
-                                </div>
-                            </th:block>
-                        </div>
+                    <div class="d-flex flex-wrap" style="overflow-y: scroll; height: 100%;">
+                        <p th:class="${earnedBadges.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No gardens created </p>
+                        <th:block th:each="badge : ${earnedBadges}">
+                            <div class="list-group-item" style="width: 19%; margin-left: 1%;">
+                                <img id="plantBadgeImage" th:src="@{${badge.imageFilename}}" th:alt="${badge.name}"
+                                     style="width: 100%; height: 100%;">
+                                <p th:text="${badge.name}" style="color: black; text-align: center;"></p>
+                            </div>
+                        </th:block>
 
                     </div>
-
 
                 </div>
             </div>

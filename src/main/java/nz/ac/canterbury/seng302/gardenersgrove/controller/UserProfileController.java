@@ -198,9 +198,13 @@ public class UserProfileController {
 
         // Badges widget info
 
-        List<Badge> earnedBadges = badgeService.getMyBadges(gardener.getId());
+        List<Badge> earnedBadges = badgeService.getMyRecentBadges(gardener.getId());
 
-        model.addAttribute("earnedBadges", earnedBadges);
+        if (earnedBadges.size() > 5) { // only want 5 most recent badges
+            model.addAttribute("earnedBadges", earnedBadges.subList(0, 5));
+        } else {
+            model.addAttribute("earnedBadges", earnedBadges);
+        }
 
         return "user";
     }

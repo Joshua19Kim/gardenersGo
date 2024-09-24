@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.BadgeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -65,7 +66,7 @@ public class BadgeService {
      * @return A list containing the three most recently earned badges.
      */
     public List<Badge> getMyRecentBadges(Long gardenerId) {
-        return badgeRepository.findRecentByGardenerId(gardenerId, PageRequest.of(0, 5));
+        return badgeRepository.findByGardenerId(gardenerId, Sort.by(Sort.Direction.DESC, "dateEarned"));
     }
 
     /**
