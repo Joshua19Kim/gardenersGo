@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BadgeType;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
