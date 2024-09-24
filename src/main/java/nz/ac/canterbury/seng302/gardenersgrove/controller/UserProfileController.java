@@ -253,7 +253,8 @@ public class UserProfileController {
     @PostMapping("/user")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    HttpServletRequest request,
-                                   Model model, RedirectAttributes redirectAttributes) {
+                                   Model model,
+                                   RedirectAttributes redirectAttributes) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("POST /upload");
@@ -267,7 +268,7 @@ public class UserProfileController {
 
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             Optional<String> uploadMessage =  imageService.saveImage(file);
-            if (!uploadMessage.isEmpty()) {
+            if (uploadMessage.isPresent()) {
                 redirectAttributes.addFlashAttribute("uploadError", uploadMessage.get());
             }
             return "redirect:/user";

@@ -2,8 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.unit.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.BadgeType;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -17,9 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
