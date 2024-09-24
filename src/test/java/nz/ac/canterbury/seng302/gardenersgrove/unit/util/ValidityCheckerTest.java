@@ -411,9 +411,9 @@ public class ValidityCheckerTest {
             "     :     ",
             "@@@$$%^S^&&S&FBBNSJLKJNSLFNNSSKNKNY#^^#T*HFBSFBSKNOIH#&@Y(@*Y*(@HOFSIHF(*Y#)#H)HFONW*(*3*@B***@HG(H@: " +
                     "Scientific name must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>" +
-                    "Scientific name must be less than 64 characters",
+                    "Scientific name must be less than or equal to 64 characters",
             "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh: " +
-                    "Scientific name must be less than 64 characters"
+                    "Scientific name must be less than or equal to 64 characters"
     }, delimiter = ':')
     void ValidateScientificNameTest(String scientificName, String expectedMessage) {
         String actualMessage = ValidityChecker.validateScientificPlantName(scientificName);
