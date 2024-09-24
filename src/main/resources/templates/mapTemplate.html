@@ -45,6 +45,9 @@
             if (scannedPlant.plantLatitude != null && scannedPlant.plantLongitude != null && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
                 L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
                     .addTo(map)
+                    .bindPopup('<b>Plant name: </b>' + scannedPlant.name + '<br>' + '<b>Date scanned: </b>' + scannedPlant.dateUploaded + '<br>' +
+                        "<img src='uploads/plant_1.jpeg'"
+                    );
             }
         /*]]>*/
         });
