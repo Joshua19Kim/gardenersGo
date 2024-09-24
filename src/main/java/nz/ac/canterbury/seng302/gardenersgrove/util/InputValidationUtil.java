@@ -125,20 +125,25 @@ public class InputValidationUtil {
     public Optional<String> checkDoB (String DoBString) {
         LocalDate DoB;
         String result = "";
+        logger.info("*/*/*/*/*" + DoBString);
 
-        try {
-            DoB = LocalDate.parse(DoBString);
-        } catch (Exception e) {
-            result += "Date is not in valid format, DD/MM/YYYY";
-            return Optional.of(result);
+        if (!DoBString.isEmpty()) {
+            try {
+                DoB = LocalDate.parse(DoBString);
+                logger.info(DoB + "<-DoB");
+            } catch (Exception e) {
+                result += "Date is not in valid format, DD/MM/YYYY";
+                return Optional.of(result);
+            }
+
+            if (Period.between(DoB, LocalDate.now()).getYears() < 13) {
+                result = "You must be 13 years or older to create an account <br/>";
+            }
+            if (Period.between(DoB, LocalDate.now()).getYears() > 120) {
+                result += "The maximum age allowed is 120 years";
+            }
         }
 
-        if (Period.between(DoB, LocalDate.now()).getYears() < 13) {
-            result = "You must be 13 years or older to create an account <br/>";
-        }
-        if (Period.between(DoB, LocalDate.now()).getYears() > 120) {
-            result += "The maximum age allowed is 120 years";
-        }
         if (result.isEmpty()) {
             return Optional.empty();
         }

@@ -37,7 +37,7 @@ public class UserProfileControllerTest {
     @MockBean
     private GardenerFormService gardenerFormService;
     @MockBean
-    private GardenService gardenService; // Tests fill fail without this
+    private GardenService gardenService; // Tests will fail without this
     @MockBean
     private ImageService imageService;
     @MockBean
@@ -113,7 +113,7 @@ public class UserProfileControllerTest {
     @WithMockUser("testEmail@gmail.com")
     void onUserPage_userChangesFirstNameWithInvalidFirstName_errorMessageProvided() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/user")
+                .perform(MockMvcRequestBuilders.post("/user/editDetails")
                         .param("firstName", "")
                         .param("lastName", "testLastName")
                         .param("DoB", "1980-01-01")
@@ -133,7 +133,7 @@ public class UserProfileControllerTest {
     @WithMockUser("testEmail@gmail.com")
     void onUserPage_userChangesLastNameWithInvalidLastName_errorMessageProvided() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/user")
+                .perform(MockMvcRequestBuilders.post("/user/editDetails")
                         .param("firstName", "testFirstName")
                         .param("lastName", "!%ASava")
                         .param("DoB", "1980-01-01")
@@ -152,7 +152,7 @@ public class UserProfileControllerTest {
     @WithMockUser("testEmail@gmail.com")
     void onUserPage_userChangesDoBWithTooLowDoB_errorMessageProvided() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/user")
+                .perform(MockMvcRequestBuilders.post("/user/editDetails")
                         .param("firstName", "testFirstName")
                         .param("lastName", "testLastName")
                         .param("DoB", "2400-01-01")
@@ -171,7 +171,7 @@ public class UserProfileControllerTest {
     @WithMockUser("testEmail@gmail.com")
     void onUserPage_userChangesDoBWithTooHighDoB_errorMessageProvided() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/user")
+                .perform(MockMvcRequestBuilders.post("/user/editDetails")
                         .param("firstName", "testFirstName")
                         .param("lastName", "testLastName")
                         .param("DoB", "1700-01-01")
@@ -190,7 +190,7 @@ public class UserProfileControllerTest {
     @WithMockUser("testEmail@gmail.com")
     void onUserPage_userChangesEmailWithInvalidEmail_errorMessageProvided() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/user")
+                .perform(MockMvcRequestBuilders.post("/user/editDetails")
                         .param("firstName", "testFirstName")
                         .param("lastName", "testLastName")
                         .param("DoB", "1980-01-01")
@@ -209,12 +209,13 @@ public class UserProfileControllerTest {
     @WithMockUser("testEmail@gmail.com")
     void onUserPage_userChangesFirstNameWithValidName_NoErrorProvidedAndSaveNewFirstName() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/user")
-                        .param("firstName", "newTestFirstName")
-                        .param("lastName", "testLastName")
+                .perform(MockMvcRequestBuilders.post("/user/editDetails")
+                        .param("firstName", "testFirstName")
+                        .param("lastName", "newTestLastName")
+                        .param("isLastNameOptional", String.valueOf(false))
+                        .param("isDoBInvalid", String.valueOf(false))
                         .param("DoB", "1980-01-01")
                         .param("email", "testEmail@gmail.com")
-                        .param("isLastNameOptional", "false")
                         .with(csrf())
                 )
                 .andExpect(status().is3xxRedirection())
@@ -235,12 +236,13 @@ public class UserProfileControllerTest {
     @WithMockUser("testEmail@gmail.com")
     void onUserPage_userChangesLastNameWithValidName_NoErrorProvidedAndSaveNewLastName() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/user")
+                .perform(MockMvcRequestBuilders.post("/user")
                         .param("firstName", "testFirstName")
                         .param("lastName", "newTestLastName")
+                        .param("isLastNameOptional", String.valueOf(false))
+                        .param("isDoBInvalid", String.valueOf(false))
                         .param("DoB", "1980-01-01")
                         .param("email", "testEmail@gmail.com")
-                        .param("isLastNameOptional", "false")
                         .with(csrf())
                 )
                 .andExpect(status().is3xxRedirection())
@@ -261,7 +263,7 @@ public class UserProfileControllerTest {
     @WithMockUser("testEmail@gmail.com")
     void onUserPage_userChangesDoBWithValidDoB_NoErrorProvidedAndSaveNewDoB() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/user")
+                .perform(MockMvcRequestBuilders.post("/user/editDetails")
                         .param("firstName", "testFirstName")
                         .param("lastName", "newTestLastName")
                         .param("DoB", "2001-12-13")
@@ -287,7 +289,7 @@ public class UserProfileControllerTest {
     @WithMockUser("testEmail@gmail.com")
     void onUserPage_userChangesEmailWithValidEmail_NoErrorProvidedAndSaveNewEmail() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/user")
+                .perform(MockMvcRequestBuilders.post("/user/editDetails")
                         .param("firstName", "testFirstName")
                         .param("lastName", "newTestLastName")
                         .param("DoB", "1980-01-01")
@@ -313,7 +315,7 @@ public class UserProfileControllerTest {
     @WithMockUser("testEmail@gmail.com")
     void onUserPage_userPutNewLastNameButTicksNoLastNameBox_NoErrorProvidedAndLastNameBecomesNull() throws Exception {
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get("/user")
+                .perform(MockMvcRequestBuilders.post("/user/editDetails")
                         .param("firstName", "testFirstName")
                         .param("lastName", "newTestLastName")
                         .param("DoB", "1980-01-01")

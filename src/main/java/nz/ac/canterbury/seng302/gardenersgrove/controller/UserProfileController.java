@@ -259,6 +259,7 @@ public class UserProfileController {
     public String editDetails(@RequestParam(name = "firstName", required = false) String firstName,
                               @RequestParam(name = "lastName", required = false) String lastName,
                               @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
+                              @RequestParam(name = "isDoBInvalid", required = false) boolean isDoBInvalid,
                               @RequestParam(name = "DoB", required = false) String DoB,
                               @RequestParam(name = "email", required = false) String email, RedirectAttributes redirectAttributes) {
 
@@ -273,17 +274,23 @@ public class UserProfileController {
         Optional<String> firstNameError = inputValidator.checkValidName(firstName, "First", true);
                 Optional<String> lastNameError = inputValidator.checkValidName(lastName, "Last", isLastNameOptional);
         Optional<String> DoBError = inputValidator.checkDoB(DoB);
+        logger.info(DoBError.toString());
         Optional<String> emailError = inputValidator.checkValidEmail(email);
         boolean emailInUse = ((inputValidator.checkEmailInUse(email)).isPresent() && !email.equals(gardener.getEmail()));
 
         if (firstNameError.isPresent() ||
                 lastNameError.isPresent() ||
                 DoBError.isPresent() ||
+                isDoBInvalid ||
                 emailError.isPresent() ||
         emailInUse) {
             redirectAttributes.addFlashAttribute("firstNameError", firstNameError.orElse(""));
             redirectAttributes.addFlashAttribute("lastNameError", lastNameError.orElse(""));
-            redirectAttributes.addFlashAttribute("DoBError", DoBError.orElse(""));
+            if (isDoBInvalid) {
+                redirectAttributes.addFlashAttribute("DoBError", "Date is not in valid format, DD/MM/YYYY");
+            } else {
+                redirectAttributes.addFlashAttribute("DoBError", DoBError.orElse(""));
+            }
             if (emailInUse && !email.equals(gardener.getEmail())) {
                 redirectAttributes.addFlashAttribute("emailError", emailError.orElse("This email address is already in use"));
             } else {
@@ -297,7 +304,11 @@ public class UserProfileController {
         gardener.setFirstName(firstName);
         gardener.setLastName(lastName);
         gardener.setEmail(email);
-        gardener.setDoB(LocalDate.parse(DoB));
+        if (DoB.isEmpty()) {
+            gardener.setDoB(null);
+        } else {
+            gardener.setDoB(LocalDate.parse(DoB));
+        }
         gardenerFormService.addGardener(gardener);
 
         redirectAttributes.addFlashAttribute("errorEditingDetails", "");
