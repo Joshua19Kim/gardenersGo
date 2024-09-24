@@ -14,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -33,6 +35,7 @@ public class UserProfileControllerTest {
     private InputValidationUtil inputValidator;
     private Optional optional;
     private HttpServletRequest mockRequest;
+    private RedirectAttributes mockRedirectAttributes;
     private RequestService requestService;
     private MainPageLayoutService mainPageLayoutService;
     private BadgeService badgeService;
@@ -44,6 +47,7 @@ public class UserProfileControllerTest {
         authentication = Mockito.mock(Authentication.class);
         mainPageLayout = Mockito.mock(MainPageLayout.class);
         mockRequest = Mockito.mock(HttpServletRequest.class);
+        mockRedirectAttributes = Mockito.mock(RedirectAttributes.class);
         requestService = Mockito.mock(RequestService.class);
         Mockito.when(mockRequest.getRequestURI()).thenReturn("");
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -82,7 +86,8 @@ public class UserProfileControllerTest {
         // ONLY works when the email is the same as the submitted one
         Mockito.when(gardener.getEmail()).thenReturn("new@new.new");
         Mockito.when(authentication.getName()).thenReturn("new@new.new");
-        userProfileController.getUserProfile("Ben", "Moore", LocalDate.of(2001, 11, 11).toString(), "new@new.new", false, false,null, mockRequest, modelMock);
+        userProfileController.getUserProfile("Ben", "Moore", LocalDate.of(2001, 11, 11).toString(), "new@new.new", false, false, null, mockRequest, modelMock);
+        userProfileController.editDetails("Ben", "Moore", false, LocalDate.of(2001, 11, 11).toString(), "new@new.new", mockRedirectAttributes);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
     }
 
@@ -102,6 +107,7 @@ public class UserProfileControllerTest {
         Mockito.when(gardener.getEmail()).thenReturn("test@gmail.com");
         Mockito.when(authentication.getName()).thenReturn("test@gmail.com");
         userProfileController.getUserProfile("Kush", "$#@", LocalDate.of(2004, 1, 15).toString(), "test@gmail.com", true,false, null, mockRequest, modelMock);
+        userProfileController.editDetails("Kush", "$#@", true, LocalDate.of(2004, 1, 15).toString(), "test@gmail.com", mockRedirectAttributes);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
     }
 
