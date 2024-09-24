@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <title>Leaflet & OSM Map Demo</title>
-    <link rel="stylesheet" href="/webjars/leaflet/1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="/webjars/leaflet-markercluster/1.4.1/MarkerCluster.css" />
-    <link rel="stylesheet" href="/webjars/leaflet-markercluster/1.4.1/MarkerCluster.Default.css" />
+    <link rel="stylesheet" th:href="@{/webjars/leaflet/1.9.4/dist/leaflet.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/leaflet-markercluster/1.4.1/MarkerCluster.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/leaflet-markercluster/1.4.1/MarkerCluster.Default.css}" />
 
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
@@ -21,8 +21,8 @@
 </head>
 <body>
 <div id="map"></div>
-<script src="/webjars/leaflet/1.9.4/dist/leaflet.js"></script>
-<script src="/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js"></script>
+<script th:src="@{/webjars/leaflet/1.9.4/dist/leaflet.js}"></script>
+<script th:src="@{/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js}"></script>
 <script >
 
 
