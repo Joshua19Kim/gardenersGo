@@ -109,9 +109,10 @@
                     <li class="nav-item flex-grow-1"></li>
 
                         <li class="nav-item-dropdown dropdown">
-                            <button class="btn btn-link p-0 mt-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img id="userIcon" class="dropdown-toggle" style="max-width: 30px; object-fit: contain;" th:href="@{/user}" alt="Account" tabindex="10">
-                            </button>                        <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="navbarDropdown">
+                            <button class="btn btn-link p-0 mt-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" tabindex="10">
+                                <img id="userIcon" class="dropdown-toggle" style="max-width: 30px; object-fit: contain;" th:href="@{/user}" alt="Account">
+                            </button>
+                            <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="navbarDropdown">
                             <li class="nav-item" tabindex="11">
                                 <a class="nav-link" th:href="@{/user}" >My Profile</a>
                             </li>

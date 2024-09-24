@@ -10,14 +10,15 @@
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 <div class="collection-container">
     <!-- Notification for successfully adding a new plant manually -->
-    <div th:if="${successMessage}" class="alert alert-warning alert-dismissible fade show w-50 m-auto text-center mb-3" role="alert">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show w-50 m-auto text-center mb-3" role="alert">
         <p class="m-auto" th:text="${successMessage}"></p>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
-        <div id="addPlantButton" class="col-md-3 mb-4" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#addPlantModal">
-            <div class="card border-custom collection-gardens-card" style="align-items: center; display:flex; flex-direction: column;  height:100%; justify-content:center;">
+        <div class="col-md-3 mb-4">
+            <div id="addPlantButton" data-bs-toggle="modal" tabindex="14" data-bs-target="#addPlantModal" class="card border-custom collection-gardens-card"
+                 style="cursor:pointer; align-items: center; display:flex; flex-direction: column;  height:100%; justify-content:center;">
                 <div class="add-button">
                     <span class="icon">+</span>
                     <span class="text">Add Plant</span>
@@ -73,10 +74,9 @@
 <!--This code below was created by Claud AI to open the modal instantly if there is an error-->
 <script th:inline="javascript">
     /*<![CDATA[*/
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         var showModal = /*[[${showModal}]]*/ false;
         var addPlantModal = new bootstrap.Modal(document.getElementById('addPlantModal'));
-
         if (showModal) {
             addPlantModal.show();
         }
