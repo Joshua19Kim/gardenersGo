@@ -2,9 +2,11 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BadgeType;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.BadgeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -56,6 +58,16 @@ public class BadgeService {
      public List<Badge> getMyBadges(Long id) {
          return badgeRepository.findByGardenerId(id);
      }
+
+    /**
+     * Retrieves the three most recently earned badges for a given gardener.
+     *
+     * @param gardenerId The id of the gardener to retrieve the most recently earned badges.
+     * @return A list containing the three most recently earned badges.
+     */
+    public List<Badge> getMyRecentBadges(Long gardenerId) {
+        return badgeRepository.findRecentByGardenerId(gardenerId, PageRequest.of(0, 5));
+    }
 
     /**
      *  gets a badge by its name

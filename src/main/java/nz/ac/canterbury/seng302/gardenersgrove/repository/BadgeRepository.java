@@ -2,7 +2,11 @@ package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BadgeType;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -56,6 +60,16 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
      * @return the badges with the given type
      */
     List<Badge> findByBadgeType(BadgeType badgeType);
+
+    /**
+     * Find the most recent badges that the certain gardener earned
+     * @param gardenerId The identifier of the garden's owner.
+     * @param pageable Pagination information to limit and order the results.
+     * @return A list of Garden, representing the most recently visited gardens by the specified gardener,
+     *         ordered by the most recent visit time in descending order.
+     */
+    @Query("SELECT badge.id FROM Badge badge WHERE badge.gardener.id = :gardenerId GROUP BY badge.id ORDER BY MAX(badge.dateEarned) DESC")
+    List<Badge> findRecentByGardenerId(@Param("gardenerId") Long gardenerId, Pageable pageable);
 
 
 }

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -38,6 +39,7 @@ public class UserProfileController {
     private final RequestService requestService;
     private final WriteEmail writeEmail;
     private final MainPageLayoutService mainPageLayoutService;
+    private final BadgeService badgeService;
     private Gardener gardener;
 
     @Autowired
@@ -49,11 +51,14 @@ public class UserProfileController {
     private boolean isFileNotAdded;
 
     @Autowired
-    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail, RequestService requestService, MainPageLayoutService mainPageLayoutService) {
+    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail,
+                                 RequestService requestService, MainPageLayoutService mainPageLayoutService,
+                                 BadgeService badgeService) {
         this.gardenerFormService = gardenerFormService;
         this.writeEmail = writeEmail;
         this.requestService = requestService;
         this.mainPageLayoutService = mainPageLayoutService;
+        this.badgeService = badgeService;
     }
 
     /**
@@ -120,6 +125,8 @@ public class UserProfileController {
             model.addAttribute("firstName", "Not Registered");
         }
 
+        // Validation
+
         if (isLastNameOptional) {
             lastName = null;
         } if (gardener.getLastName() == null) {
@@ -144,8 +151,6 @@ public class UserProfileController {
         model.addAttribute("isLastNameOptional", isLastNameOptional);
         model.addAttribute("lastNameValid", lastNameError.orElse(""));
 
-        // DoB
-
         Optional<String> validEmailError = Optional.empty();
         if (email != null) {
             validEmailError = inputValidator.checkValidEmail(email);
@@ -169,6 +174,9 @@ public class UserProfileController {
 
         model.addAttribute("emailValid", validEmailError.orElse(emailInUseError.orElse("")));
 
+
+        // Main Page Edit info
+
         MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
         String widgetsEnabled = mainPageLayout.getWidgetsEnabled();
 
@@ -178,7 +186,6 @@ public class UserProfileController {
         for (String value : values) {
             selectionList.add(value.equals("1"));
         }
-
         Boolean recentlyAccessedGardens = selectionList.get(0);
         Boolean newestPlants = selectionList.get(1);
         Boolean myGardensList = selectionList.get(2);
@@ -188,6 +195,13 @@ public class UserProfileController {
         model.addAttribute("newestPlants", newestPlants);
         model.addAttribute("myGardensList", myGardensList);
         model.addAttribute("friendsList", friendsList);
+
+
+        // Badges widget info
+
+        List<Badge> earnedBadges = badgeService.getMyBadges(gardener.getId());
+
+        model.addAttribute("earnedBadges", earnedBadges);
 
         return "user";
     }

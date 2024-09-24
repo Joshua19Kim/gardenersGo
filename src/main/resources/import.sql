@@ -240,6 +240,8 @@ INSERT INTO BADGE(name, date_earned, badge_type, gardener_id, image_filename) VA
 INSERT INTO BADGE(name, date_earned, badge_type, gardener_id, image_filename) VALUES ('10th Plant Found', DATE '2024-02-07', 1, 1, 'images/badges/10PlantBadge.png')
 INSERT INTO BADGE(name, date_earned, badge_type, gardener_id, image_filename) VALUES ('25th Plant Found', DATE '2024-03-07', 1, 1, 'images/badges/25PlantBadge.png')
 INSERT INTO BADGE(name, date_earned, badge_type, gardener_id, image_filename) VALUES ('1st Species Found', DATE '2024-01-07', 0, 1, 'images/badges/1SpeciesBadge.png')
+INSERT INTO BADGE(name, date_earned, badge_type, gardener_id, image_filename) VALUES ('10th Species Found', DATE '2024-07-07', 0, 1, 'images/badges/10SpeciesBadge.png')
+INSERT INTO BADGE(name, date_earned, badge_type, gardener_id, image_filename) VALUES ('25th Species Found', DATE '2024-08-07', 0, 1, 'images/badges/25SpeciesBadge.png')
 
 INSERT INTO FOLLOWER(garden_id, gardener_id, gardener_name) VALUES (1,3, 'Black Widow');
 INSERT INTO FOLLOWER(garden_id, gardener_id, gardener_name) VALUES (1,4, 'LongestFirstNameLongestFirstNameLongestFirstNameLongestFirstName LongestLastNameLongestLastNameLongestLastNameLongestLastNameLong');

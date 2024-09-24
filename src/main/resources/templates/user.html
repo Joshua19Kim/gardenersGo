@@ -113,43 +113,27 @@
             <div class="col-9 p-0">
                 <div class="container card">
                     <p>My badges</p>
+
                     <div class="col d-flex flex-wrap">
-                        <div class="row p-4">
-                            <div class="card">
-                                <p>
-                                    Badge 1
-                                </p>
-                            </div>
+
+                        <div class="list-group" style="overflow-y: scroll; height: 100%;">
+                            <p th:class="${earnedBadges.isEmpty()}? 'alert alert-transparent' : 'd-none'"> No gardens created </p>
+                            <th:block th:each="badge : ${earnedBadges}">
+                                <div class="row p-4">
+                                    <div class="card">
+            <!--                            <a class="list-group-item main-page-custom-hover text-dark main-page-custom-hover break-words overflow-wrap-anywhere text-break mb-2"-->
+            <!--                               style="transition: background-color 0.3s ease; min-width: 0;" th:href="@{/gardens/details(gardenId=${garden.id})}">-->
+                                        <img id="plantBadgeImage" th:src="@{${badge.imageFilename}}" th:alt="${badge.name}">
+                                        <p th:text="${badge.name}"></p>
+            <!--                            </a>-->
+                                    </div>
+                                </div>
+                            </th:block>
                         </div>
-                        <div class="row p-4">
-                            <div class="card">
-                                <p>
-                                    Badge 2
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row p-4">
-                            <div class="card">
-                                <p>
-                                    Badge 3
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row p-4">
-                            <div class="card">
-                                <p>
-                                    Badge 4
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row p-4">
-                            <div class="card">
-                                <p>
-                                    Badge 5
-                                </p>
-                            </div>
-                        </div>
+
                     </div>
+
+
                 </div>
             </div>
         </div>

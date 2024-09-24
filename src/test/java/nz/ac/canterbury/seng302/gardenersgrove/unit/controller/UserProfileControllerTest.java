@@ -35,6 +35,7 @@ public class UserProfileControllerTest {
     private HttpServletRequest mockRequest;
     private RequestService requestService;
     private MainPageLayoutService mainPageLayoutService;
+    private BadgeService badgeService;
     private MainPageLayout mainPageLayout;
 
 
@@ -51,7 +52,9 @@ public class UserProfileControllerTest {
         writeEmail = Mockito.mock(WriteEmail.class);
         gardenService = Mockito.mock(GardenService.class);
         mainPageLayoutService = Mockito.mock(MainPageLayoutService.class);
-        userProfileController = new UserProfileController(gardenerFormService, writeEmail, requestService, mainPageLayoutService);
+        badgeService = Mockito.mock(BadgeService.class);
+        userProfileController = new UserProfileController(gardenerFormService, writeEmail, requestService,
+                mainPageLayoutService, badgeService);
         modelMock = Mockito.mock(Model.class);
         gardener = Mockito.mock(Gardener.class);
         inputValidator = Mockito.mock(InputValidationUtil.class);
