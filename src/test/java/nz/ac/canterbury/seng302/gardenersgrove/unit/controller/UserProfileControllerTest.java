@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.unit.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.BadgeType;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -17,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -87,7 +90,6 @@ public class UserProfileControllerTest {
         Mockito.when(gardener.getEmail()).thenReturn("new@new.new");
         Mockito.when(authentication.getName()).thenReturn("new@new.new");
         userProfileController.getUserProfile("Ben", "Moore", LocalDate.of(2001, 11, 11).toString(), "new@new.new", false, false, null, mockRequest, modelMock);
-        userProfileController.editDetails("Ben", "Moore", false, LocalDate.of(2001, 11, 11).toString(), "new@new.new", mockRedirectAttributes);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
     }
 
@@ -107,7 +109,6 @@ public class UserProfileControllerTest {
         Mockito.when(gardener.getEmail()).thenReturn("test@gmail.com");
         Mockito.when(authentication.getName()).thenReturn("test@gmail.com");
         userProfileController.getUserProfile("Kush", "$#@", LocalDate.of(2004, 1, 15).toString(), "test@gmail.com", true,false, null, mockRequest, modelMock);
-        userProfileController.editDetails("Kush", "$#@", true, LocalDate.of(2004, 1, 15).toString(), "test@gmail.com", mockRedirectAttributes);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
     }
 

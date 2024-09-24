@@ -65,7 +65,11 @@ public class BadgeService {
      * @return A list containing the three most recently earned badges.
      */
     public List<Badge> getMyRecentBadges(Long gardenerId) {
-        return badgeRepository.findByGardenerId(gardenerId, Sort.by(Sort.Direction.DESC, "dateEarned"));
+        List<Badge> recentBadges = badgeRepository.findByGardenerId(gardenerId, Sort.by(Sort.Direction.DESC, "dateEarned"));
+        if (recentBadges.size() > 5) { // only want 5 most recent badges
+            return recentBadges.subList(0, 5);
+        }
+        return recentBadges;
     }
 
     /**

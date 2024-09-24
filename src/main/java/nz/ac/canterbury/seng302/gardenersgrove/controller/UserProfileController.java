@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -150,6 +151,18 @@ public class UserProfileController {
         model.addAttribute("isLastNameOptional", isLastNameOptional);
         model.addAttribute("lastNameValid", lastNameError.orElse(""));
 
+        Optional<String> DoBError = Optional.empty();
+        if (isDoBInvalid) {
+            if (!DoBString.isEmpty()) {
+                DoBError = Optional.of("Date is not in valid format, DD/MM/YYYY");
+            } else {
+                DoBError = inputValidator.checkDoB(DoBString);
+            }
+        } else if (DoBString != null) {
+            DoBError = inputValidator.checkDoB(DoBString);
+        }
+        model.addAttribute("DoBValid", DoBError.orElse(""));
+
         Optional<String> validEmailError = Optional.empty();
         if (email != null) {
             validEmailError = inputValidator.checkValidEmail(email);
@@ -168,10 +181,33 @@ public class UserProfileController {
             model.addAttribute("uploadMessage", "No image uploaded.");
         } else {
             model.addAttribute("uploadMessage", "");
-
         }
 
         model.addAttribute("emailValid", validEmailError.orElse(emailInUseError.orElse("")));
+
+
+        // Determines if edit should go through
+
+        if (firstNameError.isEmpty() &&
+                lastNameError.isEmpty() &&
+                DoBError.isEmpty() &&
+                validEmailError.isEmpty() &&
+                emailInUseError.isEmpty()) {
+            if (firstName != null || lastName != null || DoBString != null || email != null) {
+                gardener.setFirstName(firstName);
+                gardener.setLastName(lastName);
+                gardener.setEmail(email);
+                if (DoBString != null) {
+                    LocalDate DoB = LocalDate.parse(DoBString);
+                    gardener.setDoB(DoB);
+                }
+                gardenerFormService.addGardener(gardener);
+                // Re-authenticates user to catch case when they change their email
+                Authentication newAuth = new UsernamePasswordAuthenticationToken(gardener.getEmail(), gardener.getPassword(), gardener.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication((newAuth));
+                return "redirect:/user";
+            }
+        }
 
 
         // Main Page Edit info
@@ -199,12 +235,7 @@ public class UserProfileController {
         // Badges widget info
 
         List<Badge> earnedBadges = badgeService.getMyRecentBadges(gardener.getId());
-
-        if (earnedBadges.size() > 5) { // only want 5 most recent badges
-            model.addAttribute("earnedBadges", earnedBadges.subList(0, 5));
-        } else {
-            model.addAttribute("earnedBadges", earnedBadges);
-        }
+        model.addAttribute("earnedBadges", earnedBadges);
 
         return "user";
     }
@@ -216,12 +247,13 @@ public class UserProfileController {
      * If there is an image file, go back to 'user' page with new image
      * @param file the file of profile picture
      * @param model (map-like) representation of profile picture for use in thymeleaf
+     * @param redirectAttributes to repopulate the form on unsuccessful submission
      * @return thymeleaf 'user' page after updating successfully to reload user's details, otherwise thymeleaf login page
      */
     @PostMapping("/user")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    HttpServletRequest request,
-                                   Model model) {
+                                   Model model, RedirectAttributes redirectAttributes) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("POST /upload");
@@ -235,92 +267,13 @@ public class UserProfileController {
 
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             Optional<String> uploadMessage =  imageService.saveImage(file);
-            if (uploadMessage.isEmpty()) {
-                return "redirect:/user";
-            } else {
-                Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-                gardenerOptional.ifPresent(value -> gardener = value);
-
-                model.addAttribute("requestURI", requestService.getRequestURI(request));
-                model.addAttribute("uploadMessage", uploadMessage.get());
-                model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
-                model.addAttribute("firstName", gardenerFormService.findByEmail(authentication.getName()).get().getFirstName());
-                model.addAttribute("lastName", gardenerFormService.findByEmail(authentication.getName()).get().getLastName());
-                model.addAttribute("DoB", gardenerFormService.findByEmail(authentication.getName()).get().getDoB());
-                model.addAttribute("email", gardenerFormService.findByEmail(authentication.getName()).get().getEmail());
-                model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
-                model.addAttribute("firstNameValid", "");
-                model.addAttribute("lastNameValid", "");
-                model.addAttribute("DoBValid", "");
-                model.addAttribute("emailValid", "");
-
-                return "user";
+            if (!uploadMessage.isEmpty()) {
+                redirectAttributes.addFlashAttribute("uploadError", uploadMessage.get());
             }
+            return "redirect:/user";
         }
         return "loginForm";
     }
-
-
-    /**
-     * POST edit details of user
-     *
-     * @param firstName The first name of user
-     * @param lastName The last name of the user
-     * @param isLastNameOptional checkbox to see if lastname is optional
-     * @param DoB date of birth of the user
-     * @param email of the user
-     * @param redirectAttributes to repopulate the form on unsuccessful submission
-     * @return redirect to the /user page
-     */
-    @PostMapping("/user/editDetails")
-    public String editDetails(@RequestParam(name = "firstName", required = false) String firstName,
-                              @RequestParam(name = "lastName", required = false) String lastName,
-                              @RequestParam(name = "isLastNameOptional", required = false) boolean isLastNameOptional,
-                              @RequestParam(name = "DoB", required = false) String DoB,
-                              @RequestParam(name = "email", required = false) String email, RedirectAttributes redirectAttributes) {
-
-        logger.info("POST editing details");
-        InputValidationUtil inputValidator = new InputValidationUtil(gardenerFormService);
-
-        logger.info(firstName);
-        logger.info(lastName);
-        logger.info(DoB);
-        logger.info(email);
-
-        Optional<String> firstNameError = inputValidator.checkValidName(firstName, "First", true);
-                Optional<String> lastNameError = inputValidator.checkValidName(lastName, "Last", isLastNameOptional);
-        Optional<String> DoBError = inputValidator.checkDoB(DoB);
-        Optional<String> emailError = inputValidator.checkValidEmail(email);
-        boolean emailInUse = ((inputValidator.checkEmailInUse(email)).isPresent() && !email.equals(gardener.getEmail()));
-
-        if (firstNameError.isPresent() ||
-                lastNameError.isPresent() ||
-                DoBError.isPresent() ||
-                emailError.isPresent() ||
-        emailInUse) {
-            redirectAttributes.addFlashAttribute("firstNameError", firstNameError.orElse(""));
-            redirectAttributes.addFlashAttribute("lastNameError", lastNameError.orElse(""));
-            redirectAttributes.addFlashAttribute("DoBError", DoBError.orElse(""));
-            if (emailInUse && !email.equals(gardener.getEmail())) {
-                redirectAttributes.addFlashAttribute("emailError", emailError.orElse("This email address is already in use"));
-            } else {
-                redirectAttributes.addFlashAttribute("emailError", emailError.orElse(""));
-            }
-            redirectAttributes.addFlashAttribute("errorEditingDetails", "Error editing details");
-
-            return "redirect:/user";
-        }
-
-        gardener.setFirstName(firstName);
-        gardener.setLastName(lastName);
-        gardener.setEmail(email);
-        gardener.setDoB(LocalDate.parse(DoB));
-        gardenerFormService.addGardener(gardener);
-
-        redirectAttributes.addFlashAttribute("errorEditingDetails", "");
-
-        return "redirect:/user";
-    };
 
 
     /**Check whether there is the authentication of current user to change the profile photo.
@@ -332,7 +285,7 @@ public class UserProfileController {
     public String profileButton() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            return "user";
+            return "redirect:/user";
         }
         return "loginForm";
     }
