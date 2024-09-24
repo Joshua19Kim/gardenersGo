@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpeciesImpl;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
@@ -14,6 +13,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+
+import java.util.List;
 
 @Service
 public class IdentifiedPlantService {
@@ -42,6 +43,15 @@ public class IdentifiedPlantService {
     public Page<IdentifiedPlant> getGardenerPlantsBySpeciesPaginated(int pageNo, int pageSize, Long gardenerId, String speciesName) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         return identifiedPlantRepository.getPlantByGardenerIdAndSpecies(gardenerId, speciesName, pageable);
+    }
+
+    /**
+     * Gets the IdentifiedPlants that are owned by the gardener in list form
+     * @param gardenerId the id of the gardener
+     * @return all the IdentifiedPlants the gardener owns/ has scanned
+     */
+    public List<IdentifiedPlant> getGardenerPlants(Long gardenerId) {
+        return identifiedPlantRepository.getPlantByGardenerId(gardenerId);
     }
 
     /**
