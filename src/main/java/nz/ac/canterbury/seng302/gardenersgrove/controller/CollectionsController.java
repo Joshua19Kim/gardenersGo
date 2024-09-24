@@ -165,8 +165,8 @@ public class CollectionsController {
             model.addAttribute(showModalAttribute, false);
         }
         int badgeCount = 0;
-        badgeCount = badgeService.addBadgeToModel(plantBadgeId, "plantBadge", gardener, badgeCount, model);
-        badgeCount = badgeService.addBadgeToModel(speciesBadgeId, "speciesBadge", gardener, badgeCount, model);
+        badgeCount = addBadgeToModel(plantBadgeId, "plantBadge", gardener, badgeCount, model);
+        badgeCount = addBadgeToModel(speciesBadgeId, "speciesBadge", gardener, badgeCount, model);
         if(!model.containsAttribute("badgeCount")) {
             model.addAttribute("badgeCount", badgeCount);
         }
@@ -261,7 +261,7 @@ public class CollectionsController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        boolean isValid = identifiedPlantService.validateManuallyAddedPlantDetails(plantName, scientificName, description, isDateInvalid, redirectAttributes);
+        boolean isValid = validateManuallyAddedPlantDetails(plantName, scientificName, description, isDateInvalid, redirectAttributes);
 
         if (!plantImage.isEmpty()) {
             Optional<String> uploadMessage = imageService.checkValidImage(plantImage);
@@ -451,6 +451,71 @@ public class CollectionsController {
 
             return "editIdentifiedPlantForm";
         }
+    }
+
+    /**
+     * This validates all the details of a plant that is manually added to the collection
+     * @param plantName the plant name
+     * @param scientificName the scientific name (species)
+     * @param description the description
+     * @param isDateInvalid indicates whether the date is valid or not from HTML
+     * @param redirectAttributes used to add flash attributes when the page is redirected
+     * @return a boolean value indicating whether the plant is added or not
+     */
+    public boolean validateManuallyAddedPlantDetails(String plantName, String scientificName, String description, boolean isDateInvalid, RedirectAttributes redirectAttributes) {
+        String validatedPlantName = ValidityChecker.validatePlantName(plantName);
+        String validatedScientificName = ValidityChecker.validateScientificPlantName(scientificName);
+        String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
+
+        boolean isValid = true;
+
+        if (isDateInvalid) {
+            String dateError = "Date is not in valid format, DD/MM/YYYY";
+            redirectAttributes.addFlashAttribute("dateError", dateError);
+            isValid = false;
+        }
+
+        if (!Objects.equals(plantName, validatedPlantName)) {
+            redirectAttributes.addFlashAttribute("plantNameError", validatedPlantName);
+            isValid = false;
+        }
+        if (!Objects.equals(scientificName, validatedScientificName)) {
+            redirectAttributes.addFlashAttribute("scientificNameError", validatedScientificName);
+            isValid = false;
+        }
+        if (!Objects.equals(description, validatedPlantDescription)) {
+            redirectAttributes.addFlashAttribute("descriptionError", validatedPlantDescription);
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    /**
+     * Adds the badge to the specific model if it exists
+     * @param badgeId the badge id
+     * @param badgeName the badge name
+     * @param gardener the gardener
+     * @param badgeCount the badge count
+     * @param model the model
+     * @return the badge count
+     */
+    public int addBadgeToModel(String badgeId, String badgeName,  Gardener gardener, int badgeCount, Model model) {
+        if(badgeId != null && !badgeId.isEmpty()) {
+            try {
+                long badgeIdLong = parseLong(badgeId, 10);
+                Optional<Badge> badge = badgeService.getMyBadgeById(badgeIdLong, gardener.getId());
+                if(badge.isPresent()) {
+                    model.addAttribute(badgeName, badge.get());
+                    badgeCount += 1;
+                }
+
+            } catch (Exception e) {
+                logger.info(e.getMessage());
+            }
+
+        }
+        return badgeCount;
     }
 
 }

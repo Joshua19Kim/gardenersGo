@@ -142,30 +142,5 @@ public class BadgeService {
 
     }
 
-    /**
-     * Adds the badge to the specific model if it exists
-     * @param badgeId the badge id
-     * @param badgeName the badge name
-     * @param gardener the gardener
-     * @param badgeCount the badge count
-     * @param model the model
-     * @return the badge count
-     */
-    public int addBadgeToModel(String badgeId, String badgeName,  Gardener gardener, int badgeCount, Model model) {
-        if(badgeId != null && !badgeId.isEmpty()) {
-            try {
-                long badgeIdLong = parseLong(badgeId, 10);
-                Optional<Badge> badge = getMyBadgeById(badgeIdLong, gardener.getId());
-                if(badge.isPresent()) {
-                    model.addAttribute(badgeName, badge.get());
-                    badgeCount += 1;
-                }
 
-            } catch (Exception e) {
-                logger.info(e.getMessage());
-            }
-
-        }
-        return badgeCount;
-    }
 }

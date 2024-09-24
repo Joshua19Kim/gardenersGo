@@ -89,43 +89,6 @@ public class IdentifiedPlantService {
      */
     public int getSpeciesCount(long id) { return identifiedPlantRepository.getSpeciesCountByGardenerId(id);}
 
-    /**
-     * This validates all the details of a plant that is manually added to the collection
-     * @param plantName the plant name
-     * @param scientificName the scientific name (species)
-     * @param description the description
-     * @param isDateInvalid indicates whether the date is valid or not from HTML
-     * @param redirectAttributes used to add flash attributes when the page is redirected
-     * @return a boolean value indicating whether the plant is added or not
-     */
-    public boolean validateManuallyAddedPlantDetails(String plantName, String scientificName, String description, boolean isDateInvalid, RedirectAttributes redirectAttributes) {
-        String validatedPlantName = ValidityChecker.validatePlantName(plantName);
-        String validatedScientificName = ValidityChecker.validateScientificPlantName(scientificName);
-        String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
-
-        boolean isValid = true;
-
-        if (isDateInvalid) {
-            String dateError = "Date is not in valid format, DD/MM/YYYY";
-            redirectAttributes.addFlashAttribute("dateError", dateError);
-            isValid = false;
-        }
-
-        if (!Objects.equals(plantName, validatedPlantName)) {
-            redirectAttributes.addFlashAttribute("plantNameError", validatedPlantName);
-            isValid = false;
-        }
-        if (!Objects.equals(scientificName, validatedScientificName)) {
-            redirectAttributes.addFlashAttribute("scientificNameError", validatedScientificName);
-            isValid = false;
-        }
-        if (!Objects.equals(description, validatedPlantDescription)) {
-            redirectAttributes.addFlashAttribute("descriptionError", validatedPlantDescription);
-            isValid = false;
-        }
-
-        return isValid;
-    }
 
     /**
      * Adds all the optional details to a manually added plant
