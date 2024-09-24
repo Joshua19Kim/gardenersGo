@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.IntStream;
-import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
@@ -28,13 +27,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.IntStream;
-
-import static java.lang.Long.parseLong;
 
 /**
  * Controller class for handling HTTP requests for the Collections page
@@ -331,7 +323,7 @@ public class CollectionsController {
             if (plantBadge.isPresent()) {
                 redirectAttributes.addFlashAttribute("plantBadge", plantBadge.get());
             }
-            if (scientificName.isEmpty()) {
+            if (scientificName == null || scientificName.isEmpty()) {
                 redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE_ATTRIBUTE, plantName + " has been added to collection");
             } else {
                 redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE_ATTRIBUTE, plantName + " has been added to collection: " + scientificName);

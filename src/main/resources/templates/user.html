@@ -116,7 +116,7 @@
                     <p>My badges</p>
 
                     <div class="d-flex flex-wrap" style="overflow-y: scroll; height: 100%;">
-                        <p th:class="${earnedBadges == null}? 'alert alert-transparent' : 'd-none'"> No Badges Earned</p>
+                        <p th:class="${earnedBadges.isEmpty()}? 'alert alert-transparent' : 'd-none'">No Badges Unlocked</p>
                         <th:block th:each="badge : ${earnedBadges}">
                             <div class="list-group-item" style="width: 19%; margin-left: 1%;">
                                 <img id="plantBadgeImage" th:src="@{${badge.imageFilename}}" th:alt="${badge.name}"
