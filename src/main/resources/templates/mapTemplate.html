@@ -24,12 +24,29 @@
         }
         #map {
             height: 100%;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div id="map"></div>
+
+<div class="map_search_container"> <!-- Filtering menu -->
+    <div class="form-group field w-50">
+        <label class="input w-100">
+            <label style="margin-left: 20px;"> Start date </label>
+            <input id="sdate" class="form-control form-field" value="" type="date" max="9999-12-31">
+        </label>
+    </div>
+    <div class="form-group field w-50">
+        <label class="input w-100">
+            <label style="margin-left: 20px;"> End date </label>
+            <input id="edate" class="form-control form-field" value="" type="date" max="9999-12-31">
+        </label>
+    </div>
+</div>
+
 <script th:src="@{/webjars/leaflet/1.9.4/dist/leaflet.js}"></script>
 <script th:src="@{/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js}"></script>
 <script th:inline="javascript">
