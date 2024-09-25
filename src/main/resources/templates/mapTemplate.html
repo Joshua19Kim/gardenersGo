@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Leaflet & OSM Map Demo</title>
+    <title>Gardener's Go Map</title>
     <link href="https://fonts.googleapis.com/css2?family=Matemasie:wght@400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
     <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" rel='stylesheet'>
@@ -29,7 +29,15 @@
 </head>
 <body>
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
-<div id="map"></div>
+<div class="search-container position-absolute p-3 d-flex flex-row" style="z-index: 5; left: 40px; top: 130px;">
+    <form class="search-bar form-inline">
+        <input id="searchText" class="form-control mr-2" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="13">
+        <input id="searchPool" name="searchPool" th:value="${searchPool}" type="hidden">
+        <button class="btn btn-outline-success" onclick="submitSearch()" tabindex="17">Search</button>
+    </form>
+</div>
+<div id="map" style="z-index: 1"></div>
+
 <script th:src="@{/webjars/leaflet/1.9.4/dist/leaflet.js}"></script>
 <script th:src="@{/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js}"></script>
 <script th:inline="javascript">
@@ -85,6 +93,18 @@
     });
 
     map.addLayer(clusteredMarkers);
+
+    // Dynamically adjust map height based on the navbar height - need to do this because navbar does not have a set height
+    function resizeMap() {
+        const navbarHeight = document.querySelector('nav').offsetHeight;
+        const map = document.getElementById('map');
+        map.style.height = `calc(100vh - ${navbarHeight}px)`;
+    }
+
+    // Adjust the map height on window resize
+    window.addEventListener('resize', resizeMap);
+    window.addEventListener('load', resizeMap);
+
 
 </script>
 </body>

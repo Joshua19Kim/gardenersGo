@@ -1086,7 +1086,6 @@ button.image-button:hover {
 
 
 .search-bar {
-    background-color: yellow;
     margin-top: 20px;
     display: flex;
     align-items: center;
@@ -1635,6 +1634,7 @@ form.search-bar::after {
     align-items: center;
     max-width: 100%;
     margin: 20px auto;
+    background-color: rgba(0,0,0,0);
 }
 
 .form-inline {
