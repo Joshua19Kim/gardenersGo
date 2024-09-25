@@ -281,6 +281,13 @@ public class CollectionsController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
+        if (manualPlantLat.isBlank()) {
+            manualPlantLat = null;
+        }
+        if (manualPlantLon.isBlank()) {
+            manualPlantLon = null;
+        }
+
         boolean isValid = validateManuallyAddedPlantDetails(plantName, scientificName, description, isDateInvalid, redirectAttributes);
         boolean validLocation = ValidityChecker.validatePlantCoordinates(manualPlantLat,manualPlantLon);
 
@@ -296,7 +303,7 @@ public class CollectionsController {
             redirectAttributes.addFlashAttribute("locationError", "Invalid Location");
             isValid = false;
         }
-        if (manualPlantLon.isEmpty() && manualPlantLat.isEmpty()) {
+        if (manualPlantLon == null && manualPlantLat == null) {
             manualAddLocationToggle = false;
         }
 
@@ -456,6 +463,13 @@ public class CollectionsController {
         long plantId = parseLong(plantIdString, 10);
         IdentifiedPlant plantOptional = identifiedPlantService.getCollectionPlantById(plantId);
 
+        if (manualPlantLat.isBlank()) {
+            manualPlantLat = null;
+        }
+        if (manualPlantLon.isBlank()) {
+            manualPlantLon = null;
+        }
+
         String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(name);
         String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(description);
         boolean validLocation = ValidityChecker.validatePlantCoordinates(manualPlantLat,manualPlantLon);
@@ -476,7 +490,7 @@ public class CollectionsController {
             model.addAttribute("locationError", "Invalid Location");
             isValid = false;
         }
-        if (manualPlantLon.isEmpty() && manualPlantLat.isEmpty()) {
+        if (manualPlantLon == null && manualPlantLat == null) {
             manualAddLocationToggle = false;
         }
 

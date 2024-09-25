@@ -72,10 +72,10 @@
                             <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
                                 <label for="manualAddLocation"> Plant location: </label>
                                 <input class="form-control" type="text" id="manualAddLocation" autocomplete="off" placeholder="Search the address here..."
-                                       th:name="location" th:value="*{location}" data-cy="location" autofocus
+                                       th:name="location" th:value="${location}" data-cy="location" autofocus
                                        th:classappend="${locationError} ? 'is-invalid' : ''"
                                 >
-                                <span th:if="${locationError}" th:utext="${locationError}" class="smallErrorMessage"></span>
+                                <span id="locationError" th:utext="${locationError == null ? '' : locationError}" class="smallErrorMessage"></span>
                                 <p id="manualAddLocationUpdateMssg" class="smallErrorMessage"></p>
                                 <div id="manual-add-autocomplete-results" style="margin-top: -1rem; " ></div>
                             </div>

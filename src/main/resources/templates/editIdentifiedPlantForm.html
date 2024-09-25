@@ -37,7 +37,7 @@
                                th:name="location" th:value="${location != null ? location : savedLocation}" data-cy="location" autofocus
                                th:classappend="${locationError} ? 'is-invalid' : ''"
                         >
-                        <span th:if="${locationError}" th:utext="${locationError}" class="smallErrorMessage"></span>
+                        <span id="locationError" th:utext="${locationError == null ? '' : locationError}" class="smallErrorMessage"></span>
                         <p id="manualAddLocationUpdateMssg" class="smallErrorMessage"></p>
                         <div id="manual-add-autocomplete-results" style="margin-top: -1rem; " ></div>
                     </div>
@@ -131,6 +131,9 @@
     document.getElementById('manualAddLocationToggle').addEventListener('change', function() {
         if (this.checked) {
             manualAddGeolocationUpdateMssg.innerHTML = waitingSpinnerHtml;
+
+            document.getElementById("locationError").innerText = "";
+            document.getElementById("manualAddLocation").classList.remove("is-invalid");
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(setMACoordinates, showMAError);

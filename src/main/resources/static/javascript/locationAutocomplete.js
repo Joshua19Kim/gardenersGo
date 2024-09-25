@@ -31,7 +31,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     manualAddAddressInput.addEventListener('input', function () {
+        document.getElementById("locationError").innerText = "";
+        document.getElementById("manualAddLocation").classList.remove("is-invalid");
         address = manualAddAddressInput;
+        document.getElementById("manualPlantLat").value = address.value
         if (this.value.trim() === '') {
             manualPlantLat.value = '';
             manualPlantLon.value = '';
@@ -46,6 +49,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     scanningAddressInput.addEventListener('input', function () {
+        document.getElementById("scanningLocationError").innerText = "";
+        document.getElementById("scanningLocation").classList.remove("is-invalid");
         address = scanningAddressInput;
         if (this.value.trim() === '') {
             plantLat.value = '';
@@ -53,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
             locationUpdateMssg.innerHTML = "";
         } else {
             if (plantLat.value === '' && plantLon.value === '') {
+                document.getElementById("manualPlantLat").value = address.value
                 locationUpdateMssg.innerHTML = "Search and select a verified address from the list to show it on map."
                 locationUpdateMssg.style.color = "blue";
             }
@@ -104,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
             item.textContent = "No matching location found, location-based services may not work"
             item.style.color = 'red';
             resultBox.appendChild(item);
+
         } else if (results.status === "Searching") {
             const item = document.createElement('div');
             item.classList.add('autocomplete-item');
