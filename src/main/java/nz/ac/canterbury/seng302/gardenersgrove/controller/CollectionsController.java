@@ -125,6 +125,7 @@ public class CollectionsController {
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
             @RequestParam(name="plantBadgeId", required = false) String plantBadgeId,
             @RequestParam(name="speciesBadgeId", required = false) String speciesBadgeId,
+            @RequestParam(name="regionBadgeId", required = false) String regionBadgeId,
             @RequestParam(name="savedPlant", defaultValue = "") String savedPlantId,
             Model model) {
 
@@ -177,6 +178,7 @@ public class CollectionsController {
         int badgeCount = 0;
         badgeCount = addBadgeToModel(plantBadgeId, "plantBadge", gardener, badgeCount, model);
         badgeCount = addBadgeToModel(speciesBadgeId, "speciesBadge", gardener, badgeCount, model);
+        badgeCount = addBadgeToModel(regionBadgeId, "regionBadge", gardener, badgeCount, model);
         if(!model.containsAttribute("badgeCount")) {
             model.addAttribute("badgeCount", badgeCount);
         }

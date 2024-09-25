@@ -182,8 +182,8 @@ public class ScanController {
                     }
 
                     if (!plantLatitude.isEmpty() && !plantLongitude.isEmpty()) {
-                        String dunno = locationService.sendReverseGeocodingRequest(plantLatitude, plantLongitude);
-                        System.out.println(dunno);
+                        String region = locationService.sendReverseGeocodingRequest(plantLatitude, plantLongitude);
+                        identifiedPlant.setRegion(region);
                     }
                     identifiedPlant.setPlantLatitude(plantLatitude);
                     identifiedPlant.setPlantLongitude(plantLongitude);
@@ -206,6 +206,11 @@ public class ScanController {
                     } else {
                         response.remove("speciesBadge");
                     }
+
+                    int regionCount = identifiedPlantService.getRegionCount(gardener.get().getId());
+                    Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener.get(), regionCount);
+                    regionBadge.ifPresent(badge -> response.put("regionBadge", regionBadge.get().getId()));
+
                     return ResponseEntity.ok(response);
                 }
                 errorResponse.put("message", "Invalid Field");

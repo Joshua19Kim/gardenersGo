@@ -138,5 +138,28 @@ public class BadgeService {
 
     }
 
-
+    /**
+     * Checks if there is a badge to be added based on the number of regions
+     * @param gardener the gardener
+     * @param regionCount the species count
+     */
+    public Optional<Badge> checkRegionBadgeToBeAdded(Gardener gardener, Integer regionCount) {
+        Badge badge;
+        switch (regionCount) {
+            case 1:
+                badge = new Badge("1st Region Found", LocalDate.now(), BadgeType.REGION, gardener, "/images/badges/1RegionBadge.png");
+                return Optional.of(addBadge(badge));
+            case 5:
+                badge = new Badge("5th Region Found", LocalDate.now(), BadgeType.REGION, gardener, "/images/badges/5RegionBadge.png" );
+                return Optional.of(addBadge(badge));
+            case 10:
+                badge = new Badge("10th Region Found", LocalDate.now(), BadgeType.REGION, gardener, "/images/badges/10RegionBadge.png" );
+                return Optional.of(addBadge(badge));
+            case 17:
+                badge = new Badge("17th Region Found", LocalDate.now(), BadgeType.REGION, gardener, "/images/badges/17RegionBadge.png" );
+                return Optional.of(addBadge(badge));
+            default:
+                return Optional.empty();
+        }
+    }
 }
