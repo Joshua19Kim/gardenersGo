@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +74,9 @@ public class LocationService {
                 .build();
 
         HttpResponse<String> response = this.client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(response.body());
+        JsonNode regionNode = jsonNode.path("address");
+        return regionNode.path("state").asText();
     }
 }
