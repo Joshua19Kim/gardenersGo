@@ -81,10 +81,22 @@
                             </div>
                             <div>
                                 <div class="form-check form-switch" style="margin-top: 1rem; " >
-                                    <input class="form-check-input" type="checkbox" role="switch" id="manualAddLocationToggle">
+                                    <input class="form-check-input" type="checkbox" name="manualAddLocationToggle" th:name="manualAddLocationToggle" role="switch" id="manualAddLocationToggle"  th:id="manualAddLocationToggle" th:checked="${manualAddLocationToggle}">
                                     <label class="form-check-label" for="manualAddLocationToggle">Use current location</label>
                                 </div>
                                 <p id="manualAddGeolocationUpdateMssg" class="smallErrorMessage"></p>
+                                <script>
+                                    document.getElementById('manualAddLocation').disabled = document.getElementById('manualAddLocationToggle').checked;
+                                    document.getElementById('manualAddLocationToggle').onchange = function () {
+                                        document.getElementById('manualAddLocation').disabled = this.checked;
+                                    };
+                                    document.getElementById('manualAddLocationToggle').addEventListener('keydown', function (event) {
+                                        if (event.key === 'Enter') {
+                                            this.checked = !this.checked;
+                                            document.getElementById('manualAddLocation').disabled = this.checked;
+                                        }
+                                    });
+                                </script>
 
                             </div>
                         </div>

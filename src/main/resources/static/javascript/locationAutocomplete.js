@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     scanningAddressInput.addEventListener('input', function () {
-        console.log("working!");
         address = scanningAddressInput;
         if (this.value.trim() === '') {
             plantLat.value = '';
@@ -144,11 +143,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         const addressInputValue = `${result.address.house_number || ''} ${result.address.road || ''} ${result.address.city || ''} ${result.address.country || ''}`;
 
                         if (manualAddAddressInput.value !== '') {
-                            console.log(manualPlantLon.value);
-                            console.log(typeof result.lon);
                             manualPlantLat.value = result.lat;
                             manualPlantLon.value = result.lon;
-                            console.log(manualPlantLon.value);
                             manualAddLocationUpdateMssg.innerHTML = "The location has been verified : <br/>" + addressInputValue;
                             manualAddLocationUpdateMssg.style.color = "green";
                             manualAddAddressInput.value = addressInputValue.trim();

@@ -256,6 +256,8 @@ public class CollectionsController {
             @RequestParam("plantImage") MultipartFile plantImage,
             @RequestParam(name ="manualPlantLat",required = false) String manualPlantLat,
             @RequestParam(name ="manualPlantLon",required = false) String manualPlantLon,
+            @RequestParam(name ="location", required = false ) String location,
+            @RequestParam(name= "manualAddLocationToggle", required = false) boolean manualAddLocationToggle,
             RedirectAttributes redirectAttributes,
             Model model
     ) {
@@ -301,6 +303,9 @@ public class CollectionsController {
             redirectAttributes.addFlashAttribute("locationError", "Invalid Location");
             isValid = false;
         }
+        if (manualPlantLon.isEmpty() && manualPlantLat.isEmpty()) {
+            manualAddLocationToggle = false;
+        }
 
         if (isValid) {
             IdentifiedPlant identifiedPlant = new IdentifiedPlant(plantName, gardener);
@@ -345,6 +350,8 @@ public class CollectionsController {
             redirectAttributes.addFlashAttribute("uploadedDate", uploadedDate);
             redirectAttributes.addFlashAttribute("manualPlantLat", manualPlantLat);
             redirectAttributes.addFlashAttribute("manualPlantLon", manualPlantLon);
+            redirectAttributes.addFlashAttribute("location", location);
+            redirectAttributes.addFlashAttribute("manualAddLocationToggle", manualAddLocationToggle);
 
             redirectAttributes.addFlashAttribute(errorOccurredAttribute, true);
             redirectAttributes.addFlashAttribute(showModalAttribute, true);
