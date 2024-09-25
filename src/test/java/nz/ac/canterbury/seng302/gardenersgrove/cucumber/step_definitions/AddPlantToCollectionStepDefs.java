@@ -82,8 +82,21 @@ public class AddPlantToCollectionStepDefs {
     @When("I enter the uploaded date {string}")
     public void i_enter_the_uploaded_date(String date) {
         identifiedPlant.setDateUploaded(date);
-
     }
+
+    @When("I enter valid location")
+    public void i_enter_valid_location() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @When("I enter invalid location")
+    public void i_enter_invalid_location() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
+
+
 
     @When("I upload no image")
     public void i_upload_no_image() {
@@ -133,6 +146,10 @@ public class AddPlantToCollectionStepDefs {
         resultActions.andExpect(flash().attribute("scientificNameError", errorMessage));
     }
 
-
+    @Then("I get the location error message {string}")
+    public void i_get_the_location_error_message(String string) {
+        // Write code here that turns the phrase above into concrete actions
+        throw new io.cucumber.java.PendingException();
+    }
 
 }
