@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ public class IdentifiedPlant {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "gardener_id", nullable = false)
     private Gardener gardener;
 
@@ -43,7 +45,6 @@ public class IdentifiedPlant {
     private List<String> commonNames;
 
 
-
     @Column(name = "gbif_id")
     private String gbifId;
 
@@ -64,7 +65,7 @@ public class IdentifiedPlant {
     /**
      * Name of the plant.
      */
-    @Column(length=64)
+    @Column(length = 64)
     private String name;
 
 
@@ -87,24 +88,25 @@ public class IdentifiedPlant {
     /**
      * Description of the plant.
      */
-    @Column(length=512)
+    @Column(length = 512)
     private String description;
 
     /**
      * JPA required no-args constructor
      */
-    public IdentifiedPlant() {}
+    public IdentifiedPlant() {
+    }
 
     /**
      * Constructs an IdentifiedPlant with the specified identification details.
      *
-     * @param bestMatch the best match for the plant identification
-     * @param score the matching score for the plant identified plant
-     * @param commonNames the list of common names for the identified plant
+     * @param bestMatch                          the best match for the plant identification
+     * @param score                              the matching score for the plant identified plant
+     * @param commonNames                        the list of common names for the identified plant
      * @param speciesScientificNameWithoutAuthor The species Scientific name of the identified plant without Author
-     * @param familyScientificNameWithoutAuthor The family Scientific name of the identified plant without Author
-     * @param imagePath the path to the uploaded image used for identification
-     * @param gardener the gardener associated with the identified plant
+     * @param familyScientificNameWithoutAuthor  The family Scientific name of the identified plant without Author
+     * @param imagePath                          the path to the uploaded image used for identification
+     * @param gardener                           the gardener associated with the identified plant
      */
     public IdentifiedPlant(String bestMatch, Double score, List<String> commonNames,
                            String gbifId, String imageUrl, String imagePath,
@@ -129,11 +131,11 @@ public class IdentifiedPlant {
     /**
      * Constructs an IdentifiedPlant with the new plant details.
      *
-     * @param plantName the name of the new plant
-     * @param description the description of the new plant
+     * @param plantName                          the name of the new plant
+     * @param description                        the description of the new plant
      * @param speciesScientificNameWithoutAuthor the scientific name of the new plant
-     * @param uploadedDate the date of the plant uploaded
-     * @param gardener the gardener associated with the new plant
+     * @param uploadedDate                       the date of the plant uploaded
+     * @param gardener                           the gardener associated with the new plant
      */
     public IdentifiedPlant(String plantName, String description,
                            String speciesScientificNameWithoutAuthor, LocalDate uploadedDate,
@@ -151,8 +153,9 @@ public class IdentifiedPlant {
 
     /**
      * A constructor for the required parameters of identified plant
+     *
      * @param plantName the name of the plant
-     * @param gardener the gardener it belongs to
+     * @param gardener  the gardener it belongs to
      */
     public IdentifiedPlant(String plantName, Gardener gardener) {
         this.name = plantName;
@@ -241,6 +244,7 @@ public class IdentifiedPlant {
     public void setUploadedImage(String uploadedImage) {
         this.uploadedImage = uploadedImage;
     }
+
     public String getDateUploaded() {
         return dateUploaded;
     }
@@ -249,12 +253,20 @@ public class IdentifiedPlant {
         this.dateUploaded = dateUploaded;
     }
 
-    public String getPlantLatitude() {return plantLatitude;}
+    public String getPlantLatitude() {
+        return plantLatitude;
+    }
 
-    public void setPlantLatitude(String plantLatitude) {this.plantLatitude = plantLatitude;}
+    public void setPlantLatitude(String plantLatitude) {
+        this.plantLatitude = plantLatitude;
+    }
 
-    public String getPlantLongitude() {return plantLongitude;}
+    public String getPlantLongitude() {
+        return plantLongitude;
+    }
 
-    public void setPlantLongitude(String plantLongitude) {this.plantLongitude = plantLongitude;}
+    public void setPlantLongitude(String plantLongitude) {
+        this.plantLongitude = plantLongitude;
+    }
 
 }

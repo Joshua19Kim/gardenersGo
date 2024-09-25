@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     <title>Leaflet & OSM Map Demo</title>
-    <link rel="stylesheet" href="/webjars/leaflet/1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="/webjars/leaflet-markercluster/1.4.1/MarkerCluster.css" />
-    <link rel="stylesheet" href="/webjars/leaflet-markercluster/1.4.1/MarkerCluster.Default.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Matemasie:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" rel='stylesheet'>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+
+    <link rel="stylesheet" th:href="@{/webjars/leaflet/1.9.4/dist/leaflet.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/leaflet-markercluster/1.4.1/MarkerCluster.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/leaflet-markercluster/1.4.1/MarkerCluster.Default.css}" />
+
+    <link th:href="@{/css/stylesheet.css}" rel="stylesheet"><!-- Reference to the external stylesheet - order matters, must be below webjars line -->
+    <link th:href="@{/css/navbar.css}" rel="stylesheet">
 
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
@@ -20,21 +28,19 @@
     </style>
 </head>
 <body>
+<nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div id="map"></div>
-<script src="/webjars/leaflet/1.9.4/dist/leaflet.js"></script>
-<script src="/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js"></script>
-<script >
-
-
+<script th:src="@{/webjars/leaflet/1.9.4/dist/leaflet.js}"></script>
+<script th:src="@{/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js}"></script>
+<script th:inline="javascript">
     /**
-     * creates and initialises the Google map, also defines on click event that calls java code
+     * creates and initialises the map, also defines on click event that calls java code
      */
-
     var southWest = L.latLng(-55, 148.038821);
     var northEast = L.latLng(-28,200);
     var maxBoundArea = L.latLngBounds(southWest, northEast)
     var map = L.map('map', {
-        center: [-40.9, 174.88],
+        center: [-43.5, 174.88],
         zoom: 5.2,
         maxBounds: maxBoundArea,
         minZoom: 5.2,
@@ -44,10 +50,35 @@
         attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
     }).addTo(map);
 
-    var markers = new L.MarkerClusterGroup();
-    markers.addLayer(L.marker([-43.522897, 172.579027]));
-    markers.addLayer(L.marker([-43.520474, 172.577027]));
-    map.addLayer(markers);
+    document.addEventListener("DOMContentLoaded", function() {
+        /*<![CDATA[*/
+        var scannedPlants = /*[[${scannedPlants}]]*/ [];
+        console.log(scannedPlants);
+        scannedPlants.forEach(function (scannedPlant) {
+            if (scannedPlant.plantLatitude && scannedPlant.plantLongitude && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
+
+                var plantLink = '/collectionDetails?speciesName=' + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
+                var popupContent = '<div style="width: 200px; word-break: break-all; text-align: center;"><h2>' +
+                    scannedPlant.name + '</h2>' +
+                    '<h3><i>' + scannedPlant.speciesScientificNameWithoutAuthor + '</i></h3>' +
+                    '<h3><i>Added ' + scannedPlant.dateUploaded + '</i><h3>' +
+                    '<a style="text-decoration: none;" href="' + plantLink + '">' + 'View in your collection' + '</a><br>';
+
+                if (scannedPlant.uploadedImage) {
+                    var image = '<img src="' + scannedPlant.uploadedImage + '" alt="Plant image" width="200px" height="auto"/>';
+                    popupContent += '<br>' + image + '</div>';
+                } else {
+                    popupContent += '</div>';
+                }
+
+                L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
+                    .addTo(map)
+                    .bindPopup(popupContent, {maxWidth: 200}
+                    );
+            }
+            /*]]>*/
+        });
+    });
 </script>
 </body>
 </html>

@@ -1,13 +1,22 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpeciesImpl;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+/**
+ * Service responsible for saving identified plants to the repository and retrieve them for us in
+ * the My Collections page
+ */
+
 
 @Service
 public class IdentifiedPlantService {
@@ -39,6 +48,15 @@ public class IdentifiedPlantService {
     }
 
     /**
+     * Gets the IdentifiedPlants that are owned by the gardener in list form
+     * @param gardenerId the id of the gardener
+     * @return all the IdentifiedPlants the gardener owns/ has scanned
+     */
+    public List<IdentifiedPlant> getGardenerPlants(Long gardenerId) {
+        return identifiedPlantRepository.getPlantByGardenerId(gardenerId);
+    }
+
+    /**
      * Gets the IdentifiedPlant species that are owned by the gardener in paginated form
      * @param pageNo the page number
      * @param pageSize the size of the page
@@ -50,12 +68,13 @@ public class IdentifiedPlantService {
         return identifiedPlantRepository.getSpeciesByGardenerId(gardenerId, pageable);
     }
 
-    /**
-     * Gets a plant by its id
-     * @param id the id of the plant
-     * @return a plant if found
-     */
-    public IdentifiedPlant getCollectionPlantById(long id) {
+  /**
+   * Gets the IdentifiedPlant by ID specifically
+   *
+   * @param id the ID of the specific plant in the collection
+   * @return the related IdentifiedPlant if found
+   */
+  public IdentifiedPlant getCollectionPlantById(long id) {
         return identifiedPlantRepository.findById(id);
     }
 
@@ -65,5 +84,37 @@ public class IdentifiedPlantService {
      * @return returns the count for a gardener
      */
     public Integer getCollectionPlantCount(long id) { return identifiedPlantRepository.getIdentifiedPlantByGardenerId(id).size();}
+
+    /**
+     * Gets a count of all the species in the database
+     * @param id the id of the gardener
+     * @return a count of all the species
+     */
+    public int getSpeciesCount(long id) { return identifiedPlantRepository.getSpeciesCountByGardenerId(id);}
+
+
+    /**
+     * Adds all the optional details to a manually added plant
+     * @param identifiedPlant the identified plant
+     * @param description description
+     * @param scientificName species
+     * @param uploadedDate uploaded date
+     * @return the identified plant
+     */
+    public IdentifiedPlant createManuallyAddedPlant(IdentifiedPlant identifiedPlant, String description, String scientificName, LocalDate uploadedDate) {
+        if (description != null && !description.trim().isEmpty()) {
+            identifiedPlant.setDescription(description);
+        }
+        if (scientificName != null && !scientificName.trim().isEmpty()) {
+            identifiedPlant.setSpeciesScientificNameWithoutAuthor(scientificName);
+        } else {
+            identifiedPlant.setSpeciesScientificNameWithoutAuthor("No Species");
+        }
+        if (uploadedDate != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            identifiedPlant.setDateUploaded(uploadedDate.format(formatter));
+        }
+        return identifiedPlant;
+    }
 
 }

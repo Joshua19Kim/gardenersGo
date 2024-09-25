@@ -37,6 +37,8 @@ class IdentifiedPlantServiceTest {
 
     private int totalPlants;
 
+    private int totalSpecies;
+
     @BeforeEach
     public void setUp() {
         identifiedPlantService = new IdentifiedPlantService(identifiedPlantRepository);
@@ -46,8 +48,12 @@ class IdentifiedPlantServiceTest {
                 "Password1!");
         gardener = gardenerFormService.addGardener(gardener);
         totalPlants = 12;
+        totalSpecies = 3;
         for(int i = 0; i< totalPlants; i++) {
             IdentifiedPlant identifiedPlant = new IdentifiedPlant("Plant Name" + i, gardener);
+            if(i % (totalPlants / totalSpecies) == 0) {
+                identifiedPlant.setSpeciesScientificNameWithoutAuthor("Species" + i);
+            }
             identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
         }
     }
@@ -63,5 +69,11 @@ class IdentifiedPlantServiceTest {
     void getCollectionCountTest() {
         int count = identifiedPlantService.getCollectionPlantCount(gardener.getId());
         Assertions.assertEquals(totalPlants, count);
+    }
+
+    @Test
+    void getSpeciesCountTest() {
+        int count = identifiedPlantService.getSpeciesCount(gardener.getId());
+        Assertions.assertEquals(totalSpecies, count);
     }
 }

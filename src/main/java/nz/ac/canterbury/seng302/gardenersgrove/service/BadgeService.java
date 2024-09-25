@@ -4,6 +4,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BadgeType;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.BadgeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import java.util.Optional;
  */
 @Service
 public class BadgeService {
+
+    Logger logger = LoggerFactory.getLogger(BadgeService.class);
 
     private List<String> badgeNames;
     private BadgeRepository badgeRepository;
@@ -66,6 +70,15 @@ public class BadgeService {
          return badgeRepository.findByNameAndGardenerId(name, gardenerId);
      }
 
+    /**
+     * Finds the badge by its id
+     * @param badgeId badge id
+     * @return the badge
+     */
+    public Optional<Badge> getMyBadgeById(long badgeId, long gardenerId) {
+        return badgeRepository.findByIdAndGardenerId(badgeId, gardenerId);
+    }
+
 
     /**
      * Checks if there is a badge to be added based on the number of identified plants
@@ -97,11 +110,33 @@ public class BadgeService {
     }
 
     /**
-     * Finds the badge by its id
-     * @param badgeId badge id
-     * @return the badge
+     * Checks if there is a badge to be added based on the number of identified species
+     * @param gardener the gardener
+     * @param speciesCount the species count
      */
-    public Optional<Badge> getMyBadgeById(long badgeId, long gardenerId) {
-        return badgeRepository.findByIdAndGardenerId(badgeId, gardenerId);
+    public Optional<Badge> checkSpeciesBadgeToBeAdded(Gardener gardener, Integer speciesCount) {
+        Badge badge;
+        switch (speciesCount) {
+            case 1:
+                badge = new Badge("1st Species Found", LocalDate.now(), BadgeType.SPECIES, gardener, "/images/badges/1SpeciesBadge.png");
+                return Optional.of(addBadge(badge));
+            case 10:
+                badge = new Badge("10th Species Found", LocalDate.now(), BadgeType.SPECIES, gardener, "/images/badges/10SpeciesBadge.png" );
+                return Optional.of(addBadge(badge));
+            case 25:
+                badge = new Badge("25th Species Found", LocalDate.now(), BadgeType.SPECIES, gardener, "/images/badges/25SpeciesBadge.png" );
+                return Optional.of(addBadge(badge));
+            case 50:
+                badge = new Badge("50th Species Found", LocalDate.now(), BadgeType.SPECIES, gardener, "/images/badges/50SpeciesBadge.png" );
+                return Optional.of(addBadge(badge));
+            case 100:
+                badge = new Badge("100th Species Found", LocalDate.now(), BadgeType.SPECIES, gardener, "/images/badges/100SpeciesBadge.png" );
+                return Optional.of(addBadge(badge));
+            default:
+                return Optional.empty();
+        }
+
     }
+
+
 }

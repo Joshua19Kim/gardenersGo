@@ -10,5 +10,6 @@ import java.util.Optional;
 @Repository
 public interface LostPasswordTokenRepository extends CrudRepository<LostPasswordToken, Long> {
     Optional<LostPasswordToken> findByToken(String token);
+
     Optional<LostPasswordToken> findByGardener(Gardener gardener);
 }

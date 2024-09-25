@@ -194,7 +194,8 @@ public class ScanControllerTest {
     String description = "Cool plant";
     IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
 
-      when(identifiedPlantService.getCollectionPlantCount(testGardener.getId())).thenReturn(1);
+    when(identifiedPlantService.getCollectionPlantCount(testGardener.getId())).thenReturn(1);
+    when(identifiedPlantService.getCollectionPlantCount(testGardener.getId())).thenReturn(1);
 
     this.mockMvc
         .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
@@ -214,6 +215,9 @@ public class ScanControllerTest {
 
       verify(badgeService, times(1)).checkPlantBadgeToBeAdded(testGardener, 1);
       verify(identifiedPlantService, times(1)).getCollectionPlantCount(testGardener.getId());
+      verify(badgeService, times(0)).checkSpeciesBadgeToBeAdded(eq(testGardener), anyInt());
+      verify(identifiedPlantService, times(2)).getSpeciesCount(testGardener.getId());
+
   }
 
     @Test
@@ -292,6 +296,8 @@ public class ScanControllerTest {
 
         verify(badgeService, never()).checkPlantBadgeToBeAdded(eq(testGardener), anyInt());
         verify(identifiedPlantService, never()).getCollectionPlantCount(testGardener.getId());
+        verify(badgeService, never()).checkSpeciesBadgeToBeAdded(eq(testGardener), anyInt());
+        verify(identifiedPlantService, never()).getSpeciesCount(testGardener.getId());
     }
 
     @Test
