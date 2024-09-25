@@ -303,7 +303,7 @@ public class CollectionsController {
             redirectAttributes.addFlashAttribute("locationError", "Invalid Location");
             isValid = false;
         }
-        if (manualPlantLon.isEmpty() && manualPlantLat.isEmpty()) {
+        if ((manualPlantLon == null && manualPlantLat == null) || (Objects.equals(manualPlantLon, "") && Objects.equals(manualPlantLat, ""))) {
             manualAddLocationToggle = false;
         }
 
