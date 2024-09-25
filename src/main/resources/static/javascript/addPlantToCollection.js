@@ -4,9 +4,16 @@ var currentImage = document.getElementById('currentImage');
 var addPlantModal = document.getElementById('addPlantModal');
 var plantDateInput = document.getElementById('plantDate');
 const successAlert = document.getElementById('successAlert');
+const manualAddLocation = document.getElementById('manualAddLocation');
+const manualAddAutocompleteResults = document.getElementById('manual-add-autocomplete-results');
 var today = new Date();
 
 currentImage.src = `${getBaseUrl()}/images/placeholder.jpg`;
+
+const manualAddLocationUpdateMssg = document.getElementById("manualAddLocationUpdateMssg") || null;
+const manualAddGeolocationUpdateMssg = document.getElementById("manualAddGeolocationUpdateMssg");
+const manualPlantLat = document.getElementById('manualPlantLat');
+const manualPlantLon = document.getElementById('manualPlantLon');
 
 var errorOccurred = document.getElementById("errorOccurred").getAttribute("data-value");
 window.onload = function() {
@@ -180,10 +187,16 @@ plantNameInput.addEventListener('change', (e) => {
 
 
 function getPlantDetails(selectedPlantName, isPlantName) {
+    if (manualAddLocation.value === "" && !manualAddLocation.disabled) {
+        manualPlantLat.value = "";
+        manualPlantLat.value = "";
+    }
     const data = {
         name: selectedPlantName,
         isPlantName: isPlantName,
-        isSpecieScientificName: !isPlantName
+        isSpecieScientificName: !isPlantName,
+        plantLatitude: manualPlantLat.value,
+        plantLongitude: manualPlantLon.value
     };
 
     fetch(`${getBaseUrl()}/myCollection/autoPopulate`, {
@@ -233,3 +246,70 @@ addPlantButton.addEventListener('keydown', function(event) {
         addPlantModalToOpen.show();
     }
 });
+
+document.getElementById('manualAddLocationToggle').addEventListener('change', function() {
+    if (this.checked) {
+        manualAddGeolocationUpdateMssg.innerHTML = waitingSpinnerHtml;
+
+        if (navigator.geolocation) {
+            console.log("got here!")
+            navigator.geolocation.getCurrentPosition(setCoordinates, showError);
+            disableLocationInput(true);
+        } else {
+            console.log("gfailed")
+            manualAddGeolocationUpdateMssg.innerHTML = "Geolocation is not supported by this browser.";
+            disableLocationInput(false);
+        }
+    } else {
+        manualAddGeolocationUpdateMssg.innerHTML = '';
+        disableLocationInput(false);
+        manualAddAutocompleteResults.style.display = 'block';
+    }
+    manualAddGeolocationUpdateMssg.style.color = "green";
+
+});
+
+function showError(error) {
+    document.getElementById('manualAddLocationToggle').checked = false;
+    disableLocationInput(false);
+    manualAddAutocompleteResults.style.display = 'block';
+    manualAddGeolocationUpdateMssg.style.color = "red";
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            manualAddGeolocationUpdateMssg.innerHTML = "Current Location permission denied."
+            break;
+        case error.POSITION_UNAVAILABLE:
+            manualAddGeolocationUpdateMssg.innerHTML = "Location information is unavailable."
+            break;
+        case error.TIMEOUT:
+            manualAddGeolocationUpdateMssg.innerHTML = "The request to get user location timed out."
+            break;
+        case error.UNKNOWN_ERROR:
+            manualAddGeolocationUpdateMssg.innerHTML = "An unknown error occurred."
+            break;
+    }
+}
+
+function setCoordinates(position) {
+    if (document.getElementById("successModal").classList.contains("show")) {
+        manualPlantLat.value = position.coords.latitude.toString();
+        manualPlantLon.value = position.coords.longitude.toString();
+        manualAddGeolocationUpdateMssg.innerHTML = 'Current location saved.';
+
+    }
+}
+
+// when user clicks 'use current location', disable the input field for searching location.
+function disableLocationInput(disable) {
+    manualAddLocation.disabled = disable;
+    if (disable) {
+        manualAddLocationUpdateMssg.innerHTML = "";
+        manualAddLocation.value = "";
+        manualAddAutocompleteResults.style.display = 'none';
+        manualAddAutocompleteResults.classList.remove('visible');
+        manualAddLocation.classList.add('disabled');
+    } else {
+        manualAddLocation.classList.remove('disabled');
+        manualPlantLat.value = '';
+        manualPlantLon.value = '';
+    }}
