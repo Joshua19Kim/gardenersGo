@@ -52,6 +52,9 @@ class CollectionsControllerTest {
     private BadgeService badgeService;
 
     @MockBean
+    private LocationService locationService;
+
+    @MockBean
     private IdentifiedPlantService identifiedPlantService;
 
     @MockBean

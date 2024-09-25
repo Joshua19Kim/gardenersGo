@@ -281,10 +281,10 @@ public class CollectionsController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        if (manualPlantLat.isBlank()) {
+        if (manualPlantLat != null && manualPlantLat.isBlank()) {
             manualPlantLat = null;
         }
-        if (manualPlantLon.isBlank()) {
+        if (manualPlantLon != null && manualPlantLon.isBlank()) {
             manualPlantLon = null;
         }
 
@@ -463,10 +463,10 @@ public class CollectionsController {
         long plantId = parseLong(plantIdString, 10);
         IdentifiedPlant plantOptional = identifiedPlantService.getCollectionPlantById(plantId);
 
-        if (manualPlantLat.isBlank()) {
+        if (manualPlantLat != null && manualPlantLat.isBlank()) {
             manualPlantLat = null;
         }
-        if (manualPlantLon.isBlank()) {
+        if (manualPlantLon != null && manualPlantLon.isBlank()) {
             manualPlantLon = null;
         }
 
