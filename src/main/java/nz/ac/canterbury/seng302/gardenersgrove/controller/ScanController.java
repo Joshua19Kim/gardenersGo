@@ -31,6 +31,7 @@ public class ScanController {
     private final PlantIdentificationService plantIdentificationService;
     private final IdentifiedPlantService identifiedPlantService;
     private final GardenerFormService gardenerFormService;
+    private final LocationService locationService;
     private final ImageService imageService;
     private  final BadgeService badgeService;
     private final Map<String, String> errorResponse;
@@ -47,7 +48,7 @@ public class ScanController {
      * @param imageService               the service for checking image validation
      */
     @Autowired
-    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService, IdentifiedPlantService identifiedPlantService, BadgeService badgeService) {
+    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService, IdentifiedPlantService identifiedPlantService, BadgeService badgeService, LocationService locationService) {
         this.plantIdentificationService = plantIdentificationService;
         this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
@@ -55,6 +56,7 @@ public class ScanController {
         response = new HashMap<>();
         this.identifiedPlantService = identifiedPlantService;
         this.badgeService = badgeService;
+        this.locationService = locationService;
     }
 
     /**
@@ -178,8 +180,14 @@ public class ScanController {
                     if (descriptionPresent) {
                         identifiedPlant.setDescription(validatedPlantDescription);
                     }
+
+                    if (!plantLatitude.isEmpty() && !plantLongitude.isEmpty()) {
+                        String dunno = locationService.sendReverseGeocodingRequest(plantLatitude, plantLongitude);
+                        System.out.println(dunno);
+                    }
                     identifiedPlant.setPlantLatitude(plantLatitude);
                     identifiedPlant.setPlantLongitude(plantLongitude);
+
                     response.put("message", "Plant saved successfully");
                     int originalSpeciesCount = identifiedPlantService.getSpeciesCount(gardener.get().getId());
                     IdentifiedPlant savedPlant = identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);

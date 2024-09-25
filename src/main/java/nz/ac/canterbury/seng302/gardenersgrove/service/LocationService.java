@@ -54,4 +54,24 @@ public class LocationService {
         return this.client.send(request, HttpResponse.BodyHandlers.ofString());
 
     }
+
+    /**
+     * This sends the coordinates to the location API and receives an address back
+     * @param plantLat The latitude of the plant location.
+     * @param plantLon The longitude of the plant location.
+     * @return The address from the server.
+     * @throws IOException IOException If an I/O error occurs during the HTTP request.
+     * @throws InterruptedException InterruptedException If the thread is interrupted while waiting for the request to complete.
+     */
+    public String sendReverseGeocodingRequest(String plantLat, String plantLon) throws IOException, InterruptedException {
+        logger.info("SEND Reverse Geocoding Request");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://us1.locationiq.com/v1/reverse?key=" + this.api_key + "&lat=" + plantLat + "&lon=" + plantLon + "&format=json&"))
+                .header("accept", "application/json")
+                .GET()
+                .build();
+
+        HttpResponse<String> response = this.client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response.body();
+    }
 }

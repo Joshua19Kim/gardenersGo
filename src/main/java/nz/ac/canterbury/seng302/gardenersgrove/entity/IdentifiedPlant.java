@@ -91,6 +91,9 @@ public class IdentifiedPlant {
     @Column(length = 512)
     private String description;
 
+    @Column(name = "region")
+    private String region;
+
     /**
      * JPA required no-args constructor
      */
@@ -269,4 +272,11 @@ public class IdentifiedPlant {
         this.plantLongitude = plantLongitude;
     }
 
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
 }
