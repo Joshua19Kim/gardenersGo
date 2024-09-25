@@ -51,6 +51,18 @@
         attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
     }).addTo(map);
 
+
+    // Function to add a marker when the user clicks on the map
+    function addMarker(e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+
+        // Create a marker at the clicked location
+        var marker = L.marker([lat, lng]).addTo(map);
+        marker.bindPopup("Coordinates: " + lat.toFixed(5) + ", " + lng.toFixed(5)).openPopup();
+    }
+    map.on('click', addMarker);
+
     document.addEventListener("DOMContentLoaded", function() {
         /*<![CDATA[*/
         var scannedPlants = /*[[${scannedPlants}]]*/ [];

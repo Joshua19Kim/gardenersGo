@@ -106,6 +106,8 @@
                                 <p id="geolocationUpdateMssg" class="smallErrorMessage"></p>
 
                             </div>
+
+                            <div id="map" style="height: 300px; margin-top: 20px;"></div>
                         </div>
                         <br/>
                     </div>
@@ -127,6 +129,8 @@
 <script th:src="@{/javascript/getBaseUrl.js}"></script>
 <script th:src="@{/javascript/locationAutocomplete.js}"></script>
 <script th:src="@{/javascript/scanningModal.js}"></script>
+<script src="/webjars/leaflet/1.9.4/dist/leaflet.js"></script>
+<script src="/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js"></script>
 <script type="text/javascript">
     document.getElementById("locationToggle").addEventListener("keydown", function(event) {
         console.log("button pressed");
@@ -136,5 +140,55 @@
             this.dispatchEvent(new Event('change'));
         }
     })
+
+    let map;
+    let marker;
+    let selectedLat;
+    let selectedLon;
+
+    // Initialize Leaflet map
+    function initMap() {
+        /**
+         * creates and initialises the map, also defines on click event that calls java code
+         */
+        var southWest = L.latLng(-55, 148.038821);
+        var northEast = L.latLng(-28,200);
+        var maxBoundArea = L.latLngBounds(southWest, northEast)
+        var map = L.map('map', {
+            center: [-43.5, 174.88],
+            zoom: 5.2,
+            maxBounds: maxBoundArea,
+            minZoom: 5.2,
+            maxZoom: 18
+        });
+        new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
+            attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
+        }).addTo(map);
+
+        marker = L.marker([51.505, -0.09], { draggable: true }).addTo(map);
+        marker.on('dragend', function (e) {
+            selectedLat = marker.getLatLng().lat;
+            selectedLon = marker.getLatLng().lng;
+            document.getElementById('plantLat').value = selectedLat;
+            document.getElementById('plantLon').value = selectedLon;
+            console.log(`Selected Lat: ${selectedLat}, Lon: ${selectedLon}`);
+        });
+    }
+
+    document.getElementById("locationToggle").addEventListener("change", function () {
+        if (this.checked) {
+            useCurrentLocation();
+        } else {
+            // Reset to manual entry or default location
+            map.setView([51.505, -0.09], 13);
+            marker.setLatLng([51.505, -0.09]);
+        }
+    });
+
+    document.getElementById('scanningModal').addEventListener('shown.bs.modal', function () {
+        initMap();
+    });
+
+
 </script>
 
