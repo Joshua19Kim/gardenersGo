@@ -23,13 +23,7 @@
 <div id="map"></div>
 <script src="/webjars/leaflet/1.9.4/dist/leaflet.js"></script>
 <script src="/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js"></script>
-<script >
-
-
-    /**
-     * creates and initialises the Google map, also defines on click event that calls java code
-     */
-
+<script th:inline="javascript">
     var southWest = L.latLng(-55, 148.038821);
     var northEast = L.latLng(-28,200);
     var maxBoundArea = L.latLngBounds(southWest, northEast)
@@ -44,10 +38,17 @@
         attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
     }).addTo(map);
 
-    var markers = new L.MarkerClusterGroup();
-    markers.addLayer(L.marker([-43.522897, 172.579027]));
-    markers.addLayer(L.marker([-43.520474, 172.577027]));
-    map.addLayer(markers);
+    document.addEventListener("DOMContentLoaded", function() {
+        /*<![CDATA[*/
+        var scannedPlants = /*[[${scannedPlants}]]*/ [];
+        scannedPlants.forEach(function (scannedPlant) {
+            if (scannedPlant.plantLatitude != null && scannedPlant.plantLongitude != null && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
+                L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
+                    .addTo(map)
+            }
+        /*]]>*/
+        });
+    });
 </script>
 </body>
 </html>
