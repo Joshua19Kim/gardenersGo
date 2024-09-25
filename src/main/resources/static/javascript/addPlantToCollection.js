@@ -260,6 +260,7 @@ document.getElementById('manualAddLocationToggle').addEventListener('change', fu
         manualAddGeolocationUpdateMssg.innerHTML = '';
         disableMALocationInput(false);
         manualAddAutocompleteResults.style.display = 'block';
+        manualAddAutocompleteResults.innerText = '';
     }
     manualAddGeolocationUpdateMssg.style.color = "green";
 

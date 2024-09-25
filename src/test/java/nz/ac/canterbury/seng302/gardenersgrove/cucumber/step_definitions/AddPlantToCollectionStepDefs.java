@@ -82,7 +82,12 @@ public class AddPlantToCollectionStepDefs {
     @When("I enter the uploaded date {string}")
     public void i_enter_the_uploaded_date(String date) {
         identifiedPlant.setDateUploaded(date);
+    }
 
+    @When("I enter valid location")
+    public void i_enter_valid_location() {
+        identifiedPlant.setPlantLatitude("-1.2");
+        identifiedPlant.setPlantLongitude("0.74774");
     }
 
     @When("I upload no image")
@@ -100,6 +105,8 @@ public class AddPlantToCollectionStepDefs {
                         .param("scientificName",  identifiedPlant.getSpeciesScientificNameWithoutAuthor())
                         .param("uploadedDate", String.valueOf(LocalDate.parse(identifiedPlant.getDateUploaded(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))))
                         .param("isDateInvalid", "false")
+                        .param("manualPlantLat", identifiedPlant.getPlantLatitude())
+                        .param("manualPlantLon", identifiedPlant.getPlantLongitude())
                         .with(csrf()))
 
                 .andExpect(status().is3xxRedirection())
@@ -109,12 +116,15 @@ public class AddPlantToCollectionStepDefs {
     public void the_plant_is_added_to_my_collection() {
         List<IdentifiedPlant> identifiedPlants = identifiedPlantService.getGardenerPlantsBySpeciesPaginated(0,
                 10, gardener.getId(), identifiedPlant.getSpeciesScientificNameWithoutAuthor()).getContent();
+
         IdentifiedPlant actualIdentifiedPlant = identifiedPlants.get(0);
         Assertions.assertEquals(identifiedPlant.getName(), actualIdentifiedPlant.getName());
         Assertions.assertEquals(identifiedPlant.getDateUploaded(), actualIdentifiedPlant.getDateUploaded());
         Assertions.assertEquals(identifiedPlant.getDescription(), actualIdentifiedPlant.getDescription());
         Assertions.assertEquals(identifiedPlant.getSpeciesScientificNameWithoutAuthor(), actualIdentifiedPlant.getSpeciesScientificNameWithoutAuthor());
         Assertions.assertEquals(identifiedPlant.getUploadedImage(), actualIdentifiedPlant.getUploadedImage());
+        Assertions.assertEquals(identifiedPlant.getPlantLatitude(), actualIdentifiedPlant.getPlantLatitude());
+        Assertions.assertEquals(identifiedPlant.getPlantLongitude(), actualIdentifiedPlant.getPlantLongitude());
 
     }
 
@@ -132,7 +142,4 @@ public class AddPlantToCollectionStepDefs {
     public void i_get_the_plant_species_error_message(String errorMessage) throws Exception {
         resultActions.andExpect(flash().attribute("scientificNameError", errorMessage));
     }
-
-
-
 }

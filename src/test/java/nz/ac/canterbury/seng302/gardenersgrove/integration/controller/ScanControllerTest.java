@@ -342,31 +342,23 @@ public class ScanControllerTest {
     @WithMockUser
     @ParameterizedTest
     @CsvSource(value = {
-            "0 : 0 : true",
-            "-90 : -180 : true",
-            "90 : 180 : true",
-            "89 : 179 : true",
-            "-91 : -181 : false",
-            "-91 : 0 : false",
-            "0, : -181 : false",
-            "0 : 181 : false",
-            "91 : 0 : false",
-            "-90 : 0 : true",
-            "0 : -180 : true",
-            "0 : 180 : true",
-            "90 : 0 : true",
-            "'' : '' : true",
-            "'' : 0 : false",
-            "0 : '' : false"
-
+            "0 : 0",
+            "-90 : -180",
+            "90 : 180",
+            "89 : 179",
+            "-90 : 0",
+            "0 : -180",
+            "0 : 180",
+            "90 : 0",
+            "'' : ''",
     }, delimiter = ':')
-    void UserUsesCurrentLocationForPlant_HasInvalidCoordinates_DoesNotReturn(String plantLatitude, String plantLongitude, boolean expectedResult) throws Exception {
+    void UserUsesCurrentLocationForPlant_HasValidCoordinates_ReturnsSuccessMessage(String plantLatitude, String plantLongitude) throws Exception {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("name", "Plant test name");
         requestBody.put("plantLatitude", plantLatitude);
         requestBody.put("plantLongitude", plantLongitude);
-        ResultMatcher status = expectedResult ? status().isOk() : status().isBadRequest();
-        String expectedMessage = expectedResult ? "Plant saved successfully" : "Invalid Field";
+        ResultMatcher status =status().isOk();
+        String expectedMessage = "Plant saved successfully";
 
         byte[] imageContent = new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0};
         imageFile = new MockMultipartFile("image", "test_image.jpg", "image/jpeg", imageContent);
@@ -397,6 +389,56 @@ public class ScanControllerTest {
                 .andExpect(status)
                 .andExpect(jsonPath("$.message").value(expectedMessage));
     }
+
+    @WithMockUser
+    @ParameterizedTest
+    @CsvSource(value = {
+            "-91 : -181",
+            "-91 : 0",
+            "0, : -181",
+            "0 : 181",
+            "91 : 0",
+            "'' : 0",
+            "0 : ''"
+    }, delimiter = ':')
+    void UserUsesCurrentLocationForPlant_HasInvalidCoordinates_DoesNotReturn(String plantLatitude, String plantLongitude) throws Exception {
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("name", "Plant test name");
+        requestBody.put("plantLatitude", plantLatitude);
+        requestBody.put("plantLongitude", plantLongitude);
+        ResultMatcher status = status().isBadRequest();
+        String expectedMessage = "Invalid Field";
+
+        byte[] imageContent = new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0};
+        imageFile = new MockMultipartFile("image", "test_image.jpg", "image/jpeg", imageContent);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonBody = objectMapper.writeValueAsString(requestBody);
+
+        Gardener gardener = new Gardener("Test", "Gardener",
+                LocalDate.of(2024, 4, 1), "testgardener@gmail.com",
+                "Password1!");
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.multipart("/identifyPlant").file(imageFile).with(csrf()))
+                .andExpect(status().isOk());
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        this.mockMvc
+                .perform(
+                        MockMvcRequestBuilders.post("/saveIdentifiedPlant")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonBody)
+                                .with(csrf()))
+                .andExpect(status)
+                .andExpect(jsonPath("$.message").value(expectedMessage));
+    }
+
 
 
 
