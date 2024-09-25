@@ -152,6 +152,12 @@ public class ScanController {
                 String description = extra.get("description");
                 String plantLatitude = extra.get("plantLatitude");
                 String plantLongitude = extra.get("plantLongitude");
+                if (plantLongitude.isBlank()) {
+                    plantLongitude = null;
+                }
+                if (plantLatitude.isBlank()) {
+                    plantLongitude = null;
+                }
 
                 String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(extra.get("name"));
                 String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(extra.get("description"));

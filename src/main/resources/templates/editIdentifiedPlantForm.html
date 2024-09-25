@@ -11,7 +11,7 @@
         <h1> Edit Identified Plant </h1>
         <label class="fst-italic">* Required</label>
         <br/>
-        <form id="editPlantForm" th:action="@{edit(plantId=${plant.getId()})}" method="post" enctype="multipart/form-data">
+        <form id="editPlantForm" class="w-75 d-flex justify-content-center flex-column" th:action="@{edit(plantId=${plant.getId()})}" method="post" enctype="multipart/form-data">
             <label for="name"> *Name: </label>
             <input type="text" class="form-control" id="name" name="name" maxlength="64" th:value="${name != null ? name : plant.name}"
                    th:classappend="${nameError} ? 'is-invalid' : ''">
@@ -26,11 +26,55 @@
             <p th:if="${descriptionError}" th:utext="${descriptionError}" class="smallErrorMessage"></p>
             <br/>
 
-            <button class="btn btn-success w-100" type="submit">Submit</button>
+            <div>
+                <div style="display: flex; margin-top: 40px; justify-content: flex-end;">
+                    <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                    <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
+                        <label for="manualAddLocation"> Plant location: </label>
+                        <input class="form-control" type="text" id="manualAddLocation" autocomplete="off" placeholder="Search the address here..."
+                               th:name="location" th:value="${location != null ? location : savedLocation}" data-cy="location" autofocus
+                               th:classappend="${locationError} ? 'is-invalid' : ''"
+                        >
+                        <span th:if="${locationError}" th:utext="${locationError}" class="smallErrorMessage"></span>
+                        <p id="manualAddLocationUpdateMssg" class="smallErrorMessage"></p>
+                        <div id="manual-add-autocomplete-results" style="margin-top: -1rem; " ></div>
+                    </div>
+                    <div>
+                        <div class="form-check form-switch" style="margin-top: 1rem; " >
+                            <input class="form-check-input" type="checkbox" name="manualAddLocationToggle" th:name="manualAddLocationToggle" role="switch" id="manualAddLocationToggle"  th:id="manualAddLocationToggle" th:checked="${manualAddLocationToggle}">
+                            <label class="form-check-label" for="manualAddLocationToggle">Use current location</label>
+                        </div>
+                        <p id="manualAddGeolocationUpdateMssg" class="smallErrorMessage"></p>
+                        <script>
+                            document.getElementById('manualAddLocation').disabled = document.getElementById('manualAddLocationToggle').checked;
+                            document.getElementById('manualAddLocationToggle').onchange = function () {
+                                document.getElementById('manualAddLocation').disabled = this.checked;
+                            };
+                            document.getElementById('manualAddLocationToggle').addEventListener('keydown', function (event) {
+                                if (event.key === 'Enter') {
+                                    this.checked = !this.checked;
+                                    document.getElementById('manualAddLocation').disabled = this.checked;
+                                }
+                            });
+                        </script>
+
+                    </div>
+                </div>
+                <br/>
+            </div>
+
+            <input type="hidden" id="manualPlantLat" th:value="${manualPlantLat != null ? manualPlantLat : plant.plantLatitude}" name="manualPlantLat">
+            <input type="hidden" id="manualPlantLon" th:value="${manualPlantLon != null ? manualPlantLon : plant.plantLongitude}" name="manualPlantLon">
+
+
+            <button class="btn btn-success w-50 m-auto" type="submit">Submit</button>
+            <a class="btn btn-secondary w-50 mt-3 m-auto" th:href="@{/collectionDetails(speciesName=${plant.getSpeciesScientificNameWithoutAuthor()})}">
+                Cancel
+            </a>
         </form>
-        <a class="btn btn-secondary w-50 mt-3" th:href="@{/collectionDetails(speciesName=${plant.getSpeciesScientificNameWithoutAuthor()})}">
-            Cancel
-        </a>
+
     </div>
 </div>
 
@@ -76,6 +120,83 @@
         var characterCount = document.getElementById("characterCount");
         characterCount.textContent = textarea.value.length;
     }
+
+    const manualAddLocation = document.getElementById('manualAddLocation');
+    const manualAddAutocompleteResults = document.getElementById('manual-add-autocomplete-results');
+    const manualAddLocationUpdateMssg = document.getElementById("manualAddLocationUpdateMssg") || null;
+    const manualAddGeolocationUpdateMssg = document.getElementById("manualAddGeolocationUpdateMssg");
+    const manualPlantLat = document.getElementById('manualPlantLat');
+    const manualPlantLon = document.getElementById('manualPlantLon');
+
+    document.getElementById('manualAddLocationToggle').addEventListener('change', function() {
+        if (this.checked) {
+            manualAddGeolocationUpdateMssg.innerHTML = waitingSpinnerHtml;
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(setMACoordinates, showMAError);
+                disableMALocationInput(true);
+            } else {
+                manualAddGeolocationUpdateMssg.innerHTML = "Geolocation is not supported by this browser.";
+                disableMALocationInput(false);
+            }
+        } else {
+            manualAddGeolocationUpdateMssg.innerHTML = '';
+            disableMALocationInput(false);
+            manualAddAutocompleteResults.style.display = 'block';
+        }
+        manualAddGeolocationUpdateMssg.style.color = "green";
+
+    });
+
+    function showMAError(error) {
+        document.getElementById('manualAddLocationToggle').checked = false;
+        disableMALocationInput(false);
+        manualAddAutocompleteResults.style.display = 'block';
+        manualAddGeolocationUpdateMssg.style.color = "red";
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                manualAddGeolocationUpdateMssg.innerHTML = "Current Location permission denied."
+                break;
+            case error.POSITION_UNAVAILABLE:
+                manualAddGeolocationUpdateMssg.innerHTML = "Location information is unavailable."
+                break;
+            case error.TIMEOUT:
+                manualAddGeolocationUpdateMssg.innerHTML = "The request to get user location timed out."
+                break;
+            case error.UNKNOWN_ERROR:
+                manualAddGeolocationUpdateMssg.innerHTML = "An unknown error occurred."
+                break;
+        }
+    }
+
+    function setMACoordinates(position) {
+        manualPlantLat.value = position.coords.latitude.toString();
+        manualPlantLon.value = position.coords.longitude.toString();
+        manualAddGeolocationUpdateMssg.innerHTML = 'Current location saved.';
+
+
+    }
+
+    // when user clicks 'use current location', disable the input field for searching location.
+    function disableMALocationInput(disable) {
+        manualAddLocation.disabled = disable;
+        if (disable) {
+            manualAddLocationUpdateMssg.innerHTML = "";
+            manualAddLocation.value = "";
+            manualAddAutocompleteResults.style.display = 'none';
+            manualAddAutocompleteResults.classList.remove('visible');
+            manualAddLocation.classList.add('disabled');
+        } else {
+            manualAddLocation.classList.remove('disabled');
+            manualPlantLat.value = '';
+            manualPlantLon.value = '';
+        }}
+
+
+
+
+
 </script>
+<script th:src="@{/javascript/locationAutocomplete.js}"></script>
 </body>
 </html>
