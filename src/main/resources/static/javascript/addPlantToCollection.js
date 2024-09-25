@@ -195,8 +195,6 @@ function getPlantDetails(selectedPlantName, isPlantName) {
         name: selectedPlantName,
         isPlantName: isPlantName,
         isSpecieScientificName: !isPlantName,
-        plantLatitude: manualPlantLat.value,
-        plantLongitude: manualPlantLon.value
     };
 
     fetch(`${getBaseUrl()}/myCollection/autoPopulate`, {
@@ -252,26 +250,24 @@ document.getElementById('manualAddLocationToggle').addEventListener('change', fu
         manualAddGeolocationUpdateMssg.innerHTML = waitingSpinnerHtml;
 
         if (navigator.geolocation) {
-            console.log("got here!")
-            navigator.geolocation.getCurrentPosition(setCoordinates, showError);
-            disableLocationInput(true);
+            navigator.geolocation.getCurrentPosition(setMACoordinates, showMAError);
+            disableMALocationInput(true);
         } else {
-            console.log("gfailed")
             manualAddGeolocationUpdateMssg.innerHTML = "Geolocation is not supported by this browser.";
-            disableLocationInput(false);
+            disableMALocationInput(false);
         }
     } else {
         manualAddGeolocationUpdateMssg.innerHTML = '';
-        disableLocationInput(false);
+        disableMALocationInput(false);
         manualAddAutocompleteResults.style.display = 'block';
     }
     manualAddGeolocationUpdateMssg.style.color = "green";
 
 });
 
-function showError(error) {
+function showMAError(error) {
     document.getElementById('manualAddLocationToggle').checked = false;
-    disableLocationInput(false);
+    disableMALocationInput(false);
     manualAddAutocompleteResults.style.display = 'block';
     manualAddGeolocationUpdateMssg.style.color = "red";
     switch(error.code) {
@@ -290,17 +286,16 @@ function showError(error) {
     }
 }
 
-function setCoordinates(position) {
-    if (document.getElementById("successModal").classList.contains("show")) {
-        manualPlantLat.value = position.coords.latitude.toString();
-        manualPlantLon.value = position.coords.longitude.toString();
-        manualAddGeolocationUpdateMssg.innerHTML = 'Current location saved.';
+function setMACoordinates(position) {
+    manualPlantLat.value = position.coords.latitude.toString();
+    manualPlantLon.value = position.coords.longitude.toString();
+    manualAddGeolocationUpdateMssg.innerHTML = 'Current location saved.';
 
-    }
+
 }
 
 // when user clicks 'use current location', disable the input field for searching location.
-function disableLocationInput(disable) {
+function disableMALocationInput(disable) {
     manualAddLocation.disabled = disable;
     if (disable) {
         manualAddLocationUpdateMssg.innerHTML = "";

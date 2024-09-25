@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const plantLat = document.getElementById('plantLat') || null;
     const plantLon = document.getElementById('plantLon') || null;
 
-    const manualPlantLat = document.getElementById('plantLat') || null;
-    const manualPlantLon = document.getElementById('plantLon') || null;
+    const manualPlantLat = document.getElementById('manualPlantLat') || null;
+    const manualPlantLon = document.getElementById('manualPlantLon') || null;
 
     const xmlRequest = new XMLHttpRequest();
     let address;
@@ -144,8 +144,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         const addressInputValue = `${result.address.house_number || ''} ${result.address.road || ''} ${result.address.city || ''} ${result.address.country || ''}`;
 
                         if (manualAddAddressInput.value !== '') {
-                            plantLat.value = result.lat;
-                            plantLon.value = result.lon;
+                            console.log(manualPlantLon.value);
+                            console.log(typeof result.lon);
+                            manualPlantLat.value = result.lat;
+                            manualPlantLon.value = result.lon;
+                            console.log(manualPlantLon.value);
                             manualAddLocationUpdateMssg.innerHTML = "The location has been verified : <br/>" + addressInputValue;
                             manualAddLocationUpdateMssg.style.color = "green";
                             manualAddAddressInput.value = addressInputValue.trim();

@@ -91,7 +91,8 @@
                         <br/>
                     </div>
 
-
+                    <input type="hidden" id="manualPlantLat" th:value="${manualPlantLat}" name="manualPlantLat">
+                    <input type="hidden" id="manualPlantLon" th:value="${manualPlantLon}" name="manualPlantLon">
 
                     <div class="d-flex flex-column align-items-center justify-content-center py-1">
                         <button type="submit" class="btn btn-primary mt-2 mb-2" >Save New Plant</button>
@@ -100,8 +101,7 @@
                 </form>
 
             </div>
-            <input type="hidden" id="manualPlantLat">
-            <input type="hidden" id="manualPlantLon">
+
         </div>
     </div>
 </div>

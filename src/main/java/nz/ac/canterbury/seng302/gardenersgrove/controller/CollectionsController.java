@@ -254,6 +254,8 @@ public class CollectionsController {
             @RequestParam(name = "uploadedDate", required = false) LocalDate uploadedDate,
             @RequestParam(name = "isDateInvalid", required = false) boolean isDateInvalid,
             @RequestParam("plantImage") MultipartFile plantImage,
+            @RequestParam(name ="manualPlantLat",required = false) String manualPlantLat,
+            @RequestParam(name ="manualPlantLon",required = false) String manualPlantLon,
             RedirectAttributes redirectAttributes,
             Model model
     ) {
@@ -264,6 +266,7 @@ public class CollectionsController {
         String validatedPlantName = ValidityChecker.validatePlantName(plantName);
         String validatedScientificName = ValidityChecker.validateScientificPlantName(scientificName);
         String validatedPlantDescription = ValidityChecker.validatePlantDescription(description);
+        boolean validLocation = ValidityChecker.validatePlantCoordinates(manualPlantLat,manualPlantLon);
 
         boolean isValid = true;
 
@@ -294,8 +297,15 @@ public class CollectionsController {
             }
         }
 
+        if (!validLocation) {
+            redirectAttributes.addFlashAttribute("locationError", "Invalid Location");
+            isValid = false;
+        }
+
         if (isValid) {
             IdentifiedPlant identifiedPlant = new IdentifiedPlant(plantName, gardener);
+            identifiedPlant.setPlantLatitude(manualPlantLat);
+            identifiedPlant.setPlantLongitude(manualPlantLon);
 
             if (description != null && !description.trim().isEmpty()) {
                 identifiedPlant.setDescription(description);
@@ -326,12 +336,16 @@ public class CollectionsController {
             } else {
                 redirectAttributes.addFlashAttribute("successMessage", plantName + " has been added to collection: " + scientificName);
             }
+
             return "redirect:/myCollection";
         } else {
             redirectAttributes.addFlashAttribute("plantName", plantName);
             redirectAttributes.addFlashAttribute("description", description);
             redirectAttributes.addFlashAttribute("scientificName", scientificName);
             redirectAttributes.addFlashAttribute("uploadedDate", uploadedDate);
+            redirectAttributes.addFlashAttribute("manualPlantLat", manualPlantLat);
+            redirectAttributes.addFlashAttribute("manualPlantLon", manualPlantLon);
+
             redirectAttributes.addFlashAttribute(errorOccurredAttribute, true);
             redirectAttributes.addFlashAttribute(showModalAttribute, true);
 
