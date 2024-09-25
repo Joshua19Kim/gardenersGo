@@ -19,8 +19,6 @@ import java.util.Optional;
 @Service
 public class BadgeService {
 
-    Logger logger = LoggerFactory.getLogger(BadgeService.class);
-
     private List<String> badgeNames;
     private BadgeRepository badgeRepository;
 
