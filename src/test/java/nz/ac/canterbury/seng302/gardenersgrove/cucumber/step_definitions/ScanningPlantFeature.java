@@ -45,6 +45,8 @@ public class ScanningPlantFeature {
   private String errorMessage;
   private String inputName;
   private String inputDescription;
+  private String inputLatitude;
+  private String inputLongitude;
   private ResultActions resultActions;
   private IdentifiedPlant cataloguedPlant;
 
@@ -142,6 +144,8 @@ public class ScanningPlantFeature {
             .param("name",inputName)
             .param("description", inputDescription)
             .param("plantId", cataloguedPlant.getId().toString())
+                    .param("manualPlantLat", inputLatitude)
+                    .param("manualPlantLon", inputLongitude)
             .with(csrf()));
   }
 
@@ -150,6 +154,8 @@ public class ScanningPlantFeature {
     IdentifiedPlant plant = identifiedPlantService.getCollectionPlantById(cataloguedPlant.getId());
     assertEquals(inputName, plant.getName());
     assertEquals((inputDescription.isEmpty() ? null : inputDescription), plant.getDescription());
+    assertEquals(inputLatitude, plant.getPlantLatitude());
+    assertEquals(inputLongitude, plant.getPlantLongitude());
   }
 
   @Then("I get the error message {string}")
@@ -168,6 +174,9 @@ public class ScanningPlantFeature {
     if (result.containsKey("descriptionError")) {
       assertEquals(message, result.get("descriptionError"));
     }
+    if(result.containsKey("locationError")) {
+      assertEquals(message, result.get("locationError"));
+    }
   }
 
   @Then("I should be informed that the app failed to identify plant")
@@ -183,6 +192,8 @@ public class ScanningPlantFeature {
     Map<String, String> requestBody = new HashMap<>();
     requestBody.put("name", inputName);
     requestBody.put("description", inputDescription);
+    requestBody.put("plantLatitude", inputLatitude);
+    requestBody.put("plantLongitude", inputLongitude);
 
     ObjectMapper objectMapper = new ObjectMapper();
     String jsonBody = objectMapper.writeValueAsString(requestBody);
@@ -198,10 +209,12 @@ public class ScanningPlantFeature {
             .andExpect(jsonPath("$.message").value("Plant saved successfully"));
   }
 
-  @When("I input a {string} and {string}")
-  public void i_input_a_name_and_description(String name, String description) {
+  @When("I input a {string}, {string}, {string} and {string}")
+  public void i_input_a_and(String name, String description, String latitude, String longitude) {
     inputName = name;
     inputDescription = description;
+    inputLatitude = latitude;
+    inputLongitude = longitude;
   }
 
   @Then("If the details are invalid, I get the appropriate {string}")
@@ -210,6 +223,8 @@ public class ScanningPlantFeature {
     Map<String, String> requestBody = new HashMap<>();
     requestBody.put("name", inputName);
     requestBody.put("description", inputDescription);
+    requestBody.put("plantLatitude", inputLatitude);
+    requestBody.put("plantLongitude", inputLongitude);
 
     ObjectMapper objectMapper = new ObjectMapper();
     String jsonBody = objectMapper.writeValueAsString(requestBody);
@@ -231,7 +246,10 @@ public class ScanningPlantFeature {
       assertEquals(message, responseMap.get("nameError"));
     } else if (responseMap.containsKey("descriptionError")) {
       assertEquals(message, responseMap.get("descriptionError"));
-    } else {
+    } else if (responseMap.containsKey("locationError")) {
+      assertEquals(message, responseMap.get("locationError"));
+    }
+    else {
       Assertions.fail("Expected error message not found in response");
     }
   }
