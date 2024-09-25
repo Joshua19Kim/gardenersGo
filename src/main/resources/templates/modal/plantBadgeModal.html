@@ -12,8 +12,8 @@
                 <p th:if="${badgeCount == 1}">You have earned a new badge!</p>
                 <p th:if="${badgeCount > 1}" th:text="'You have earned ' + ${badgeCount} + ' new badges!'"></p>
                 <div class="d-flex flex-row justify-content-center align-items-center">
-                    <img id="plantBadgeImage" th:if="${plantBadge}" th:src="@{${plantBadge.imageFilename}}" th:alt="${plantBadge.name}">
-                    <img id="speciesBadgeImage" th:if="${speciesBadge}" th:src="@{${speciesBadge.imageFilename}}" th:alt="${speciesBadge.name}">
+                    <img id="plantBadgeImage" th:if="${plantBadge}" th:src="@{${plantBadge.imageFilename}}" th:alt="${plantBadge.name}" class="w-50">
+                    <img id="speciesBadgeImage" th:if="${speciesBadge}" th:src="@{${speciesBadge.imageFilename}}" th:alt="${speciesBadge.name}" class="w-50">
                 </div>
             </div>
             <div class="modal-footer d-flex flex-column justify-content-center">
