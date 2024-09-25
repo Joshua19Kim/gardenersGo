@@ -86,17 +86,9 @@ public class AddPlantToCollectionStepDefs {
 
     @When("I enter valid location")
     public void i_enter_valid_location() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        identifiedPlant.setPlantLatitude("-1.2");
+        identifiedPlant.setPlantLongitude("0.74774");
     }
-
-    @When("I enter invalid location")
-    public void i_enter_invalid_location() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
-    }
-
-
 
     @When("I upload no image")
     public void i_upload_no_image() {
@@ -113,6 +105,8 @@ public class AddPlantToCollectionStepDefs {
                         .param("scientificName",  identifiedPlant.getSpeciesScientificNameWithoutAuthor())
                         .param("uploadedDate", String.valueOf(LocalDate.parse(identifiedPlant.getDateUploaded(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))))
                         .param("isDateInvalid", "false")
+                        .param("manualPlantLat", identifiedPlant.getPlantLatitude())
+                        .param("manualPlantLon", identifiedPlant.getPlantLongitude())
                         .with(csrf()))
 
                 .andExpect(status().is3xxRedirection())
@@ -122,12 +116,15 @@ public class AddPlantToCollectionStepDefs {
     public void the_plant_is_added_to_my_collection() {
         List<IdentifiedPlant> identifiedPlants = identifiedPlantService.getGardenerPlantsBySpeciesPaginated(0,
                 10, gardener.getId(), identifiedPlant.getSpeciesScientificNameWithoutAuthor()).getContent();
+
         IdentifiedPlant actualIdentifiedPlant = identifiedPlants.get(0);
         Assertions.assertEquals(identifiedPlant.getName(), actualIdentifiedPlant.getName());
         Assertions.assertEquals(identifiedPlant.getDateUploaded(), actualIdentifiedPlant.getDateUploaded());
         Assertions.assertEquals(identifiedPlant.getDescription(), actualIdentifiedPlant.getDescription());
         Assertions.assertEquals(identifiedPlant.getSpeciesScientificNameWithoutAuthor(), actualIdentifiedPlant.getSpeciesScientificNameWithoutAuthor());
         Assertions.assertEquals(identifiedPlant.getUploadedImage(), actualIdentifiedPlant.getUploadedImage());
+        Assertions.assertEquals(identifiedPlant.getPlantLatitude(), actualIdentifiedPlant.getPlantLatitude());
+        Assertions.assertEquals(identifiedPlant.getPlantLongitude(), actualIdentifiedPlant.getPlantLongitude());
 
     }
 
@@ -145,11 +142,4 @@ public class AddPlantToCollectionStepDefs {
     public void i_get_the_plant_species_error_message(String errorMessage) throws Exception {
         resultActions.andExpect(flash().attribute("scientificNameError", errorMessage));
     }
-
-    @Then("I get the location error message {string}")
-    public void i_get_the_location_error_message(String string) {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
-    }
-
 }
