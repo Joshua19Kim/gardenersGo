@@ -461,7 +461,7 @@ public class CollectionsController {
             @RequestParam(name= "manualAddLocationToggle", required = false) boolean manualAddLocationToggle,
 
             HttpServletRequest request,
-            Model model) {
+            Model model) throws IOException, InterruptedException {
 
         logger.info("POST /collectionDetails/edit");
 
@@ -504,6 +504,13 @@ public class CollectionsController {
             IdentifiedPlant plant = plantOptional;
             plant.setPlantLatitude(manualPlantLat);
             plant.setPlantLongitude(manualPlantLon);
+
+            if (manualPlantLat == null && manualPlantLon == null) {
+                plant.setRegion(null);
+            } else {
+                String region = locationService.sendReverseGeocodingRequest(manualPlantLat, manualPlantLon);
+                plant .setRegion(region);
+            }
 
             plant.setName(validatedPlantName);
             boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
