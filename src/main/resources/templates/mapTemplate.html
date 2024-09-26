@@ -50,6 +50,10 @@
         attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
     }).addTo(map);
 
+    var clusteredMarkers = L.markerClusterGroup({
+        maxClusterRadius: 50 // Helps to prevent clusters over a large area
+    });
+
     document.addEventListener("DOMContentLoaded", function() {
         /*<![CDATA[*/
         var scannedPlants = /*[[${scannedPlants}]]*/ [];
@@ -72,13 +76,16 @@
                 }
 
                 L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
-                    .addTo(map)
+                    .addTo(clusteredMarkers)
                     .bindPopup(popupContent, {maxWidth: 200}
                     );
             }
             /*]]>*/
         });
     });
+
+    map.addLayer(clusteredMarkers);
+
 </script>
 </body>
 </html>
