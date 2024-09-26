@@ -97,11 +97,14 @@
             if (scannedPlant.plantLatitude && scannedPlant.plantLongitude && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
 
                 var plantLink = '/collectionDetails?speciesName=' + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
-                var popupContent = '<div style="width: 200px; word-break: break-word; text-align: center;"><h2>' +
-                    scannedPlant.name + '</h2>' +
-                    '<h3><i>' + scannedPlant.speciesScientificNameWithoutAuthor + '</i></h3>' +
-                    '<h3><i>Added ' + scannedPlant.dateUploaded + '</i><h3>' +
-                    '<a style="text-decoration: none;" href="' + plantLink + '">' + 'View in your collection' + '</a><br>';
+                var popupContent =
+                    `<div style="width: 200px; word-break: break-word; text-align: center;">
+                    <div>
+                    <h4>${scannedPlant.name}</h4>
+                    <p><i>${scannedPlant.speciesScientificNameWithoutAuthor}</i></p>
+                    <p><i>Added ${scannedPlant.dateUploaded} </i></p>
+                    <a style="text-decoration: none;" href="'${plantLink}'">View in your collection</a><br>
+                    </div>`;
 
                 if (scannedPlant.uploadedImage) {
                     var image = '<img src="' + scannedPlant.uploadedImage + '" alt="Plant image" width="200px" height="auto"/>';
@@ -109,6 +112,7 @@
                 } else {
                     popupContent += '</div>';
                 }
+
 
                 L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
                     .addTo(clusteredMarkers)
