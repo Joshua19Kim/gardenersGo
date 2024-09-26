@@ -64,12 +64,11 @@ public class LocationService {
                 .header("accept", "application/json")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
-        // Needs to be HttpClient type as it goes back to HTML.
+
         HttpResponse<String> response = this.client.send(request, HttpResponse.BodyHandlers.ofString());
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonResponse = objectMapper.readTree(response.body());
 
-        // Extract the 'display_name' field from the JSON
         return jsonResponse.get("display_name").asText();
     }
 }

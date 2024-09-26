@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("scanningLocationError").innerText = "";
         document.getElementById("scanningLocation").classList.remove("is-invalid");
         address = scanningAddressInput;
+        document.getElementById("plantLat").value = address.value
         if (this.value.trim() === '') {
             plantLat.value = '';
             plantLon.value = '';
@@ -157,6 +158,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             manualAddLocationUpdateMssg.innerHTML = "The location has been verified : <br/>" + addressInputValue;
                             manualAddLocationUpdateMssg.style.color = "green";
                             manualAddAddressInput.value = addressInputValue.trim();
+                            document.getElementById("locationError").innerText = "";
+                            document.getElementById("manualAddLocation").classList.remove("is-invalid");
                         }
 
 
@@ -166,6 +169,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             locationUpdateMssg.innerHTML = "The location has been verified : <br/>" + addressInputValue;
                             locationUpdateMssg.style.color = "green";
                             scanningAddressInput.value = addressInputValue.trim();
+                            document.getElementById("scanningLocationError").innerText = "";
+                            document.getElementById("scanningLocation").classList.remove("is-invalid");
                         }
 
                     }

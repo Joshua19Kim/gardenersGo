@@ -33,8 +33,8 @@ public class ScanController {
     private final GardenerFormService gardenerFormService;
     private final ImageService imageService;
     private  final BadgeService badgeService;
-    private final Map<String, String> errorResponse;
-    private final Map<String, Object> response;
+    private Map<String, String> errorResponse;
+    private Map<String, Object> response;
     private IdentifiedPlant identifiedPlant;
 
     private final String errorKey = "error";
@@ -51,8 +51,6 @@ public class ScanController {
         this.plantIdentificationService = plantIdentificationService;
         this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
-        errorResponse = new HashMap<>();
-        response = new HashMap<>();
         this.identifiedPlantService = identifiedPlantService;
         this.badgeService = badgeService;
     }
@@ -85,6 +83,8 @@ public class ScanController {
     public ResponseEntity<?> identifyPlant(@RequestParam("image") MultipartFile image) {
         logger.info("POST /identifyPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
+        errorResponse = new HashMap<>();
+        response = new HashMap<>();
 
         if (image.isEmpty()) {
             errorResponse.put(errorKey, "Please add an image to identify.");
@@ -146,6 +146,9 @@ public class ScanController {
         logger.info("POST /saveIdentifiedPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
+        errorResponse = new HashMap<>();
+        response = new HashMap<>();
+
         if (gardener.isPresent()) {
             try {
                 String name = extra.get("name");
@@ -193,16 +196,12 @@ public class ScanController {
                     Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener.get(), plantCount);
                     if(plantBadge.isPresent()) {
                         response.put("plantBadge", plantBadge.get().getId());
-                    } else {
-                        response.remove("plantBadge");
                     }
                     response.put("savedPlant", savedPlant.getId());
                     int speciesCount = identifiedPlantService.getSpeciesCount(gardener.get().getId());
                     if(speciesCount != originalSpeciesCount) {
                         Optional<Badge> speciesBadge = badgeService.checkSpeciesBadgeToBeAdded(gardener.get(), speciesCount);
                         speciesBadge.ifPresent(badge -> response.put("speciesBadge", speciesBadge.get().getId()));
-                    } else {
-                        response.remove("speciesBadge");
                     }
                     return ResponseEntity.ok(response);
                 }
