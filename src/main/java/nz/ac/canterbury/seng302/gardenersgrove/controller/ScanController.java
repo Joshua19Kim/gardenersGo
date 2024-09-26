@@ -150,8 +150,6 @@ public class ScanController {
 
         if (gardener.isPresent()) {
 
-            logger.info("gardener present");
-
             try {
                 String name = extra.get("name");
                 String description = extra.get("description");
@@ -224,7 +222,6 @@ public class ScanController {
                 return ResponseEntity.badRequest().body(errorResponse);
             }
         } else {
-            logger.info("No gardener is the issue");
             errorResponse.put(errorKey, "User not authenticated");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }

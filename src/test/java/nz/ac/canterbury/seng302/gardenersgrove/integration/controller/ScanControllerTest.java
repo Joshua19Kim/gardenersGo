@@ -47,8 +47,9 @@ public class ScanControllerTest {
     private PlantIdentificationService plantIdentificationService;
     @MockBean
     private ImageService imageService;
+    @MockBean
+    private LocationService locationService;
     private MockMultipartFile imageFile;
-
     Gardener testGardener;
 
     @BeforeEach
@@ -181,6 +182,8 @@ public class ScanControllerTest {
     Map<String, String> requestBody = new HashMap<>();
     requestBody.put("name", "Tomato");
     requestBody.put("description", "Vegetable");
+    requestBody.put("plantLatitude", "");
+    requestBody.put("plantLongitude", "");
 
     ObjectMapper objectMapper = new ObjectMapper();
     String jsonBody = objectMapper.writeValueAsString(requestBody);
@@ -232,6 +235,8 @@ public class ScanControllerTest {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("name", "Tomato");
         requestBody.put("description", "Vegetable");
+        requestBody.put("plantLatitude", "");
+        requestBody.put("plantLongitude", "");
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonBody = objectMapper.writeValueAsString(requestBody);
