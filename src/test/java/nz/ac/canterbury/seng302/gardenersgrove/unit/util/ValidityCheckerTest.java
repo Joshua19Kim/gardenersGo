@@ -436,7 +436,7 @@ public class ValidityCheckerTest {
             "0 : -180 : true",
             "0 : 180 : true",
             "90 : 0 : true",
-            "'' : '' : true",
+            "'' : '' : false",
             "'' : 0 : false",
             "0 : '' : false"
 
@@ -445,7 +445,7 @@ public class ValidityCheckerTest {
 
         boolean result = ValidityChecker.validatePlantCoordinates(plantLatitude, plantLongitude);
 
-        Assertions.assertEquals(result, expectedResult);
+        Assertions.assertEquals(expectedResult, result);
     }
 
 

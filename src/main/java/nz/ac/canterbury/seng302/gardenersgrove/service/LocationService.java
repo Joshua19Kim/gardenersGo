@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.h2.util.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +56,20 @@ public class LocationService {
         // Needs to be HttpClient type as it goes back to HTML.
         return this.client.send(request, HttpResponse.BodyHandlers.ofString());
 
+    }
+
+    public String getLocationfromLatLong(String latitude, String longitude) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://us1.locationiq.com/v1/reverse?key=" + this.api_key + "&lat=" + latitude + "&lon=" + longitude + "&format=json"))
+                .header("accept", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        // Needs to be HttpClient type as it goes back to HTML.
+        HttpResponse<String> response = this.client.send(request, HttpResponse.BodyHandlers.ofString());
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonResponse = objectMapper.readTree(response.body());
+
+        // Extract the 'display_name' field from the JSON
+        return jsonResponse.get("display_name").asText();
     }
 }
