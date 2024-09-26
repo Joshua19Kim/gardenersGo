@@ -29,13 +29,14 @@
 </head>
 <body>
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
-<div class="search-container position-absolute p-3 d-flex flex-row" style="z-index: 5; left: 40px; top: 130px;">
-    <form class="search-bar form-inline">
-        <input id="searchText" class="form-control mr-2" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="13">
+<div class="search-container position-absolute p-3" style="z-index: 5; left: 40px; top: 130px;">
+    <form class="search-bar form-inline d-flex">
+        <input id="searchTerm" class="form-control me-2" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="13" style="margin-bottom: 0 !important">
         <input id="searchPool" name="searchPool" th:value="${searchPool}" type="hidden">
         <button class="btn btn-outline-success" onclick="submitSearch()" tabindex="17">Search</button>
     </form>
 </div>
+
 <div id="map" style="z-index: 1"></div>
 
 <script th:src="@{/webjars/leaflet/1.9.4/dist/leaflet.js}"></script>
@@ -62,15 +63,21 @@
         maxClusterRadius: 50 // Helps to prevent clusters over a large area
     });
 
+    var searchInput = document.getElementById("searchTerm");
     document.addEventListener("DOMContentLoaded", function() {
         /*<![CDATA[*/
         var scannedPlants = /*[[${scannedPlants}]]*/ [];
-        console.log(scannedPlants);
+
+        if (!searchInput.trim().isEmpty()) { // If the searchInput is in use then it will filter the returned pins
+            scannedPlants = scannedPlants.filter(function(plant) {
+                return plant.name.trim() === searchInput.trim();
+            });
+        }
         scannedPlants.forEach(function (scannedPlant) {
             if (scannedPlant.plantLatitude && scannedPlant.plantLongitude && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
 
                 var plantLink = '/collectionDetails?speciesName=' + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
-                var popupContent = '<div style="width: 200px; word-break: break-all; text-align: center;"><h2>' +
+                var popupContent = '<div style="width: 200px; word-break: break-word; text-align: center;"><h2>' +
                     scannedPlant.name + '</h2>' +
                     '<h3><i>' + scannedPlant.speciesScientificNameWithoutAuthor + '</i></h3>' +
                     '<h3><i>Added ' + scannedPlant.dateUploaded + '</i><h3>' +
@@ -88,8 +95,10 @@
                     .bindPopup(popupContent, {maxWidth: 200}
                     );
             }
-            /*]]>*/
+
+
         });
+        /*]]>*/
     });
 
     map.addLayer(clusteredMarkers);
