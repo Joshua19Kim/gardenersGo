@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById("locationError").innerText = "";
             document.getElementById("manualAddLocation").classList.remove("is-invalid");
             address = manualAddAddressInput;
-            document.getElementById("manualPlantLat").value = address.value
             if (this.value.trim() === '') {
                 manualPlantLat.value = '';
                 manualPlantLon.value = '';
@@ -54,14 +53,12 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("scanningLocationError").innerText = "";
         document.getElementById("scanningLocation").classList.remove("is-invalid");
         address = scanningAddressInput;
-        document.getElementById("plantLat").value = address.value
         if (this.value.trim() === '') {
             plantLat.value = '';
             plantLon.value = '';
             locationUpdateMssg.innerHTML = "";
         } else {
             if (plantLat.value === '' && plantLon.value === '') {
-                document.getElementById("manualPlantLat").value = address.value
                 locationUpdateMssg.innerHTML = "Search and select a verified address from the list to show it on map."
                 locationUpdateMssg.style.color = "blue";
             }
