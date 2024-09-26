@@ -34,8 +34,8 @@ public class ScanController {
     private final LocationService locationService;
     private final ImageService imageService;
     private  final BadgeService badgeService;
-    private final Map<String, String> errorResponse;
-    private final Map<String, Object> response;
+    private Map<String, String> errorResponse;
+    private Map<String, Object> response;
     private IdentifiedPlant identifiedPlant;
 
     private final String errorKey = "error";
@@ -52,8 +52,6 @@ public class ScanController {
         this.plantIdentificationService = plantIdentificationService;
         this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
-        errorResponse = new HashMap<>();
-        response = new HashMap<>();
         this.identifiedPlantService = identifiedPlantService;
         this.badgeService = badgeService;
         this.locationService = locationService;
@@ -87,6 +85,8 @@ public class ScanController {
     public ResponseEntity<?> identifyPlant(@RequestParam("image") MultipartFile image) {
         logger.info("POST /identifyPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
+        errorResponse = new HashMap<>();
+        response = new HashMap<>();
 
         if (image.isEmpty()) {
             errorResponse.put(errorKey, "Please add an image to identify.");
@@ -148,6 +148,9 @@ public class ScanController {
         logger.info("POST /saveIdentifiedPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
+        errorResponse = new HashMap<>();
+        response = new HashMap<>();
+
         if (gardener.isPresent()) {
 
             try {
@@ -155,10 +158,16 @@ public class ScanController {
                 String description = extra.get("description");
                 String plantLatitude = extra.get("plantLatitude");
                 String plantLongitude = extra.get("plantLongitude");
+                if (plantLongitude != null && plantLongitude.isBlank()) {
+                    plantLongitude = null;
+                }
+                if (plantLatitude != null && plantLatitude.isBlank()) {
+                    plantLatitude = null;
+                }
 
-                String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(extra.get("name"));
-                String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(extra.get("description"));
-                boolean validLocation = ValidityChecker.validatePlantCoordinates(extra.get("plantLatitude"), extra.get("plantLongitude"));
+                String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(name);
+                String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(description);
+                boolean validLocation = ValidityChecker.validatePlantCoordinates(plantLatitude, plantLongitude);
 
                 boolean isValid = true;
 
@@ -196,16 +205,12 @@ public class ScanController {
                     Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener.get(), plantCount);
                     if(plantBadge.isPresent()) {
                         response.put("plantBadge", plantBadge.get().getId());
-                    } else {
-                        response.remove("plantBadge");
                     }
                     response.put("savedPlant", savedPlant.getId());
                     int speciesCount = identifiedPlantService.getSpeciesCount(gardener.get().getId());
                     if(speciesCount != originalSpeciesCount) {
                         Optional<Badge> speciesBadge = badgeService.checkSpeciesBadgeToBeAdded(gardener.get(), speciesCount);
                         speciesBadge.ifPresent(badge -> response.put("speciesBadge", speciesBadge.get().getId()));
-                    } else {
-                        response.remove("speciesBadge");
                     }
 
                     int regionCount = identifiedPlantService.getRegionCount(gardener.get().getId());

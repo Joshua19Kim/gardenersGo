@@ -127,6 +127,8 @@ public class IdentifiedPlant {
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         this.dateUploaded = currentDate.format(formatter);
+        this.plantLatitude = null;
+        this.plantLongitude = null;
 
     }
 
@@ -151,6 +153,8 @@ public class IdentifiedPlant {
         this.speciesScientificNameWithoutAuthor = speciesScientificNameWithoutAuthor;
         this.gardener = gardener;
         this.commonNames = new ArrayList<>();
+        this.plantLatitude = null;
+        this.plantLongitude = null;
 
     }
 
@@ -163,6 +167,8 @@ public class IdentifiedPlant {
     public IdentifiedPlant(String plantName, Gardener gardener) {
         this.name = plantName;
         this.gardener = gardener;
+        this.plantLatitude = null;
+        this.plantLongitude = null;
     }
 
 

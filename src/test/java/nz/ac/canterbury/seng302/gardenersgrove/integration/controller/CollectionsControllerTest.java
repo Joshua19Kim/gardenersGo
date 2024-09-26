@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -12,6 +13,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationServic
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,16 +23,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -48,6 +50,9 @@ class CollectionsControllerTest {
 
     @MockBean
     private BadgeService badgeService;
+
+    @MockBean
+    private LocationService locationService;
 
     @MockBean
     private IdentifiedPlantService identifiedPlantService;
@@ -264,5 +269,102 @@ class CollectionsControllerTest {
                 .andExpect(model().attribute("badgeCount", 2))
                 .andExpect(model().attribute("speciesBadge", speciesBadge));
     }
+
+    @WithMockUser
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0 : 0",
+            "-90 : -180",
+            "90 : 180",
+            "89 : 179",
+            "-90 : 0",
+            "0 : -180",
+            "0 : 180",
+            "90 : 0",
+            "'' : ''",
+    }, delimiter = ':')
+    void UserUsesCurrentLocationForPlant_HasCoordinates_ReturnsExpectedResult(String plantLatitude, String plantLongitude) throws Exception {
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        boolean isDateInvalid = false;
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "plantImage",
+                "image.jpg",
+                "image/jpeg",
+                "image content".getBytes()
+        );
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
+        when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/myCollection")
+                        .file(mockMultipartFile)
+                        .param("plantName", name)
+                        .param("description", description)
+                        .param("scientificName", species)
+                        .param("uploadedDate", String.valueOf(date))
+                        .param("isDateInvalid", String.valueOf(isDateInvalid))
+                        .param("manualPlantLat", plantLatitude)
+                        .param("manualPlantLon", plantLongitude)
+                        .with(csrf()))
+
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/myCollection"))
+                .andExpect(flash().attributeExists("successMessage"))
+                .andExpect(flash().attribute("successMessage", "My Plant has been added to collection: Plant Species"));
+    }
+
+    @WithMockUser
+    @ParameterizedTest
+    @CsvSource(value = {
+            "-91 : -181",
+            "-91 : 0",
+            "0, : -181",
+            "0 : 181",
+            "91 : 0",
+            "'' : 0",
+            "0 : ''"
+    }, delimiter = ':')
+    void UserUsesCurrentLocationForPlant_HasInvalidCoordinates_ReturnsNothing(String plantLatitude, String plantLongitude) throws Exception {
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        boolean isDateInvalid = false;
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "plantImage",
+                "image.jpg",
+                "image/jpeg",
+                "image content".getBytes()
+        );
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
+        when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/myCollection")
+                        .file(mockMultipartFile)
+                        .param("plantName", name)
+                        .param("description", description)
+                        .param("scientificName", species)
+                        .param("uploadedDate", String.valueOf(date))
+                        .param("isDateInvalid", String.valueOf(isDateInvalid))
+                        .param("manualPlantLat", plantLatitude)
+                        .param("manualPlantLon", plantLongitude)
+                        .with(csrf()))
+
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/myCollection"))
+                .andExpect(flash().attributeExists("locationError"))
+                .andExpect(flash().attribute("locationError", "Invalid Location"));
+    }
+
+
+
 
 }

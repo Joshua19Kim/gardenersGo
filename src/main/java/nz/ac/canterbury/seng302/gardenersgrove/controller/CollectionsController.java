@@ -5,6 +5,9 @@ import static java.lang.Long.parseLong;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.IntStream;
@@ -46,6 +49,8 @@ public class CollectionsController {
     private final BadgeService badgeService;
 
     private final RequestService requestService;
+
+    private final LocationService locationService;
     private Gardener gardener;
 
     private static final String PAGINATION_MESSAGE_ATTRIBUTE = "paginationMessage";
@@ -74,12 +79,13 @@ public class CollectionsController {
     public CollectionsController(ImageService imageService, GardenService gardenService,
                                  GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService,
                                  RequestService requestService,
-                                 PlantIdentificationService plantIdentificationService, BadgeService badgeService) {
+                                 PlantIdentificationService plantIdentificationService, BadgeService badgeService, LocationService locationService) {
         this.imageService = imageService;
         this.gardenService = gardenService;
         this.gardenerFormService = gardenerFormService;
         this.identifiedPlantService = identifiedPlantService;
         this.plantIdentificationService = plantIdentificationService;
+        this.locationService = locationService;
         errorResponse = new HashMap<>();
         response = new HashMap<>();
         this.requestService = requestService;
@@ -258,13 +264,25 @@ public class CollectionsController {
             @RequestParam(name = "uploadedDate", required = false) LocalDate uploadedDate,
             @RequestParam(name = "isDateInvalid", required = false) boolean isDateInvalid,
             @RequestParam("plantImage") MultipartFile plantImage,
+            @RequestParam(name ="manualPlantLat",required = false) String manualPlantLat,
+            @RequestParam(name ="manualPlantLon",required = false) String manualPlantLon,
+            @RequestParam(name ="location", required = false ) String location,
+            @RequestParam(name= "manualAddLocationToggle", required = false) boolean manualAddLocationToggle,
             RedirectAttributes redirectAttributes
     ) {
         logger.info("/myCollection/addNewPlantToMyCollection");
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
+        if (manualPlantLat != null && manualPlantLat.isBlank()) {
+            manualPlantLat = null;
+        }
+        if (manualPlantLon != null && manualPlantLon.isBlank()) {
+            manualPlantLon = null;
+        }
+
         boolean isValid = validateManuallyAddedPlantDetails(plantName, scientificName, description, isDateInvalid, redirectAttributes);
+        boolean validLocation = ValidityChecker.validatePlantCoordinates(manualPlantLat,manualPlantLon);
 
         if (!plantImage.isEmpty()) {
             Optional<String> uploadMessage = imageService.checkValidImage(plantImage);
@@ -274,8 +292,18 @@ public class CollectionsController {
             }
         }
 
+        if (!validLocation) {
+            redirectAttributes.addFlashAttribute("locationError", "Invalid Location");
+            isValid = false;
+        }
+        if (manualPlantLon == null && manualPlantLat == null) {
+            manualAddLocationToggle = false;
+        }
+
         if (isValid) {
             IdentifiedPlant identifiedPlant = new IdentifiedPlant(plantName, gardener);
+            identifiedPlant.setPlantLatitude(manualPlantLat);
+            identifiedPlant.setPlantLongitude(manualPlantLon);
 
             identifiedPlant = identifiedPlantService.createManuallyAddedPlant(identifiedPlant, description, scientificName, uploadedDate);
 
@@ -317,6 +345,10 @@ public class CollectionsController {
             redirectAttributes.addFlashAttribute("description", description);
             redirectAttributes.addFlashAttribute("scientificName", scientificName);
             redirectAttributes.addFlashAttribute("uploadedDate", uploadedDate);
+            redirectAttributes.addFlashAttribute("manualPlantLat", manualPlantLat);
+            redirectAttributes.addFlashAttribute("manualPlantLon", manualPlantLon);
+            redirectAttributes.addFlashAttribute("location", location);
+            redirectAttributes.addFlashAttribute("manualAddLocationToggle", manualAddLocationToggle);
             redirectAttributes.addFlashAttribute(ERROR_OCCURRED_ATTRIBUTE, true);
             redirectAttributes.addFlashAttribute(SHOW_MODAL_ATTRIBUTE, true);
 
@@ -369,7 +401,7 @@ public class CollectionsController {
     @GetMapping("/collectionDetails/edit")
     public String editIdentifiedPlant(
             @RequestParam(name = "plantId") String plantIdString,
-            Model model, HttpServletRequest request) {
+            Model model, HttpServletRequest request) throws IOException, InterruptedException {
 
         logger.info("GET /collectionDetails/edit");
 
@@ -382,6 +414,10 @@ public class CollectionsController {
         if (plant != null) {
             model.addAttribute("requestURI", requestService.getRequestURI(request));
             model.addAttribute("plant", plant);
+            if (plant.getPlantLatitude() != null && plant.getPlantLongitude() != null) {
+                String savedLocation = locationService.getLocationfromLatLong(plant.getPlantLatitude(), plant.getPlantLongitude());
+                model.addAttribute("savedLocation", savedLocation);
+            }
 
             // need to add to model so that the navbar can populate the dropdown
             List<Garden> gardens = gardenService.getGardensByGardenerId(gardener.getId());
@@ -407,6 +443,11 @@ public class CollectionsController {
             @RequestParam(name = "name") String name,
             @RequestParam(name = "description", required = false) String description,
             @RequestParam(name = "plantId") String plantIdString,
+            @RequestParam(name ="manualPlantLat",required = false) String manualPlantLat,
+            @RequestParam(name ="manualPlantLon",required = false) String manualPlantLon,
+            @RequestParam(name ="location", required = false ) String location,
+            @RequestParam(name= "manualAddLocationToggle", required = false) boolean manualAddLocationToggle,
+
             HttpServletRequest request,
             Model model) {
 
@@ -415,8 +456,18 @@ public class CollectionsController {
         long plantId = parseLong(plantIdString, 10);
         IdentifiedPlant plantOptional = identifiedPlantService.getCollectionPlantById(plantId);
 
+        if (manualPlantLat != null && manualPlantLat.isBlank()) {
+            manualPlantLat = null;
+        }
+        if (manualPlantLon != null && manualPlantLon.isBlank()) {
+            manualPlantLon = null;
+        }
+
         String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(name);
         String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(description);
+        boolean validLocation = ValidityChecker.validatePlantCoordinates(manualPlantLat,manualPlantLon);
+
+
 
         boolean isValid = true;
 
@@ -428,9 +479,19 @@ public class CollectionsController {
             model.addAttribute("descriptionError", validatedPlantDescription);
             isValid = false;
         }
+        if (!validLocation) {
+            model.addAttribute("locationError", "Invalid Location");
+            isValid = false;
+        }
+        if (manualPlantLon == null && manualPlantLat == null) {
+            manualAddLocationToggle = false;
+        }
+
 
         if (isValid && plantOptional != null) {
             IdentifiedPlant plant = plantOptional;
+            plant.setPlantLatitude(manualPlantLat);
+            plant.setPlantLongitude(manualPlantLon);
 
             plant.setName(validatedPlantName);
             boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
@@ -451,6 +512,10 @@ public class CollectionsController {
             model.addAttribute("name", name);
             model.addAttribute("plant", plantOptional);
             model.addAttribute("description", description);
+            model.addAttribute("manualPlantLat", manualPlantLat);
+            model.addAttribute("manualPlantLon", manualPlantLon);
+            model.addAttribute("location", location);
+            model.addAttribute("manualAddLocationToggle", manualAddLocationToggle);
 
             return "editIdentifiedPlantForm";
         }
