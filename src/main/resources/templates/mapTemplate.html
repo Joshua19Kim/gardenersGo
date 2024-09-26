@@ -36,13 +36,13 @@
     <div class="form-group field w-50">
         <label class="input w-100">
             <label style="margin-left: 20px;"> Start date </label>
-            <input id="sdate" class="form-control form-field" value="" type="date" max="9999-12-31">
+            <input id="startDate" class="form-control form-field" value="" type="date" max="9999-12-31">
         </label>
     </div>
     <div class="form-group field w-50">
         <label class="input w-100">
             <label style="margin-left: 20px;"> End date </label>
-            <input id="edate" class="form-control form-field" value="" type="date" max="9999-12-31">
+            <input id="endDate" class="form-control form-field" value="" type="date" max="9999-12-31">
         </label>
     </div>
 </div>
@@ -67,35 +67,80 @@
         attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
     }).addTo(map);
 
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", updateMap);
+
+    // Event listener for when date inputs change
+    document.getElementById('startDate').addEventListener('change', updateMap);
+    document.getElementById('endDate').addEventListener('change', updateMap);
+
+    // Parses HTML input and DateUploaded into JS Dates
+    function parseDateString(dateString, splitChar) {
+        if (!dateString) return null; // Return null if the input is empty
+        var parts = dateString.split(splitChar);
+        // Ensure parts are in the right order: [DD, MM, YYYY]
+        return new Date(parts[0], parts[1] - 1, parts[2]); // Months are 0-indexed
+    }
+
+    function updateMap() {
+
+        var startDate = parseDateString(document.getElementById('startDate').value, '-');
+        var endDate = parseDateString(document.getElementById('endDate').value, '-');
+
+        // Ensure endDate is inclusive as per gpt
+        if (endDate) {
+            endDate.setHours(23, 59, 59, 999); // Set to the end of the day
+        }
+
+        // Reset map as per GPT
+        map.eachLayer(function(layer) {
+            if (layer instanceof L.Marker) {
+                map.removeLayer(layer);
+            }
+        });
+
         /*<![CDATA[*/
         var scannedPlants = /*[[${scannedPlants}]]*/ [];
-        console.log(scannedPlants);
+
         scannedPlants.forEach(function (scannedPlant) {
-            if (scannedPlant.plantLatitude && scannedPlant.plantLongitude && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
+            // Filtering by date
+            var plantDate = parseDateString(scannedPlant.dateUploaded, '/');
 
-                var plantLink = '/collectionDetails?speciesName=' + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
-                var popupContent = '<div style="width: 200px; word-break: break-all; text-align: center;"><h2>' +
-                    scannedPlant.name + '</h2>' +
-                    '<h3><i>' + scannedPlant.speciesScientificNameWithoutAuthor + '</i></h3>' +
-                    '<h3><i>Added ' + scannedPlant.dateUploaded + '</i><h3>' +
-                    '<a style="text-decoration: none;" href="' + plantLink + '">' + 'View in your collection' + '</a><br>';
+            // Failsafe value to allow for null dates (or other filter values)
+            var filtered = true;
+            if (startDate && plantDate < startDate) {
+                filtered = false;
+            }
+            if (endDate && plantDate > endDate) {
+                filtered = false;
+            }
 
-                if (scannedPlant.uploadedImage) {
-                    var image = '<img src="' + scannedPlant.uploadedImage + '" alt="Plant image" width="200px" height="auto"/>';
-                    popupContent += '<br>' + image + '</div>';
-                } else {
-                    popupContent += '</div>';
+            if (filtered) {
+                if (scannedPlant.plantLatitude && scannedPlant.plantLongitude && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
+
+                    var plantLink = '/collectionDetails?speciesName=' + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
+                    var popupContent = '<div style="width: 200px; word-break: break-all; text-align: center;"><h2>' +
+                        scannedPlant.name + '</h2>' +
+                        '<h3><i>' + scannedPlant.speciesScientificNameWithoutAuthor + '</i></h3>' +
+                        '<h3><i>Added ' + scannedPlant.dateUploaded + '</i><h3>' +
+                        '<a style="text-decoration: none;" href="' + plantLink + '">' + 'View in your collection' + '</a><br>';
+
+                    if (scannedPlant.uploadedImage) {
+                        var image = '<img src="' + scannedPlant.uploadedImage + '" alt="Plant image" width="200px" height="auto"/>';
+                        popupContent += '<br>' + image + '</div>';
+                    } else {
+                        popupContent += '</div>';
+                    }
+
+                    L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
+                        .addTo(map)
+                        .bindPopup(popupContent, {maxWidth: 200}
+                        );
                 }
-
-                L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
-                    .addTo(map)
-                    .bindPopup(popupContent, {maxWidth: 200}
-                    );
             }
             /*]]>*/
         });
-    });
+    }
+
 </script>
 </body>
 </html>
