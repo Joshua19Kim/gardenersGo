@@ -29,15 +29,17 @@
 </head>
 <body>
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
-<div class="search-container position-absolute p-3" style="z-index: 5; left: 40px; top: 130px;">
-    <form class="search-bar form-inline d-flex">
-        <input id="searchTerm" class="form-control me-2" th:name="searchTerm" th:value="${searchTerm}" type="search" placeholder="Search" aria-label="Search" tabindex="13" style="margin-bottom: 0 !important">
-        <input id="searchPool" name="searchPool" th:value="${searchPool}" type="hidden">
-        <button class="btn btn-outline-success" onclick="submitSearch()" tabindex="17">Search</button>
-    </form>
-</div>
 
-<div id="map" style="z-index: 1"></div>
+<div id="map" style="z-index: 1">
+    <div class="search-container position-relative p-0 m-0 justify-content-start" style="z-index: 999; left: 75px;">
+        <form class="search-bar form-inline d-flex">
+            <input aria-label="Search" class="form-control me-2" id="searchTerm" list="plant-names" placeholder="Search"
+                   style="margin-bottom: 0 !important" tabindex="13" th:name="searchTerm" th:value="${searchTerm}"
+                   type="search">
+            <datalist id="plant-names"></datalist>
+        </form>
+    </div>
+</div>
 
 <script th:src="@{/webjars/leaflet/1.9.4/dist/leaflet.js}"></script>
 <script th:src="@{/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js}"></script>
@@ -63,17 +65,35 @@
         maxClusterRadius: 50 // Helps to prevent clusters over a large area
     });
 
+    let scannedPlants;
+    let currentPlants;
     var searchInput = document.getElementById("searchTerm");
+    searchInput.addEventListener("input", function() {
+        console.log("changed");
+        if (searchInput.value.trim() !== "") { // If the searchInput is in use then it will filter the returned pins
+            currentPlants = scannedPlants.filter(function (plant) {
+                return plant.name.trim().toLowerCase() === searchInput.value.trim().toLowerCase();
+            });
+        } else {
+            currentPlants = scannedPlants;
+            document.getElementById("plant-names").innerHTML = '';
+            loadAllOptions();
+        }
+        clusteredMarkers.clearLayers();
+        showMarkers();
+    })
+
     document.addEventListener("DOMContentLoaded", function() {
         /*<![CDATA[*/
-        var scannedPlants = /*[[${scannedPlants}]]*/ [];
+        scannedPlants = /*[[${scannedPlants}]]*/ [];
+        currentPlants = scannedPlants
+        showMarkers();
+        loadAllOptions();
+        /*]]>*/
+    });
 
-        if (!searchInput.trim().isEmpty()) { // If the searchInput is in use then it will filter the returned pins
-            scannedPlants = scannedPlants.filter(function(plant) {
-                return plant.name.trim() === searchInput.trim();
-            });
-        }
-        scannedPlants.forEach(function (scannedPlant) {
+    function showMarkers() {
+        currentPlants.forEach(function (scannedPlant) {
             if (scannedPlant.plantLatitude && scannedPlant.plantLongitude && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
 
                 var plantLink = '/collectionDetails?speciesName=' + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
@@ -95,12 +115,21 @@
                     .bindPopup(popupContent, {maxWidth: 200}
                     );
             }
-
-
         });
-        /*]]>*/
-    });
+    }
 
+    function loadAllOptions() {
+        const plantNames = document.getElementById("plant-names");
+        let uniqueNames = [...new Set(scannedPlants.map((plant => plant.name.trim())))].sort();
+
+        uniqueNames.forEach(name => {
+                let newOption = document.createElement("option");
+                newOption.value = name;
+                newOption.text = name;
+                plantNames.appendChild(newOption);
+            }
+        )
+    }
     map.addLayer(clusteredMarkers);
 
     // Dynamically adjust map height based on the navbar height - need to do this because navbar does not have a set height
