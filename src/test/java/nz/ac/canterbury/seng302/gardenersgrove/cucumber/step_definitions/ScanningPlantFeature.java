@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -180,15 +182,19 @@ public class ScanningPlantFeature {
 
   @Then("my plant is saved")
   public void my_plant_is_saved() throws Exception {
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
     Map<String, String> requestBody = new HashMap<>();
     requestBody.put("name", inputName);
     requestBody.put("description", inputDescription);
+    requestBody.put("plantLatitude", "");
+    requestBody.put("plantLongitude", "");
 
     ObjectMapper objectMapper = new ObjectMapper();
     String jsonBody = objectMapper.writeValueAsString(requestBody);
 
     resultActions =
-        mockMvc
+    mockMvc
             .perform(
                 post("/saveIdentifiedPlant")
                     .contentType(MediaType.APPLICATION_JSON)
