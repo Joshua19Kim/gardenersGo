@@ -158,11 +158,10 @@ public class ScanController {
                 String description = extra.get("description");
                 String plantLatitude = extra.get("plantLatitude");
                 String plantLongitude = extra.get("plantLongitude");
-                if (plantLongitude != null && plantLongitude.isBlank()) {
-                    plantLongitude = null;
-                }
-                if (plantLatitude != null && plantLatitude.isBlank()) {
+
+                if (plantLatitude.isEmpty() && plantLongitude.isEmpty()){
                     plantLatitude = null;
+                    plantLongitude = null;
                 }
 
                 String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(name);
@@ -190,10 +189,11 @@ public class ScanController {
                     if (descriptionPresent) {
                         identifiedPlant.setDescription(validatedPlantDescription);
                     }
-
-                    if (!plantLatitude.isEmpty() && !plantLongitude.isEmpty()) {
-                        String region = locationService.sendReverseGeocodingRequest(plantLatitude, plantLongitude);
-                        identifiedPlant.setRegion(region);
+                    if (!(plantLatitude == null)) {
+                        if (!plantLatitude.isEmpty() && !plantLongitude.isEmpty()) {
+                            String region = locationService.sendReverseGeocodingRequest(plantLatitude, plantLongitude);
+                            identifiedPlant.setRegion(region);
+                        }
                     }
                     identifiedPlant.setPlantLatitude(plantLatitude);
                     identifiedPlant.setPlantLongitude(plantLongitude);

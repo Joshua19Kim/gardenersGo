@@ -282,6 +282,8 @@ public class ScanControllerTest {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("name", name);
         requestBody.put("description", description);
+        requestBody.put("plantLatitude", "");
+        requestBody.put("plantLongitude", "");
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonBody = objectMapper.writeValueAsString(requestBody);
