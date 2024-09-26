@@ -269,7 +269,7 @@ public class CollectionsController {
             @RequestParam(name ="location", required = false ) String location,
             @RequestParam(name= "manualAddLocationToggle", required = false) boolean manualAddLocationToggle,
             RedirectAttributes redirectAttributes
-    ) {
+    ) throws IOException, InterruptedException {
         logger.info("/myCollection/addNewPlantToMyCollection");
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
@@ -302,6 +302,12 @@ public class CollectionsController {
 
         if (isValid) {
             IdentifiedPlant identifiedPlant = new IdentifiedPlant(plantName, gardener);
+            if (!(manualPlantLat == null)) {
+                if (!manualPlantLat.isEmpty() && !manualPlantLon.isEmpty()) {
+                    String region = locationService.sendReverseGeocodingRequest(manualPlantLat, manualPlantLon);
+                    identifiedPlant.setRegion(region);
+                }
+            }
             identifiedPlant.setPlantLatitude(manualPlantLat);
             identifiedPlant.setPlantLongitude(manualPlantLon);
 
@@ -335,6 +341,12 @@ public class CollectionsController {
                     redirectAttributes.addFlashAttribute("speciesBadge", speciesBadge.get());
                     badgeCount += 1;
                 }
+            }
+            int regionCount = identifiedPlantService.getRegionCount(gardener.getId());
+            Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener, regionCount);
+            if(regionBadge.isPresent()) {
+                redirectAttributes.addFlashAttribute("regionBadge", regionBadge.get());
+                badgeCount += 1;
             }
 
             redirectAttributes.addFlashAttribute("badgeCount", badgeCount);

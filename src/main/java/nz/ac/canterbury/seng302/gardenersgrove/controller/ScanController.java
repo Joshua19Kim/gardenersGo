@@ -214,7 +214,9 @@ public class ScanController {
                     }
 
                     int regionCount = identifiedPlantService.getRegionCount(gardener.get().getId());
+                    logger.info("region count:" + regionCount);
                     Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener.get(), regionCount);
+                    logger.info(regionBadge.toString());
                     regionBadge.ifPresent(badge -> response.put("regionBadge", regionBadge.get().getId()));
 
                     return ResponseEntity.ok(response);
