@@ -20,7 +20,6 @@ import java.util.Optional;
 public class BadgeService {
 
     private List<String> badgeNames;
-    private List<String> regions;
     private BadgeRepository badgeRepository;
 
     /**
@@ -33,9 +32,6 @@ public class BadgeService {
          this.badgeNames = List.of("1st Plant Found", "10th Plant Found", "25th Plant Found", "50th Plant Found", "100th Plant Found",
                  "1st Species Found", "10th Species Found", "25th Species Found", "50th Species Found", "100th Species Found",
                  "1st Region Found", "5th Region Found", "10th Region Found", "17th Region Found");
-         this.regions = List.of("Southland", "Otago", "Canterbury", "West Coast", "Northland",
-                 "Tasman", "Waikato", "Wellington", "Taranaki", "Manawatu-Wanganui", "Marlborough",
-                 "Hawke's Bay", "Gisborne", "Bay of Plenty", "Auckland", "Nelson", "Chatham Islands");
      }
 
     /**

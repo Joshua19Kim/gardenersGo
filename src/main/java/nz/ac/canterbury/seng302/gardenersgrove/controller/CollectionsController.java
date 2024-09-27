@@ -521,10 +521,6 @@ public class CollectionsController {
                 plant.setDescription(null);
             }
 
-            identifiedPlantService.saveIdentifiedPlantDetails(plant);
-            int regionCount = identifiedPlantService.getRegionCount(gardener.getId());
-            Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener, regionCount);
-
             return "redirect:/collectionDetails?speciesName=" + plant.getSpeciesScientificNameWithoutAuthor();
         } else {
             Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();

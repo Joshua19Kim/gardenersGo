@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 /**
  * LocationService sends an autocomplete request to server.
@@ -92,6 +93,17 @@ public class LocationService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response.body());
         JsonNode regionNode = jsonNode.path("address");
-        return regionNode.path("state").asText();
+
+        String state = regionNode.path("state").asText();
+        List<String> regions = List.of("Southland", "Otago", "Canterbury", "West Coast", "Northland",
+                "Tasman", "Waikato", "Wellington", "Taranaki", "Manawatu-Wanganui", "Marlborough",
+                "Hawke's Bay", "Gisborne", "Bay of Plenty", "Auckland", "Nelson", "Chatham Islands");
+
+        for (String region : regions) {
+            if (state.startsWith(region)) {
+                return region;
+            }
+        }
+        return null;
     }
 }
