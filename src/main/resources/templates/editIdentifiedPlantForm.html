@@ -65,7 +65,8 @@
                 </div>
                 <br/>
             </div>
-            <div id="map" style="height: 300px"></div>
+            <p>Click on the map to place a location marker</p>
+            <div id="map" style="height: 300px" class="mb-3"></div>
 
             <input type="hidden" id="manualPlantLat" th:value="${manualPlantLat != null ? manualPlantLat : plant.plantLatitude}" name="manualPlantLat">
             <input type="hidden" id="manualPlantLon" th:value="${manualPlantLon != null ? manualPlantLon : plant.plantLongitude}" name="manualPlantLon">
@@ -178,6 +179,7 @@
         manualPlantLat.value = position.coords.latitude.toString();
         manualPlantLon.value = position.coords.longitude.toString();
         manualAddGeolocationUpdateMssg.innerHTML = 'Current location saved.';
+        manualPlantLat.dispatchEvent(new Event('change'));
 
 
     }
@@ -224,7 +226,7 @@
     }).addTo(map);
 
     map.on('click', onClick);
-    let marker;
+    let marker = L.marker([document.getElementById("manualPlantLat").value, document.getElementById("manualPlantLon").value]).addTo(map);
     function onClick(e) {
         const selectedLat = e.latlng.lat;
         const selectedLon = e.latlng.lng;
@@ -238,8 +240,8 @@
         document.getElementById("manualAddLocation").value = '';
     }
 
-    document.getElementById("manualAddLocationUpdateMssg").addEventListener("change", function() {
-        if (this.innerText.startsWith("The location has been verified")) {
+    document.getElementById("manualPlantLat").addEventListener("change", function() {
+        if (this.value !== '') {
             if (marker) {
                 map.removeLayer(marker);
             }
