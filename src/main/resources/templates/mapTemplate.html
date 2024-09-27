@@ -34,75 +34,91 @@
 <body>
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div id="map">
-
-    <button id="searchToggle" class="search-toggle-btn">
-        <img th:src='@{/images/icons/search.svg}' alt="Search" width="24" height="24">
-    </button>
+    <div class="map-button-container">
+        <button id="searchToggle" class="map-button">
+            <img th:src='@{/images/icons/search.svg}' alt="Search" width="24" height="24">
+        </button>
+        <button id="refresh" class="map-button">
+            <img th:src='@{/images/icons/arrow-clockwise.svg}' alt="Search" width="24" height="24">
+        </button>
+        <button id="currentLocation" class="map-button">
+            <img th:src='@{/images/icons/crosshair.svg}' alt="Search" width="24" height="24">
+        </button>
+    </div>
 
     <div id="searchContainer" class="search-container-map position-relative p-2 m-0 mt-3 justify-content-start"
              style="z-index: 999; left: 60px; flex-direction: column; align-items: baseline; width: fit-content; display: none;" >
-            <form id="nameFilter" class="search-bar form-inline d-flex">
+            <form id="nameFilter" class="search-bar form-inline" style="display: flex; flex-direction: column;">
                 <div class="input w-100">
-                    <label class="map-lable ms-3 mb-2" style="margin-left: 20px;"> Plant Name </label>
-                    <div class="row g-2" style="display: flex; flex-direction: row;">
-                        <div class="col-8">
-                            <input aria-label="Search" class="form-control me-2" id="searchTerm" list="plant-names" placeholder="Search by plant name"
-                                   style="margin-bottom: 0 !important" tabindex="13" autocomplete="off" th:name="searchTerm" th:value="${searchTerm}"
-                                   type="search">
-                        </div>
-                        <div class="col-4">
-                            <button class="btn btn-outline-success mt-0 " style="width: 100%" onclick="plantFilter()"
-                                    tabindex="14">Apply Filter
-                            </button>
-                        </div>
+                    <label class="map-label ms-3 mb-2" style="margin-left: 20px;"> Plant Name </label>
+                    <div class="name-button row g-2" style="display: flex">
+                        <input aria-label="Search" class="form-control me-2" id="searchTerm" list="plant-names" placeholder="Search by plant name"
+                               style="margin-bottom: 0 !important" tabindex="13" autocomplete="off" th:name="searchTerm" th:value="${searchTerm}"
+                               type="search">
                     </div>
+                    <datalist id="plant-names"></datalist>
                 </div>
-                <datalist id="plant-names"></datalist>
+                <!-- Date filtering -->
+                <div class="field date-input mt-3">
+                    <label class="input w-100">
+                        <label class="map-label" style="margin-left: 20px;">Start date </label>
+                        <input id="startDate" class="form-control form-field" value="1900-01-01" onchange="validateStartDate();" type="date" max="9999-12-31" tabindex="15">
+                        <span id="startDateError" class="smallErrorMessageMap"></span>
+                    </label>
+
+                </div>
+                <div class="field date-input mt-3 mb-3">
+                    <label class="input w-100">
+                        <label class="map-label" style="margin-left: 20px;">End date </label>
+                        <input id="endDate" class="form-control form-field" value="" type="date" onchange="validateEndDate();" max="9999-12-31" tabindex="16">
+                        <span id="endDateError" class="smallErrorMessageMap"></span>
+                    </label>
+
+                </div>
+                <div class="w-100">
+                    <button class="btn btn-outline-success mt-0 " style="width: 100%" onclick="plantFilter()"
+                            tabindex="14">Apply Filter
+                    </button>
+                    <span id="noResultsError" class="smallErrorMessageMap"></span>
+                </div>
 
             </form>
-            <!-- Date filtering -->
-            <div class="field date-input mt-3">
-                <label class="input w-100">
-                    <label class="map-lable" style="margin-left: 20px;">Start date </label>
-                    <input id="startDate" class="form-control form-field" value="2000-01-01" onchange="validateStartDate();" type="date" max="9999-12-31" tabindex="15">
-                    <span id="startDateError" class="smallErrorMessageMap"></span>
-                </label>
 
-            </div>
-            <div class="field date-input mt-3 mb-3">
-                <label class="input w-100">
-                    <label class="map-lable" style="margin-left: 20px;">End date </label>
-                    <input id="endDate" class="form-control form-field" value="" type="date" onchange="validateEndDate();" max="9999-12-31" tabindex="16">
-                    <span id="endDateError" class="smallErrorMessageMap"></span>
-                </label>
-
-            </div>
 
         </div>
 
 </div>
 
+<!--notification when there is error for current location function-->
+<div id="notification" class="alert alert-warning map-notification" type="hidden" role="alert"></div>
 
 
+<script th:src="@{/javascript/getBaseUrl.js}"></script>
 <script th:src="@{/webjars/leaflet/1.9.4/dist/leaflet.js}"></script>
 <script th:src="@{/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js}"></script>
 <script th:inline="javascript">
     /**
      * creates and initialises the map, also defines on click event that calls java code
      */
-    var southWest = L.latLng(-55, 148.038821);
-    var northEast = L.latLng(-28,200);
-    var maxBoundArea = L.latLngBounds(southWest, northEast)
-    var map = L.map('map', {
+    const initialMapState = {
         center: [-43.5, 174.88],
         zoom: 5.2,
         maxBounds: maxBoundArea,
         minZoom: 5.2,
         maxZoom: 18
-    });
+    };
+    var southWest = L.latLng(-55, 148.038821);
+    var northEast = L.latLng(-28,200);
+    var maxBoundArea = L.latLngBounds(southWest, northEast)
+    var map = L.map('map', initialMapState);
     new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
         attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
     }).addTo(map);
+
+    // Function to reset the map to initial state
+    function resetMap(locationo) {
+        map.setView(locationo.center, locationo.zoom);
+    }
 
     var clusteredMarkers = L.markerClusterGroup({
         maxClusterRadius: 50, // Helps to prevent clusters over a large area
@@ -163,29 +179,42 @@
     const endDate = document.getElementById('endDate');
     endDate.valueAsDate = new Date();
     const endDateError = document.getElementById('endDateError');
+    const noResultsError = document.getElementById('noResultsError');
+
 
     function validateStartDate() {
         validateDate(startDate,startDateError)
+        compareDates();
     }
     function validateEndDate() {
         validateDate(endDate,endDateError)
+        compareDates();
     }
 
     function validateDate(checkDate, checkDateError) {
         const inputDate = new Date(checkDate.value);
         const maxDate = new Date('9999-12-31');
         if (!isDateValid(inputDate)) {
-            checkDateError.textContent = 'Please enter a valid date.';
+            checkDateError.textContent = 'Date is not in the format DD/MM/YYYY';
         } else if (inputDate > maxDate) {
             checkDateError.textContent = 'Date cannot be later than 9999-12-31.';
         } else {
             checkDateError.textContent = '';
         }
     }
+    function compareDates() {
+        const sDate = new Date(startDate.value);
+        const eDate = new Date(endDate.value);
 
+        if (sDate > eDate) {
+            endDateError.textContent = "End date must be after the start date";
+            endDateError.style.display = "block";
+        } else {
+            endDateError.textContent = "";
+            endDateError.style.display = "none";
+        }
+    }
 
-    // document.getElementById('startDate').addEventListener('change', plantFilter);
-    // document.getElementById('endDate').addEventListener('change', plantFilter);
 
     function plantFilter() {
         var startDate = parseDateString(document.getElementById('startDate').value, '-');
@@ -220,10 +249,19 @@
     }
 
     function showMarkers() {
+        clusteredMarkers.clearLayers();
+
+        if (currentPlants.length === 0) {
+            noResultsError.textContent = "No matches found.";
+            noResultsError.style.display = "block";
+            return;
+        }
+        noResultsError.style.display = "none";
+
         currentPlants.forEach(function (scannedPlant) {
             if (scannedPlant.plantLatitude && scannedPlant.plantLongitude && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
 
-                var plantLink = '/collectionDetails?speciesName=' + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
+                var plantLink = `${getBaseUrl()}/collectionDetails?speciesName=` + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
                 var popupContent = `<div style="min-width: 450px; word-break: break-word;" class="row">
                 <div class="col-5" style="white-space: normal; overflow-wrap: break-word;">
                     <h4>${scannedPlant.name}</h4>
@@ -262,11 +300,15 @@
 
     const searchToggle = document.getElementById('searchToggle');
     const searchContainer = document.getElementById('searchContainer');
+    const refreshButton = document.getElementById('refresh');
+    const currentLocationButton = document.getElementById('currentLocation');
+    const notificationBox = document.getElementById('notification');
 
+    // open & close the search button for search container
     searchToggle.addEventListener('click', function() {
         if (searchContainer.style.display === 'none') {
             searchContainer.style.display = 'block';
-            searchToggle.style.backgroundColor = 'rgba(91, 111, 71, 0.7)';
+            searchToggle.style.backgroundColor = 'rgba(52, 72, 59, 0.7)';
 
         } else {
             searchContainer.style.display = 'none';
@@ -275,6 +317,73 @@
         }
     });
 
+    // refresh all the inputs in the search container
+    refreshButton.addEventListener('click', function() {
+        startDate.valueAsDate = new Date('1900-01-01');
+        endDate.valueAsDate = new Date();
+        searchInput.value = '';
+        startDateError.textContent = '';
+        endDateError.textContent = '';
+        searchContainer.style.display = 'none';
+        searchToggle.style.backgroundColor = 'rgba(141, 171, 110, 0.7)';
+        noResultsError.style.display = "none";
+        resetMap(initialMapState);
+        plantFilter();
+    });
+
+    // get the current coordinates
+    currentLocationButton.addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(getCurrentCoordinates, showMapError);
+            searchContainer.style.display = 'none';
+            searchToggle.style.backgroundColor = 'rgba(141, 171, 110, 0.7)';
+        } else {
+            notificationBox.textContent = "Geolocation is not supported by this browser.";
+            notificationBox.style.backgroundColor = "#ffec84";
+
+        }
+    });
+
+    function showMapError(error) {
+        notificationBox.style.display = 'block';
+        notificationBox.style.backgroundColor = "#ffec84";
+        let errorMessage;
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                errorMessage = "Current Location permission denied."
+                break;
+            case error.POSITION_UNAVAILABLE:
+                errorMessage = "Location information is unavailable."
+                break;
+            case error.TIMEOUT:
+                errorMessage = "The request to get user location timed out."
+                break;
+            case error.UNKNOWN_ERROR:
+                errorMessage = "An unknown error occurred."
+                break;
+            default:
+                errorMessage = "An error occurred while getting location.";
+        }
+        notificationBox.textContent = errorMessage;
+
+        // Automatically hide the notification after 3 seconds
+        setTimeout(() => {
+            notificationBox.style.display = 'none';
+            notificationBox.style.backgroundColor = 'transparent';
+        }, 2000);
+
+    }
+
+    function getCurrentCoordinates(position) {
+        const currentLocationState = {
+            center: [position.coords.latitude, position.coords.longitude],
+            zoom: 15.2,
+            maxBounds: maxBoundArea,
+            minZoom: 5.2,
+            maxZoom: 18
+        };
+        resetMap(currentLocationState);
+    }
 
 
     // Dynamically adjust map height based on the navbar height - need to do this because navbar does not have a set height
@@ -287,6 +396,7 @@
     // Adjust the map height on window resize
     window.addEventListener('resize', resizeMap);
     window.addEventListener('load', resizeMap);
+
 
 </script>
 </body>

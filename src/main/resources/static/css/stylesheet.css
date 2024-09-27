@@ -1481,6 +1481,17 @@ form.search-bar::after {
     display: flex;
     align-items: center;
 }
+.map-notification {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    z-index: 1000;
+    background-color: transparent;
+    border-color: transparent;
+}
 
 .notification form {
     display: flex;
@@ -1638,7 +1649,7 @@ form.search-bar::after {
     align-items: center;
     max-width: 380px;
     margin: 20px auto;
-    background-color: rgba(141, 171, 110, 0.7);
+    background-color: rgba(141, 171, 110, 0.9);
     border-radius: 25px;
 }
 
@@ -1652,20 +1663,43 @@ form.search-bar::after {
     margin-bottom:1rem
 }
 
-.search-toggle-btn {
+.map-button-container{
     position: absolute;
     top: 90px;
     left: 10px;
     z-index: 999;
+    display:flex;
+    flex-direction:column;
+}
+.map-button {
     border: none;
     cursor: pointer;
     padding: 5px;
+    margin-bottom: 15px;
     border-radius: 50%;
-    background-color: rgba(141, 171, 110, 0.7);
+    background-color: rgba(141, 171, 110, 0.9);
 }
-.map-lable {
+.map-button:hover {
+    background-color: rgba(52, 72, 59, 0.9);
+}
+.map-label {
     font-size:17px;
+}
 
+@media (max-width: 767px) {
+    .row {
+        display: block;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .search-container-map{
+        max-width: 300px;
+    }
+    .col-8, .col-4 {
+        width: 100%;
+        padding-left: 0;
+        padding-right: 0;
+    }
 }
 
 
