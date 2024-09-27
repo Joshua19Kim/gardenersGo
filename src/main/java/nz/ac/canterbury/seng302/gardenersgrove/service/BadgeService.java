@@ -160,4 +160,30 @@ public class BadgeService {
                 return Optional.empty();
         }
     }
+
+    /**
+     * Deletes badge if location is removed
+     * @param orginalCount the original count
+     * @param currentCount the current count
+     * @param gardener the gardener
+     */
+    public void checkIfBadgeShouldBeRemoved(int orginalCount, int currentCount, Gardener gardener) {
+        if(orginalCount == 1 && currentCount == 0) {
+            Badge badge = badgeRepository.findByNameAndGardenerId("1st Region Found", gardener.getId()).get();
+            badgeRepository.delete(badge);
+        }
+        if(orginalCount == 5 && currentCount == 4) {
+            Badge badge = badgeRepository.findByNameAndGardenerId("5th Region Found", gardener.getId()).get();
+            badgeRepository.delete(badge);
+        }
+        if(orginalCount == 10 && currentCount == 9) {
+            Badge badge = badgeRepository.findByNameAndGardenerId("10th Region Found", gardener.getId()).get();
+            badgeRepository.delete(badge);
+        }
+        if(orginalCount == 17 && currentCount == 6) {
+            Badge badge = badgeRepository.findByNameAndGardenerId("17th Region Found", gardener.getId()).get();
+            badgeRepository.delete(badge);
+        }
+
+    }
 }

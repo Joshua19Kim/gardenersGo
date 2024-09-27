@@ -129,8 +129,6 @@ public class CollectionsController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        System.out.println(model.containsAttribute("regionBadge"));
-
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
         Page<IdentifiedPlantSpeciesImpl> speciesList = identifiedPlantService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
         logger.info("GET /myCollection");
@@ -220,10 +218,6 @@ public class CollectionsController {
         Page<IdentifiedPlant> collectionsList = identifiedPlantService.getGardenerPlantsBySpeciesPaginated(pageNo, pageSize, gardener.getId(), speciesName);
         model.addAttribute("collectionsList", collectionsList);
         model.addAttribute("speciesName", speciesName);
-
-        System.out.println(model.containsAttribute("regionBadge"));
-        System.out.println(model.containsAttribute("badgeCount"));
-
 
         int totalPages = collectionsList.getTotalPages();
         if (totalPages > 0) {
@@ -538,13 +532,16 @@ public class CollectionsController {
 
             int badgeCount = 0;
             int regionCount = identifiedPlantService.getRegionCount(gardener.getId());
-            if(regionCount != originalRegionCount) {
+            if(regionCount < originalRegionCount) {
+                badgeService.checkIfBadgeShouldBeRemoved(originalRegionCount, regionCount, gardener);
+            } else if(regionCount != originalRegionCount) {
                 Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener, regionCount);
                 if(regionBadge.isPresent()) {
                     redirectAttributes.addFlashAttribute("regionBadge", regionBadge.get());
                     badgeCount += 1;
                 }
             }
+
 
             redirectAttributes.addFlashAttribute("badgeCount", badgeCount);
             redirectAttributes.addFlashAttribute("speciesName", plant.getSpeciesScientificNameWithoutAuthor());
