@@ -183,12 +183,15 @@
 
 
     function validateStartDate() {
-        validateDate(startDate,startDateError)
-        compareDates();
+        if(validateDate(startDate,startDateError)) {
+            compareDates();
+        }
     }
     function validateEndDate() {
-        validateDate(endDate,endDateError)
-        compareDates();
+        if(validateDate(endDate,endDateError)) {
+            compareDates();
+        }
+
     }
 
     function validateDate(checkDate, checkDateError) {
@@ -196,10 +199,13 @@
         const maxDate = new Date('9999-12-31');
         if (!isDateValid(inputDate)) {
             checkDateError.textContent = 'Date is not in the format DD/MM/YYYY';
+            return false;
         } else if (inputDate > maxDate) {
             checkDateError.textContent = 'Date cannot be later than 9999-12-31.';
+            return false;
         } else {
             checkDateError.textContent = '';
+            return true;
         }
     }
     function compareDates() {
@@ -210,6 +216,7 @@
             endDateError.textContent = "End date must be after the start date";
             endDateError.style.display = "block";
         } else {
+            console.log("Aaaaaaaaaaa")
             endDateError.textContent = "";
             endDateError.style.display = "none";
         }
