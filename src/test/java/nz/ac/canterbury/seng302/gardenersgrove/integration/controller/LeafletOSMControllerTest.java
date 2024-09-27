@@ -57,7 +57,7 @@ class LeafletOSMControllerTest {
         identifiedPlant.setId(1L);
         List<IdentifiedPlant> scannedPlants = List.of(identifiedPlant);
 
-        when(identifiedPlantService.getGardenerPlants(any())).thenReturn(scannedPlants);
+        when(identifiedPlantService.getGardenerPlantsWithLocations(any())).thenReturn(scannedPlants);
         mockMvc.perform(MockMvcRequestBuilders.get("/map"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(model().attributeExists("scannedPlants"))
