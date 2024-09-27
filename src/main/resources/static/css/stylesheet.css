@@ -852,15 +852,6 @@ body, h2, h3, h4, h5, h6, a {
     text-align: center;
 }
 
-/*https://directory.spatineo.com/*/
-.map_search_container {
-    width: 50em;
-    position: absolute;
-    top: 130px;
-    left: 50%;
-    margin-left: -25em;
-    z-index: 10;
-}
 
 .UserProfilePicContainer {
     width: 105px;
@@ -1096,7 +1087,6 @@ button.image-button:hover {
 
 
 .search-bar {
-    background-color: yellow;
     margin-top: 20px;
     display: flex;
     align-items: center;
