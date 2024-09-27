@@ -132,6 +132,7 @@
     const manualPlantLon = document.getElementById('manualPlantLon');
 
     document.getElementById('manualAddLocationToggle').addEventListener('change', function() {
+
         if (this.checked) {
             manualAddGeolocationUpdateMssg.innerHTML = waitingSpinnerHtml;
 
@@ -144,11 +145,13 @@
             } else {
                 manualAddGeolocationUpdateMssg.innerHTML = "Geolocation is not supported by this browser.";
                 disableMALocationInput(false);
+                manualPlantLat.dispatchEvent(new Event('change'));
             }
         } else {
             manualAddGeolocationUpdateMssg.innerHTML = '';
             disableMALocationInput(false);
             manualAddAutocompleteResults.style.display = 'block';
+            manualPlantLat.dispatchEvent(new Event('change'));
         }
         manualAddGeolocationUpdateMssg.style.color = "green";
 
@@ -173,6 +176,7 @@
                 manualAddGeolocationUpdateMssg.innerHTML = "An unknown error occurred."
                 break;
         }
+        manualPlantLat.dispatchEvent(new Event('change'));
     }
 
     function setMACoordinates(position) {
@@ -180,8 +184,6 @@
         manualPlantLon.value = position.coords.longitude.toString();
         manualAddGeolocationUpdateMssg.innerHTML = 'Current location saved.';
         manualPlantLat.dispatchEvent(new Event('change'));
-
-
     }
 
     // when user clicks 'use current location', disable the input field for searching location.
@@ -241,10 +243,11 @@
     }
 
     document.getElementById("manualPlantLat").addEventListener("change", function() {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+
         if (this.value !== '') {
-            if (marker) {
-                map.removeLayer(marker);
-            }
             const selectedLat = document.getElementById("manualPlantLat").value;
             const selectedLon = document.getElementById("manualPlantLon").value;
             marker = L.marker([selectedLat, selectedLon]).addTo(map);
