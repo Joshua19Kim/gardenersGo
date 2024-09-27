@@ -7,86 +7,132 @@
 <body>
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
+<div id="errorEditingDetails" th:attr="data-error-occurred=${errorEditingDetails}"></div>
 
 
 <div class="mb-5" id="user_div">
 
-    <button class="btn btn-primary w-auto m-2" data-bs-target="#customiseHomepageModal" data-bs-toggle="modal" type="button">
-        Edit Homepage
-    </button>
+    <h1 class="text-dark mt-4 mb-2">User Profile</h1>
 
-    <h1 class="text-dark mt-0">User Profile</h1>
-    <div class="UserProfilePicContainer">
-        <form th:action="@{user}" method="post" enctype="multipart/form-data" id="uploadImageForm">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <img th:src="@{${profilePic}}" alt="Profile Picture" id="currentProfilePic">
-            <button type="button" class="image-button" id="fileInputBtn" onclick="handleImageClick()">+</button>
-            <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*"
-                   onchange="handleImageChange()">
-        </form>
-    </div>
-
-    <div class="warningMessageContainer">
-        <p th:text="${uploadMessage}" th:value="*{uploadMessage}" class="errorMessage"></p>
-    </div>
-
-    <div class="container card w-50">
-        <form th:action="@{user}" method="get" id="userForm" class="w-100 text-center" novalidate>
-
-            <label for="firstName"> First Name: </label>
-            <span id="firstName" th:text="${firstName}"></span>
-            <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
-                   placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
-                   style="display: none;"
-                   th:classappend="${firstNameValid != '' ? 'is-invalid' : ''}">
-            <p class="smallErrorMessage" th:utext="${firstNameValid}"></p>
-            <br/>
-
-            <label for="lastName"> Last Name: </label>
-            <span id="lastName" th:text="${lastName}"></span>
-            <input class="form-control" data-cy="lastName" id="lastNameEdit" placeholder="Last Name" maxlength="255"
-                   th:name="lastName" th:value="*{lastName}" type="text" style="display: none"
-                   th:classappend="${lastNameValid != '' ? 'is-invalid' : ''}"
-                   th:disabled="${isLastNameOptional}">
-            <br/>
-
-            <div id="surnameCheck" class="m-3">
-                <label id="isLastNameOptionalLabelEdit" for="isLastNameOptional" style="display: none;">I have no surname:</label>
-                <input class="form-check-input" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
-                       placeholder="Last Name Tick Box Check" th:checked="${isLastNameOptional}"
-                       th:name="isLastNameOptional" type="checkbox" style="display: none;">
+    <div class="container card col-md-6 border-0">
+        <div class="row">
+            <div class="col-3">
+                <div class="UserProfilePicContainer">
+                    <form th:action="@{user}" method="post" enctype="multipart/form-data" id="uploadImageForm">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <img th:src="@{${profilePic}}" alt="Profile Picture" id="currentProfilePic">
+                        <button type="button" class="image-button" id="fileInputBtn" onclick="handleImageClick()">+</button>
+                        <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*"
+                               onchange="handleImageChange()">
+                    </form>
+                    <div class="warningMessageContainer">
+                        <p th:text="${uploadMessage}" class="smallErrorMessage"></p>
+                        <p th:text="${uploadError}" class="smallErrorMessage"></p>
+                    </div>
+                </div>
             </div>
 
-            <p class="smallErrorMessage" th:utext="${lastNameValid}"></p>
-            <br/>
+            <div class="col">
+                <form th:action="@{user}" method="get" id="userForm" class="w-100 text-center" novalidate>
+                    <div class="row">
+                        <div class="col d-flex flex-wrap">
 
-            <label for="DoB"> Date of Birth: </label>
-            <span id="DoB" th:text="${DoB}"></span>
-            <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;"
-                   th:classappend="${(DoBValid != '' && DoBValid != null) ? 'is-invalid' : ''}" max="9999-12-31">
-            <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
-            <input type="hidden" id="isDoBInvalid" th:name="isDoBInvalid" th:value="false"/>
+                            <label for="firstName"> First Name: </label>
+                            <span class="form-control user-profile-details mx-2" id="firstName" th:text="${firstName}"></span>
+                            <input autofocus class="form-control" data-cy="firstName" id="firstNameEdit" maxlength="255"
+                                   placeholder="First Name" th:name="firstName" th:value="*{firstName}" type="text"
+                                   style="display: none;"
+                                   th:classappend="${firstNameValid !=  '' ? 'is-invalid' : ''}">
+                            <p class="smallErrorMessage" th:utext="${firstNameValid}"></p>
+                            <br/>
 
-            <br/>
-            <label for="email"> Email: </label>
-            <span id="email" th:text="${email}"></span>
-            <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email" maxlength="320"
-                   th:name="email" th:value="*{email}" type="text" style="display: none;"
-                   th:classappend="${emailValid != '' ? 'is-invalid' : ''}">
-            <p class="smallErrorMessage" th:utext="${emailValid}"></p>
-            <br/>
+                            <label for="lastName"> Last Name: </label>
+                            <span class="form-control user-profile-details mx-2" id="lastName" th:text="${lastName}"></span>
+                            <input class="form-control" data-cy="lastName" id="lastNameEdit" placeholder="Last Name" maxlength="255"
+                                   th:name="lastName" th:value="*{lastName}" type="text" style="display: none"
+                                   th:classappend="${lastNameValid != '' ? 'is-invalid' : ''}"
+                                   th:disabled="${isLastNameOptional}">
+                            <br/>
 
 
-            <div id="editButtonDiv">
-                <button class="btn btn-primary mb-3" type="button" onclick="enableEditing()">Edit</button>
+                            <label class="mb-3" id="isLastNameOptionalLabelEdit" for="isLastNameOptional" style="display: none;">I have no surname:</label>
+                            <div class="form-check mb-3 p-0">
+                                <input class="form-check-input mx-2" data-cy="isLastNameOptional" id="isLastNameOptional" name="isLastNameOptional"
+                                       placeholder="Last Name Tick Box Check" th:checked="${isLastNameOptional}"
+                                       th:name="isLastNameOptional" type="checkbox" style="display: none;">
+                            </div>
+
+                            <p class="smallErrorMessage" th:utext="${lastNameValid}"></p>
+                            <br/>
+
+                            <input class="form-control" style="display: none;">
+
+                            <label for="DoB"> Date of Birth: </label>
+                            <span class="form-control user-profile-details mx-2" id="DoB" th:text="${DoB}"></span>
+                            <input class="form-control" id="DoBEdit" th:name="DoB" th:value="*{DoB}" type="date" style="display: none;"
+                                   th:classappend="${(DoBValid != '' && DoBValid != null) ? 'is-invalid' : ''}" max="9999-12-31">
+                            <p class="smallErrorMessage" id="DoBInvalid" th:utext="${DoBValid}"></p>
+                            <input type="hidden" id="isDoBInvalid" th:name="isDoBInvalid" th:value="false"/>
+
+                            <br/>
+                            <label for="email"> Email: </label>
+                            <span class="form-control user-profile-details mx-2" id="email" th:text="${email}"></span>
+                            <input class="form-control" data-cy="email" id="emailEdit" placeholder="Email" maxlength="320"
+                                   th:name="email" th:value="*{email}" type="text" style="display: none;"
+                                   th:classappend="${emailValid != '' ? 'is-invalid' : ''}">
+                            <p class="smallErrorMessage" th:utext="${emailValid}"></p>
+                            <br/>
+                        </div>
+
+                        <div class="col-3">
+                            <div id="editButtonDiv">
+                                <button class="btn btn-primary mb-3" type="button" onclick="enableEditing()">Edit</button>
+                            </div>
+                            <div id="saveCancelButtonDiv" class="" style="display: none !important;">
+                                <button class="btn btn-secondary mb-3 ml-25p d-flex justify-content-center" type="button" onclick="window.location='./password'">Update password</button>
+                                <input class="btn btn-success mb-3 ml-25p d-flex justify-content-center" type="submit" value="Save"/>
+                                <button class="btn btn-danger mb-3 ml-25p d-flex justify-content-center" type="button" onclick="disableEditing(); window.location='./user'">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div id="saveCancelButtonDiv" class="" style="display: none !important;">
-                <button class="btn btn-secondary mb-3 ml-25p d-flex justify-content-center" type="button" onclick="window.location='./password'">Update password</button>
-                <input class="btn btn-success mb-3 ml-25p d-flex justify-content-center" type="submit" value="Save"/>
-                <button class="btn btn-danger mb-3 ml-25p d-flex justify-content-center" type="button" onclick="disableEditing(); window.location='./user'">Cancel</button>
-            </div>
-        </form>
+        </div>
     </div>
+
+    <div class="container col-md-6 p-2">
+        <div class="row w-100">
+            <div class="col-3 p-0">
+                <button class="btn btn-primary w-auto m-2" data-bs-target="#customiseHomepageModal" data-bs-toggle="modal" type="button">
+                    Edit Homepage
+                </button>
+
+                <button class="btn btn-primary w-auto m-2" data-bs-target="#viewAllBadgesModal" data-bs-toggle="modal" type="button">
+                    View all badges
+                </button>
+            </div>
+            <div class="col p-0">
+                <div class="container card">
+                    <p>My badges</p>
+
+                    <div class="d-flex flex-wrap" style="overflow-y: scroll; height: 100%;">
+                        <p th:class="${earnedBadges.isEmpty()}? 'alert alert-transparent' : 'd-none'">No Badges Unlocked</p>
+                        <th:block th:each="badge : ${earnedBadges}">
+                            <div class="list-group-item p-1" style="width: 19%; margin-left: 1%; min-width: min-content;
+                                min-height: 200px; border-radius: 10px;">
+                                <img id="plantBadgeImage" th:src="@{${badge.imageFilename}}" th:alt="${badge.name}"
+                                     style="width: 100%; height: 100%;">
+                                <p th:text="${badge.name}" style="color: black; text-align: center;"></p>
+                            </div>
+                        </th:block>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- Customise Modal -->
@@ -232,18 +278,7 @@
         document.getElementById('layoutForm').submit();
     }
 
-    document.getElementById("userForm").addEventListener("submit", function(event) {
-        const dobInput = document.getElementById("DoBEdit");
-        if (!(dobInput.checkValidity())) {
-            console.log("invalid date")
-            event.preventDefault();
-            document.getElementById("isDoBInvalid").value = true;
-            document.getElementById("userForm").submit();
-        } else {
-            console.log("valid date")
-            document.getElementById("isDoBInvalid").value = false;
-        }
-    });
+
     function handleImageClick() {
         document.getElementById('fileInput').click();
     }
@@ -265,7 +300,7 @@
         document.getElementById('isLastNameOptionalLabelEdit').style.display = 'inline';
         let lName = document.getElementById('lastNameEdit');
         let lNameError = document.getElementById("lastNameError")
-        if (lName.value.trim() === "" && lNameError.textContent === "") {
+        if (lName.value.trim() === "" && !lNameError === null && lNameError.textContent === "") {
             document.getElementById('isLastNameOptional').checked = true;
             document.getElementById('lastNameEdit').disabled = true;
         }
@@ -276,6 +311,7 @@
         document.getElementById('email').style.display = 'none';
         document.getElementById('emailEdit').style.display = 'inline';
 
+        console.log("Editing Enabled");
     }
 
     function disableEditing() {
@@ -297,7 +333,20 @@
         document.getElementById('emailEdit').style.display = 'none';
 
         window.location.href = '/user'
+
+        console.log("Editing Disabled");
     }
+
+    function checkIfError() {
+        const errorOccurred = document.getElementById("errorEditingDetails").getAttribute("data-error-occurred");
+        if (errorOccurred && errorOccurred === "Error editing details") {
+            enableEditing();
+        }
+    }
+
+    window.onload = function() {
+        checkIfError();
+    };
 </script>
 <script th:inline="javascript">
     /*<![CDATA[*/
@@ -307,7 +356,7 @@
     var emailValid = /*[[${emailValid}]]*/ '';
     var uploadMessage = /*[[${uploadMessage}]]*/ '';
 
-    if ((firstNameValid !== '' || lastNameValid !== '' || DoBValid !== '' || emailValid !== '')) {
+    if ((firstNameValid !== '' || lastNameValid !== '' || emailValid !== '')) {
         console.log("edit");
         enableEditing();
     }
