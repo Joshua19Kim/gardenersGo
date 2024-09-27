@@ -50,12 +50,10 @@
              style="z-index: 999; left: 60px; flex-direction: column; align-items: baseline; width: fit-content; display: none;" >
             <form id="nameFilter" class="search-bar form-inline" style="display: flex; flex-direction: column;">
                 <div class="input w-100">
-                    <label class="map-label ms-3 mb-2" style="margin-left: 20px;"> Plant Name </label>
-                    <div class="name-button row g-2" style="display: flex">
-                        <input aria-label="Search" class="form-control me-2" id="searchTerm" list="plant-names" placeholder="Search by plant name"
-                               style="margin-bottom: 0 !important" tabindex="16" autocomplete="off" th:name="searchTerm" th:value="${searchTerm}"
-                               type="search">
-                    </div>
+                    <label class="map-label" style="margin-left: 20px;"> Plant Name </label>
+                    <input aria-label="Search" class="form-control form-field" id="searchTerm" list="plant-names" placeholder="Search by plant name"
+                           style="margin-bottom: 0 !important" tabindex="16" autocomplete="off" th:name="searchTerm" th:value="${searchTerm}"
+                           type="search">
                     <datalist id="plant-names"></datalist>
                 </div>
                 <!-- Date filtering -->
@@ -100,6 +98,10 @@
     /**
      * creates and initialises the map, also defines on click event that calls java code
      */
+
+    var southWest = L.latLng(-55, 148.038821);
+    var northEast = L.latLng(-28,200);
+    var maxBoundArea = L.latLngBounds(southWest, northEast)
     const initialMapState = {
         center: [-43.5, 174.88],
         zoom: 5.2,
@@ -107,9 +109,6 @@
         minZoom: 5.2,
         maxZoom: 18
     };
-    var southWest = L.latLng(-55, 148.038821);
-    var northEast = L.latLng(-28,200);
-    var maxBoundArea = L.latLngBounds(southWest, northEast)
     var map = L.map('map', initialMapState);
     new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
         attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
@@ -177,7 +176,7 @@
     const startDate = document.getElementById('startDate');
     const startDateError = document.getElementById('startDateError');
     const endDate = document.getElementById('endDate');
-    endDate.valueAsDate = new Date();
+    endDate.valueAsDate = new Date(); // provide current date for endDate as a default value
     const endDateError = document.getElementById('endDateError');
     const noResultsError = document.getElementById('noResultsError');
 
