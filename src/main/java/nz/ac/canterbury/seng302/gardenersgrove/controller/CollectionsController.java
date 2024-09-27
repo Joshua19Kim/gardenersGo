@@ -58,6 +58,9 @@ public class CollectionsController {
     private static final String SHOW_MODAL_ATTRIBUTE = "showModal";
     private static final String SUCCESS_MESSAGE_ATTRIBUTE = "successMessage";
     private static final String ERROR_KEY = "error";
+    private static final String REGION_BADGE_NAME = "regionBadge";
+    private static final String BADGE_COUNT_NAME = "badgeCount";
+    private static final String SPECIES_NAME = "speciesName";
 
     private final PlantIdentificationService plantIdentificationService;
 
@@ -175,9 +178,9 @@ public class CollectionsController {
         int badgeCount = 0;
         badgeCount = addBadgeToModel(plantBadgeId, "plantBadge", gardener, badgeCount, model);
         badgeCount = addBadgeToModel(speciesBadgeId, "speciesBadge", gardener, badgeCount, model);
-        badgeCount = addBadgeToModel(regionBadgeId, "regionBadge", gardener, badgeCount, model);
-        if(!model.containsAttribute("badgeCount")) {
-            model.addAttribute("badgeCount", badgeCount);
+        badgeCount = addBadgeToModel(regionBadgeId, REGION_BADGE_NAME, gardener, badgeCount, model);
+        if(!model.containsAttribute(BADGE_COUNT_NAME)) {
+            model.addAttribute(BADGE_COUNT_NAME, badgeCount);
         }
 
         if (!savedPlantId.isEmpty()) {
@@ -205,7 +208,7 @@ public class CollectionsController {
      */
     @GetMapping("/collectionDetails")
     public String getSpeciesDetails(
-            @RequestParam(name = "speciesName", required = false) String speciesName,
+            @RequestParam(name = SPECIES_NAME, required = false) String speciesName,
             @RequestParam(name = "pageNo", defaultValue = "0") String pageNoString,
             Model model) {
 
@@ -213,11 +216,11 @@ public class CollectionsController {
         gardenerOptional.ifPresent(value -> gardener = value);
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
         if(speciesName == null) {
-            speciesName = (String) model.getAttribute("speciesName");
+            speciesName = (String) model.getAttribute(SPECIES_NAME);
         }
         Page<IdentifiedPlant> collectionsList = identifiedPlantService.getGardenerPlantsBySpeciesPaginated(pageNo, pageSize, gardener.getId(), speciesName);
         model.addAttribute("collectionsList", collectionsList);
-        model.addAttribute("speciesName", speciesName);
+        model.addAttribute(SPECIES_NAME, speciesName);
 
         int totalPages = collectionsList.getTotalPages();
         if (totalPages > 0) {
@@ -305,11 +308,9 @@ public class CollectionsController {
 
         if (isValid) {
             IdentifiedPlant identifiedPlant = new IdentifiedPlant(plantName, gardener);
-            if (!(manualPlantLat == null) && !(manualPlantLon == null)) {
-                if (!manualPlantLat.isEmpty() && !manualPlantLon.isEmpty()) {
-                    String region = locationService.sendReverseGeocodingRequest(manualPlantLat, manualPlantLon);
-                    identifiedPlant.setRegion(region);
-                }
+            if (manualPlantLat != null && manualPlantLon != null && !manualPlantLat.isEmpty() && !manualPlantLon.isEmpty()) {
+                String region = locationService.sendReverseGeocodingRequest(manualPlantLat, manualPlantLon);
+                identifiedPlant.setRegion(region);
             }
             identifiedPlant.setPlantLatitude(manualPlantLat);
             identifiedPlant.setPlantLongitude(manualPlantLon);
@@ -350,12 +351,12 @@ public class CollectionsController {
             if(regionCount != originalRegionCount) {
                 Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener, regionCount);
                 if(regionBadge.isPresent()) {
-                    redirectAttributes.addFlashAttribute("regionBadge", regionBadge.get());
+                    redirectAttributes.addFlashAttribute(REGION_BADGE_NAME, regionBadge.get());
                     badgeCount += 1;
                 }
             }
 
-            redirectAttributes.addFlashAttribute("badgeCount", badgeCount);
+            redirectAttributes.addFlashAttribute(BADGE_COUNT_NAME, badgeCount);
 
             return "redirect:/myCollection";
         } else {
@@ -537,14 +538,14 @@ public class CollectionsController {
             } else if(regionCount != originalRegionCount) {
                 Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener, regionCount);
                 if(regionBadge.isPresent()) {
-                    redirectAttributes.addFlashAttribute("regionBadge", regionBadge.get());
+                    redirectAttributes.addFlashAttribute(REGION_BADGE_NAME, regionBadge.get());
                     badgeCount += 1;
                 }
             }
 
 
-            redirectAttributes.addFlashAttribute("badgeCount", badgeCount);
-            redirectAttributes.addFlashAttribute("speciesName", plant.getSpeciesScientificNameWithoutAuthor());
+            redirectAttributes.addFlashAttribute(BADGE_COUNT_NAME, badgeCount);
+            redirectAttributes.addFlashAttribute(SPECIES_NAME, plant.getSpeciesScientificNameWithoutAuthor());
 
 
             return "redirect:/collectionDetails";

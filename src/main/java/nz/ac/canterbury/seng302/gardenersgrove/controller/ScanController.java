@@ -190,11 +190,9 @@ public class ScanController {
                     if (descriptionPresent) {
                         identifiedPlant.setDescription(validatedPlantDescription);
                     }
-                    if (!(plantLatitude == null)) {
-                        if (!plantLatitude.isEmpty() && !plantLongitude.isEmpty()) {
-                            String region = locationService.sendReverseGeocodingRequest(plantLatitude, plantLongitude);
-                            identifiedPlant.setRegion(region);
-                        }
+                    if (plantLatitude != null && plantLongitude != null && !plantLatitude.isEmpty() && !plantLongitude.isEmpty()) {
+                        String region = locationService.sendReverseGeocodingRequest(plantLatitude, plantLongitude);
+                        identifiedPlant.setRegion(region);
                     }
                     identifiedPlant.setPlantLatitude(plantLatitude);
                     identifiedPlant.setPlantLongitude(plantLongitude);
@@ -216,22 +214,22 @@ public class ScanController {
                     }
 
                     int regionCount = identifiedPlantService.getRegionCount(gardener.get().getId());
-                    logger.info("region count:" + regionCount);
                     if(regionCount != originalRegionCount) {
                         Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener.get(), regionCount);
-                        logger.info(regionBadge.toString());
                         regionBadge.ifPresent(badge -> response.put("regionBadge", regionBadge.get().getId()));
                     }
-
-
                     return ResponseEntity.ok(response);
                 }
                 errorResponse.put("message", "Invalid Field");
                 return ResponseEntity.badRequest().body(errorResponse);
 
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
                 return ResponseEntity.badRequest().body(errorResponse);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                errorResponse.put(errorKey, "Operation was interrupted: " + e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
             }
         } else {
             errorResponse.put(errorKey, "User not authenticated");
