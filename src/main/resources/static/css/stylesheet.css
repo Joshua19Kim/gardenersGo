@@ -848,15 +848,15 @@ body, h2, h3, h4, h5, h6, a {
 }
 
 .UserProfilePicContainer {
-    width: 105px;
+    width: 100%;
     margin: 0 auto;
     border-radius: 4px;
     position: relative;
 }
 
 .UserProfilePicContainer img {
-    width: 105px;
-    height: 130px;
+    width: 100%;
+    height: 100%;
     border-radius: 12px;
     object-fit: cover;
     transition: filter 0.3s ease;
