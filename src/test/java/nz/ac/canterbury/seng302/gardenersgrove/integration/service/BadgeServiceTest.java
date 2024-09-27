@@ -104,5 +104,26 @@ class BadgeServiceTest {
         assertTrue(badges.isEmpty());
     }
 
+    @ParameterizedTest
+    @CsvSource(value = {
+            "1, 1st Region Found",
+            "5, 5th Region Found",
+            "10, 10th Region Found",
+            "17, 17th Region Found",
+    })
+    void checkRegionBadgeToBeAddedTest(int regionCount, String expectedName) {
+        badgeService.checkRegionBadgeToBeAdded(gardener, regionCount);
+        Optional<Badge> expectedBadge = badgeService.getMyBadgeByName(expectedName, gardener.getId());
+        assertTrue(expectedBadge.isPresent());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 11, 24, 49, 99, 101
+    })
+    void checkRegionBadgeToBeAddedTest(int regionCount) {
+        badgeService.checkSpeciesBadgeToBeAdded(gardener, regionCount);
+        List<Badge> badges = badgeService.getMyBadges(gardener.getId());
+        assertTrue(badges.isEmpty());
+    }
 }
 
