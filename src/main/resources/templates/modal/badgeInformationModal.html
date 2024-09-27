@@ -7,10 +7,12 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <canvas id="canvas"></canvas>
+            <div class="modal-body d-flex flex-column justify-content-center">
                 <img id="badgeImage" alt="No badge image">
-                <p id="badgeDateEarned"></p>
+                <div class="d-flex flex-row justify-content-center">
+                    <strong style="margin-right: 2%" >Date Earned: </strong>
+                    <p  id="badgeDateEarned"></p>
+                </div>
             </div>
             <div class="modal-footer d-flex flex-column justify-content-center">
                 <button type="button" class="btn btn-secondary cancel-button text-white" data-bs-dismiss="modal">Close</button>
@@ -22,11 +24,12 @@
 <script>
     var badgeModal = document.getElementById("badgeInformationModal");
 
-    function handleBadgeClick(badge) {
-        document.getElementById("badgeTitle").innerText = badge.name;
-        document.getElementById("badgeImage").src = badge.imageFilename;
-        document.getElementById("badgeDateEarned").innerText = badge.dateEarned;
-        bootstrap.Modal.getOrCreateInstance(badgeModal);
-        badgeModal.show();
+    // do not delete this method it is being used
+    function handleBadgeClick(badgeName, imageFilename, dateEarned) {
+        document.getElementById("badgeTitle").innerText = badgeName;
+        document.getElementById("badgeImage").src = imageFilename;
+        document.getElementById("badgeDateEarned").innerText = dateEarned;
+        var badgeModalInstance = bootstrap.Modal.getOrCreateInstance(badgeModal);
+        badgeModalInstance.show();
     }
 </script>

@@ -118,7 +118,8 @@
                     <div class="d-flex flex-wrap" style="overflow-y: scroll; height: 100%;">
                         <p th:class="${earnedBadges.isEmpty()}? 'alert alert-transparent' : 'd-none'">No Badges Unlocked</p>
                         <th:block th:each="badge : ${earnedBadges}">
-                            <div th:onclick="'handleBadgeClick(\'' + ${badge} + '\');'" class="list-group-item" style="width: 19%; margin-left: 1%;">
+                            <div  th:onclick="handleBadgeClick([[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])"
+                                 class="list-group-item main-page-custom-hover" style="width: 19%; margin-left: 1%; cursor: pointer;">
                                 <img id="plantBadgeImage" th:src="@{${badge.imageFilename}}" th:alt="${badge.name}"
                                      style="width: 100%; height: 100%;">
                                 <p th:text="${badge.name}" style="color: black; text-align: center;"></p>
