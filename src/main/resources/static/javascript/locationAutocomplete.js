@@ -154,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             manualPlantLon.value = result.lon;
                             manualAddLocationUpdateMssg.innerHTML = "The location has been verified : <br/>" + addressInputValue;
                             manualAddLocationUpdateMssg.style.color = "green";
+                            manualAddLocationUpdateMssg.dispatchEvent(new Event('change'));
                             manualAddAddressInput.value = addressInputValue.trim();
                             document.getElementById("locationError").innerText = "";
                             document.getElementById("manualAddLocation").classList.remove("is-invalid");

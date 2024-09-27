@@ -109,6 +109,7 @@
 
 
                 </form>
+                <div id="scanningMap" style="height: 300px;"></div>
             </div>
 
 
@@ -124,7 +125,11 @@
 <script th:src="@{/javascript/getBaseUrl.js}"></script>
 <script th:src="@{/javascript/locationAutocomplete.js}"></script>
 <script th:src="@{/javascript/scanningModal.js}"></script>
+
 <script type="text/javascript">
+
+
+
     document.getElementById("locationToggle").addEventListener("keydown", function(event) {
         console.log("button pressed");
         if (event.key === "Enter") {
