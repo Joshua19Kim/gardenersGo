@@ -24,7 +24,6 @@
 <script>
     var badgeModal = document.getElementById("badgeInformationModal");
 
-    // do not delete this method it is being used
     function handleBadgeClick(badgeName, imageFilename, dateEarned) {
         document.getElementById("badgeTitle").innerText = badgeName;
         document.getElementById("badgeImage").src = imageFilename;
@@ -32,4 +31,28 @@
         var badgeModalInstance = bootstrap.Modal.getOrCreateInstance(badgeModal);
         badgeModalInstance.show();
     }
+    function handleEnterKey(event, badgeName, badgeImageFilename, badgeDateEarned) {
+        if (event.key === "Enter" || event.keyCode === 13) {
+            handleBadgeClick(badgeName, badgeImageFilename, badgeDateEarned);
+        }
+    }
+
+    var canvas = document.getElementById("canvas");
+
+
+
+    badgeModal.addEventListener('show.bs.modal', function() {
+        console.log("Displaying Fireworks")
+        canvas.style.display = 'block';
+        if(loaded === false) {
+            onLoad();
+            loaded = true;
+        }
+
+    });
+
+    badgeModal.addEventListener('hide.bs.modal', function() {
+        canvas.style.display = 'none';
+    });
+
 </script>

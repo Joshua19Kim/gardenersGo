@@ -21,7 +21,7 @@
                     <form th:action="@{user}" method="post" enctype="multipart/form-data" id="uploadImageForm">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <img th:src="@{${profilePic}}" alt="Profile Picture" id="currentProfilePic">
-                        <button type="button" class="image-button" id="fileInputBtn" onclick="handleImageClick()">+</button>
+                        <button type="button" class="image-button" id="fileInputBtn" onclick="handleImageClick()" tabindex="14">+</button>
                         <input type="file" id="fileInput" name="file" style="display: none;" accept="image/*"
                                onchange="handleImageChange()">
                     </form>
@@ -86,7 +86,7 @@
 
                         <div class="col">
                             <div id="editButtonDiv">
-                                <button class="btn btn-primary mb-3" type="button" onclick="enableEditing()">Edit</button>
+                                <button class="btn btn-primary mb-3" type="button" onclick="enableEditing()" tabindex="15">Edit</button>
                             </div>
                             <div id="saveCancelButtonDiv" class="" style="display: none !important;">
                                 <button class="btn btn-secondary mb-3 ml-25p d-flex justify-content-center" type="button" onclick="window.location='./password'">Update password</button>
@@ -103,11 +103,11 @@
     <div class="container col-md-6 left-align p-2">
         <div class="row">
             <div class="col p-0">
-                <button class="btn btn-primary w-auto m-2" data-bs-target="#customiseHomepageModal" data-bs-toggle="modal" type="button">
+                <button class="btn btn-primary w-auto m-2" data-bs-target="#customiseHomepageModal" data-bs-toggle="modal" type="button" tabindex="16">
                     Edit Homepage
                 </button>
 
-                <button class="btn btn-primary w-auto m-2" data-bs-target="#viewAllBadgesModal" data-bs-toggle="modal" type="button">
+                <button class="btn btn-primary w-auto m-2" data-bs-target="#viewAllBadgesModal" data-bs-toggle="modal" type="button" tabindex="17">
                     View all badges
                 </button>
             </div>
@@ -117,8 +117,9 @@
 
                     <div class="d-flex flex-wrap" style="overflow-y: scroll; height: 100%;">
                         <p th:class="${earnedBadges.isEmpty()}? 'alert alert-transparent' : 'd-none'">No Badges Unlocked</p>
-                        <th:block th:each="badge : ${earnedBadges}">
+                        <th:block th:each="badge, iterStat : ${earnedBadges}">
                             <div  th:onclick="handleBadgeClick([[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])"
+                                  th:tabIndex="${iterStat.index + 18}" th:onkeydown="handleEnterKey(event, [[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])"
                                  class="list-group-item main-page-custom-hover" style="width: 19%; margin-left: 1%; cursor: pointer;">
                                 <img id="plantBadgeImage" th:src="@{${badge.imageFilename}}" th:alt="${badge.name}"
                                      style="width: 100%; height: 100%;">
