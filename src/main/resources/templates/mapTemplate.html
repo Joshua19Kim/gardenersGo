@@ -31,12 +31,16 @@
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 
 <div id="map" style="z-index: 1">
-    <div class="search-container position-relative p-0 m-0 justify-content-start" style="z-index: 999; left: 75px;">
-        <form class="search-bar form-inline d-flex">
-            <input aria-label="Search" class="form-control me-2" id="searchTerm" list="plant-names" placeholder="Search"
-                   style="margin-bottom: 0 !important" tabindex="13" th:name="searchTerm" th:value="${searchTerm}"
+    <div class="search-container position-relative p-0 m-0 justify-content-start" style="z-index: 999; left: 75px; width: fit-content">
+        <form id="nameFilter" class="search-bar form-inline d-flex">
+            <input aria-label="Search" class="form-control me-2" id="searchTerm" list="plant-names"
+                   placeholder="Search by plant name"
+                   style="margin-bottom: 0 !important; width: fit-content" tabindex="13" th:name="searchTerm" th:value="${searchTerm}"
                    type="search">
             <datalist id="plant-names"></datalist>
+            <button class="btn btn-outline-success mt-0 " style="width: 100%" onclick="nameFilter()"
+                    tabindex="14">Apply Filter
+            </button>
         </form>
     </div>
 </div>
@@ -68,19 +72,13 @@
     let scannedPlants;
     let currentPlants;
     var searchInput = document.getElementById("searchTerm");
-    searchInput.addEventListener("input", function() {
-        console.log("changed");
-        if (searchInput.value.trim() !== "") { // If the searchInput is in use then it will filter the returned pins
-            currentPlants = scannedPlants.filter(function (plant) {
-                return plant.name.trim().toLowerCase() === searchInput.value.trim().toLowerCase();
-            });
-        } else {
-            currentPlants = scannedPlants;
-            document.getElementById("plant-names").innerHTML = '';
-            loadAllOptions();
-        }
-        clusteredMarkers.clearLayers();
-        showMarkers();
+
+
+    searchInput.addEventListener("input", nameFilter);
+
+    document.getElementById("nameFilter").addEventListener("submit", function (event) {
+        event.preventDefault();
+        nameFilter();
     })
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -92,31 +90,42 @@
         /*]]>*/
     });
 
+    function nameFilter() {
+        if (searchInput.value.trim() !== "") { // If the searchInput is in use then it will filter the returned pins
+            currentPlants = scannedPlants.filter(function (plant) {
+                return plant.name.trim().toLowerCase() === searchInput.value.trim().toLowerCase();
+            });
+        } else {
+            currentPlants = scannedPlants;
+            document.getElementById("plant-names").innerHTML = '';
+            loadAllOptions();
+        }
+        clusteredMarkers.clearLayers();
+        showMarkers();
+    }
+
     function showMarkers() {
         currentPlants.forEach(function (scannedPlant) {
             if (scannedPlant.plantLatitude && scannedPlant.plantLongitude && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
 
                 var plantLink = '/collectionDetails?speciesName=' + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
-                var popupContent =
-                    `<div style="width: 200px; word-break: break-word; text-align: center;">
-                    <div>
+                var popupContent = `<div style="min-width: 450px; word-break: break-word;" class="row">
+                <div class="col-5" style="white-space: normal; overflow-wrap: break-word;">
                     <h4>${scannedPlant.name}</h4>
                     <p><i>${scannedPlant.speciesScientificNameWithoutAuthor}</i></p>
-                    <p><i>Added ${scannedPlant.dateUploaded} </i></p>
-                    <a style="text-decoration: none;" href="${plantLink}">View in your collection</a><br>
-                    </div>`;
+                    <p><i>Added ${scannedPlant.dateUploaded}</i></p>
+                    <a style="text-decoration: none;" href="${plantLink}">View in your collection</a>
+                </div>`;
 
                 if (scannedPlant.uploadedImage) {
-                    var image = '<img src="' + scannedPlant.uploadedImage + '" alt="Plant image" width="200px" height="auto"/>';
-                    popupContent += '<br>' + image + '</div>';
-                } else {
-                    popupContent += '</div>';
+                    var image = `<img src="${scannedPlant.uploadedImage}" alt="Plant image" width="50%" height="100%" style="object-fit: cover; border-radius: 8px"/>`;
+                    popupContent += `<div class="col-7" style="text-align: center;">${image}</div>`;
                 }
-
+                popupContent += '</div>';
 
                 L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
                     .addTo(clusteredMarkers)
-                    .bindPopup(popupContent, {maxWidth: 200}
+                    .bindPopup(popupContent, {minWidth: 450}
                     );
             }
         });
