@@ -129,6 +129,8 @@ public class CollectionsController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
+        System.out.println(model.containsAttribute("regionBadge"));
+
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
         Page<IdentifiedPlantSpeciesImpl> speciesList = identifiedPlantService.getGardenerPlantSpeciesPaginated(pageNo, pageSize, gardener.getId());
         logger.info("GET /myCollection");
@@ -205,16 +207,23 @@ public class CollectionsController {
      */
     @GetMapping("/collectionDetails")
     public String getSpeciesDetails(
-            @RequestParam(name = "speciesName") String speciesName,
+            @RequestParam(name = "speciesName", required = false) String speciesName,
             @RequestParam(name = "pageNo", defaultValue = "0") String pageNoString,
             Model model) {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
+        if(speciesName == null) {
+            speciesName = (String) model.getAttribute("speciesName");
+        }
         Page<IdentifiedPlant> collectionsList = identifiedPlantService.getGardenerPlantsBySpeciesPaginated(pageNo, pageSize, gardener.getId(), speciesName);
         model.addAttribute("collectionsList", collectionsList);
         model.addAttribute("speciesName", speciesName);
+
+        System.out.println(model.containsAttribute("regionBadge"));
+        System.out.println(model.containsAttribute("badgeCount"));
+
 
         int totalPages = collectionsList.getTotalPages();
         if (totalPages > 0) {
@@ -314,6 +323,7 @@ public class CollectionsController {
             identifiedPlant = identifiedPlantService.createManuallyAddedPlant(identifiedPlant, description, scientificName, uploadedDate);
 
             int originalSpeciesCount = identifiedPlantService.getSpeciesCount(gardener.getId());
+            int originalRegionCount = identifiedPlantService.getRegionCount(gardener.getId());
 
             if (plantImage.isEmpty()) {
                 identifiedPlant.setUploadedImage("/images/placeholder.jpg");
@@ -343,10 +353,12 @@ public class CollectionsController {
                 }
             }
             int regionCount = identifiedPlantService.getRegionCount(gardener.getId());
-            Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener, regionCount);
-            if(regionBadge.isPresent()) {
-                redirectAttributes.addFlashAttribute("regionBadge", regionBadge.get());
-                badgeCount += 1;
+            if(regionCount != originalRegionCount) {
+                Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener, regionCount);
+                if(regionBadge.isPresent()) {
+                    redirectAttributes.addFlashAttribute("regionBadge", regionBadge.get());
+                    badgeCount += 1;
+                }
             }
 
             redirectAttributes.addFlashAttribute("badgeCount", badgeCount);
@@ -459,7 +471,7 @@ public class CollectionsController {
             @RequestParam(name ="manualPlantLon",required = false) String manualPlantLon,
             @RequestParam(name ="location", required = false ) String location,
             @RequestParam(name= "manualAddLocationToggle", required = false) boolean manualAddLocationToggle,
-
+            RedirectAttributes redirectAttributes,
             HttpServletRequest request,
             Model model) throws IOException, InterruptedException {
 
@@ -505,6 +517,8 @@ public class CollectionsController {
             plant.setPlantLatitude(manualPlantLat);
             plant.setPlantLongitude(manualPlantLon);
 
+            int originalRegionCount = identifiedPlantService.getRegionCount(gardener.getId());
+
             if (manualPlantLat == null && manualPlantLon == null) {
                 plant.setRegion(null);
             } else {
@@ -520,8 +534,23 @@ public class CollectionsController {
             } else {
                 plant.setDescription(null);
             }
+            identifiedPlantService.saveIdentifiedPlantDetails(plant);
 
-            return "redirect:/collectionDetails?speciesName=" + plant.getSpeciesScientificNameWithoutAuthor();
+            int badgeCount = 0;
+            int regionCount = identifiedPlantService.getRegionCount(gardener.getId());
+            if(regionCount != originalRegionCount) {
+                Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener, regionCount);
+                if(regionBadge.isPresent()) {
+                    redirectAttributes.addFlashAttribute("regionBadge", regionBadge.get());
+                    badgeCount += 1;
+                }
+            }
+
+            redirectAttributes.addFlashAttribute("badgeCount", badgeCount);
+            redirectAttributes.addFlashAttribute("speciesName", plant.getSpeciesScientificNameWithoutAuthor());
+
+
+            return "redirect:/collectionDetails";
         } else {
             Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
             gardenerOptional.ifPresent(value -> gardener = value);

@@ -200,6 +200,7 @@ public class ScanController {
 
                     response.put("message", "Plant saved successfully");
                     int originalSpeciesCount = identifiedPlantService.getSpeciesCount(gardener.get().getId());
+                    int originalRegionCount = identifiedPlantService.getRegionCount(gardener.get().getId());
                     IdentifiedPlant savedPlant = identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                     Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.get().getId());
                     Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener.get(), plantCount);
@@ -215,9 +216,12 @@ public class ScanController {
 
                     int regionCount = identifiedPlantService.getRegionCount(gardener.get().getId());
                     logger.info("region count:" + regionCount);
-                    Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener.get(), regionCount);
-                    logger.info(regionBadge.toString());
-                    regionBadge.ifPresent(badge -> response.put("regionBadge", regionBadge.get().getId()));
+                    if(regionCount != originalRegionCount) {
+                        Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener.get(), regionCount);
+                        logger.info(regionBadge.toString());
+                        regionBadge.ifPresent(badge -> response.put("regionBadge", regionBadge.get().getId()));
+                    }
+
 
                     return ResponseEntity.ok(response);
                 }
