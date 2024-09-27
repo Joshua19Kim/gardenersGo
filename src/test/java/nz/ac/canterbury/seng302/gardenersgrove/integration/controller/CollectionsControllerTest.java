@@ -2,12 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpeciesImpl;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -103,6 +99,7 @@ class CollectionsControllerTest {
         doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
         when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
         when(identifiedPlantService.getCollectionPlantCount(gardener.getId())).thenReturn(1);
+        when(identifiedPlantService.getSpeciesCount(gardener.getId())).thenReturn(0);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/myCollection")
                 .file(mockMultipartFile)
@@ -119,6 +116,8 @@ class CollectionsControllerTest {
 
         verify(badgeService, times(1)).checkPlantBadgeToBeAdded(gardener, 1);
         verify(identifiedPlantService, times(1)).getCollectionPlantCount(gardener.getId());
+        verify(badgeService, times(0)).checkSpeciesBadgeToBeAdded(eq(gardener), anyInt());
+        verify(identifiedPlantService, times(2)).getSpeciesCount(gardener.getId());
     }
 
     @Test
@@ -235,6 +234,35 @@ class CollectionsControllerTest {
 
         verify(badgeService, never()).checkPlantBadgeToBeAdded(eq(gardener), anyInt());
         verify(identifiedPlantService, never()).getCollectionPlantCount(gardener.getId());
+        verify(badgeService, never()).checkSpeciesBadgeToBeAdded(eq(gardener), anyInt());
+        verify(identifiedPlantService, never()).getSpeciesCount(gardener.getId());
+    }
+
+
+    @Test
+    @WithMockUser
+    public void GetMyCollection_PlantAndBadgeSpecified_MyCollectionShown() throws Exception {
+        Page<IdentifiedPlantSpeciesImpl> page = new PageImpl<>(List.of());
+        when(identifiedPlantService.getGardenerPlantSpeciesPaginated(0, 12, gardener.getId())).thenReturn(page);
+
+
+
+        Badge plantBadge = new Badge("plant badge", LocalDate.of(2003, 12, 30),
+                BadgeType.PLANTS, gardener, "images/placeholder.jpg");
+        Badge speciesBadge = new Badge("species badge", LocalDate.of(2003, 12, 30),
+                BadgeType.SPECIES, gardener, "images/placeholder.jpg");
+
+        when(badgeService.getMyBadgeById(1L, gardener.getId())).thenReturn(Optional.of(plantBadge));
+        when(badgeService.getMyBadgeById(2L, gardener.getId())).thenReturn(Optional.of(speciesBadge));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/myCollection")
+                .param("plantBadgeId", "1")
+                .param("speciesBadgeId", "2"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("myCollectionTemplate"))
+                .andExpect(model().attribute("plantBadge", plantBadge))
+                .andExpect(model().attribute("badgeCount", 2))
+                .andExpect(model().attribute("speciesBadge", speciesBadge));
     }
 
 }

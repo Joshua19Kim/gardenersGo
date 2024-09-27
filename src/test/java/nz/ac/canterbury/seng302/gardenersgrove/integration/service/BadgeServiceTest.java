@@ -81,5 +81,28 @@ class BadgeServiceTest {
         assertTrue(badges.isEmpty());
     }
 
+    @ParameterizedTest
+    @CsvSource(value = {
+            "1, 1st Species Found",
+            "10, 10th Species Found",
+            "25, 25th Species Found",
+            "50, 50th Species Found",
+            "100, 100th Species Found",
+    })
+    void checkSpeciesBadgeToBeAddedTest(int speciesCount, String expectedName) {
+        badgeService.checkSpeciesBadgeToBeAdded(gardener, speciesCount);
+        Optional<Badge> expectedBadge = badgeService.getMyBadgeByName(expectedName, gardener.getId());
+        assertTrue(expectedBadge.isPresent());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 11, 24, 49, 99, 101
+    })
+    void checkSpeciesBadgeToBeAddedTest(int speciesCount) {
+        badgeService.checkSpeciesBadgeToBeAdded(gardener, speciesCount);
+        List<Badge> badges = badgeService.getMyBadges(gardener.getId());
+        assertTrue(badges.isEmpty());
+    }
+
 }
 

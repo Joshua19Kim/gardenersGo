@@ -3,10 +3,9 @@
 Gardener's Grove is an application designed to allow gardeners to record information about their garden(s) and plants 
 in their garden(s). This sprint's deliverable currently allows new users to register and log in to the application, 
 edit their profile, create/edit gardens and add plants to them, send friend requests to other users, 
-add tags to gardens, make gardens public, and view the weather for the garden location. Friends can view each other's 
-profile and garden details. There is also the ability to browse public gardens, including searching for gardens/plants by name and filtering by tags. When you first log in you will be directed to the home page which is composed of some interesting and fun widgets.
+add tags to gardens, make gardens public, view the weather for the garden location, customise the homepage, view public gardens and filter the results, follow public gardens, explore plant information in a plant wiki, add plants from wiki to a garden, scan plant pictures and add plants to a collection from scanned/ identified plants . Friends can view each other's profile and garden details. There is also the ability to browse public gardens, including searching for gardens/plants by name and filtering by tags. When you first log in you will be directed to the home page which is composed of some interesting and fun widgets, customisable from the user profile.
 
-The project currently uses ```gradle```, ```Spring Boot```, ```Thymeleaf```, ```Bootstrap```,```WeatherAPI```, ```LocationIQ``` and ```Simple Java Mail```.
+The project currently uses ```gradle```, ```Spring Boot```, ```Thymeleaf```, ```Bootstrap```,```WeatherAPI```, ```LocationIQ```, ```PlantNet```, ```Perenual```, ```Google Fonts/ Icons``` and ```Simple Java Mail```.
 ```GitLab CI``` is configured to build and run the project but for sprint 2 we request that the project not be 
 evaluated on the online VM.
 
@@ -20,7 +19,7 @@ Jasmine Ong - jon25@uclive.ac.nz\
 Rinlada Tolley - rto52@uclive.ac.nz\
 Kush Desai - kde54@uclive.ac.nz\
 Sam Dawson - sda110@uclive.ac.nz\
-Ben Moore - BenMoore1.work@gmail.com\
+Ben Moore - bmo80.@uclive.ac.nz\
 Joshua Byoungsoo Kim - bki42@uclive.ac.nz
 
 
@@ -42,29 +41,32 @@ In order to run the project correctly for this sprint, you MUST use IntelliJ IDE
 - This should add a run configuration on the top navigation bar. Select the dropdown menu and press "edit configurations"
 - Under the run configuration, select "modify options" and click "environment variables"
 - Click on the three lines at the end of the new box that has appeared and add new environment variables with name 
-DB_USERNAME, DB_PASSWORD, SJMP, LOCATIONIQ, WEATHER and the values given in the teaching team communications chat on Mattermost
+DB_USERNAME, DB_PASSWORD, SJMP, LOCATIONIQ, WEATHER, PLANTNET, PLANTWIKI and the values given in the teaching team communications chat on Mattermost
 - Create an application-local.properties file in the src\main\resources folder
 - Copy and paste the following to the folder:
 ```
 spring.application.name=gardeners-grove
-spring.datasource.url=jdbc:h2:mem:testdb
+
+spring.datasource.url=${DB_URL}
 spring.datasource.username=${DB_USERNAME}
 spring.datasource.password=${DB_PASSWORD}
 
 spring.datasource.driverClassName=org.h2.Driver
 spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-
 spring.jpa.hibernate.ddl-auto=create
+spring.jpa.defer-datasource-initialization=true
 spring.h2.console.enabled=true
 spring.h2.console.path=/h2
 spring.sql.init.mode=embedded
 spring.servlet.multipart.max-file-size=-1
 spring.servlet.multipart.max-request-size=-1
 email.password=${SJMP}
+plantNet.password=${PLANTNET}
+plantWiki.key = ${PLANTWIKI}
 locationIq.password=${LOCATIONIQ}
 weather.password=${WEATHER}
 caching.spring.currentWeatherTTL=3600000
-server.url=http://localhost:8080
+server.url=http://localhost:8080 
 ```
 
 - You should now be able to run the application with the green button at the top of IntelliJ
