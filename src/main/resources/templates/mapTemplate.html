@@ -35,13 +35,13 @@
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div id="map">
     <div class="map-button-container">
-        <button id="searchToggle" class="map-button">
+        <button id="searchToggle" class="map-button" tabindex="13">
             <img th:src='@{/images/icons/search.svg}' alt="Search" width="24" height="24">
         </button>
-        <button id="refresh" class="map-button">
+        <button id="refresh" class="map-button" tabindex="14">
             <img th:src='@{/images/icons/arrow-clockwise.svg}' alt="Search" width="24" height="24">
         </button>
-        <button id="currentLocation" class="map-button">
+        <button id="currentLocation" class="map-button" tabindex="15">
             <img th:src='@{/images/icons/crosshair.svg}' alt="Search" width="24" height="24">
         </button>
     </div>
@@ -53,7 +53,7 @@
                     <label class="map-label ms-3 mb-2" style="margin-left: 20px;"> Plant Name </label>
                     <div class="name-button row g-2" style="display: flex">
                         <input aria-label="Search" class="form-control me-2" id="searchTerm" list="plant-names" placeholder="Search by plant name"
-                               style="margin-bottom: 0 !important" tabindex="13" autocomplete="off" th:name="searchTerm" th:value="${searchTerm}"
+                               style="margin-bottom: 0 !important" tabindex="16" autocomplete="off" th:name="searchTerm" th:value="${searchTerm}"
                                type="search">
                     </div>
                     <datalist id="plant-names"></datalist>
@@ -62,7 +62,7 @@
                 <div class="field date-input mt-3">
                     <label class="input w-100">
                         <label class="map-label" style="margin-left: 20px;">Start date </label>
-                        <input id="startDate" class="form-control form-field" value="1900-01-01" onchange="validateStartDate();" type="date" max="9999-12-31" tabindex="15">
+                        <input id="startDate" class="form-control form-field" value="1900-01-01" onchange="validateStartDate();" type="date" max="9999-12-31" tabindex="17">
                         <span id="startDateError" class="smallErrorMessageMap"></span>
                     </label>
 
@@ -70,14 +70,14 @@
                 <div class="field date-input mt-3 mb-3">
                     <label class="input w-100">
                         <label class="map-label" style="margin-left: 20px;">End date </label>
-                        <input id="endDate" class="form-control form-field" value="" type="date" onchange="validateEndDate();" max="9999-12-31" tabindex="16">
+                        <input id="endDate" class="form-control form-field" value="" type="date" onchange="validateEndDate();" max="9999-12-31" tabindex="18">
                         <span id="endDateError" class="smallErrorMessageMap"></span>
                     </label>
 
                 </div>
                 <div class="w-100">
                     <button class="btn btn-outline-success mt-0 " style="width: 100%" onclick="plantFilter()"
-                            tabindex="14">Apply Filter
+                            tabindex="19">Apply Filter
                     </button>
                     <span id="noResultsError" class="smallErrorMessageMap"></span>
                 </div>
