@@ -17,6 +17,7 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
 
     /**
      * Gets the badge with the specified id
+     *
      * @param id id of the badge
      * @return a badge
      */
@@ -24,7 +25,8 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
 
     /**
      * Gets the badge with the id and gardener id
-     * @param id the id of the badge
+     *
+     * @param id         the id of the badge
      * @param gardenerId the id of the gardener
      * @return the badge
      */
@@ -32,6 +34,7 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
 
     /**
      * gets all the badges
+     *
      * @return all the badges
      */
     List<Badge> findAll();
@@ -55,6 +58,7 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
 
     /**
      * Finds the badge by its name
+     *
      * @param name the name of the badge
      * @return the badge with the given name
      */
@@ -62,6 +66,7 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
 
     /**
      * Finds the badges with the specified type
+     *
      * @param badgeType the badge type
      * @return the badges with the given type
      */

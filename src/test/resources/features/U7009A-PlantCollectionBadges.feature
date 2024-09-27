@@ -5,7 +5,7 @@ Feature: As Jackie Wei, I enjoy collecting achievements and want to share my pro
     Given I am logged in with email "a@gmail.com" and password "Password1!"
     And I have collected <initialPlantCount> plants,
     When I have collected another plant
-    Then I will be shown the earned badge with name <expectedName>
+    Then I will be shown the plant badge with name <expectedName>
     Examples:
     |initialPlantCount|expectedName|
     |0|"1st Plant Found"|

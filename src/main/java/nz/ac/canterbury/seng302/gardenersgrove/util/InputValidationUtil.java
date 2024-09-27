@@ -1,16 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.util;
 
-import nz.ac.canterbury.seng302.gardenersgrove.controller.BrowseGardensController;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.slf4j.Logger;
 
-
-import java.util.Objects;
-import java.util.Optional;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Objects;
+import java.util.Optional;
 
 public class InputValidationUtil {
 
@@ -24,36 +22,39 @@ public class InputValidationUtil {
 
     /**
      * Verify correctness of password entry by checking if match
+     *
      * @param passwordOne first password entered in form
      * @param passwordTwo second pass entered in form
      * @return boolean true for successful match or false if passwords do not match
      */
-    public Optional<String> checkPasswordsMatch (String passwordOne, String passwordTwo) {
+    public Optional<String> checkPasswordsMatch(String passwordOne, String passwordTwo) {
         return (passwordOne.equals(passwordTwo)) ? Optional.empty() : Optional.of("Passwords do not match.");
     }
 
-    public Optional<String> checkOldPasswordDoesNotMatchNewPassword (String oldPassword, String newPassword) {
+    public Optional<String> checkOldPasswordDoesNotMatchNewPassword(String oldPassword, String newPassword) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return (encoder.matches(newPassword, oldPassword)) ? Optional.of("New password cannot be the same as old password.") : Optional.empty();
     }
 
     /**
      * Verify password entered is strong as given by U1-AC12
+     *
      * @param password attempted by user
      * @return empty optional if password is strong, otherwise error string
      */
-    public Optional<String> checkStrongPassword (String password) {
+    public Optional<String> checkStrongPassword(String password) {
         String validRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_])[A-Za-z\\d\\W_]{8,255}$";
         return (password.matches(validRegex) ? Optional.empty() : Optional.of("Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."));
     }
 
     /**
      * Verify password entered is matching to the saved password in database
-     * @param password password entered in form
+     *
+     * @param password               password entered in form
      * @param hashedPasswordInServer password called from the database
      * @return empty optional if password is correct, otherwise error string
      */
-    public Optional<String> checkSavedPassword (String password, String hashedPasswordInServer) {
+    public Optional<String> checkSavedPassword(String password, String hashedPasswordInServer) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return (encoder.matches(password, hashedPasswordInServer)) ? Optional.empty() : Optional.of("Your old password is incorrect.");
     }
@@ -62,24 +63,28 @@ public class InputValidationUtil {
      * Verify name user has input passes conditions:
      * - 0 < Name <= 64
      * - Allows special characters umlauts, macrons, apostrophes, spaces
+     *
      * @param name provided by user input
      * @return empty optional if input is valid, otherwise return error string
      */
-    public Optional<String> checkValidName (String name, String firstOrLast, boolean isLastNameOptional) {
+    public Optional<String> checkValidName(String name, String firstOrLast, boolean isLastNameOptional) {
         String nameRegex = "[\\p{L}]+((?:[-' ]?\\p{L}+)?)*";
         String result = "";
         if (isLastNameOptional && Objects.equals(firstOrLast, "Last")) {
             return Optional.empty();
-        } if (name.length() > 64) {
-            result = firstOrLast +" name must " +
+        }
+        if (name.length() > 64) {
+            result = firstOrLast + " name must " +
                     "be 64 characters long or less <br/>";
-        } if (name == null || name.trim().isEmpty()) {
+        }
+        if (name == null || name.trim().isEmpty()) {
             result += firstOrLast + " name cannot be empty and must only include letters, spaces, " +
                     "hyphens or apostrophes <br/>";
         } else if (!name.matches(nameRegex)) {
             result += firstOrLast + " name cannot be empty and must only include letters, spaces, " +
                     "hyphens or apostrophes <br/>";
-        } if (!name.matches("\\p{L}.*")) {
+        }
+        if (!name.matches("\\p{L}.*")) {
             result += firstOrLast + " name must include at least one letter";
         }
         if (result.isEmpty()) {
@@ -91,19 +96,20 @@ public class InputValidationUtil {
 
     /**
      * Verifies that email matches IETF guidelines on acceptable addresses
+     *
      * @param email provided by user input
      * @return optional empty if passes verification, else optional with error messages
      */
-    public Optional<String> checkValidEmail (String email) {
+    public Optional<String> checkValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         String result = "";
         if (email.length() > 320) {
             result = "Email address must be 320 characters or less <br/>";
         }
-        if(!email.matches(emailRegex)) {
+        if (!email.matches(emailRegex)) {
             result += "Email address must be in the form 'jane@doe.nz'";
         }
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(result);
@@ -111,6 +117,7 @@ public class InputValidationUtil {
 
     /**
      * Checks if the email is already in use
+     *
      * @param email provided by user input
      * @return empty optional if email is valid otherwise returns an Optional error string
      */
@@ -118,11 +125,13 @@ public class InputValidationUtil {
         return (gardenerFormService.findByEmail(email).isPresent() ? Optional.of("This email address is already in use") : Optional.empty());
     }
 
-    /** Verifies that the user is old enough to register (13 years or more)
+    /**
+     * Verifies that the user is old enough to register (13 years or more)
+     *
      * @param DoBString LocalDate object that contains users age
      * @return empty optional if date is valid, otherwise returns Optional error string
      */
-    public Optional<String> checkDoB (String DoBString) {
+    public Optional<String> checkDoB(String DoBString) {
         LocalDate DoB;
         String result = "";
 
@@ -145,7 +154,6 @@ public class InputValidationUtil {
         return Optional.of(result);
 
     }
-
 
 
 }

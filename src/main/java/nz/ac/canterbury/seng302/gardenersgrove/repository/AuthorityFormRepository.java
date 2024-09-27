@@ -13,6 +13,7 @@ public interface AuthorityFormRepository extends CrudRepository<Authority, Long>
     Optional<Authority> findById(long id);
 
     Optional<Authority> findAuthorityByGardener(Gardener gardener);
+
     List<Authority> findAll();
 
 }

@@ -1,13 +1,15 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpecies;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantSpeciesImpl;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -82,5 +84,37 @@ public class IdentifiedPlantService {
      * @return returns the count for a gardener
      */
     public Integer getCollectionPlantCount(long id) { return identifiedPlantRepository.getIdentifiedPlantByGardenerId(id).size();}
+
+    /**
+     * Gets a count of all the species in the database
+     * @param id the id of the gardener
+     * @return a count of all the species
+     */
+    public int getSpeciesCount(long id) { return identifiedPlantRepository.getSpeciesCountByGardenerId(id);}
+
+
+    /**
+     * Adds all the optional details to a manually added plant
+     * @param identifiedPlant the identified plant
+     * @param description description
+     * @param scientificName species
+     * @param uploadedDate uploaded date
+     * @return the identified plant
+     */
+    public IdentifiedPlant createManuallyAddedPlant(IdentifiedPlant identifiedPlant, String description, String scientificName, LocalDate uploadedDate) {
+        if (description != null && !description.trim().isEmpty()) {
+            identifiedPlant.setDescription(description);
+        }
+        if (scientificName != null && !scientificName.trim().isEmpty()) {
+            identifiedPlant.setSpeciesScientificNameWithoutAuthor(scientificName);
+        } else {
+            identifiedPlant.setSpeciesScientificNameWithoutAuthor("No Species");
+        }
+        if (uploadedDate != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            identifiedPlant.setDateUploaded(uploadedDate.format(formatter));
+        }
+        return identifiedPlant;
+    }
 
 }

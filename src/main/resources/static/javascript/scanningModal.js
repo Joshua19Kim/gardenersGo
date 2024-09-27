@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <br>${data.imageUrl ? `<img src="${data.imageUrl}"
                                         class="img-fluid"
                                         style="max-width: 200px; max-height: 200px; object-fit: contain;">`
-                                                : 'No image available'}
+                        : 'No image available'}
                                 </div>
                                 <div class="flex-grow-1 overflow-auto">
                                     <div class="d-flex flex-column gap-3">
@@ -174,8 +174,8 @@ saveToCollectionButton.addEventListener('click', function() {
 goToCollectionButton.addEventListener('click', function() {
 
     var formData = new FormData(document.getElementById('identifiedPlantNameForm'));
-    var name = formData.get('name');
-    var description = formData.get('description');
+    var name = formData.get('scanningName');
+    var description = formData.get('scanningDescription');
     if (scanningLocation.value === "" && !scanningLocation.disabled) {
         plantLon.value = "";
         plantLat.value = "";
@@ -191,22 +191,26 @@ goToCollectionButton.addEventListener('click', function() {
             'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
         },
         body: JSON.stringify({name: name,
-                                    description: description,
-                                    plantLatitude: plantLat.value,
-                                    plantLongitude: plantLon.value
+            description: description,
+            plantLatitude: plantLat.value,
+            plantLongitude: plantLon.value
         })
     })
         .then(response => {
             if (!response.ok) {
                 return response.json().then(data => {
                     if (data.nameError) {
-                        document.getElementById('name').classList.add('is-invalid');
-                        document.getElementById('nameError').innerHTML= data.nameError;
+                        document.getElementById('scanningName').classList.add('is-invalid');
+                        document.getElementById('scanningNameError').innerHTML= data.nameError;
                     }
                     if (data.descriptionError) {
                         console.log(data.descriptionError);
                         document.getElementById('scanning-description').classList.add('is-invalid');
-                        document.getElementById('descriptionError').innerHTML = data.descriptionError;
+                        document.getElementById('scanningDescriptionError').innerHTML = data.descriptionError;
+                    }
+                    if (data.locationError) {
+                        document.getElementById('scanningLocation').classList.add('is-invalid');
+                        document.getElementById('scanningLocationError').innerHTML = data.locationError;
                     }
                     throw new Error('Validation failed');
                 })
@@ -215,12 +219,16 @@ goToCollectionButton.addEventListener('click', function() {
         })
         .then(data => {
             var plantBadge = data.plantBadge;
+            var speciesBadge = data.speciesBadge;
             var modal = bootstrap.Modal.getInstance(successModal);
+            var windowLocation = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}`;
             if(plantBadge !== undefined) {
-                window.location.href = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}&badgeEarned=` + plantBadge;
-            } else {
-                window.location.href = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}`;
+                windowLocation += `&plantBadgeId=` + plantBadge;
             }
+            if(speciesBadge !== undefined) {
+                windowLocation += `&speciesBadgeId=` + speciesBadge;
+            }
+            window.location.href = windowLocation;
             refreshFields()
             modal.hide();
         })
@@ -231,10 +239,10 @@ goToCollectionButton.addEventListener('click', function() {
 });
 
 function refreshFields() {
-    document.getElementById('name').value = "";
+    document.getElementById('scanningName').value = "";
     document.getElementById('scanning-description').value = "";
-    document.getElementById('nameError').innerText = '';
-    document.getElementById('descriptionError').innerText = '';
+    document.getElementById('scanningNameError').innerText = '';
+    document.getElementById('scanningDescriptionError').innerText = '';
     disableLocationInput(false);
     scanningAutocompleteResults.style.display = 'block';
     scanningLocation.value = "";
@@ -243,7 +251,7 @@ function refreshFields() {
     locationUpdateMssg.innerHTML = "";
     geolocationUpdateMssg.innerHTML = "";
     document.getElementById('scanningCharacterCount').innerText = '0';
-    document.getElementById('name').classList.remove('is-invalid');
+    document.getElementById('scanningName').classList.remove('is-invalid');
     document.getElementById('scanning-description').classList.remove('is-invalid');
     plantLat.value = "";
     plantLon.value = "";
