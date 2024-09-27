@@ -1,0 +1,32 @@
+<div id="badgeInformationModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between ">
+                <h5 id="badgeTitle" class="modal-title"></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <canvas id="canvas"></canvas>
+                <img id="badgeImage" alt="No badge image">
+                <p id="badgeDateEarned"></p>
+            </div>
+            <div class="modal-footer d-flex flex-column justify-content-center">
+                <button type="button" class="btn btn-secondary cancel-button text-white" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var badgeModal = document.getElementById("badgeInformationModal");
+
+    function handleBadgeClick(badge) {
+        document.getElementById("badgeTitle").innerText = badge.name;
+        document.getElementById("badgeImage").src = badge.imageFilename;
+        document.getElementById("badgeDateEarned").innerText = badge.dateEarned;
+        bootstrap.Modal.getOrCreateInstance(badgeModal);
+        badgeModal.show();
+    }
+</script>

@@ -118,7 +118,7 @@
                     <div class="d-flex flex-wrap" style="overflow-y: scroll; height: 100%;">
                         <p th:class="${earnedBadges.isEmpty()}? 'alert alert-transparent' : 'd-none'">No Badges Unlocked</p>
                         <th:block th:each="badge : ${earnedBadges}">
-                            <div class="list-group-item" style="width: 19%; margin-left: 1%;">
+                            <div th:onclick="'handleBadgeClick(\'' + ${badge} + '\');'" class="list-group-item" style="width: 19%; margin-left: 1%;">
                                 <img id="plantBadgeImage" th:src="@{${badge.imageFilename}}" th:alt="${badge.name}"
                                      style="width: 100%; height: 100%;">
                                 <p th:text="${badge.name}" style="color: black; text-align: center;"></p>
@@ -238,7 +238,7 @@
     </div>
 </div>
 
-
+<div th:insert="~{modal/badgeInformationModal.html}"></div>
 <script type="text/javascript">
     document.getElementById('isLastNameOptional').onchange = function () {
         document.getElementById('lastNameEdit').disabled = this.checked;
