@@ -43,7 +43,7 @@
              style="z-index: 999; left: 60px; flex-direction: column; align-items: baseline; width: fit-content; display: none;" >
             <form id="nameFilter" class="search-bar form-inline d-flex">
                 <div class="input w-100">
-                    <label class="ms-3 mb-2" style="margin-left: 20px;"> Plant Name </label>
+                    <label class="map-lable ms-3 mb-2" style="margin-left: 20px;"> Plant Name </label>
                     <div class="row g-2" style="display: flex; flex-direction: row;">
                         <div class="col-8">
                             <input aria-label="Search" class="form-control me-2" id="searchTerm" list="plant-names" placeholder="Search by plant name"
@@ -63,15 +63,19 @@
             <!-- Date filtering -->
             <div class="field date-input mt-3">
                 <label class="input w-100">
-                    <label style="margin-left: 20px;"> Start date </label>
-                    <input id="startDate" class="form-control form-field" value="" type="date" max="9999-12-31" tabindex="15">
+                    <label class="map-lable" style="margin-left: 20px;">Start date </label>
+                    <input id="startDate" class="form-control form-field" value="2000-01-01" onchange="validateStartDate();" type="date" max="9999-12-31" tabindex="15">
+                    <span id="startDateError" class="smallErrorMessageMap"></span>
                 </label>
+
             </div>
-            <div class="field date-input">
+            <div class="field date-input mt-3 mb-3">
                 <label class="input w-100">
-                    <label style="margin-left: 20px;"> End date </label>
-                    <input id="endDate" class="form-control form-field" value="" type="date" max="9999-12-31" tabindex="16">
+                    <label class="map-lable" style="margin-left: 20px;">End date </label>
+                    <input id="endDate" class="form-control form-field" value="" type="date" onchange="validateEndDate();" max="9999-12-31" tabindex="16">
+                    <span id="endDateError" class="smallErrorMessageMap"></span>
                 </label>
+
             </div>
 
         </div>
@@ -150,9 +154,38 @@
         return new Date(parts[splitChar === '/' ? 2 : 0], // Months are 0-indexed
             parts[1] - 1, parts[splitChar === '/' ? 0 : 2]);
     }
+    function isDateValid(dateStr) {
+        return !isNaN(new Date(dateStr));
+    }
 
-    document.getElementById('startDate').addEventListener('change', plantFilter);
-    document.getElementById('endDate').addEventListener('change', plantFilter);
+    const startDate = document.getElementById('startDate');
+    const startDateError = document.getElementById('startDateError');
+    const endDate = document.getElementById('endDate');
+    endDate.valueAsDate = new Date();
+    const endDateError = document.getElementById('endDateError');
+
+    function validateStartDate() {
+        validateDate(startDate,startDateError)
+    }
+    function validateEndDate() {
+        validateDate(endDate,endDateError)
+    }
+
+    function validateDate(checkDate, checkDateError) {
+        const inputDate = new Date(checkDate.value);
+        const maxDate = new Date('9999-12-31');
+        if (!isDateValid(inputDate)) {
+            checkDateError.textContent = 'Please enter a valid date.';
+        } else if (inputDate > maxDate) {
+            checkDateError.textContent = 'Date cannot be later than 9999-12-31.';
+        } else {
+            checkDateError.textContent = '';
+        }
+    }
+
+
+    // document.getElementById('startDate').addEventListener('change', plantFilter);
+    // document.getElementById('endDate').addEventListener('change', plantFilter);
 
     function plantFilter() {
         var startDate = parseDateString(document.getElementById('startDate').value, '-');
@@ -167,7 +200,6 @@
             document.getElementById("plant-names").innerHTML = '';
             loadAllOptions();
         }
-
         if (startDate) {
             currentPlants = currentPlants.filter(function (plant) {
                 var plantDate = parseDateString(plant.dateUploaded, '/');
@@ -234,8 +266,12 @@
     searchToggle.addEventListener('click', function() {
         if (searchContainer.style.display === 'none') {
             searchContainer.style.display = 'block';
+            searchToggle.style.backgroundColor = 'rgba(91, 111, 71, 0.7)';
+
         } else {
             searchContainer.style.display = 'none';
+            searchToggle.style.backgroundColor = 'rgba(141, 171, 110, 0.7)';
+
         }
     });
 

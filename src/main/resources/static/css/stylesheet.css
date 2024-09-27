@@ -1642,9 +1642,15 @@ form.search-bar::after {
     border-radius: 25px;
 }
 
-/*.search-toggle-button {*/
-
-/*}*/
+.smallErrorMessageMap {
+    font-size: 14px;
+    font-style: italic;
+    color: red;
+    display: block;
+    margin-left:1rem;
+    margin-top:-1rem;
+    margin-bottom:1rem
+}
 
 .search-toggle-btn {
     position: absolute;
@@ -1657,7 +1663,10 @@ form.search-bar::after {
     border-radius: 50%;
     background-color: rgba(141, 171, 110, 0.7);
 }
+.map-lable {
+    font-size:17px;
 
+}
 
 
 
