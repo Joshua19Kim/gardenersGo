@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Leaflet & OSM Map Demo</title>
+    <title>Gardener's Go Map</title>
     <link href="https://fonts.googleapis.com/css2?family=Matemasie:wght@400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
     <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" rel='stylesheet'>
@@ -90,11 +90,8 @@
 
     let scannedPlants;
     let currentPlants;
-
     var searchInput = document.getElementById("searchTerm");
-
     searchInput.addEventListener("input", plantFilter);
-
 
     // Parses HTML input and DateUploaded into JS Dates - taken + changed from GPT and Stack Overflow
     function parseDateString(dateString, splitChar) {
@@ -171,7 +168,6 @@
                 } else {
                     popupContent += '</div>';
                 }
-
 
                 L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
                     .addTo(clusteredMarkers)
