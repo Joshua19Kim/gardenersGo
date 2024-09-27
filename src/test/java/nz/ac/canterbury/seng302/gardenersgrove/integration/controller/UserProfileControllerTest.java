@@ -1,9 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.UserProfileController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Authority;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.WriteEmail;
 import org.hamcrest.Matchers;
@@ -56,6 +54,8 @@ public class UserProfileControllerTest {
     private RequestService requestService;
     @MockBean
     private MainPageLayout mainPageLayout;
+    @MockBean
+    private BadgeService badgeService;
 
 
     @BeforeEach
@@ -95,6 +95,29 @@ public class UserProfileControllerTest {
                 .andExpect(model().attribute("email", "testEmail@gmail.com"))
                 .andExpect(model().attribute("profilePic", "/images/defaultProfilePic.png"));
 
+    }
+
+    @Test
+    @WithMockUser("testEmail@gmail.com")
+    void onUserPage_userWantsToSeeBadges_showCorrectDetails() throws Exception {
+        List<Badge> earnedBadges = List.of(
+                new Badge("1st Plant Found", LocalDate.now(), BadgeType.PLANTS, testGardener, "/images/badges/1PlantBadge.png"),
+                new Badge("10th Plant Found", LocalDate.now(), BadgeType.PLANTS, testGardener, "/images/badges/10PlantBadge.png"),
+                new Badge("25th Plant Found", LocalDate.now(), BadgeType.PLANTS, testGardener, "/images/badges/25PlantBadge.png")
+        );
+        when(badgeService.getMyRecentBadges(anyLong())).thenReturn(earnedBadges);
+
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.get("/user")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user"))
+                .andExpect(model().attribute("firstName", "testFirstName"))
+                .andExpect(model().attribute("lastName", "testLastName"))
+                .andExpect(model().attribute("DoB", "1980-01-01"))
+                .andExpect(model().attribute("email", "testEmail@gmail.com"))
+                .andExpect(model().attribute("profilePic", "/images/defaultProfilePic.png"))
+                .andExpect(model().attribute("earnedBadges", earnedBadges));
     }
     @Test
     @WithMockUser()
@@ -418,7 +441,7 @@ public class UserProfileControllerTest {
                 .perform(MockMvcRequestBuilders.multipart("/user")
                 .file(mockMultipartFile)
                 .with(csrf()))
-                .andExpect(view().name("user"));
+                .andExpect(status().is3xxRedirection());
 
         gardenerCaptor = ArgumentCaptor.forClass(Gardener.class);
         //wantedNumberOfInvocation has additional 1 since .addGardener() is called once in test
@@ -430,8 +453,7 @@ public class UserProfileControllerTest {
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/redirectToUserPage")
                         .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("user"));
+                .andExpect(status().is3xxRedirection());
     }
     @Test
     @WithMockUser("testEmail@gmail.com")

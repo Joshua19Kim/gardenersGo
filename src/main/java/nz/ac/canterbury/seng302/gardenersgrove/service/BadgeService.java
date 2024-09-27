@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.BadgeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -60,6 +61,20 @@ public class BadgeService {
      public List<Badge> getMyBadges(Long id) {
          return badgeRepository.findByGardenerId(id);
      }
+
+    /**
+     * Retrieves the three most recently earned badges for a given gardener.
+     *
+     * @param gardenerId The id of the gardener to retrieve the most recently earned badges.
+     * @return A list containing the three most recently earned badges.
+     */
+    public List<Badge> getMyRecentBadges(Long gardenerId) {
+        List<Badge> recentBadges = badgeRepository.findByGardenerId(gardenerId, Sort.by(Sort.Direction.DESC, "dateEarned"));
+        if (recentBadges.size() > 5) { // only want 5 most recent badges
+            return recentBadges.subList(0, 5);
+        }
+        return recentBadges;
+    }
 
     /**
      *  gets a badge by its name

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ public class UserProfileController {
     private final RequestService requestService;
     private final WriteEmail writeEmail;
     private final MainPageLayoutService mainPageLayoutService;
+    private final BadgeService badgeService;
     private Gardener gardener;
 
     @Autowired
@@ -48,11 +51,14 @@ public class UserProfileController {
     private boolean isFileNotAdded;
 
     @Autowired
-    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail, RequestService requestService, MainPageLayoutService mainPageLayoutService) {
+    public UserProfileController(GardenerFormService gardenerFormService, WriteEmail writeEmail,
+                                 RequestService requestService, MainPageLayoutService mainPageLayoutService,
+                                 BadgeService badgeService) {
         this.gardenerFormService = gardenerFormService;
         this.writeEmail = writeEmail;
         this.requestService = requestService;
         this.mainPageLayoutService = mainPageLayoutService;
+        this.badgeService = badgeService;
     }
 
     /**
@@ -119,6 +125,8 @@ public class UserProfileController {
             model.addAttribute("firstName", "Not Registered");
         }
 
+        // Validation
+
         if (isLastNameOptional) {
             lastName = null;
         } if (gardener.getLastName() == null) {
@@ -173,10 +181,12 @@ public class UserProfileController {
             model.addAttribute("uploadMessage", "No image uploaded.");
         } else {
             model.addAttribute("uploadMessage", "");
-
         }
 
         model.addAttribute("emailValid", validEmailError.orElse(emailInUseError.orElse("")));
+
+
+        // Determines if edit should go through
 
         if (firstNameError.isEmpty() &&
                 lastNameError.isEmpty() &&
@@ -199,6 +209,9 @@ public class UserProfileController {
             }
         }
 
+
+        // Main Page Edit info
+
         MainPageLayout mainPageLayout = mainPageLayoutService.getLayoutByGardenerId(gardener.getId());
         String widgetsEnabled = mainPageLayout.getWidgetsEnabled();
 
@@ -208,7 +221,6 @@ public class UserProfileController {
         for (String value : values) {
             selectionList.add(value.equals("1"));
         }
-
         Boolean recentlyAccessedGardens = selectionList.get(0);
         Boolean newestPlants = selectionList.get(1);
         Boolean myGardensList = selectionList.get(2);
@@ -218,6 +230,12 @@ public class UserProfileController {
         model.addAttribute("newestPlants", newestPlants);
         model.addAttribute("myGardensList", myGardensList);
         model.addAttribute("friendsList", friendsList);
+
+
+        // Badges widget info
+
+        List<Badge> earnedBadges = badgeService.getMyRecentBadges(gardener.getId());
+        model.addAttribute("earnedBadges", earnedBadges);
 
         return "user";
     }
@@ -229,12 +247,14 @@ public class UserProfileController {
      * If there is an image file, go back to 'user' page with new image
      * @param file the file of profile picture
      * @param model (map-like) representation of profile picture for use in thymeleaf
+     * @param redirectAttributes to repopulate the form on unsuccessful submission
      * @return thymeleaf 'user' page after updating successfully to reload user's details, otherwise thymeleaf login page
      */
     @PostMapping("/user")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    HttpServletRequest request,
-                                   Model model) {
+                                   Model model,
+                                   RedirectAttributes redirectAttributes) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("POST /upload");
@@ -248,30 +268,14 @@ public class UserProfileController {
 
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             Optional<String> uploadMessage =  imageService.saveImage(file);
-            if (uploadMessage.isEmpty()) {
-                return "redirect:/user";
-            } else {
-                Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
-                gardenerOptional.ifPresent(value -> gardener = value);
-
-                model.addAttribute("requestURI", requestService.getRequestURI(request));
-                model.addAttribute("uploadMessage", uploadMessage.get());
-                model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
-                model.addAttribute("firstName", gardenerFormService.findByEmail(authentication.getName()).get().getFirstName());
-                model.addAttribute("lastName", gardenerFormService.findByEmail(authentication.getName()).get().getLastName());
-                model.addAttribute("DoB", gardenerFormService.findByEmail(authentication.getName()).get().getDoB());
-                model.addAttribute("email", gardenerFormService.findByEmail(authentication.getName()).get().getEmail());
-                model.addAttribute("profilePic", gardenerFormService.findByEmail(authentication.getName()).get().getProfilePicture());
-                model.addAttribute("firstNameValid", "");
-                model.addAttribute("lastNameValid", "");
-                model.addAttribute("DoBValid", "");
-                model.addAttribute("emailValid", "");
-
-                return "user";
+            if (uploadMessage.isPresent()) {
+                redirectAttributes.addFlashAttribute("uploadError", uploadMessage.get());
             }
+            return "redirect:/user";
         }
         return "loginForm";
     }
+
 
     /**Check whether there is the authentication of current user to change the profile photo.
      * If yes, redirect user to 'user' page with photo uploading function
@@ -282,7 +286,7 @@ public class UserProfileController {
     public String profileButton() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            return "user";
+            return "redirect:/user";
         }
         return "loginForm";
     }
