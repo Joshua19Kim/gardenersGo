@@ -56,6 +56,10 @@ public class IdentifiedPlantService {
         return identifiedPlantRepository.getPlantByGardenerId(gardenerId);
     }
 
+    public List<IdentifiedPlant> getGardenerPlantsWithLocations(Long gardenerId) {
+        return  identifiedPlantRepository.getIdentifiedPlantWithLocationByGardenerId(gardenerId);
+    }
+
     /**
      * Gets the IdentifiedPlant species that are owned by the gardener in paginated form
      * @param pageNo the page number

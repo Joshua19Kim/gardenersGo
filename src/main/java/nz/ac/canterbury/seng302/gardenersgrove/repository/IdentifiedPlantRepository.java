@@ -106,4 +106,7 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
     List<IdentifiedPlant> getPlantDetailsWithSpeciesScientificName(String name);
 
     List<IdentifiedPlant> getIdentifiedPlantByGardenerId(long id);
+
+    @Query(value = "SELECT * FROM identifiedplant WHERE gardener_id = :id AND plant_lat IS NOT NULL AND plant_lon IS NOT NULL", nativeQuery = true)
+    List<IdentifiedPlant> getIdentifiedPlantWithLocationByGardenerId(long id);
 }

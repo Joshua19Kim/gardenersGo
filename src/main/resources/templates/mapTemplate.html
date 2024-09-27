@@ -51,7 +51,7 @@
                                    type="search">
                         </div>
                         <div class="col-4">
-                            <button class="btn btn-outline-success mt-0 " style="width: 100%" onclick="nameFilter()"
+                            <button class="btn btn-outline-success mt-0 " style="width: 100%" onclick="plantFilter()"
                                     tabindex="14">Apply Filter
                             </button>
                         </div>
@@ -107,11 +107,10 @@
     let scannedPlants;
     let currentPlants;
     var searchInput = document.getElementById("searchTerm");
-    searchInput.addEventListener("input", plantFilter);
 
     document.getElementById("nameFilter").addEventListener("submit", function (event) {
         event.preventDefault();
-        nameFilter();
+        plantFilter();
     })
 
     document.addEventListener("DOMContentLoaded", function() {
