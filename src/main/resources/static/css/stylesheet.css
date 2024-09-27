@@ -1638,6 +1638,36 @@ form.search-bar::after {
     background-color: rgba(0,0,0,0);
 }
 
+.search-container-map {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 380px;
+    margin: 20px auto;
+    background-color: rgba(141, 171, 110, 0.7);
+    border-radius: 25px;
+}
+
+/*.search-toggle-button {*/
+
+/*}*/
+
+.search-toggle-btn {
+    position: absolute;
+    top: 90px;
+    left: 10px;
+    z-index: 999;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    background-color: rgba(141, 171, 110, 0.7);
+}
+
+
+
+
 .form-inline {
     display: flex;
     align-items: center;

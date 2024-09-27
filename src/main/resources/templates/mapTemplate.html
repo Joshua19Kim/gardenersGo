@@ -26,40 +26,56 @@
             height: 100%;
             z-index: 1;
         }
-        #startDate, #endDate, #searchTerm {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-        }
         .date-input {
-            width: 142%;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div id="map">
-    <div class="search-container position-relative p-0 m-0 justify-content-start"
-         style="z-index: 999; left: 75px; flex-direction: column; align-items: baseline;">
-        <form class="search-bar form-inline d-flex">
-            <input aria-label="Search" class="form-control me-2" id="searchTerm" list="plant-names" placeholder="Search"
-                   style="margin-bottom: 0 !important" tabindex="13" th:name="searchTerm" th:value="${searchTerm}"
-                   type="search">
-            <datalist id="plant-names"></datalist>
-        </form>
-        <div> <!-- Date filtering -->
-            <div class="form-group field date-input">
+
+    <button id="searchToggle" class="search-toggle-btn">
+        <img th:src='@{/images/icons/search.svg}' alt="Search" width="24" height="24">
+    </button>
+
+    <div id="searchContainer" class="search-container-map position-relative p-2 m-0 mt-3 justify-content-start"
+             style="z-index: 999; left: 60px; flex-direction: column; align-items: baseline; width: fit-content; display: none;" >
+            <form id="nameFilter" class="search-bar form-inline d-flex">
+                <div class="input w-100">
+                    <label class="ms-3 mb-2" style="margin-left: 20px;"> Plant Name </label>
+                    <div class="row g-2" style="display: flex; flex-direction: row;">
+                        <div class="col-8">
+                            <input aria-label="Search" class="form-control me-2" id="searchTerm" list="plant-names" placeholder="Search by plant name"
+                                   style="margin-bottom: 0 !important" tabindex="13" autocomplete="off" th:name="searchTerm" th:value="${searchTerm}"
+                                   type="search">
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-outline-success mt-0 " style="width: 100%" onclick="nameFilter()"
+                                    tabindex="14">Apply Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <datalist id="plant-names"></datalist>
+
+            </form>
+            <!-- Date filtering -->
+            <div class="field date-input mt-3">
                 <label class="input w-100">
                     <label style="margin-left: 20px;"> Start date </label>
-                    <input id="startDate" class="form-control form-field" value="" type="date" max="9999-12-31">
+                    <input id="startDate" class="form-control form-field" value="" type="date" max="9999-12-31" tabindex="15">
                 </label>
             </div>
-            <div class="form-group field date-input">
+            <div class="field date-input">
                 <label class="input w-100">
                     <label style="margin-left: 20px;"> End date </label>
-                    <input id="endDate" class="form-control form-field" value="" type="date" max="9999-12-31">
+                    <input id="endDate" class="form-control form-field" value="" type="date" max="9999-12-31" tabindex="16">
                 </label>
             </div>
+
         </div>
-    </div>
+
 </div>
 
 
@@ -92,6 +108,23 @@
     let currentPlants;
     var searchInput = document.getElementById("searchTerm");
     searchInput.addEventListener("input", plantFilter);
+
+    document.getElementById("nameFilter").addEventListener("submit", function (event) {
+        event.preventDefault();
+        nameFilter();
+    })
+
+    document.addEventListener("DOMContentLoaded", function() {
+        /*<![CDATA[*/
+        scannedPlants = /*[[${scannedPlants}]]*/ [];
+        currentPlants = scannedPlants
+        showMarkers();
+        loadAllOptions();
+        /*]]>*/
+    });
+
+
+
 
     // Parses HTML input and DateUploaded into JS Dates - taken + changed from GPT and Stack Overflow
     function parseDateString(dateString, splitChar) {
@@ -138,40 +171,28 @@
         showMarkers();
     }
 
-
-    document.addEventListener("DOMContentLoaded", function() {
-        /*<![CDATA[*/
-        scannedPlants = /*[[${scannedPlants}]]*/ [];
-        currentPlants = scannedPlants;
-        showMarkers();
-        loadAllOptions();
-        /*]]>*/
-    });
-
     function showMarkers() {
         currentPlants.forEach(function (scannedPlant) {
             if (scannedPlant.plantLatitude && scannedPlant.plantLongitude && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
 
                 var plantLink = '/collectionDetails?speciesName=' + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
-                var popupContent =
-                    `<div style="width: 200px; word-break: break-word; text-align: center;">
-                    <div>
+                var popupContent = `<div style="min-width: 450px; word-break: break-word;" class="row">
+                <div class="col-5" style="white-space: normal; overflow-wrap: break-word;">
                     <h4>${scannedPlant.name}</h4>
                     <p><i>${scannedPlant.speciesScientificNameWithoutAuthor}</i></p>
-                    <p><i>Added ${scannedPlant.dateUploaded} </i></p>
-                    <a style="text-decoration: none;" href="${plantLink}">View in your collection</a><br>
-                    </div>`;
+                    <p><i>Added ${scannedPlant.dateUploaded}</i></p>
+                    <a style="text-decoration: none;" href="${plantLink}">View in your collection</a>
+                </div>`;
+
 
                 if (scannedPlant.uploadedImage) {
-                    var image = '<img src="' + scannedPlant.uploadedImage + '" alt="Plant image" width="200px" height="auto"/>';
-                    popupContent += '<br>' + image + '</div>';
-                } else {
-                    popupContent += '</div>';
+                    var image = `<img src="${scannedPlant.uploadedImage}" alt="Plant image" width="50%" height="100%" style="object-fit: cover; border-radius: 8px"/>`;
+                    popupContent += `<div class="col-7" style="text-align: center;">${image}</div>`;
                 }
-
+                popupContent += '</div>';
                 L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
                     .addTo(clusteredMarkers)
-                    .bindPopup(popupContent, {maxWidth: 200}
+                    .bindPopup(popupContent, {minWidth: 450}
                     );
             }
         });
@@ -190,6 +211,19 @@
             }
         )
     }
+
+    const searchToggle = document.getElementById('searchToggle');
+    const searchContainer = document.getElementById('searchContainer');
+
+    searchToggle.addEventListener('click', function() {
+        if (searchContainer.style.display === 'none') {
+            searchContainer.style.display = 'block';
+        } else {
+            searchContainer.style.display = 'none';
+        }
+    });
+
+
 
     // Dynamically adjust map height based on the navbar height - need to do this because navbar does not have a set height
     function resizeMap() {
