@@ -169,20 +169,20 @@ public class BadgeService {
      */
     public void checkIfBadgeShouldBeRemoved(int orginalCount, int currentCount, Gardener gardener) {
         if(orginalCount == 1 && currentCount == 0) {
-            Badge badge = badgeRepository.findByNameAndGardenerId("1st Region Found", gardener.getId()).get();
-            badgeRepository.delete(badge);
+            Optional<Badge> badge = badgeRepository.findByNameAndGardenerId("1st Region Found", gardener.getId());
+            badge.ifPresent(value -> badgeRepository.delete(value));
         }
         if(orginalCount == 5 && currentCount == 4) {
-            Badge badge = badgeRepository.findByNameAndGardenerId("5th Region Found", gardener.getId()).get();
-            badgeRepository.delete(badge);
+            Optional<Badge> badge = badgeRepository.findByNameAndGardenerId("5th Region Found", gardener.getId());
+            badge.ifPresent(value -> badgeRepository.delete(value));
         }
         if(orginalCount == 10 && currentCount == 9) {
-            Badge badge = badgeRepository.findByNameAndGardenerId("10th Region Found", gardener.getId()).get();
-            badgeRepository.delete(badge);
+            Optional<Badge> badge = badgeRepository.findByNameAndGardenerId("10th Region Found", gardener.getId());
+            badge.ifPresent(value -> badgeRepository.delete(value));
         }
         if(orginalCount == 17 && currentCount == 16) {
-            Badge badge = badgeRepository.findByNameAndGardenerId("17th Region Found", gardener.getId()).get();
-            badgeRepository.delete(badge);
+            Optional<Badge> badge = badgeRepository.findByNameAndGardenerId("17th Region Found", gardener.getId());
+            badge.ifPresent(value -> badgeRepository.delete(value));
         }
 
     }

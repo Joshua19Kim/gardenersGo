@@ -305,7 +305,7 @@ public class CollectionsController {
 
         if (isValid) {
             IdentifiedPlant identifiedPlant = new IdentifiedPlant(plantName, gardener);
-            if (!(manualPlantLat == null)) {
+            if (!(manualPlantLat == null) && !(manualPlantLon == null)) {
                 if (!manualPlantLat.isEmpty() && !manualPlantLon.isEmpty()) {
                     String region = locationService.sendReverseGeocodingRequest(manualPlantLat, manualPlantLon);
                     identifiedPlant.setRegion(region);

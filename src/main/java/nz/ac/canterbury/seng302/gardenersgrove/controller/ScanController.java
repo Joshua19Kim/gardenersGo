@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import java.io.IOException;
 import java.util.*;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
@@ -228,7 +229,7 @@ public class ScanController {
                 errorResponse.put("message", "Invalid Field");
                 return ResponseEntity.badRequest().body(errorResponse);
 
-            } catch (Exception e) {
+            } catch (IOException | InterruptedException e) {
                 errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
                 return ResponseEntity.badRequest().body(errorResponse);
             }

@@ -1,4 +1,4 @@
-Feature: As Jackie Wei, I enjoy collecting achievements and want to share my progress with my followers. I want to display and receive badges for collecting species. Milestones: Collect a new species (1,10,25,50,100)
+Feature: As Jackie Wei, I enjoy collecting achievements and want to share my progress with my followers. I want to display and receive badges for collecting regions. Milestones: Collect a new region (1,5,10,17)
 
   @U7009B
   Scenario Outline:
