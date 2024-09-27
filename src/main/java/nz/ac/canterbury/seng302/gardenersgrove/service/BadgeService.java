@@ -180,7 +180,7 @@ public class BadgeService {
             Badge badge = badgeRepository.findByNameAndGardenerId("10th Region Found", gardener.getId()).get();
             badgeRepository.delete(badge);
         }
-        if(orginalCount == 17 && currentCount == 6) {
+        if(orginalCount == 17 && currentCount == 16) {
             Badge badge = badgeRepository.findByNameAndGardenerId("17th Region Found", gardener.getId()).get();
             badgeRepository.delete(badge);
         }

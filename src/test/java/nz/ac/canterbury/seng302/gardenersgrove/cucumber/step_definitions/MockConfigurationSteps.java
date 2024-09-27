@@ -6,21 +6,27 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
-import nz.ac.canterbury.seng302.gardenersgrove.service.EmailUserService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // The base of this file was shown in the code that Matthew suggested to follow in the workshop
 // https://eng-git.canterbury.ac.nz/seng302-2024/cucumber-mocking-example
@@ -28,7 +34,11 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class MockConfigurationSteps {
     @Autowired
+    private MockMvc mockMvc;
+    @Autowired
     private EmailUserService emailUserService;
+    @Autowired
+    private LocationService locationService;
     @Autowired
     private PlantIdentificationService plantIdentificationService;
     @Autowired
@@ -102,10 +112,27 @@ public class MockConfigurationSteps {
         when(plantIdentificationService.identifyPlant(
                 any(MultipartFile.class),
                 any(Gardener.class))).thenThrow(new IOException("Species not found"));
-
-
     }
 
+    @When("I have collected another region")
+    public void i_have_collected_another_region() throws Exception {
+        MockMultipartFile imageFile = new MockMultipartFile("plantImage", "image.jpg", "image/jpeg", new byte[0]);
+        String manualPlantLat = "-43.522783";
+        String manualPlantLon = "172.581256";
+        when(locationService.sendReverseGeocodingRequest(manualPlantLat, manualPlantLon)).thenReturn("Chatham Islands");
 
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/myCollection")
+                        .file(imageFile)
+                        .param("plantName", "New Plant" )
+                        .param("description", "Awesome description")
+                        .param("scientificName",  "Sick species")
+                        .param("uploadedDate", String.valueOf(LocalDate.parse("12/02/2024", DateTimeFormatter.ofPattern("dd/MM/yyyy"))))
+                        .param("isDateInvalid", "false")
+                        .param("manualPlantLat", manualPlantLat)
+                        .param("manualPlantLon", manualPlantLon)
+                        .with(csrf()))
 
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/myCollection"));
+    }
 }
