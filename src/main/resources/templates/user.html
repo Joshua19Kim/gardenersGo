@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <div class="col-6">
+            <div class="col">
                 <form th:action="@{user}" method="get" id="userForm" class="w-100 text-center" novalidate>
                     <div class="row">
                         <div class="col d-flex flex-wrap">
@@ -84,7 +84,7 @@
                             <br/>
                         </div>
 
-                        <div class="col">
+                        <div class="col-3">
                             <div id="editButtonDiv">
                                 <button class="btn btn-primary mb-3" type="button" onclick="enableEditing()" tabindex="15">Edit</button>
                             </div>
@@ -100,10 +100,10 @@
         </div>
     </div>
 
-    <div class="container col-md-6 left-align p-2">
-        <div class="row">
-            <div class="col p-0">
-                <button class="btn btn-primary w-auto m-2" data-bs-target="#customiseHomepageModal" data-bs-toggle="modal" type="button" tabindex="16">
+    <div class="container col-md-6 p-2">
+        <div class="row w-100">
+            <div class="col-3 p-0">
+                <button class="btn btn-primary w-auto m-2" data-bs-target="#customiseHomepageModal" data-bs-toggle="modal" type="button">
                     Edit Homepage
                 </button>
 
@@ -111,16 +111,17 @@
                     View all badges
                 </button>
             </div>
-            <div class="col-9 p-0">
+            <div class="col p-0">
                 <div class="container card">
                     <p>My Recently Earned Badges</p>
 
                     <div class="d-flex flex-wrap" style="overflow-y: scroll; height: 100%;">
                         <p th:class="${earnedBadges.isEmpty()}? 'alert alert-transparent' : 'd-none'">No Badges Unlocked</p>
                         <th:block th:each="badge, iterStat : ${earnedBadges}">
-                            <div  th:onclick="handleBadgeClick([[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])"
-                                  th:tabIndex="${iterStat.index + 18}" th:onkeydown="handleEnterKey(event, [[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])"
-                                 class="list-group-item main-page-custom-hover" style="width: 19%; margin-left: 1%; cursor: pointer;">
+                            <div th:onclick="handleBadgeClick([[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])"
+                                 th:tabIndex="${iterStat.index + 18}" th:onkeydown="handleEnterKey(event, [[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])"
+                                 class="list-group-item main-page-custom-hover p-1" style="width: 19%; margin-left: 1%; min-width: min-content; cursor: pointer;
+                                min-height: 200px; border-radius: 10px;">
                                 <img id="plantBadgeImage" th:src="@{${badge.imageFilename}}" th:alt="${badge.name}"
                                      style="width: 100%; height: 100%;">
                                 <p th:text="${badge.name}" style="color: black; text-align: center;"></p>
