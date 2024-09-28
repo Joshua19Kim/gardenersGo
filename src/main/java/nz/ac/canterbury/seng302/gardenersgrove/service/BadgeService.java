@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  *  Service class for the badge repository
@@ -61,6 +62,20 @@ public class BadgeService {
      public List<Badge> getMyBadges(Long id) {
          return badgeRepository.findByGardenerId(id);
      }
+
+    /**
+     *  gets the unearned badges for a specific gardener
+     * @param id the gardener's id
+     * @return all of the gardener's unearned badges
+     */
+    public List<String> getMyLockedBadgeNames(Long id) {
+        List<String> unlockedNames = badgeRepository.findByGardenerId(id).stream()
+                .map(badge -> badge.getName()) // Gets names of all unlocked badges
+                .collect(Collectors.toList());
+        return badgeNames.stream() // Gets all badge names
+                .filter(badgeName -> !unlockedNames.contains(badgeName)) // Filters out unlocked badges
+                .collect(Collectors.toList());
+    }
 
     /**
      * Retrieves the three most recently earned badges for a given gardener.
