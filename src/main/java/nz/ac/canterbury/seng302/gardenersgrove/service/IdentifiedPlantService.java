@@ -90,6 +90,13 @@ public class IdentifiedPlantService {
     public Integer getCollectionPlantCount(long id) { return identifiedPlantRepository.getIdentifiedPlantByGardenerId(id).size();}
 
     /**
+     * Gets the region count for a gardener
+     * @param id gardener's id
+     * @return returns the region count for a gardener
+     */
+    public Integer getRegionCount(long id) { return identifiedPlantRepository.getRegionCountByGardenerId(id);}
+
+    /**
      * Gets a count of all the species in the database
      * @param id the id of the gardener
      * @return a count of all the species

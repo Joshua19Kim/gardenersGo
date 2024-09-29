@@ -220,6 +220,7 @@ goToCollectionButton.addEventListener('click', function() {
         .then(data => {
             var plantBadge = data.plantBadge;
             var speciesBadge = data.speciesBadge;
+            var regionBadge = data.regionBadge;
             var modal = bootstrap.Modal.getInstance(successModal);
             var windowLocation = `${getBaseUrl()}/myCollection?savedPlant=${data.savedPlant}`;
             if(plantBadge !== undefined) {
@@ -227,6 +228,9 @@ goToCollectionButton.addEventListener('click', function() {
             }
             if(speciesBadge !== undefined) {
                 windowLocation += `&speciesBadgeId=` + speciesBadge;
+            }
+            if(regionBadge !== undefined) {
+                windowLocation += `&regionBadgeId=` + regionBadge;
             }
             window.location.href = windowLocation;
             refreshFields()

@@ -100,4 +100,6 @@ public class EarnBadgeFeature {
         Assertions.assertEquals(expectedName, badge.get().getName());
         resultActions.andExpect(flash().attributeExists("plantBadge"));
     }
+
+
 }
