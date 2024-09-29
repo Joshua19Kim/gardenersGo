@@ -142,8 +142,9 @@
     }
 
     var clusteredMarkers = L.markerClusterGroup({
-        maxClusterRadius: 50, // Helps to prevent clusters over a large area
-        singleMarkerMode: false // Keep markers as part of cluster
+        maxClusterRadius: 60, // Helps to prevent clusters over a large area
+        singleMarkerMode: false, // Keep markers as part of cluster
+        removeOutsideVisibleBounds: false // Never removes markers
     });
 
     clusteredMarkers.on('clusterclick', function (a) {
@@ -237,7 +238,6 @@
             endDateError.textContent = "End date must be after the start date";
             endDateError.style.display = "block";
         } else {
-            console.log("Aaaaaaaaaaa")
             endDateError.textContent = "";
             endDateError.style.display = "none";
         }
@@ -271,8 +271,6 @@
                 return plantDate <= endDate;
             });
         }
-
-        clusteredMarkers.clearLayers();
         showMarkers();
     }
 
