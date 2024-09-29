@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BadgeType;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -47,6 +48,15 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
     List<Badge> findByGardenerId(Long gardenerId);
 
     /**
+     * Retrieves a list of badges by their owner's gardener ID, sorted by date acquired.
+     *
+     * @param gardenerId The identifier of the garden's owner.
+     * @param sorting The sort method to order the results by date.
+     * @return A list of all badges with the specified owner stored in the repository.
+     */
+    List<Badge> findByGardenerId(Long gardenerId, Sort sorting);
+
+    /**
      * Finds the badge by its name
      *
      * @param name the name of the badge
@@ -61,6 +71,5 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
      * @return the badges with the given type
      */
     List<Badge> findByBadgeType(BadgeType badgeType);
-
 
 }

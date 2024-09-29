@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -33,8 +34,10 @@ public class UserProfileControllerTest {
     private InputValidationUtil inputValidator;
     private Optional optional;
     private HttpServletRequest mockRequest;
+    private RedirectAttributes mockRedirectAttributes;
     private RequestService requestService;
     private MainPageLayoutService mainPageLayoutService;
+    private BadgeService badgeService;
     private MainPageLayout mainPageLayout;
 
 
@@ -43,6 +46,7 @@ public class UserProfileControllerTest {
         authentication = Mockito.mock(Authentication.class);
         mainPageLayout = Mockito.mock(MainPageLayout.class);
         mockRequest = Mockito.mock(HttpServletRequest.class);
+        mockRedirectAttributes = Mockito.mock(RedirectAttributes.class);
         requestService = Mockito.mock(RequestService.class);
         Mockito.when(mockRequest.getRequestURI()).thenReturn("");
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -51,7 +55,9 @@ public class UserProfileControllerTest {
         writeEmail = Mockito.mock(WriteEmail.class);
         gardenService = Mockito.mock(GardenService.class);
         mainPageLayoutService = Mockito.mock(MainPageLayoutService.class);
-        userProfileController = new UserProfileController(gardenerFormService, writeEmail, requestService, mainPageLayoutService);
+        badgeService = Mockito.mock(BadgeService.class);
+        userProfileController = new UserProfileController(gardenerFormService, writeEmail, requestService,
+                mainPageLayoutService, badgeService);
         modelMock = Mockito.mock(Model.class);
         gardener = Mockito.mock(Gardener.class);
         inputValidator = Mockito.mock(InputValidationUtil.class);
@@ -79,7 +85,7 @@ public class UserProfileControllerTest {
         // ONLY works when the email is the same as the submitted one
         Mockito.when(gardener.getEmail()).thenReturn("new@new.new");
         Mockito.when(authentication.getName()).thenReturn("new@new.new");
-        userProfileController.getUserProfile("Ben", "Moore", LocalDate.of(2001, 11, 11).toString(), "new@new.new", false, false,null, mockRequest, modelMock);
+        userProfileController.getUserProfile("Ben", "Moore", LocalDate.of(2001, 11, 11).toString(), "new@new.new", false, false, null, mockRequest, modelMock);
         Mockito.verify(gardenerFormService, times(1)).addGardener(Mockito.any(Gardener.class));
     }
 
