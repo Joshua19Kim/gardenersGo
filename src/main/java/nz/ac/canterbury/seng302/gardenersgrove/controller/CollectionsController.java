@@ -334,7 +334,7 @@ public class CollectionsController {
                 redirectAttributes.addFlashAttribute("plantBadge", plantBadge.get());
                 badgeCount += 1;
             }
-            if (scientificName.isEmpty()) {
+            if (scientificName == null || scientificName.isEmpty()) {
                 redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE_ATTRIBUTE, plantName + " has been added to collection");
             } else {
                 redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE_ATTRIBUTE, plantName + " has been added to collection: " + scientificName);
