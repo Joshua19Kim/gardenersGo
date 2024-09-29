@@ -173,5 +173,20 @@
         }
     });
 
+    // ChatGPT provided this solution to the map tiles not loading in properly.
+    // The issue was that the map size needed to be recalculated once the modal opens,
+    // because it has issues when it first loads as the all the fields are hidden
+
+    // Wait for the DOM to load before adding event listeners
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the modal element by ID
+        const addPlantModal = document.getElementById('addPlantModal');
+
+        // Listen for the modal 'shown' event using Bootstrap's event system
+        addPlantModal.addEventListener('shown.bs.modal', function () {
+            map.invalidateSize(); // Force Leaflet to recalculate map size when the modal is fully shown
+        });
+    });
+
 
 </script>
