@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.h2.util.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * LocationService sends an autocomplete request to server.
@@ -23,8 +21,8 @@ import java.util.Objects;
 @Service
 public class LocationService {
     Logger logger = LoggerFactory.getLogger(LocationService.class);
-    private String api_key;
-    private HttpClient client;
+    private final String api_key;
+    private final HttpClient client;
 
     /**
      * Constructor of LocationService.
@@ -85,7 +83,7 @@ public class LocationService {
     public String sendReverseGeocodingRequest(String plantLat, String plantLon) throws IOException, InterruptedException {
         logger.info("SEND Reverse Geocoding Request");
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://us1.locationiq.com/v1/reverse?key=" + this.api_key + "&lat=" + plantLat + "&lon=" + plantLon + "&format=json&"))
+                .uri(URI.create("https://us1.locationiq.com/v1/reverse?key=" + this.api_key + "&lat=" + plantLat + "&lon=" + plantLon + "&format=json"))
                 .header("accept", "application/json")
                 .GET()
                 .build();
@@ -101,7 +99,7 @@ public class LocationService {
                 "Hawke's Bay", "Gisborne", "Bay of Plenty", "Auckland", "Nelson", "Chatham Islands");
 
         for (String region : regions) {
-            if (state.startsWith(region) && Objects.equals(country, "New Zealand")) {
+            if ((state.equalsIgnoreCase(region) || state.equalsIgnoreCase(region + " region")) && country.equalsIgnoreCase("New Zealand")) {
                 return region;
             }
         }
