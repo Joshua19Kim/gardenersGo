@@ -55,6 +55,7 @@
                            style="margin-bottom: 0 !important" tabindex="16" autocomplete="off" th:name="searchTerm" th:value="${searchTerm}"
                            type="search">
                     <datalist id="plant-names"></datalist>
+                    <span id="nameError" class="smallErrorMessageMap mt-2 mb-0"></span>
                 </div>
                 <!-- Date filtering -->
                 <div class="field date-input mt-3">
@@ -179,7 +180,7 @@
     endDate.valueAsDate = new Date(); // provide current date for endDate as a default value
     const endDateError = document.getElementById('endDateError');
     const noResultsError = document.getElementById('noResultsError');
-
+    const nameError = document.getElementById('nameError');
 
     function validateStartDate() {
         if(validateDate(startDate,startDateError)) {
@@ -234,14 +235,10 @@
 
         // Search validation
         if (!validateSearchInput(searchTerm)) {
-            noResultsError.textContent = "Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes";
-            noResultsError.style.display = "block";
-            clusteredMarkers.clearLayers();  // Clear any pins from the map if the search is invalid
+            nameError.textContent = "Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+            nameError.style.display = "block";
             return;
         }
-
-        noResultsError.textContent = "";
-        noResultsError.style.display = "none";
 
         var startDate = parseDateString(document.getElementById('startDate').value, '-');
         var endDate = parseDateString(document.getElementById('endDate').value, '-');
