@@ -3,7 +3,6 @@ var fileInput = document.getElementById('fileInput');
 var currentImage = document.getElementById('currentImage');
 var addPlantModal = document.getElementById('addPlantModal');
 var plantDateInput = document.getElementById('plantDate');
-const successAlert = document.getElementById('successAlert');
 const manualAddLocation = document.getElementById('manualAddLocation');
 const manualAddAutocompleteResults = document.getElementById('manual-add-autocomplete-results');
 var today = new Date();
@@ -26,7 +25,7 @@ window.onload = function() {
 }
 
 // clears all the fields when the modal is closed
-addPlantModal.addEventListener('hide.bs.modal', function(event) {
+addPlantModal.addEventListener('hide.bs.modal', function() {
     errorOccurred = false;
 
     const addPlantForm = document.getElementById('plantForm')
@@ -51,7 +50,7 @@ addPlantModal.addEventListener('hide.bs.modal', function(event) {
 });
 
 // this will be triggered when the modal is about to open
-addPlantModal.addEventListener('show.bs.modal', function (event) {
+addPlantModal.addEventListener('show.bs.modal', function () {
     fileInput.value = '';
     currentImage.src = `${getBaseUrl()}/images/placeholder.jpg`;
 
@@ -162,7 +161,7 @@ scientificNameInput.addEventListener("keydown", (e) => {
 });
 
 
-plantNameInput.addEventListener('change', (e) => {
+plantNameInput.addEventListener('change', () => {
     const inputValue = tagInput.value;
     const options = dataList.options
     if (keypress === false) {

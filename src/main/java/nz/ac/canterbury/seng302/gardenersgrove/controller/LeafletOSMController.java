@@ -52,7 +52,7 @@ public class LeafletOSMController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        List<IdentifiedPlant> scannedPlants = identifiedPlantService.getGardenerPlants(gardener.getId());
+        List<IdentifiedPlant> scannedPlants = identifiedPlantService.getGardenerPlantsWithLocations(gardener.getId());
         model.addAttribute("scannedPlants", scannedPlants);
         return "mapTemplate";
     }
