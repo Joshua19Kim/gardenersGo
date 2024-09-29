@@ -105,8 +105,20 @@ public interface IdentifiedPlantRepository extends CrudRepository<IdentifiedPlan
     @Query(value = "SELECT * FROM identifiedplant WHERE species_scientific_name_without_author = :name", nativeQuery = true)
     List<IdentifiedPlant> getPlantDetailsWithSpeciesScientificName(String name);
 
+    /**
+     * Gets the plant details according to the gardener id
+     *
+     * @param id the id of the gardener
+     * @return the plant details in the database
+     */
     List<IdentifiedPlant> getIdentifiedPlantByGardenerId(long id);
 
+    /**
+     * Gets the plant details according to Species Scientific Plant name
+     *
+     * @param id the id of the gardener
+     * @return the plant details in the database
+     */
     @Query(value = "SELECT * FROM identifiedplant WHERE gardener_id = :id AND plant_lat IS NOT NULL AND plant_lon IS NOT NULL", nativeQuery = true)
     List<IdentifiedPlant> getIdentifiedPlantWithLocationByGardenerId(long id);
 
