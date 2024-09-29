@@ -176,12 +176,6 @@ goToCollectionButton.addEventListener('click', function() {
     var formData = new FormData(document.getElementById('identifiedPlantNameForm'));
     var name = formData.get('scanningName');
     var description = formData.get('scanningDescription');
-    if (scanningLocation.value === "" && !scanningLocation.disabled) {
-        plantLon.value = "";
-        plantLat.value = "";
-    }
-    console.log(plantLon.value);
-    console.log(plantLat.value);
 
     const saveUrl = `${getBaseUrl()}/saveIdentifiedPlant`;
     fetch(saveUrl, {

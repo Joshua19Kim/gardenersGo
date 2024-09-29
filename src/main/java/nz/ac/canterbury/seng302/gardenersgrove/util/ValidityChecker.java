@@ -446,7 +446,7 @@ public class ValidityChecker {
             }
             double plantLat = Double.parseDouble(plantLatitude);
             double plantLon = Double.parseDouble(plantLongitude);
-            return plantLat <= 90 && plantLat >= -90 && plantLon >= -180 && plantLon <= 180;
+            return plantLat <= 90 && plantLat >= -90 && plantLon >= -180 && plantLon <= 185; // need 185 lon for Chatham islands
         } catch (Exception e) {
             return false;
         }
