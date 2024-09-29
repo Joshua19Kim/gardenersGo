@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Leaflet & OSM Map Demo</title>
+    <title>Gardener's Go Map</title>
     <link href="https://fonts.googleapis.com/css2?family=Matemasie:wght@400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
     <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" rel='stylesheet'>
@@ -24,67 +24,385 @@
         }
         #map {
             height: 100%;
+            z-index: 1;
+        }
+        .date-input {
+            width: 100%;
         }
     </style>
 </head>
 <body>
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
-<div id="map"></div>
+<div id="map">
+    <div class="map-button-container">
+        <button id="searchToggle" class="map-button" tabindex="13" title = "Map Filter">
+            <img th:src='@{/images/icons/search.svg}' alt="Search" width="24" height="24">
+        </button>
+        <button id="refresh" class="map-button" tabindex="14" title = "Refresh map & filter">
+            <img th:src='@{/images/icons/arrow-clockwise.svg}' alt="Search" width="24" height="24">
+        </button>
+        <button id="currentLocation" class="map-button" tabindex="15" title = "Current location">
+            <img th:src='@{/images/icons/crosshair.svg}' alt="Search" width="24" height="24">
+        </button>
+    </div>
+
+    <div id="searchContainer" class="search-container-map position-relative p-2 m-0 mt-3 justify-content-start"
+             style="z-index: 999; left: 60px; flex-direction: column; align-items: baseline; width: fit-content; display: none;" >
+            <form id="nameFilter" class="search-bar form-inline" style="display: flex; flex-direction: column;">
+                <div class="input w-100">
+                    <label class="map-label" style="margin-left: 20px;"> Plant Name </label>
+                    <input aria-label="Search" class="form-control form-field" id="searchTerm" list="plant-names" placeholder="Search by plant name"
+                           style="margin-bottom: 0 !important" tabindex="16" autocomplete="off" th:name="searchTerm" th:value="${searchTerm}"
+                           type="search">
+                    <datalist id="plant-names"></datalist>
+                </div>
+                <!-- Date filtering -->
+                <div class="field date-input mt-3">
+                    <label class="input w-100">
+                        <label class="map-label" style="margin-left: 20px;">Start date </label>
+                        <input id="startDate" class="form-control form-field" value="1900-01-01" onchange="validateStartDate();" type="date" max="9999-12-31" tabindex="17">
+                        <span id="startDateError" class="smallErrorMessageMap"></span>
+                    </label>
+
+                </div>
+                <div class="field date-input mt-3 mb-3">
+                    <label class="input w-100">
+                        <label class="map-label" style="margin-left: 20px;">End date </label>
+                        <input id="endDate" class="form-control form-field" value="" type="date" onchange="validateEndDate();" max="9999-12-31" tabindex="18">
+                        <span id="endDateError" class="smallErrorMessageMap"></span>
+                    </label>
+
+                </div>
+                <div class="w-100">
+                    <button class="btn btn-outline-success mt-0 " style="width: 100%" onclick="plantFilter()"
+                            tabindex="19">Apply Filter
+                    </button>
+                    <span id="noResultsError" class="smallErrorMessageMap"></span>
+                </div>
+
+            </form>
+
+
+        </div>
+
+</div>
+
+<!--notification when there is error for current location function-->
+<div id="notification" class="alert alert-warning map-notification" type="hidden" role="alert"></div>
+
+
+<script th:src="@{/javascript/getBaseUrl.js}"></script>
 <script th:src="@{/webjars/leaflet/1.9.4/dist/leaflet.js}"></script>
 <script th:src="@{/webjars/leaflet-markercluster/1.4.1/leaflet.markercluster-src.js}"></script>
 <script th:inline="javascript">
     /**
      * creates and initialises the map, also defines on click event that calls java code
      */
+
     var southWest = L.latLng(-55, 148.038821);
     var northEast = L.latLng(-28,200);
     var maxBoundArea = L.latLngBounds(southWest, northEast)
-    var map = L.map('map', {
+    const initialMapState = {
         center: [-43.5, 174.88],
         zoom: 5.2,
         maxBounds: maxBoundArea,
         minZoom: 5.2,
         maxZoom: 18
-    });
+    };
+    var map = L.map('map', initialMapState);
     new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
         attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
     }).addTo(map);
 
+    // Function to reset the map to initial state
+    function resetMap(locationo) {
+        map.setView(locationo.center, locationo.zoom);
+    }
+
     var clusteredMarkers = L.markerClusterGroup({
-        maxClusterRadius: 50 // Helps to prevent clusters over a large area
+        maxClusterRadius: 50, // Helps to prevent clusters over a large area
+        singleMarkerMode: false // Keep markers as part of cluster
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
-        /*<![CDATA[*/
-        var scannedPlants = /*[[${scannedPlants}]]*/ [];
-        console.log(scannedPlants);
-        scannedPlants.forEach(function (scannedPlant) {
-            if (scannedPlant.plantLatitude && scannedPlant.plantLongitude && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
+    clusteredMarkers.on('clusterclick', function (a) {
+        var cluster = a.layer;
+        var childCount = cluster.getChildCount();
 
-                var plantLink = '/collectionDetails?speciesName=' + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
-                var popupContent = '<div style="width: 200px; word-break: break-all; text-align: center;"><h2>' +
-                    scannedPlant.name + '</h2>' +
-                    '<h3><i>' + scannedPlant.speciesScientificNameWithoutAuthor + '</i></h3>' +
-                    '<h3><i>Added ' + scannedPlant.dateUploaded + '</i><h3>' +
-                    '<a style="text-decoration: none;" href="' + plantLink + '">' + 'View in your collection' + '</a><br>';
+        if (childCount === 1) {
+            // The cluster has only one marker and needs single marker NOT cluster group
+            var markers = cluster.getAllChildMarkers();
+            var singleMarker = markers[0];
 
-                if (scannedPlant.uploadedImage) {
-                    var image = '<img src="' + scannedPlant.uploadedImage + '" alt="Plant image" width="200px" height="auto"/>';
-                    popupContent += '<br>' + image + '</div>';
-                } else {
-                    popupContent += '</div>';
-                }
-
-                L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
-                    .addTo(clusteredMarkers)
-                    .bindPopup(popupContent, {maxWidth: 200}
-                    );
-            }
-            /*]]>*/
-        });
+            singleMarker.openPopup();
+        }
     });
 
     map.addLayer(clusteredMarkers);
+
+
+    let scannedPlants;
+    let currentPlants;
+    var searchInput = document.getElementById("searchTerm");
+
+    document.getElementById("nameFilter").addEventListener("submit", function (event) {
+        event.preventDefault();
+        plantFilter();
+    })
+
+    document.addEventListener("DOMContentLoaded", function() {
+        /*<![CDATA[*/
+        scannedPlants = /*[[${scannedPlants}]]*/ [];
+        currentPlants = scannedPlants
+        showMarkers();
+        loadAllOptions();
+        /*]]>*/
+    });
+
+
+
+
+    // Parses HTML input and DateUploaded into JS Dates - taken + changed from GPT and Stack Overflow
+    function parseDateString(dateString, splitChar) {
+        if (!dateString) return null; // Return null if the input is empty
+        var parts = dateString.split(splitChar);
+        // Ensure parts are in the right order: [DD, MM, YYYY] --> [YYYY MM DD] if regular date (with '/' used)
+        return new Date(parts[splitChar === '/' ? 2 : 0], // Months are 0-indexed
+            parts[1] - 1, parts[splitChar === '/' ? 0 : 2]);
+    }
+    function isDateValid(dateStr) {
+        return !isNaN(new Date(dateStr));
+    }
+
+    const startDate = document.getElementById('startDate');
+    const startDateError = document.getElementById('startDateError');
+    const endDate = document.getElementById('endDate');
+    endDate.valueAsDate = new Date(); // provide current date for endDate as a default value
+    const endDateError = document.getElementById('endDateError');
+    const noResultsError = document.getElementById('noResultsError');
+
+
+    function validateStartDate() {
+        if(validateDate(startDate,startDateError)) {
+            compareDates();
+        }
+    }
+    function validateEndDate() {
+        if(validateDate(endDate,endDateError)) {
+            compareDates();
+        }
+
+    }
+
+    function validateDate(checkDate, checkDateError) {
+        const inputDate = new Date(checkDate.value);
+        const maxDate = new Date('9999-12-31');
+        if (!isDateValid(inputDate)) {
+            checkDateError.textContent = 'Date is not in the format DD/MM/YYYY';
+            return false;
+        } else if (inputDate > maxDate) {
+            checkDateError.textContent = 'Date cannot be later than 9999-12-31.';
+            return false;
+        } else {
+            checkDateError.textContent = '';
+            return true;
+        }
+    }
+    function compareDates() {
+        const sDate = new Date(startDate.value);
+        const eDate = new Date(endDate.value);
+
+        if (sDate > eDate) {
+            endDateError.textContent = "End date must be after the start date";
+            endDateError.style.display = "block";
+        } else {
+            console.log("Aaaaaaaaaaa")
+            endDateError.textContent = "";
+            endDateError.style.display = "none";
+        }
+    }
+
+
+    function plantFilter() {
+        var startDate = parseDateString(document.getElementById('startDate').value, '-');
+        var endDate = parseDateString(document.getElementById('endDate').value, '-');
+
+        if (searchInput.value.trim() !== "") { // If the searchInput is in use then it will filter the returned pins
+            currentPlants = scannedPlants.filter(function (plant) {
+                return plant.name.trim().toLowerCase() === searchInput.value.trim().toLowerCase();
+            });
+        } else {
+            currentPlants = scannedPlants;
+            document.getElementById("plant-names").innerHTML = '';
+            loadAllOptions();
+        }
+        if (startDate) {
+            currentPlants = currentPlants.filter(function (plant) {
+                var plantDate = parseDateString(plant.dateUploaded, '/');
+                return plantDate >= startDate;
+            });
+        }
+
+        if (endDate) {
+            endDate.setHours(23, 59, 59, 999); // Ensure endDate is inclusive as per gpt
+            currentPlants = currentPlants.filter(function (plant) {
+                var plantDate = parseDateString(plant.dateUploaded, '/');
+                return plantDate <= endDate;
+            });
+        }
+
+        clusteredMarkers.clearLayers();
+        showMarkers();
+    }
+
+    function showMarkers() {
+        clusteredMarkers.clearLayers();
+
+        if (currentPlants.length === 0) {
+            noResultsError.textContent = "No matches found.";
+            noResultsError.style.display = "block";
+            return;
+        }
+        noResultsError.style.display = "none";
+
+        currentPlants.forEach(function (scannedPlant) {
+            if (scannedPlant.plantLatitude && scannedPlant.plantLongitude && !isNaN(scannedPlant.plantLatitude) && !isNaN(scannedPlant.plantLongitude)) {
+
+                var plantLink = `${getBaseUrl()}/collectionDetails?speciesName=` + encodeURIComponent(scannedPlant.speciesScientificNameWithoutAuthor);
+                var popupContent = `<div style="min-width: 450px; word-break: break-word;" class="row">
+                <div class="col-5" style="white-space: normal; overflow-wrap: break-word;">
+                    <h4>${scannedPlant.name}</h4>
+                    <p><i>${scannedPlant.speciesScientificNameWithoutAuthor}</i></p>
+                    <p><i>Added ${scannedPlant.dateUploaded}</i></p>
+                    <a style="text-decoration: none;" href="${plantLink}">View in your collection</a>
+                </div>`;
+
+
+                if (scannedPlant.uploadedImage) {
+                    var image = `<img src="${scannedPlant.uploadedImage}" alt="Plant image" width="50%" height="100%" style="object-fit: cover; border-radius: 8px"/>`;
+                    popupContent += `<div class="col-7" style="text-align: center;">${image}</div>`;
+                }
+                popupContent += '</div>';
+                L.marker([scannedPlant.plantLatitude, scannedPlant.plantLongitude])
+                    .addTo(clusteredMarkers)
+                    .bindPopup(popupContent, {minWidth: 450}
+                    );
+            }
+        });
+        map.addLayer(clusteredMarkers);
+    }
+
+    function loadAllOptions() {
+        const plantNames = document.getElementById("plant-names");
+        let uniqueNames = [...new Set(scannedPlants.map((plant => plant.name.trim())))].sort();
+
+        uniqueNames.forEach(name => {
+                let newOption = document.createElement("option");
+                newOption.value = name;
+                newOption.text = name;
+                plantNames.appendChild(newOption);
+            }
+        )
+    }
+
+    const searchToggle = document.getElementById('searchToggle');
+    const searchContainer = document.getElementById('searchContainer');
+    const refreshButton = document.getElementById('refresh');
+    const currentLocationButton = document.getElementById('currentLocation');
+    const notificationBox = document.getElementById('notification');
+
+    // open & close the search button for search container
+    searchToggle.addEventListener('click', function() {
+        if (searchContainer.style.display === 'none') {
+            searchContainer.style.display = 'block';
+            searchToggle.style.backgroundColor = 'rgba(52, 72, 59, 0.7)';
+
+        } else {
+            searchContainer.style.display = 'none';
+            searchToggle.style.backgroundColor = 'rgba(141, 171, 110, 0.7)';
+
+        }
+    });
+
+    // refresh all the inputs in the search container
+    refreshButton.addEventListener('click', function() {
+        startDate.valueAsDate = new Date('1900-01-01');
+        endDate.valueAsDate = new Date();
+        searchInput.value = '';
+        startDateError.textContent = '';
+        endDateError.textContent = '';
+        searchContainer.style.display = 'none';
+        searchToggle.style.backgroundColor = 'rgba(141, 171, 110, 0.7)';
+        noResultsError.style.display = "none";
+        resetMap(initialMapState);
+        plantFilter();
+    });
+
+    // get the current coordinates
+    currentLocationButton.addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(getCurrentCoordinates, showMapError);
+            searchContainer.style.display = 'none';
+            searchToggle.style.backgroundColor = 'rgba(141, 171, 110, 0.7)';
+        } else {
+            notificationBox.textContent = "Geolocation is not supported by this browser.";
+            notificationBox.style.backgroundColor = "#ffec84";
+
+        }
+    });
+
+    function showMapError(error) {
+        notificationBox.style.display = 'block';
+        notificationBox.style.backgroundColor = "#ffec84";
+        let errorMessage;
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                errorMessage = "Current Location permission denied."
+                break;
+            case error.POSITION_UNAVAILABLE:
+                errorMessage = "Location information is unavailable."
+                break;
+            case error.TIMEOUT:
+                errorMessage = "The request to get user location timed out."
+                break;
+            case error.UNKNOWN_ERROR:
+                errorMessage = "An unknown error occurred."
+                break;
+            default:
+                errorMessage = "An error occurred while getting location.";
+        }
+        notificationBox.textContent = errorMessage;
+
+        // Automatically hide the notification after 3 seconds
+        setTimeout(() => {
+            notificationBox.style.display = 'none';
+            notificationBox.style.backgroundColor = 'transparent';
+        }, 2000);
+
+    }
+
+    function getCurrentCoordinates(position) {
+        const currentLocationState = {
+            center: [position.coords.latitude, position.coords.longitude],
+            zoom: 15.2,
+            maxBounds: maxBoundArea,
+            minZoom: 5.2,
+            maxZoom: 18
+        };
+        resetMap(currentLocationState);
+    }
+
+
+    // Dynamically adjust map height based on the navbar height - need to do this because navbar does not have a set height
+    function resizeMap() {
+        const navbarHeight = document.querySelector('nav').offsetHeight;
+        const map = document.getElementById('map');
+        map.style.height = `calc(100vh - ${navbarHeight}px)`;
+    }
+
+    // Adjust the map height on window resize
+    window.addEventListener('resize', resizeMap);
+    window.addEventListener('load', resizeMap);
+
 
 </script>
 </body>
