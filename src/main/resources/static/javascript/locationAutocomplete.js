@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (manualAddAddressInput != null) {
         manualAddAddressInput.addEventListener('input', function () {
+            manualPlantLat.value = this.value
             document.getElementById("locationError").innerText = "";
             document.getElementById("manualAddLocation").classList.remove("is-invalid");
             address = manualAddAddressInput;
@@ -50,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     scanningAddressInput.addEventListener('input', function () {
+        plantLat.value = this.value
         document.getElementById("scanningLocationError").innerText = "";
         document.getElementById("scanningLocation").classList.remove("is-invalid");
         address = scanningAddressInput;
