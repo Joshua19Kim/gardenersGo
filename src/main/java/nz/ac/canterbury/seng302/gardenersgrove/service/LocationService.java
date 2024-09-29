@@ -69,6 +69,9 @@ public class LocationService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonResponse = objectMapper.readTree(response.body());
 
-        return jsonResponse.get("display_name").asText();
+        if (jsonResponse.has("display_name")) {
+            return jsonResponse.get("display_name").asText();
+        }
+        return "";
     }
 }
