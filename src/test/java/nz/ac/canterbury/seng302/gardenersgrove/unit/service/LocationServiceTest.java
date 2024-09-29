@@ -82,4 +82,30 @@ public class LocationServiceTest {
         verify(httpClient).send(eq(mockRequest), any(HttpResponse.BodyHandler.class));
         Assertions.assertEquals(expectedLocation, response);
     }
+
+    @Test
+    public void getRegionFromLatLonTest() {
+        String latitude = "50";
+        String longitude = "20";
+        String expectedLocation = "1600 Amphitheatre Parkway, Mountain View, CA";
+        String apiKey = null;
+        String expectedUrl = "https://us1.locationiq.com/v1/reverse?key=" + apiKey + "&lat=" + latitude + "&lon=" + longitude + "&format=json";
+        String mockResponseBody = "{\"display_name\": \"1600 Amphitheatre Parkway, Mountain View, CA\"}";
+
+        HttpRequest mockRequest = HttpRequest.newBuilder()
+                .uri(URI.create(expectedUrl))
+                .header("accept", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        HttpResponse<String> mockResponse = mock(HttpResponse.class);
+        when(mockResponse.body()).thenReturn(mockResponseBody);
+        when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                .thenReturn(mockResponse);
+
+        String response = locationService.getLocationfromLatLong(latitude, longitude);
+
+        verify(httpClient).send(eq(mockRequest), any(HttpResponse.BodyHandler.class));
+        Assertions.assertEquals(expectedLocation, response);
+    }
 }

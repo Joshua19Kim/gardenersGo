@@ -94,7 +94,6 @@ public class LocationService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response.body());
         JsonNode regionNode = jsonNode.path("address");
-
         String state = regionNode.path("state").asText();
         String country = regionNode.path("country").asText();
         List<String> regions = List.of("Southland", "Otago", "Canterbury", "West Coast", "Northland",
