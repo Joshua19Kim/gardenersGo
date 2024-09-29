@@ -35,13 +35,13 @@
 <nav th:insert="~{fragmentExample/fragments/navbar.html}"></nav>
 <div id="map">
     <div class="map-button-container">
-        <button id="searchToggle" class="map-button" tabindex="13">
+        <button id="searchToggle" class="map-button" tabindex="13" title = "Map Filter">
             <img th:src='@{/images/icons/search.svg}' alt="Search" width="24" height="24">
         </button>
-        <button id="refresh" class="map-button" tabindex="14">
+        <button id="refresh" class="map-button" tabindex="14" title = "Refresh map & filter">
             <img th:src='@{/images/icons/arrow-clockwise.svg}' alt="Search" width="24" height="24">
         </button>
-        <button id="currentLocation" class="map-button" tabindex="15">
+        <button id="currentLocation" class="map-button" tabindex="15" title = "Current location">
             <img th:src='@{/images/icons/crosshair.svg}' alt="Search" width="24" height="24">
         </button>
     </div>

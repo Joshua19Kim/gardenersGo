@@ -1656,7 +1656,7 @@ form.search-bar::after {
 .smallErrorMessageMap {
     font-size: 14px;
     font-style: italic;
-    color: red;
+    color: #8A0606;
     display: block;
     margin-left:1rem;
     margin-top:-1rem;
