@@ -221,8 +221,28 @@
         }
     }
 
+    function validateSearchInput(searchInput) {
+        var validCharacters = /^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$/;
+        if (searchInput.trim() === "" || !validCharacters.test(searchInput.trim())) {
+            return false;
+        } return true;
+    }
+
 
     function plantFilter() {
+        var searchTerm = searchInput.value.trim();
+
+        // Search validation
+        if (!validateSearchInput(searchTerm)) {
+            noResultsError.textContent = "Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+            noResultsError.style.display = "block";
+            clusteredMarkers.clearLayers();  // Clear any pins from the map if the search is invalid
+            return;
+        }
+
+        noResultsError.textContent = "";
+        noResultsError.style.display = "none";
+
         var startDate = parseDateString(document.getElementById('startDate').value, '-');
         var endDate = parseDateString(document.getElementById('endDate').value, '-');
 
