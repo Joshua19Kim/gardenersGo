@@ -122,7 +122,7 @@ public class LocationServiceTest {
             "-43.457578, 172.636001, Chatham Islands, Chatham Islands",
             "-43.457578, 172.636001, Chatham Islands Region, Chatham Islands",
     })
-    public void getRegionFromLatLonTest(String latitude, String longitude, String inputRegion, String expectedRegion) throws IOException, InterruptedException {
+    void getRegionFromLatLonTest(String latitude, String longitude, String inputRegion, String expectedRegion) throws IOException, InterruptedException {
         String apiKey = null;
         String expectedUrl = "https://us1.locationiq.com/v1/reverse?key=" + apiKey + "&lat=" + latitude + "&lon=" + longitude + "&format=json";
         String mockResponseBody = "{\"address\": {\"state\": \"" + inputRegion + "\", \"country\": \"New Zealand\"}}";
@@ -156,7 +156,7 @@ public class LocationServiceTest {
             "-43.457578, 172.636001, Southland Southland Region, New Zealand",
             "-43.457578, 172.636001, Region, New Zealand",
     })
-    public void getRegionFromInvalidLatLonTest(String latitude, String longitude, String inputRegion, String country) throws IOException, InterruptedException {
+    void getRegionFromInvalidLatLonTest(String latitude, String longitude, String inputRegion, String country) throws IOException, InterruptedException {
         String apiKey = null;
         String expectedUrl = "https://us1.locationiq.com/v1/reverse?key=" + apiKey + "&lat=" + latitude + "&lon=" + longitude + "&format=json";
         String mockResponseBody = "{\"address\": {\"state\": \"" + inputRegion + "\", \"country\": \"" + country + "\"}}";
