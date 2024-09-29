@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.IntStream;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
@@ -59,6 +58,9 @@ public class CollectionsController {
     private static final String SHOW_MODAL_ATTRIBUTE = "showModal";
     private static final String SUCCESS_MESSAGE_ATTRIBUTE = "successMessage";
     private static final String ERROR_KEY = "error";
+    private static final String REGION_BADGE_NAME = "regionBadge";
+    private static final String BADGE_COUNT_NAME = "badgeCount";
+    private static final String SPECIES_NAME = "speciesName";
 
     private final PlantIdentificationService plantIdentificationService;
 
@@ -123,6 +125,7 @@ public class CollectionsController {
             @RequestParam(name="pageNo", defaultValue = "0") String pageNoString,
             @RequestParam(name="plantBadgeId", required = false) String plantBadgeId,
             @RequestParam(name="speciesBadgeId", required = false) String speciesBadgeId,
+            @RequestParam(name="regionBadgeId", required = false) String regionBadgeId,
             @RequestParam(name="savedPlant", defaultValue = "") String savedPlantId,
             Model model) {
 
@@ -175,8 +178,9 @@ public class CollectionsController {
         int badgeCount = 0;
         badgeCount = addBadgeToModel(plantBadgeId, "plantBadge", gardener, badgeCount, model);
         badgeCount = addBadgeToModel(speciesBadgeId, "speciesBadge", gardener, badgeCount, model);
-        if(!model.containsAttribute("badgeCount")) {
-            model.addAttribute("badgeCount", badgeCount);
+        badgeCount = addBadgeToModel(regionBadgeId, REGION_BADGE_NAME, gardener, badgeCount, model);
+        if(!model.containsAttribute(BADGE_COUNT_NAME)) {
+            model.addAttribute(BADGE_COUNT_NAME, badgeCount);
         }
 
         if (!savedPlantId.isEmpty()) {
@@ -204,16 +208,19 @@ public class CollectionsController {
      */
     @GetMapping("/collectionDetails")
     public String getSpeciesDetails(
-            @RequestParam(name = "speciesName") String speciesName,
+            @RequestParam(name = SPECIES_NAME, required = false) String speciesName,
             @RequestParam(name = "pageNo", defaultValue = "0") String pageNoString,
             Model model) {
 
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
         int pageNo = ValidityChecker.validatePageNumber(pageNoString);
+        if(speciesName == null) {
+            speciesName = (String) model.getAttribute(SPECIES_NAME);
+        }
         Page<IdentifiedPlant> collectionsList = identifiedPlantService.getGardenerPlantsBySpeciesPaginated(pageNo, pageSize, gardener.getId(), speciesName);
         model.addAttribute("collectionsList", collectionsList);
-        model.addAttribute("speciesName", speciesName);
+        model.addAttribute(SPECIES_NAME, speciesName);
 
         int totalPages = collectionsList.getTotalPages();
         if (totalPages > 0) {
@@ -268,7 +275,7 @@ public class CollectionsController {
             @RequestParam(name ="location", required = false ) String location,
             @RequestParam(name= "manualAddLocationToggle", required = false) boolean manualAddLocationToggle,
             RedirectAttributes redirectAttributes
-    ) {
+    ) throws IOException, InterruptedException {
         logger.info("/myCollection/addNewPlantToMyCollection");
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
@@ -301,12 +308,17 @@ public class CollectionsController {
 
         if (isValid) {
             IdentifiedPlant identifiedPlant = new IdentifiedPlant(plantName, gardener);
+            if (manualPlantLat != null && manualPlantLon != null && !manualPlantLat.isEmpty() && !manualPlantLon.isEmpty()) {
+                String region = locationService.sendReverseGeocodingRequest(manualPlantLat, manualPlantLon);
+                identifiedPlant.setRegion(region);
+            }
             identifiedPlant.setPlantLatitude(manualPlantLat);
             identifiedPlant.setPlantLongitude(manualPlantLon);
 
             identifiedPlant = identifiedPlantService.createManuallyAddedPlant(identifiedPlant, description, scientificName, uploadedDate);
 
             int originalSpeciesCount = identifiedPlantService.getSpeciesCount(gardener.getId());
+            int originalRegionCount = identifiedPlantService.getRegionCount(gardener.getId());
 
             if (plantImage.isEmpty()) {
                 identifiedPlant.setUploadedImage("/images/placeholder.jpg");
@@ -335,8 +347,16 @@ public class CollectionsController {
                     badgeCount += 1;
                 }
             }
+            int regionCount = identifiedPlantService.getRegionCount(gardener.getId());
+            if(regionCount != originalRegionCount) {
+                Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener, regionCount);
+                if(regionBadge.isPresent()) {
+                    redirectAttributes.addFlashAttribute(REGION_BADGE_NAME, regionBadge.get());
+                    badgeCount += 1;
+                }
+            }
 
-            redirectAttributes.addFlashAttribute("badgeCount", badgeCount);
+            redirectAttributes.addFlashAttribute(BADGE_COUNT_NAME, badgeCount);
 
             return "redirect:/myCollection";
         } else {
@@ -446,9 +466,9 @@ public class CollectionsController {
             @RequestParam(name ="manualPlantLon",required = false) String manualPlantLon,
             @RequestParam(name ="location", required = false ) String location,
             @RequestParam(name= "manualAddLocationToggle", required = false) boolean manualAddLocationToggle,
-
+            RedirectAttributes redirectAttributes,
             HttpServletRequest request,
-            Model model) {
+            Model model) throws IOException, InterruptedException {
 
         logger.info("POST /collectionDetails/edit");
 
@@ -492,6 +512,15 @@ public class CollectionsController {
             plant.setPlantLatitude(manualPlantLat);
             plant.setPlantLongitude(manualPlantLon);
 
+            int originalRegionCount = identifiedPlantService.getRegionCount(gardener.getId());
+
+            if (manualPlantLat == null && manualPlantLon == null) {
+                plant.setRegion(null);
+            } else {
+                String region = locationService.sendReverseGeocodingRequest(manualPlantLat, manualPlantLon);
+                plant .setRegion(region);
+            }
+
             plant.setName(validatedPlantName);
             boolean descriptionPresent = !Objects.equals(validatedPlantDescription.trim(), "");
 
@@ -500,10 +529,26 @@ public class CollectionsController {
             } else {
                 plant.setDescription(null);
             }
-
             identifiedPlantService.saveIdentifiedPlantDetails(plant);
 
-            return "redirect:/collectionDetails?speciesName=" + plant.getSpeciesScientificNameWithoutAuthor();
+            int badgeCount = 0;
+            int regionCount = identifiedPlantService.getRegionCount(gardener.getId());
+            if(regionCount < originalRegionCount) {
+                badgeService.checkIfBadgeShouldBeRemoved(originalRegionCount, regionCount, gardener);
+            } else if(regionCount != originalRegionCount) {
+                Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener, regionCount);
+                if(regionBadge.isPresent()) {
+                    redirectAttributes.addFlashAttribute(REGION_BADGE_NAME, regionBadge.get());
+                    badgeCount += 1;
+                }
+            }
+
+
+            redirectAttributes.addFlashAttribute(BADGE_COUNT_NAME, badgeCount);
+            redirectAttributes.addFlashAttribute(SPECIES_NAME, plant.getSpeciesScientificNameWithoutAuthor());
+
+
+            return "redirect:/collectionDetails";
         } else {
             Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
             gardenerOptional.ifPresent(value -> gardener = value);
