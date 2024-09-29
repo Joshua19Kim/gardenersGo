@@ -159,6 +159,7 @@
         document.getElementById('manualPlantLon').value = selectedLon;
         console.log(`Selected Lat: ${selectedLat}, Lon: ${selectedLon}`);
         document.getElementById("manualAddLocation").value = '';
+        document.getElementById("manualAddLocationUpdateMssg").innerText = '';
     }
 
     document.getElementById("manualPlantLat").addEventListener("change", function() {
@@ -187,6 +188,4 @@
             map.invalidateSize(); // Force Leaflet to recalculate map size when the modal is fully shown
         });
     });
-
-
 </script>

@@ -125,7 +125,69 @@
 <script th:src="@{/javascript/getBaseUrl.js}"></script>
 <script th:src="@{/javascript/locationAutocomplete.js}"></script>
 <script th:src="@{/javascript/scanningModal.js}"></script>
+<script th:src="@{/webjars/leaflet/1.9.4/dist/leaflet.js}"></script>
+<script th:inline="javascript">
+    /**
+     * creates and initialises the map, also defines on click event that calls java code
+     */
 
+    var southWest = L.latLng(-55, 148.038821);
+    var northEast = L.latLng(-28,200);
+    var maxBoundArea = L.latLngBounds(southWest, northEast)
+    var scanningMap = L.map('scanningMap', {
+        center: [-43.5, 174.88],
+        zoom: 4,
+        maxBounds: maxBoundArea,
+        minZoom: 4,
+        maxZoom: 18
+    });
+    new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
+        attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
+    }).addTo(scanningMap);
+
+    scanningMap.on('click', onClick);
+    let scanningMarker = L.marker([document.getElementById("plantLat").value, document.getElementById("plantLon").value]).addTo(scanningMap);
+    function onClick(e) {
+        const selectedLat = e.latlng.lat;
+        const selectedLon = e.latlng.lng;
+        if (scanningMarker) {
+            scanningMap.removeLayer(scanningMarker);
+        }
+        scanningMarker = L.marker([selectedLat, selectedLon]).addTo(scanningMap);
+        document.getElementById('plantLat').value = selectedLat;
+        document.getElementById('plantLon').value = selectedLon;
+        console.log(`Selected Lat: ${selectedLat}, Lon: ${selectedLon}`);
+        document.getElementById("scanningLocation").value = '';
+        document.getElementById("locationUpdateMssg").innerText = '';
+    }
+
+    document.getElementById("plantLat").addEventListener("change", function() {
+        if (scanningMarker) {
+            scanningMap.removeLayer(scanningMarker);
+        }
+
+        if (this.value !== '') {
+            const selectedLat = document.getElementById("plantLat").value;
+            const selectedLon = document.getElementById("plantLon").value;
+            scanningMarker = L.marker([selectedLat, selectedLon]).addTo(scanningMap);
+        }
+    });
+
+    // ChatGPT provided this solution to the map tiles not loading in properly.
+    // The issue was that the map size needed to be recalculated once the modal opens,
+    // because it has issues when it first loads as the all the fields are hidden
+
+    // Wait for the DOM to load before adding event listeners
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the modal element by ID
+        const successModal = document.getElementById('successModal');
+
+        // Listen for the modal 'shown' event using Bootstrap's event system
+        successModal.addEventListener('shown.bs.modal', function () {
+            scanningMap.invalidateSize(); // Force Leaflet to recalculate map size when the modal is fully shown
+        });
+    });
+</script>
 <script type="text/javascript">
 
 

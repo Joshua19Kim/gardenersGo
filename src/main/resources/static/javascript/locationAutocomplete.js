@@ -167,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             locationUpdateMssg.innerHTML = "The location has been verified : <br/>" + addressInputValue;
                             locationUpdateMssg.style.color = "green";
                             scanningAddressInput.value = addressInputValue.trim();
+                            plantLat.dispatchEvent(new Event("change"));
                             document.getElementById("scanningLocationError").innerText = "";
                             document.getElementById("scanningLocation").classList.remove("is-invalid");
                         }
