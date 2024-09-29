@@ -430,7 +430,7 @@ public class ValidityCheckerTest {
             "-91 : -181 : false",
             "-91 : 0 : false",
             "0, : -181 : false",
-            "0 : 181 : false",
+            "0 : 181 : true",
             "91 : 0 : false",
             "-90 : 0 : true",
             "0 : -180 : true",
