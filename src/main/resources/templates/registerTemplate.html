@@ -5,9 +5,10 @@
 </head>
 
 <body>
+<link rel="icon" th:href='@{/images/icons/favicon.svg}' type="image/x-icon"> <!-- Favicon!-->
 <div class="container">
     <div class="header-container text-center">
-        <img th:src="@{/images/placeholder.jpg}" alt="logo" class="logo"/>
+        <img th:src="@{/images/icons/favicon.svg}" alt="logo" class="logo"/>
         <h1 class="title">Gardeners Grove</h1>
     </div>
     <div class="card w-50">
@@ -141,13 +142,6 @@
         }
     });
 
-    document.getElementById('lastName').disabled = document.getElementById("isLastNameOptional").checked
-
-    document.getElementById("isLastNameOptional").addEventListener("keydown",function (event){
-        if(event.key == "Enter") {
-
-        }
-    });
 </script>
 </body>
 </html>

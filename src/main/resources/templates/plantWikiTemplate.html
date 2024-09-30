@@ -34,7 +34,7 @@
                        'Suggested Sunlight Levels: ' + ${#strings.listJoin(plant.sunlight, ', ')}"
                                 onclick="displayAddPlantModal(this)">Add plant</button>
                     </div>
-                    <img id="collection-card-img" class="card-img-top" th:src="${plant.imagePath != ''} ? ${plant.imagePath} : '/images/placeholder.jpg'" alt="No Image">
+                    <img id="collection-card-img" class="card-img-top" th:src="@{${plant.imagePath != '' ? plant.imagePath : '/images/placeholder.jpg'}}" alt="No Image">
                     <div class="card-collection-body">
                         <div class="card-body">
                             <h5 style="color: #fffdf6" class="card-title" th:text="${plant.name}"></h5>

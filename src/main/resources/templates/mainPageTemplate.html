@@ -60,14 +60,11 @@
     /*<![CDATA[*/
     // Thymeleaf variable injected into JavaScript
     const ordering = /*[[${ordering}]]*/ 'default';
-    console.log(ordering);
-
     /*]]>*/
 
     function orderItems(ordering) {
 
         const order = ordering.split(' ');
-        console.log(order);
         let container = document.getElementById('widget-container');
         let box = document.getElementById('widget-box');
         const tall = document.getElementById('widget-tall');

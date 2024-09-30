@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.repository.MainPageLayoutRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.MainPageLayout;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.MainPageLayoutRepository;
 import org.springframework.stereotype.Service;
 
 @Service

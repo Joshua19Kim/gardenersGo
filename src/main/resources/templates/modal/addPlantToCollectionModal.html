@@ -30,7 +30,7 @@
                         <label for="plantName" class="required-label"> *Required </label>
                     </div>
                     <input type="text" class="form-control input-modal" th:value="${plantName}"
-                           id="plantName" name="plantName" autocomplete="off" placeholder="Plant Name" maxlength="64" list="plantNamesList"
+                           id="plantName" name="plantName" autocomplete="off" placeholder="Plant Name" maxlength="100" list="plantNamesList"
                            th:classappend="${plantNameError} ? 'is-invalid' : ''">
                     <datalist id="plantNamesList"></datalist>
                     <span th:if="${plantNameError}" th:utext="${plantNameError}" class="smallErrorMessage"></span>
@@ -39,7 +39,7 @@
 
                     <label for="scientificName"> Scientific Name: </label>
                     <input type="text" class="form-control input-modal" th:value="${scientificName}"
-                           id="scientificName" name="scientificName" autocomplete="off" placeholder="Scientific Name" maxlength="64" list="scientificNamesList"
+                           id="scientificName" name="scientificName" autocomplete="off" placeholder="Scientific Name" maxlength="100" list="scientificNamesList"
                            th:classappend="${scientificNameError} ? 'is-invalid' : ''">
                     <datalist id="scientificNamesList"></datalist>
                     <span th:if="${scientificNameError}" th:utext="${scientificNameError}" class="smallErrorMessage"></span>
@@ -56,13 +56,57 @@
                     <br/>
 
 
-                    <label for="plantDate"> Date Planted: </label>
+                    <label for="plantDate"> Date of Addition: </label>
                     <input type="date" class="form-control" th:value="${uploadedDate}"
                            id="plantDate" th:name="uploadedDate" style="color:#6c757d;" max="9999-12-31"
                            th:classappend="${dateError} ? 'is-invalid' : ''">
                     <span id="dateError" class="smallErrorMessage" th:utext="${dateError}"></span>
                     <input type="hidden" id="isDateInvalid" th:name="isDateInvalid" th:value="false"/>
 
+
+                    <div>
+                        <div style="display: flex; margin-top: 40px; justify-content: flex-end;">
+                            <label class="LocationIQ-attribution">Search by LocationIQ.com</label>
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <div class="autocomplete-container" style="flex: 100%; margin-top: -20px;">
+                                <label for="manualAddLocation"> Plant location: </label>
+                                <input class="form-control" type="text" id="manualAddLocation" autocomplete="off" placeholder="Search the address here..."
+                                       th:name="location" th:value="${location}" data-cy="location" autofocus
+                                       th:classappend="${locationError} ? 'is-invalid' : ''"
+                                >
+                                <span id="locationError" th:utext="${locationError == null ? '' : locationError}" class="smallErrorMessage"></span>
+                                <p id="manualAddLocationUpdateMssg" class="smallErrorMessage"></p>
+                                <div id="manual-add-autocomplete-results" style="margin-top: -1rem; " ></div>
+                            </div>
+                            <div>
+                                <div class="form-check form-switch" style="margin-top: 1rem; " >
+                                    <input class="form-check-input" type="checkbox" name="manualAddLocationToggle" th:name="manualAddLocationToggle" role="switch" id="manualAddLocationToggle"  th:id="manualAddLocationToggle" th:checked="${manualAddLocationToggle}">
+                                    <label class="form-check-label" for="manualAddLocationToggle">Use current location</label>
+                                </div>
+                                <p id="manualAddGeolocationUpdateMssg" class="smallErrorMessage"></p>
+                                <script>
+                                    document.getElementById('manualAddLocation').disabled = document.getElementById('manualAddLocationToggle').checked;
+                                    document.getElementById('manualAddLocationToggle').onchange = function () {
+                                        document.getElementById('manualAddLocation').disabled = this.checked;
+                                    };
+                                    document.getElementById('manualAddLocationToggle').addEventListener('keydown', function (event) {
+                                        if (event.key === 'Enter') {
+                                            this.checked = !this.checked;
+                                            document.getElementById('manualAddLocation').disabled = this.checked;
+                                        }
+                                    });
+                                </script>
+
+                            </div>
+                        </div>
+                        <br/>
+                    </div>
+                    <p>Click on the map to place a location marker</p>
+                    <div id="map" style="height: 300px" class="mb-3"></div>
+
+                    <input type="hidden" id="manualPlantLat" th:value="${manualPlantLat}" name="manualPlantLat">
+                    <input type="hidden" id="manualPlantLon" th:value="${manualPlantLon}" name="manualPlantLon">
 
                     <div class="d-flex flex-column align-items-center justify-content-center py-1">
                         <button type="submit" class="btn btn-primary mt-2 mb-2" >Save New Plant</button>
@@ -81,230 +125,66 @@
 <input type="hidden" id="plantScientificNamesJson" th:value="${plantScientificNamesJson}">
 <!---->
 
-<script>
-    var form = document.getElementById('plantForm');
-    var fileInput = document.getElementById('fileInput');
-    var currentImage = document.getElementById('currentImage');
-    var addPlantModal = document.getElementById('addPlantModal');
-    var plantDateInput = document.getElementById('plantDate');
-    var today = new Date();
+<script th:src="@{/javascript/addPlantToCollection.js}"></script>
+<script th:src="@{/webjars/leaflet/1.9.4/dist/leaflet.js}"></script>
+<script th:inline="javascript">
+    /**
+     * creates and initialises the map, also defines on click event that calls java code
+     */
 
-    currentImage.src = `${getBaseUrl()}/images/placeholder.jpg`;
+    var southWest = L.latLng(-55, 148.038821);
+    var northEast = L.latLng(-28,200);
+    var maxBoundArea = L.latLngBounds(southWest, northEast)
+    var map = L.map('map', {
+        center: [-43.5, 174.88],
+        zoom: 4,
+        maxBounds: maxBoundArea,
+        minZoom: 4,
+        maxZoom: 18
+    });
+    new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
+        attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
+    }).addTo(map);
 
-    var errorOccurred = document.getElementById("errorOccurred").getAttribute("data-value");
-    window.onload = function() {
-        console.log(errorOccurred)
-        if(errorOccurred === 'true') {
-            var modal = bootstrap.Modal.getOrCreateInstance(addPlantModal);
-            modal.show();
+    map.on('click', onClick);
+    let marker = L.marker([document.getElementById("manualPlantLat").value, document.getElementById("manualPlantLon").value]).addTo(map);
+    function onClick(e) {
+        const selectedLat = e.latlng.lat;
+        const selectedLon = e.latlng.lng;
+        if (marker) {
+            map.removeLayer(marker);
         }
-        updateCharacterCount();
+        marker = L.marker([selectedLat, selectedLon]).addTo(map);
+        document.getElementById('manualPlantLat').value = selectedLat;
+        document.getElementById('manualPlantLon').value = selectedLon;
+        document.getElementById("manualAddLocation").value = '';
+        document.getElementById("manualAddLocationUpdateMssg").innerText = '';
     }
 
-    // clears all the fields when the modal is closed
-    addPlantModal.addEventListener('hide.bs.modal', function(event) {
-        errorOccurred = false;
+    document.getElementById("manualPlantLat").addEventListener("change", function() {
+        if (marker) {
+            map.removeLayer(marker);
+        }
 
-        const addPlantForm = document.getElementById('plantForm')
+        if (this.value !== '') {
+            const selectedLat = document.getElementById("manualPlantLat").value;
+            const selectedLon = document.getElementById("manualPlantLon").value;
+            marker = L.marker([selectedLat, selectedLon]).addTo(map);
+        }
+    });
 
-        const invalidInputs = addPlantForm.querySelectorAll('.is-invalid');
-        invalidInputs.forEach((input) => {
-            input.classList.remove('is-invalid');
+    // ChatGPT provided this solution to the map tiles not loading in properly.
+    // The issue was that the map size needed to be recalculated once the modal opens,
+    // because it has issues when it first loads as the all the fields are hidden
+
+    // Wait for the DOM to load before adding event listeners
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the modal element by ID
+        const addPlantModal = document.getElementById('addPlantModal');
+
+        // Listen for the modal 'shown' event using Bootstrap's event system
+        addPlantModal.addEventListener('shown.bs.modal', function () {
+            map.invalidateSize(); // Force Leaflet to recalculate map size when the modal is fully shown
         });
-
-        const errorMessages = addPlantForm.querySelectorAll('span');
-        errorMessages.forEach((errorMessage) => {
-            if(errorMessage.id !== 'characterCountContainer' && errorMessage.id !== 'characterCount') {
-                errorMessage.textContent = '';
-            }
-        })
-
-        document.getElementById('description').value = '';
-        document.getElementById('plantName').value = '';
-        document.getElementById('scientificName').value = '';
-
-
     });
-
-    // this will be triggered when the modal is about to open
-    addPlantModal.addEventListener('show.bs.modal', function (event) {
-        fileInput.value = '';
-        currentImage.src = '[[@{/images/placeholder.jpg}]]';
-
-        if(errorOccurred !== 'true') {
-            plantDateInput.value = today.getFullYear() + '-' +
-                String(today.getMonth() + 1).padStart(2, '0') + '-' +
-                String(today.getDate()).padStart(2, '0');
-        }
-
-    });
-
-    document.getElementById("plantForm").addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            var activeElement = document.activeElement;
-            if (activeElement.type === "date" || activeElement.tagName === "BUTTON") {
-                return true;
-            } else {
-                event.preventDefault();
-            }
-        }
-    });
-
-    function handleImageChange() {
-        var file = fileInput.files[0];
-        if (file) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('currentImage').src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    document.getElementById("plantForm").addEventListener("submit", function(event) {
-        const dateInput = document.getElementById("plantDate");
-        if (!(dateInput.checkValidity())) {
-            event.preventDefault();
-            document.getElementById("isDateInvalid").value = true;
-            document.getElementById("plantForm").submit();
-        } else {
-            document.getElementById("isDateInvalid").value = false;
-        }
-    });
-
-    document.getElementById('description').addEventListener('input', updateCharacterCount);
-
-    function updateCharacterCount() {
-        var textarea = document.getElementById("description");
-        var characterCount = document.getElementById("characterCount");
-        characterCount.textContent = textarea.value.length;
-    }
-
-
-    /////////////////////////////////////////////////////////////////////
-    let plantNames = JSON.parse(document.getElementById('plantNamesJson').value || '[]');
-    let scientificNames = JSON.parse(document.getElementById('plantScientificNamesJson').value || '[]');
-
-    const plantNameInput = document.getElementById('plantName');
-    const scientificNameInput = document.getElementById('scientificName');
-
-    let removedOption = "";
-    let keypress = false;
-
-
-    const plantNamesList = document.getElementById('plantNamesList');
-    plantNames.forEach(name => {
-        let option = document.createElement('option');
-        option.value = name;
-        option.addEventListener('click', function() {
-            getPlantDetails(name, true);
-        });
-        plantNamesList.appendChild(option);
-    });
-
-    const scientificNamesList = document.getElementById('scientificNamesList');
-    scientificNames.forEach(name => {
-        let option = document.createElement('option');
-        option.value = name;
-        scientificNamesList.appendChild(option);
-    });
-
-
-    plantNameInput.addEventListener('input', function() {
-        const selectedValue = this.value;
-        if (plantNames.includes(selectedValue)) {
-            getPlantDetails(selectedValue, true);
-        }
-    });
-
-    scientificNameInput.addEventListener('input', function() {
-        const selectedValue = this.value;
-        if (scientificNames.includes(selectedValue)) {
-            getPlantDetails(selectedValue, false);
-        }
-    });
-
-
-    plantNameInput.addEventListener("keydown", (e) => {
-        if(e.key) {
-            keypress = true;
-        }
-    });
-
-    scientificNameInput.addEventListener("keydown", (e) => {
-        if(e.key) {
-            keypress = true;
-        }
-    });
-
-
-    plantNameInput.addEventListener('change', (e) => {
-        const inputValue = tagInput.value;
-        const options = dataList.options
-        if (keypress === false) {
-            getPlantDetails(plantNameInput.value, true)
-        }
-        if(inputValue !== removedOption && removedOption !== "") {
-            let newOption = document.createElement("option");
-            newOption.value = removedOption;
-            newOption.text = removedOption;
-            dataList.appendChild(newOption);
-            removedOption = "";
-        }
-        for (let i = 0; i < options.length; i++) {
-            if (options[i].value === inputValue) {
-                removedOption = options[i].value;
-                options[i].remove();
-                break;
-            }
-        }
-        keypress = false;
-    });
-
-
-    function getPlantDetails(selectedPlantName, isPlantName) {
-        const data = {
-            name: selectedPlantName,
-            isPlantName: isPlantName,
-            isSpecieScientificName: !isPlantName
-        };
-
-        fetch(`${getBaseUrl()}/myCollection/autoPopulate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(plantDetailsList => {
-                if (plantDetailsList.length > 0) {
-                    const plantDetails = plantDetailsList[0];
-                    document.getElementById('plantName').value = plantDetails.name || '';
-                    document.getElementById('scientificName').value = plantDetails.scientificName || '';
-                    document.getElementById('description').value = plantDetails.description || '';
-                    updateCharacterCount()
-                    document.getElementById('plantDate').value = convertToHtmlDate(plantDetails.dateUploaded) || '';
-                } else {
-                    console.log('No plant details found');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    function convertToHtmlDate(dateString) {
-        const [day, month, year] = dateString.split('/');
-        const date = new Date(year, month - 1, day);
-        return date.toISOString().split('T')[0];
-    }
-
-
 </script>

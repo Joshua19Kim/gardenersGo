@@ -411,13 +411,44 @@ public class ValidityCheckerTest {
             "     :     ",
             "@@@$$%^S^&&S&FBBNSJLKJNSLFNNSSKNKNY#^^#T*HFBSFBSKNOIH#&@Y(@*Y*(@HOFSIHF(*Y#)#H)HFONW*(*3*@B***@HG(H@: " +
                     "Scientific name must only include letters, numbers, spaces, dots, hyphens or apostrophes <br/>" +
-                    "Scientific name must be less than 64 characters",
+                    "Scientific name must be less than or equal to 64 characters",
             "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh: " +
-                    "Scientific name must be less than 64 characters"
+                    "Scientific name must be less than or equal to 64 characters"
     }, delimiter = ':')
     void ValidateScientificNameTest(String scientificName, String expectedMessage) {
         String actualMessage = ValidityChecker.validateScientificPlantName(scientificName);
         Assertions.assertEquals(expectedMessage, actualMessage);
     }
+
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0 : 0 : true",
+            "-90 : -180 : true",
+            "90 : 180 : true",
+            "89 : 179 : true",
+            "-91 : -181 : false",
+            "-91 : 0 : false",
+            "0, : -181 : false",
+            "0 : 181 : true",
+            "91 : 0 : false",
+            "-90 : 0 : true",
+            "0 : -180 : true",
+            "0 : 180 : true",
+            "90 : 0 : true",
+            "'' : '' : false",
+            "'' : 0 : false",
+            "0 : '' : false"
+
+    }, delimiter = ':')
+    void ValidateCoordinates(String plantLatitude, String plantLongitude, boolean expectedResult) {
+
+        boolean result = ValidityChecker.validatePlantCoordinates(plantLatitude, plantLongitude);
+
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+
+
 
 }

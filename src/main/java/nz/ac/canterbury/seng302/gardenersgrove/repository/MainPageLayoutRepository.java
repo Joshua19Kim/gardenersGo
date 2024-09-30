@@ -16,6 +16,6 @@ public interface MainPageLayoutRepository extends CrudRepository<MainPageLayout,
      * @return the users main page layout
      */
 
-    @Query(value= "select * from main_page_layout where gardener_id = ?1", nativeQuery = true)
+    @Query(value = "select * from main_page_layout where gardener_id = ?1", nativeQuery = true)
     MainPageLayout findByGardenerId(long gardenerId);
 }

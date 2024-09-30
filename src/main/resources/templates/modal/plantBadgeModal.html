@@ -1,0 +1,80 @@
+<div id="badgeModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between ">
+                <h5 class="modal-title">Congratulations</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p th:if="${badgeCount == 1}">You have earned a new badge!</p>
+                <p th:if="${badgeCount > 1}" th:text="'You have earned ' + ${badgeCount} + ' new badges!'"></p>
+                <div class="d-flex flex-row justify-content-center align-items-center">
+                    <img id="plantBadgeImage" class="badgeImage" th:if="${plantBadge}" th:src="@{${plantBadge.imageFilename}}" th:alt="${plantBadge.name}">
+                    <img id="speciesBadgeImage" class="badgeImage" th:if="${speciesBadge}" th:src="@{${speciesBadge.imageFilename}}" th:alt="${speciesBadge.name}">
+                    <img id="regionBadgeImage" class="badgeImage" th:if="${regionBadge}" th:src="@{${regionBadge.imageFilename}}" th:alt="${regionBadge.name}">
+                </div>
+            </div>
+            <div class="modal-footer d-flex flex-column justify-content-center">
+                <a th:href="@{/user}" class="btn btn-primary" role="button" th:if="${badgeCount > 0}"
+                   th:text="${badgeCount > 1} ? 'View Badges in Profile' : 'View Badge in Profile'">
+                </a>
+                <button type="button" class="btn btn-secondary cancel-button text-white" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        var badgeCount = /*[[${badgeCount}]]*/ 0;
+        var badgeModal = document.getElementById("badgeModal");
+        var canvas = document.getElementById("canvas");
+
+
+        var badgeModalInstance = bootstrap.Modal.getOrCreateInstance(badgeModal);
+
+        badgeModal.addEventListener('show.bs.modal', function() {
+            console.log("Displaying Fireworks")
+            canvas.style.display = 'block';
+            if(loaded === false) {
+                onLoad();
+                loaded = true;
+            }
+        });
+
+        badgeModal.addEventListener('hide.bs.modal', function() {
+            canvas.style.display = 'none';
+        });
+        if (badgeCount > 0) {
+            badgeModalInstance.show();
+        }
+
+    });
+    /*]]>*/
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var badgeImages = document.querySelectorAll('.badgeImage');
+        var visibleBadges = Array.from(badgeImages).filter(function (image) {
+            return image.offsetParent !== null;
+        });
+
+        var widthPercentage;
+        if (visibleBadges.length === 1) {
+            widthPercentage = "100%";
+        } else if (visibleBadges.length === 2) {
+            widthPercentage = "50%";
+        } else if (visibleBadges.length >= 3) {
+            widthPercentage = "33%";
+        }
+
+        visibleBadges.forEach(function (image) {
+            image.style.width = widthPercentage;
+        });
+    });
+
+</script>
+<script th:src="@{/javascript/fireworks.js}"></script>

@@ -1,12 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import java.io.IOException;
 import java.util.*;
+
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.ImageService;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationService;
+import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+
 /**
  * Controller responsible for handling requests related to plant identification.
  */
@@ -31,9 +32,11 @@ public class ScanController {
     private final PlantIdentificationService plantIdentificationService;
     private final IdentifiedPlantService identifiedPlantService;
     private final GardenerFormService gardenerFormService;
+    private final LocationService locationService;
     private final ImageService imageService;
-    private final Map<String, String> errorResponse;
-    private final Map<String, Object> response;
+    private  final BadgeService badgeService;
+    private Map<String, String> errorResponse;
+    private Map<String, Object> response;
     private IdentifiedPlant identifiedPlant;
 
     private final String errorKey = "error";
@@ -46,13 +49,13 @@ public class ScanController {
      * @param imageService               the service for checking image validation
      */
     @Autowired
-    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService, IdentifiedPlantService identifiedPlantService) {
+    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService, IdentifiedPlantService identifiedPlantService, BadgeService badgeService, LocationService locationService) {
         this.plantIdentificationService = plantIdentificationService;
         this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
-        errorResponse = new HashMap<>();
-        response = new HashMap<>();
         this.identifiedPlantService = identifiedPlantService;
+        this.badgeService = badgeService;
+        this.locationService = locationService;
     }
 
     /**
@@ -83,6 +86,8 @@ public class ScanController {
     public ResponseEntity<?> identifyPlant(@RequestParam("image") MultipartFile image) {
         logger.info("POST /identifyPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
+        errorResponse = new HashMap<>();
+        response = new HashMap<>();
 
         if (image.isEmpty()) {
             errorResponse.put(errorKey, "Please add an image to identify.");
@@ -138,24 +143,44 @@ public class ScanController {
      */
     @PostMapping("/saveIdentifiedPlant")
     @ResponseBody
-    public ResponseEntity<?> saveIdentifiedPlant( @RequestBody Map<String, String> extra) {
+    public ResponseEntity<?> saveIdentifiedPlant(
+            @RequestBody Map<String, String> extra
+    ) {
         logger.info("POST /saveIdentifiedPlant");
         Optional<Gardener> gardener = getGardenerFromAuthentication();
 
+        errorResponse = new HashMap<>();
+        response = new HashMap<>();
+
         if (gardener.isPresent()) {
+
             try {
                 String name = extra.get("name");
                 String description = extra.get("description");
+                String plantLatitude = extra.get("plantLatitude");
+                String plantLongitude = extra.get("plantLongitude");
 
-                String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(extra.get("name"));
-                String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(extra.get("description"));
+                if (plantLatitude.isEmpty() && plantLongitude.isEmpty()){
+                    plantLatitude = null;
+                    plantLongitude = null;
+                }
+
+                String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(name);
+                String validatedPlantDescription = ValidityChecker.validateIdentifiedPlantDescription(description);
+                boolean validLocation = ValidityChecker.validatePlantCoordinates(plantLatitude, plantLongitude);
+
                 boolean isValid = true;
+
                 if (!Objects.equals(name, validatedPlantName)) {
                     errorResponse.put("nameError", validatedPlantName);
                     isValid = false;
                 }
                 if (!Objects.equals(description, validatedPlantDescription)) {
                     errorResponse.put("descriptionError", validatedPlantDescription);
+                    isValid = false;
+                }
+                if (!validLocation) {
+                    errorResponse.put("locationError", "Invalid Location");
                     isValid = false;
                 }
 
@@ -165,16 +190,46 @@ public class ScanController {
                     if (descriptionPresent) {
                         identifiedPlant.setDescription(validatedPlantDescription);
                     }
-                    response.put("message", "Plant saved successfully");
-                    identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
-                    return ResponseEntity.ok(response);
+                    if (plantLatitude != null && plantLongitude != null && !plantLatitude.isEmpty() && !plantLongitude.isEmpty()) {
+                        String region = locationService.sendReverseGeocodingRequest(plantLatitude, plantLongitude);
+                        identifiedPlant.setRegion(region);
+                    }
+                    identifiedPlant.setPlantLatitude(plantLatitude);
+                    identifiedPlant.setPlantLongitude(plantLongitude);
 
+                    response.put("message", "Plant saved successfully");
+                    int originalSpeciesCount = identifiedPlantService.getSpeciesCount(gardener.get().getId());
+                    int originalRegionCount = identifiedPlantService.getRegionCount(gardener.get().getId());
+                    IdentifiedPlant savedPlant = identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
+                    Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.get().getId());
+                    Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener.get(), plantCount);
+                    if(plantBadge.isPresent()) {
+                        response.put("plantBadge", plantBadge.get().getId());
+                    }
+                    response.put("savedPlant", savedPlant.getId());
+                    int speciesCount = identifiedPlantService.getSpeciesCount(gardener.get().getId());
+                    if(speciesCount != originalSpeciesCount) {
+                        Optional<Badge> speciesBadge = badgeService.checkSpeciesBadgeToBeAdded(gardener.get(), speciesCount);
+                        speciesBadge.ifPresent(badge -> response.put("speciesBadge", speciesBadge.get().getId()));
+                    }
+
+                    int regionCount = identifiedPlantService.getRegionCount(gardener.get().getId());
+                    if(regionCount != originalRegionCount) {
+                        Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener.get(), regionCount);
+                        regionBadge.ifPresent(badge -> response.put("regionBadge", regionBadge.get().getId()));
+                    }
+                    return ResponseEntity.ok(response);
                 }
+                errorResponse.put("message", "Invalid Field");
                 return ResponseEntity.badRequest().body(errorResponse);
 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
                 return ResponseEntity.badRequest().body(errorResponse);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                errorResponse.put(errorKey, "Operation was interrupted: " + e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
             }
         } else {
             errorResponse.put(errorKey, "User not authenticated");

@@ -1,10 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.integration.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.CollectionsController;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -13,25 +13,29 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.PlantIdentificationServic
 import nz.ac.canterbury.seng302.gardenersgrove.util.ValidityChecker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -43,6 +47,12 @@ class CollectionsControllerTest {
 
     @MockBean
     private PlantIdentificationService plantIdentificationService;
+
+    @MockBean
+    private BadgeService badgeService;
+
+    @MockBean
+    private LocationService locationService;
 
     @MockBean
     private IdentifiedPlantService identifiedPlantService;
@@ -93,6 +103,8 @@ class CollectionsControllerTest {
         when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
         doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
         when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
+        when(identifiedPlantService.getCollectionPlantCount(gardener.getId())).thenReturn(1);
+        when(identifiedPlantService.getSpeciesCount(gardener.getId())).thenReturn(0);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/myCollection")
                 .file(mockMultipartFile)
@@ -105,6 +117,70 @@ class CollectionsControllerTest {
 
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/myCollection"));
+
+
+        verify(badgeService, times(1)).checkPlantBadgeToBeAdded(gardener, 1);
+        verify(identifiedPlantService, times(1)).getCollectionPlantCount(gardener.getId());
+        verify(badgeService, times(0)).checkSpeciesBadgeToBeAdded(eq(gardener), anyInt());
+        verify(identifiedPlantService, times(2)).getSpeciesCount(gardener.getId());
+    }
+
+    @Test
+    @WithMockUser
+    void AddPlantToCollection_ValidValues_PlantAddedAndSuccessMessageShown() throws Exception {
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        boolean isDateInvalid = false;
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "plantImage",
+                "image.jpg",
+                "image/jpeg",
+                "image content".getBytes()
+        );
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
+        when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/myCollection")
+                        .file(mockMultipartFile)
+                        .param("plantName", name)
+                        .param("description", description)
+                        .param("scientificName", species)
+                        .param("uploadedDate", String.valueOf(date))
+                        .param("isDateInvalid", String.valueOf(isDateInvalid))
+                        .with(csrf()))
+
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/myCollection"))
+                .andExpect(flash().attributeExists("successMessage"))
+                .andExpect(flash().attribute("successMessage", "My Plant has been added to collection: Plant Species"));
+    }
+
+    @Test
+    @WithMockUser
+    void GetCollection_SavedPlantInURL_SuccessMessageShown() throws Exception {
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+        identifiedPlant.setId(1L);
+
+        IdentifiedPlantSpeciesImpl plantSpecies = mock(IdentifiedPlantSpeciesImpl.class);
+        Page<IdentifiedPlantSpeciesImpl> speciesList = new PageImpl<>(List.of(plantSpecies), PageRequest.of(0, 12), 1);
+        when(identifiedPlantService.getGardenerPlantSpeciesPaginated(eq(0), eq(12), any(Long.class))).thenReturn(speciesList);
+        when(identifiedPlantService.getCollectionPlantById(anyLong())).thenReturn(identifiedPlant);
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/myCollection")
+                .param("savedPlant", identifiedPlant.getId().toString()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().attributeExists("successMessage"))
+                .andExpect(model().attribute("successMessage", "My Plant has been added to collection: Plant Species"));
     }
 
     @Test
@@ -160,6 +236,135 @@ class CollectionsControllerTest {
                 .andExpect(flash().attribute("scientificName", species))
                 .andExpect(flash().attribute("uploadedDate", date))
                 .andExpect(flash().attribute("errorOccurred", true));
+
+        verify(badgeService, never()).checkPlantBadgeToBeAdded(eq(gardener), anyInt());
+        verify(identifiedPlantService, never()).getCollectionPlantCount(gardener.getId());
+        verify(badgeService, never()).checkSpeciesBadgeToBeAdded(eq(gardener), anyInt());
+        verify(identifiedPlantService, never()).getSpeciesCount(gardener.getId());
     }
+
+
+    @Test
+    @WithMockUser
+    public void GetMyCollection_PlantAndBadgeSpecified_MyCollectionShown() throws Exception {
+        Page<IdentifiedPlantSpeciesImpl> page = new PageImpl<>(List.of());
+        when(identifiedPlantService.getGardenerPlantSpeciesPaginated(0, 12, gardener.getId())).thenReturn(page);
+
+
+
+        Badge plantBadge = new Badge("plant badge", LocalDate.of(2003, 12, 30),
+                BadgeType.PLANTS, gardener, "images/placeholder.jpg");
+        Badge speciesBadge = new Badge("species badge", LocalDate.of(2003, 12, 30),
+                BadgeType.SPECIES, gardener, "images/placeholder.jpg");
+
+        when(badgeService.getMyBadgeById(1L, gardener.getId())).thenReturn(Optional.of(plantBadge));
+        when(badgeService.getMyBadgeById(2L, gardener.getId())).thenReturn(Optional.of(speciesBadge));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/myCollection")
+                .param("plantBadgeId", "1")
+                .param("speciesBadgeId", "2"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("myCollectionTemplate"))
+                .andExpect(model().attribute("plantBadge", plantBadge))
+                .andExpect(model().attribute("badgeCount", 2))
+                .andExpect(model().attribute("speciesBadge", speciesBadge));
+    }
+
+    @WithMockUser
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0 : 0",
+            "-90 : -180",
+            "90 : 180",
+            "89 : 179",
+            "-90 : 0",
+            "0 : -180",
+            "0 : 180",
+            "90 : 0",
+            "'' : ''",
+    }, delimiter = ':')
+    void UserUsesCurrentLocationForPlant_HasCoordinates_ReturnsExpectedResult(String plantLatitude, String plantLongitude) throws Exception {
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        boolean isDateInvalid = false;
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "plantImage",
+                "image.jpg",
+                "image/jpeg",
+                "image content".getBytes()
+        );
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
+        when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/myCollection")
+                        .file(mockMultipartFile)
+                        .param("plantName", name)
+                        .param("description", description)
+                        .param("scientificName", species)
+                        .param("uploadedDate", String.valueOf(date))
+                        .param("isDateInvalid", String.valueOf(isDateInvalid))
+                        .param("manualPlantLat", plantLatitude)
+                        .param("manualPlantLon", plantLongitude)
+                        .with(csrf()))
+
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/myCollection"))
+                .andExpect(flash().attributeExists("successMessage"))
+                .andExpect(flash().attribute("successMessage", "My Plant has been added to collection: Plant Species"));
+    }
+
+    @WithMockUser
+    @ParameterizedTest
+    @CsvSource(value = {
+            "-91 : -181",
+            "-91 : 0",
+            "0, : -181",
+            "0 : 186",
+            "91 : 0",
+            "'' : 0",
+            "0 : ''"
+    }, delimiter = ':')
+    void UserUsesCurrentLocationForPlant_HasInvalidCoordinates_ReturnsNothing(String plantLatitude, String plantLongitude) throws Exception {
+        String name = "My Plant";
+        String species = "Plant Species";
+        LocalDate date = LocalDate.of(2004, 5, 20);
+        String description = "Cool plant";
+        boolean isDateInvalid = false;
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "plantImage",
+                "image.jpg",
+                "image/jpeg",
+                "image content".getBytes()
+        );
+        IdentifiedPlant identifiedPlant = new IdentifiedPlant(name, description, species, date, gardener);
+
+        when(identifiedPlantService.saveIdentifiedPlantDetails(any(IdentifiedPlant.class))).thenReturn(identifiedPlant);
+        doNothing().when(imageService).saveCollectionPlantImage(eq(mockMultipartFile), any(IdentifiedPlant.class));
+        when(imageService.checkValidImage(mockMultipartFile)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/myCollection")
+                        .file(mockMultipartFile)
+                        .param("plantName", name)
+                        .param("description", description)
+                        .param("scientificName", species)
+                        .param("uploadedDate", String.valueOf(date))
+                        .param("isDateInvalid", String.valueOf(isDateInvalid))
+                        .param("manualPlantLat", plantLatitude)
+                        .param("manualPlantLon", plantLongitude)
+                        .with(csrf()))
+
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/myCollection"))
+                .andExpect(flash().attributeExists("locationError"))
+                .andExpect(flash().attribute("locationError", "Invalid Location"));
+    }
+
+
+
 
 }

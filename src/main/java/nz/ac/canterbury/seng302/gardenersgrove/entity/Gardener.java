@@ -32,7 +32,7 @@ public class Gardener {
     @Column()
     private LocalDate DoB;
 
-    @Column(length=320, nullable = false)
+    @Column(length = 320, nullable = false)
     private String email;
 
     @Column(nullable = false)
@@ -41,7 +41,9 @@ public class Gardener {
     @Column(name = "profile_picture")
     private String profilePicture;
 
-    /** A counter for how many bad words the gardener tries to use */
+    /**
+     * A counter for how many bad words the gardener tries to use
+     */
     @Column(name = "bad_word_count")
     private Integer badWordCount;
 
@@ -51,18 +53,27 @@ public class Gardener {
     private List<Authority> userRoles;
     // Create an encoder with strength 16
 
-    /** The list of gardens belonging to the gardener. */
+    /**
+     * The list of gardens belonging to the gardener.
+     */
     @OneToMany(mappedBy = "gardener")
     private List<Garden> gardens;
 
     @Column(name = "ban_expiry_date")
     private Date banExpiryDate;
 
+    /**
+     * The list of badges belonging to the gardener.
+     */
+    @OneToMany(mappedBy = "gardener")
+    private List<Badge> badges;
+
 
     /**
      * JPA required no-args constructor
      */
-    protected Gardener() {}
+    protected Gardener() {
+    }
 
     /**
      * Creates a new Gardener object
@@ -85,24 +96,28 @@ public class Gardener {
     }
 
     public void grantAuthority(String authority) {
-        if ( userRoles == null )
+        if (userRoles == null)
             userRoles = new ArrayList<>();
         userRoles.add(new Authority(authority));
     }
+
     public void grantAuthorities(List<String> roles) {
-        if ( userRoles == null )
+        if (userRoles == null)
             userRoles = new ArrayList<>();
-        for (String s: roles) {
+        for (String s : roles) {
             userRoles.add(new Authority(s));
         }
     }
 
-    public List<GrantedAuthority> getAuthorities(){
+    public List<GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
         return authorities;
     }
-    public void setUserRoles(List<Authority> userRoles) { this.userRoles = userRoles;}
+
+    public void setUserRoles(List<Authority> userRoles) {
+        this.userRoles = userRoles;
+    }
 
     public String hashPasword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -111,6 +126,7 @@ public class Gardener {
 
     /**
      * Compares the given password with the stored password using bcrypt
+     *
      * @param password the password to compare
      * @return true if the passwords match, false otherwise
      */
@@ -143,30 +159,53 @@ public class Gardener {
         return email;
     }
 
-    public String getPassword() {return password; }
+    public String getPassword() {
+        return password;
+    }
 
-    public String getProfilePicture() { return this.profilePicture; }
+    public String getProfilePicture() {
+        return this.profilePicture;
+    }
 
-    public int getBadWordCount() { return badWordCount; }
+    public int getBadWordCount() {
+        return badWordCount;
+    }
 
-    public void setId(Long id) { this.id = id; }
-    public List<Garden> getGardens() { return gardens; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public List<Garden> getGardens() {
+        return gardens;
+    }
 
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-    public void setDoB(LocalDate DoB) { this.DoB = DoB; }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-    public void setEmail(String email) {this.email = email; }
+    public void setDoB(LocalDate DoB) {
+        this.DoB = DoB;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public void setProfilePicture(String imageLocation) {
         this.profilePicture = imageLocation;
     }
 
-    public void updatePassword(String password) { this.password = hashPasword(password); }
+    public void updatePassword(String password) {
+        this.password = hashPasword(password);
+    }
 
-    public void setGardens(List<Garden> gardens) { this.gardens = gardens; }
+    public void setGardens(List<Garden> gardens) {
+        this.gardens = gardens;
+    }
 
     public void setBadWordCount(int badWordCount) {
         this.badWordCount = badWordCount;

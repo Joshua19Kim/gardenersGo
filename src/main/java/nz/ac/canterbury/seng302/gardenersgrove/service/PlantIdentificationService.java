@@ -6,8 +6,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlantResponse;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.IdentifiedPlantRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -29,7 +27,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,10 +36,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PlantIdentificationService {
-    Logger logger = LoggerFactory.getLogger(PlantIdentificationService.class);
     private static final String PROJECT = "all";
     private static final String API_URL = "https://my-api.plantnet.org/v2/identify/";
-    private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
+    private static final String IMAGE_DIRECTORY = Path.of(System.getProperty("user.dir")).resolve("uploads").toString();
 
     private final String apiKey;
     private final ObjectMapper objectMapper;
@@ -52,7 +48,7 @@ public class PlantIdentificationService {
     /**
      * Constructs a new PlantIdentificationService with the specified API key and repository.
      *
-     * @param apiKey                    the API key for authenticating with the external plant identification service
+     * @param apiKey  the API key for authenticating with the external plant identification service
      */
     @Autowired
     public PlantIdentificationService(@Value("${plantNet.password}") String apiKey, IdentifiedPlantRepository identifiedPlantRepository) {
@@ -122,7 +118,7 @@ public class PlantIdentificationService {
         String extension = StringUtils.getFilenameExtension(originalFileName);
         String newFileName = UUID.randomUUID() + "." + extension;
 
-        String filePath = IMAGE_DIRECTORY + newFileName;
+        String filePath = Path.of(IMAGE_DIRECTORY).resolve(newFileName).toString();
         Path file = Paths.get(filePath);
 
         // The following code checks to make sure the user has not messed with the file path
@@ -134,7 +130,7 @@ public class PlantIdentificationService {
 
         // If everything is all good, then create the file
         Files.write(file, image.getBytes());
-        return "/uploads/" + newFileName;
+        return Path.of("uploads").resolve(newFileName).toString();
     }
 
     /**

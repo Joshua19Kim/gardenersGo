@@ -38,6 +38,15 @@ body {
     align-items: center;
 }
 
+/* got this from chatGPT */
+#canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    pointer-events: none;
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -161,6 +170,7 @@ textarea#description.garden-form-control {
 .btn-primary {
     background-color: var(--button-color);
     color: var(--text-color);
+    border-color: transparent;
     /*box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2), 0 10px 10px rgba(0, 0, 0, 0.2);*/
 }
 
@@ -187,9 +197,9 @@ textarea#description.garden-form-control {
 
 
 .logo {
-    width: 75px;
+    width: 200px;
     border-radius: 100%;
-    height: 75px;
+    height: 200px;
 }
 
 /* Label code from https://codepen.io/lucasyem/pen/ZEEYKdj */
@@ -248,6 +258,10 @@ textarea#description.garden-form-control {
     align-items: baseline;
     max-height: 25vh;
     overflow: scroll;
+}
+
+.left-align {
+    align-items: baseline !important;
 }
 
 .autocomplete-item {
@@ -426,15 +440,6 @@ img {
     margin-bottom: 15px;
     overflow-y: auto;
     resize: vertical;
-}
-
-#form .surnameCheck {
-    display: inline;
-    margin-top: 3px;
-}
-
-#form .surnameCheck input {
-    width: 50%;
 }
 
 #characterCountContainer {
@@ -845,17 +850,17 @@ body, h2, h3, h4, h5, h6, a {
     text-align: center;
 }
 
+
 .UserProfilePicContainer {
-    width: 105px;
+    width: 100%;
     margin: 0 auto;
     border-radius: 4px;
     position: relative;
-    display: inline-block;
 }
 
 .UserProfilePicContainer img {
-    width: 105px;
-    height: 130px;
+    width: 100%;
+    height: 100%;
     border-radius: 12px;
     object-fit: cover;
     transition: filter 0.3s ease;
@@ -1016,8 +1021,7 @@ button.image-button:hover {
 }
 
 #user_div div {
-    display: flex;
-    justify-content: center;
+
     align-items: center;
 }
 
@@ -1079,7 +1083,6 @@ button.image-button:hover {
 
 
 .search-bar {
-    background-color: yellow;
     margin-top: 20px;
     display: flex;
     align-items: center;
@@ -1481,6 +1484,17 @@ form.search-bar::after {
     display: flex;
     align-items: center;
 }
+.map-notification {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    z-index: 1000;
+    background-color: transparent;
+    border-color: transparent;
+}
 
 .notification form {
     display: flex;
@@ -1628,7 +1642,70 @@ form.search-bar::after {
     align-items: center;
     max-width: 100%;
     margin: 20px auto;
+    background-color: rgba(0,0,0,0);
 }
+
+.search-container-map {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 380px;
+    margin: 20px auto;
+    background-color: rgba(141, 171, 110, 0.9);
+    border-radius: 25px;
+}
+
+.smallErrorMessageMap {
+    font-size: 14px;
+    font-style: italic;
+    color: #8A0606;
+    display: block;
+    margin-left:1rem;
+    margin-top:-1rem;
+    margin-bottom:1rem
+}
+
+.map-button-container{
+    position: absolute;
+    top: 90px;
+    left: 10px;
+    z-index: 999;
+    display:flex;
+    flex-direction:column;
+}
+.map-button {
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-bottom: 15px;
+    border-radius: 50%;
+    background-color: rgba(141, 171, 110, 0.9);
+}
+.map-button:hover {
+    background-color: rgba(52, 72, 59, 0.9);
+}
+.map-label {
+    font-size:17px;
+}
+
+@media (max-width: 767px) {
+    .row {
+        display: block;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .search-container-map{
+        max-width: 300px;
+    }
+    .col-8, .col-4 {
+        width: 100%;
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+
 
 .form-inline {
     display: flex;
@@ -1637,6 +1714,15 @@ form.search-bar::after {
 
 .form-control {
     margin-right: 10px;
+}
+
+.user-profile-details {
+    opacity: 80%;
+    color: gray;
+    font-style: italic;
+    border-style: solid;
+    border-color: #fffdf6;
+    border-width: 2px;
 }
 
 .browse-gardens-container {
