@@ -247,12 +247,7 @@
     function validateSearchInput(searchInput) {
         const validCharacters = /^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$/;
 
-        if (searchInput.length > 0) {
-            if (searchInput.trim() === "" || !validCharacters.test(searchInput.trim())) {
-                return false;
-            }
-        }
-        return true;
+        return !((searchInput.length > 0) && (searchInput.trim() === "" || !validCharacters.test(searchInput.trim())));
     }
 
 
