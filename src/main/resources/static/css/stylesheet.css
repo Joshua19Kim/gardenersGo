@@ -67,6 +67,14 @@ body {
     max-width: 128px;
 }
 
+.cancel-button:focus {
+    background-color: var(--button-cancel-hover-colour);
+    border-color: var(--button-cancel-hover-colour);
+}
+
+.image-add-button:focus {
+    background-color: var(--primary-color) !important;
+}
 
 
 .current {

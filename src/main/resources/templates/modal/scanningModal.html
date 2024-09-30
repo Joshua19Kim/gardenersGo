@@ -1,7 +1,6 @@
 <link th:href="@{/css/modal.css}" rel="stylesheet">
 <meta name="_csrf" th:content="${_csrf.token}"/>
 <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-
 <div id="scanningModal" class="modal fade" aria-hidden="true" aria-labelledby="scanningModalLabel" data-bs-backdrop="static" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -18,7 +17,7 @@
                     </div>
                     <div class="mb-3 text-center">
                         <div id="fileName" class="mt-2"></div>
-                        <label for="imageInput" class="btn image-add-button">
+                        <label for="imageInput" class="btn image-add-button" tabindex="0" id="imageLabel">
                             Upload plant image..
                             <input type="file" id="imageInput" name="image" accept="image/*" required class="d-none">
                         </label>
@@ -115,7 +114,7 @@
 
             <div class="modal-footer d-flex justify-content-center" >
                 <button type="button" class="btn btn-primary" id="goToCollectionButton">Save to my collection</button>
-                <button type="button" class="btn cancel-button text-white" data-bs-dismiss="modal" onclick="refreshFields()">Cancel</button>
+                <button type="button" class="btn cancel-button" data-bs-dismiss="modal" onclick="refreshFields()">Cancel</button>
             </div>
         </div>
     </div>
@@ -189,7 +188,15 @@
 </script>
 <script type="text/javascript">
 
-
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("imageLabel").addEventListener("keydown", function(event) {
+            if (event.key === 'Enter') {
+                console.log("toggle");
+                event.preventDefault();
+                document.getElementById("imageInput").click();
+            }
+        });
+    });
 
     document.getElementById("locationToggle").addEventListener("keydown", function(event) {
         console.log("button pressed");
