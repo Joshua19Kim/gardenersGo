@@ -171,8 +171,8 @@ class CollectionsControllerTest {
         identifiedPlant.setId(1L);
 
         IdentifiedPlantSpeciesImpl plantSpecies = mock(IdentifiedPlantSpeciesImpl.class);
-        Page<IdentifiedPlantSpeciesImpl> speciesList = new PageImpl<>(List.of(plantSpecies), PageRequest.of(0, 12), 1);
-        when(identifiedPlantService.getGardenerPlantSpeciesPaginated(eq(0), eq(12), any(Long.class))).thenReturn(speciesList);
+        Page<IdentifiedPlantSpeciesImpl> speciesList = new PageImpl<>(List.of(plantSpecies), PageRequest.of(0, 11), 1);
+        when(identifiedPlantService.getGardenerPlantSpeciesPaginated(eq(0), eq(11), any(Long.class))).thenReturn(speciesList);
         when(identifiedPlantService.getCollectionPlantById(anyLong())).thenReturn(identifiedPlant);
 
 
@@ -248,7 +248,7 @@ class CollectionsControllerTest {
     @WithMockUser
     public void GetMyCollection_PlantAndBadgeSpecified_MyCollectionShown() throws Exception {
         Page<IdentifiedPlantSpeciesImpl> page = new PageImpl<>(List.of());
-        when(identifiedPlantService.getGardenerPlantSpeciesPaginated(0, 12, gardener.getId())).thenReturn(page);
+        when(identifiedPlantService.getGardenerPlantSpeciesPaginated(0, 11, gardener.getId())).thenReturn(page);
 
 
 
