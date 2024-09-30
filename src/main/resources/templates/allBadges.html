@@ -7,46 +7,55 @@
 
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
-<div class="d-flex flex-wrap justify-content-center mt-4 gap-3">
-    <div class="col-md-6 col-sm-6 col-lg-4 col-xl-4 col-xxl-3 mb-4 h-100" style="height:100%">
-        <div>
-            <div class="main-page2-card" style="height: 100%; overflow: hidden">
-                <h5 class="main-page2-card-title">My Badges</h5>
-                <div>
+<div class="container mt-4">
+    <a id="backButton" th:href="@{../user}" class="btn btn-primary position-absolute" style="left: 20px; padding: 10px 10px; width: auto;" role="button">
+        Back to Profile
+    </a>
 
-                    <p th:class="${earnedBadges == null || earnedBadges.isEmpty()}? 'alert alert-transparent' : 'd-none'">No Badges Unlocked</p>
-                    <th:block th:each="badge, iterStat : ${earnedBadges}">
-                        <div th:onclick="handleBadgeClick([[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])"
-                             th:tabIndex="${iterStat.index + 18}" th:onkeydown="handleEnterKey(event, [[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])"
-                             class="list-group-item main-page-custom-hover p-1" style="width: 29%;cursor: pointer; border-radius: 10px;">
-                            <p th:text="${badge.name}" style="color: black; text-align: center;"></p>
-                            <img id="plantBadgeImage" th:src="@{${badge.imageFilename}}" th:alt="${badge.name}"
-                                 style="width: 100%; height: 50%;">
-                            <p th:text="${badge.dateEarned}" style="color: black; text-align: center;"></p>
+
+    <div class="row">
+        <h2>Badges</h2>
+    </div>
+
+    <!-- My Badges Section -->
+    <div class="row"><h3 style="color: #8dab6e">My badges</h3></div>
+    <div class="d-flex flex-wrap justify-content-center">
+        <div class="m-1" th:each="badge : ${earnedBadges}" style="width: 400px;">
+            <div class="card browse-gardens-card col p-0 h-100" style="background-color: #fff; cursor: pointer;"
+                 th:onclick="handleBadgeClick([[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])">
+
+                <div class="card-body w-100">
+                    <div class="row mt-auto">
+                        <div class="col" style="display: flex; flex-direction: row; justify-content: left; align-items: center;">
+                            <img  th:src="@{${badge.imageFilename}}" alt="Badge Image" style="width: 200px; height: 200px; object-fit: cover;">
+                            <p class="card-text d-inline-block text-truncate" style="color: black; max-width: 50%" th:text="${badge.name}"></p>
                         </div>
-                    </th:block>
+                    </div>
 
+                    <div style="display: flex; justify-content: center; margin-top: 13px;">
+                        <p class="card-text" style="color: black;" th:text="${badge.dateEarned}"></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6 col-sm-6 col-lg-4 col-xl-4 col-xxl-3 mb-4 h-100" style="height:100%">
-        <div style="height: 32vh;">
-            <div class="main-page2-card" style="height: 100%; overflow: hidden">
-                <h5 class="main-page2-card-title">Locked Badges</h5>
-                <div class="main-page-friend-container d-flex flex-wrap justify-content-center gap-3 p-0 overflow-auto" >
 
-                    <p th:class="${lockedBadgeNames == null || lockedBadgeNames.isEmpty()}? 'alert alert-transparent' : 'd-none'">All Badges Unlocked</p>
-                    <th:block th:each="badgeInfo, iterStat : ${lockedBadgeNames}">
-                        <div class="list-group-item main-page-custom-hover p-1"
-                             style="width: 29%; border-radius: 10px;">
-                            <p th:text="${badgeInfo.key}" style="color: black; text-align: center;"></p>
-                            <img id="lockedPlantBadgeImage" th:src="@{${badgeInfo.value}}" th:alt="${badgeInfo.key}"
-                                 style="width: 100%; height: 100%;">
+    <hr class="my-4" style="width: 100%; border: 1px solid #8dab6e;">
+
+    <!-- Locked Badges Section -->
+    <div class="row"><h3 style="color: #8dab6e">Badges to earn</h3></div>
+    <div class="d-flex flex-wrap justify-content-center">
+
+        <div class="m-1" th:each="badgeInfo : ${lockedBadgeNames}" style="width: 400px;">
+            <div class="card  col p-0 h-100" style="background-color: #e9ecef;">
+                <div class="card-body w-100">
+                    <div class="row mt-auto">
+                        <div class="col" style="display: flex; flex-direction: row; justify-content: left; align-items: center;">
+                            <img  th:src="@{${badgeInfo.value}}" alt="Locked Badge Image" style="width: 100px; height: 100px; object-fit: cover;">
+                            <p class="card-text d-inline-block text-truncate" style="color: black; max-width: 50%" th:text="${badgeInfo.key}"></p>
                         </div>
-                    </th:block>
-
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,5 +63,18 @@
 </div>
 
 <div th:insert="~{modal/badgeInformationModal.html}"></div>
+<script>
+
+    // Dynamically adjust back button height based on the navbar height - need to do this because navbar does not have a set height
+    function adjustButtonPosition() {
+        const navbarHeight = document.querySelector('nav').offsetHeight;
+        const backButton = document.getElementById('backButton');
+        backButton.style.top = `${navbarHeight + 20}px`;
+    }
+
+    // Call the function on window load and resize
+    window.onload = adjustButtonPosition;
+    window.onresize = adjustButtonPosition;
+</script>
 </body>
 </html>
