@@ -240,6 +240,10 @@
             return;
         }
 
+        nameError.textContent = "";
+        nameError.style.display = "none";
+
+
         var startDate = parseDateString(document.getElementById('startDate').value, '-');
         var endDate = parseDateString(document.getElementById('endDate').value, '-');
 
