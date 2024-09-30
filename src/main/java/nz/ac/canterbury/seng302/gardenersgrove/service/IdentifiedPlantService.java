@@ -56,6 +56,10 @@ public class IdentifiedPlantService {
         return identifiedPlantRepository.getPlantByGardenerId(gardenerId);
     }
 
+    public List<IdentifiedPlant> getGardenerPlantsWithLocations(Long gardenerId) {
+        return  identifiedPlantRepository.getIdentifiedPlantWithLocationByGardenerId(gardenerId);
+    }
+
     /**
      * Gets the IdentifiedPlant species that are owned by the gardener in paginated form
      * @param pageNo the page number
@@ -84,6 +88,13 @@ public class IdentifiedPlantService {
      * @return returns the count for a gardener
      */
     public Integer getCollectionPlantCount(long id) { return identifiedPlantRepository.getIdentifiedPlantByGardenerId(id).size();}
+
+    /**
+     * Gets the region count for a gardener
+     * @param id gardener's id
+     * @return returns the region count for a gardener
+     */
+    public Integer getRegionCount(long id) { return identifiedPlantRepository.getRegionCountByGardenerId(id);}
 
     /**
      * Gets a count of all the species in the database

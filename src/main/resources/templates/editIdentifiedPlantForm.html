@@ -2,6 +2,7 @@
 <html lang="en">
 <head th:insert="~{fragmentExample/fragments/bootstrap.html}">
     <title>Edit Plant</title>
+
 </head>
 <body>
 
@@ -64,6 +65,8 @@
                 </div>
                 <br/>
             </div>
+            <p>Click on the map to place a location marker</p>
+            <div id="map" style="height: 300px" class="mb-3"></div>
 
             <input type="hidden" id="manualPlantLat" th:value="${manualPlantLat != null ? manualPlantLat : plant.plantLatitude}" name="manualPlantLat">
             <input type="hidden" id="manualPlantLon" th:value="${manualPlantLon != null ? manualPlantLon : plant.plantLongitude}" name="manualPlantLon">
@@ -129,6 +132,7 @@
     const manualPlantLon = document.getElementById('manualPlantLon');
 
     document.getElementById('manualAddLocationToggle').addEventListener('change', function() {
+
         if (this.checked) {
             manualAddGeolocationUpdateMssg.innerHTML = waitingSpinnerHtml;
 
@@ -141,11 +145,13 @@
             } else {
                 manualAddGeolocationUpdateMssg.innerHTML = "Geolocation is not supported by this browser.";
                 disableMALocationInput(false);
+                manualPlantLat.dispatchEvent(new Event('change'));
             }
         } else {
             manualAddGeolocationUpdateMssg.innerHTML = '';
             disableMALocationInput(false);
             manualAddAutocompleteResults.style.display = 'block';
+            manualPlantLat.dispatchEvent(new Event('change'));
         }
         manualAddGeolocationUpdateMssg.style.color = "green";
 
@@ -170,14 +176,14 @@
                 manualAddGeolocationUpdateMssg.innerHTML = "An unknown error occurred."
                 break;
         }
+        manualPlantLat.dispatchEvent(new Event('change'));
     }
 
     function setMACoordinates(position) {
         manualPlantLat.value = position.coords.latitude.toString();
         manualPlantLon.value = position.coords.longitude.toString();
         manualAddGeolocationUpdateMssg.innerHTML = 'Current location saved.';
-
-
+        manualPlantLat.dispatchEvent(new Event('change'));
     }
 
     // when user clicks 'use current location', disable the input field for searching location.
@@ -201,5 +207,55 @@
 
 </script>
 <script th:src="@{/javascript/locationAutocomplete.js}"></script>
+<script th:src="@{/webjars/leaflet/1.9.4/dist/leaflet.js}"></script>
+<script th:inline="javascript">
+    /**
+    * creates and initialises the map, also defines on click event that calls java code
+    */
+
+    var southWest = L.latLng(-55, 148.038821);
+    var northEast = L.latLng(-28,200);
+    var maxBoundArea = L.latLngBounds(southWest, northEast)
+    var map = L.map('map', {
+        center: [-43.5, 174.88],
+        zoom: 4,
+        maxBounds: maxBoundArea,
+        minZoom: 4,
+        maxZoom: 18
+    });
+    new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
+        attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
+    }).addTo(map);
+
+    map.on('click', onClick);
+    let marker = L.marker([document.getElementById("manualPlantLat").value, document.getElementById("manualPlantLon").value]).addTo(map);
+    function onClick(e) {
+        const selectedLat = e.latlng.lat;
+        const selectedLon = e.latlng.lng;
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        marker = L.marker([selectedLat, selectedLon]).addTo(map);
+        document.getElementById('manualPlantLat').value = selectedLat;
+        document.getElementById('manualPlantLon').value = selectedLon;
+        document.getElementById("manualAddLocation").value = '';
+        document.getElementById("manualAddLocationUpdateMssg").innerText = '';
+
+    }
+
+    document.getElementById("manualPlantLat").addEventListener("change", function() {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+
+        if (this.value !== '') {
+            const selectedLat = document.getElementById("manualPlantLat").value;
+            const selectedLon = document.getElementById("manualPlantLon").value;
+            marker = L.marker([selectedLat, selectedLon]).addTo(map);
+        }
+    });
+
+
+</script>
 </body>
 </html>

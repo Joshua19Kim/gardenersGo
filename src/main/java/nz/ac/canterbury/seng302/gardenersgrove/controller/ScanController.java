@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import java.io.IOException;
 import java.util.*;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
@@ -31,6 +32,7 @@ public class ScanController {
     private final PlantIdentificationService plantIdentificationService;
     private final IdentifiedPlantService identifiedPlantService;
     private final GardenerFormService gardenerFormService;
+    private final LocationService locationService;
     private final ImageService imageService;
     private  final BadgeService badgeService;
     private Map<String, String> errorResponse;
@@ -47,12 +49,13 @@ public class ScanController {
      * @param imageService               the service for checking image validation
      */
     @Autowired
-    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService, IdentifiedPlantService identifiedPlantService, BadgeService badgeService) {
+    public ScanController(PlantIdentificationService plantIdentificationService, GardenerFormService gardenerFormService, ImageService imageService, IdentifiedPlantService identifiedPlantService, BadgeService badgeService, LocationService locationService) {
         this.plantIdentificationService = plantIdentificationService;
         this.gardenerFormService = gardenerFormService;
         this.imageService = imageService;
         this.identifiedPlantService = identifiedPlantService;
         this.badgeService = badgeService;
+        this.locationService = locationService;
     }
 
     /**
@@ -150,16 +153,16 @@ public class ScanController {
         response = new HashMap<>();
 
         if (gardener.isPresent()) {
+
             try {
                 String name = extra.get("name");
                 String description = extra.get("description");
                 String plantLatitude = extra.get("plantLatitude");
                 String plantLongitude = extra.get("plantLongitude");
-                if (plantLongitude != null && plantLongitude.isBlank()) {
-                    plantLongitude = null;
-                }
-                if (plantLatitude != null && plantLatitude.isBlank()) {
+
+                if (plantLatitude.isEmpty() && plantLongitude.isEmpty()){
                     plantLatitude = null;
+                    plantLongitude = null;
                 }
 
                 String validatedPlantName = ValidityChecker.validateIdentifiedPlantName(name);
@@ -187,10 +190,16 @@ public class ScanController {
                     if (descriptionPresent) {
                         identifiedPlant.setDescription(validatedPlantDescription);
                     }
+                    if (plantLatitude != null && plantLongitude != null && !plantLatitude.isEmpty() && !plantLongitude.isEmpty()) {
+                        String region = locationService.sendReverseGeocodingRequest(plantLatitude, plantLongitude);
+                        identifiedPlant.setRegion(region);
+                    }
                     identifiedPlant.setPlantLatitude(plantLatitude);
                     identifiedPlant.setPlantLongitude(plantLongitude);
+
                     response.put("message", "Plant saved successfully");
                     int originalSpeciesCount = identifiedPlantService.getSpeciesCount(gardener.get().getId());
+                    int originalRegionCount = identifiedPlantService.getRegionCount(gardener.get().getId());
                     IdentifiedPlant savedPlant = identifiedPlantService.saveIdentifiedPlantDetails(identifiedPlant);
                     Integer plantCount = identifiedPlantService.getCollectionPlantCount(gardener.get().getId());
                     Optional<Badge> plantBadge = badgeService.checkPlantBadgeToBeAdded(gardener.get(), plantCount);
@@ -203,14 +212,24 @@ public class ScanController {
                         Optional<Badge> speciesBadge = badgeService.checkSpeciesBadgeToBeAdded(gardener.get(), speciesCount);
                         speciesBadge.ifPresent(badge -> response.put("speciesBadge", speciesBadge.get().getId()));
                     }
+
+                    int regionCount = identifiedPlantService.getRegionCount(gardener.get().getId());
+                    if(regionCount != originalRegionCount) {
+                        Optional<Badge> regionBadge = badgeService.checkRegionBadgeToBeAdded(gardener.get(), regionCount);
+                        regionBadge.ifPresent(badge -> response.put("regionBadge", regionBadge.get().getId()));
+                    }
                     return ResponseEntity.ok(response);
                 }
                 errorResponse.put("message", "Invalid Field");
                 return ResponseEntity.badRequest().body(errorResponse);
 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 errorResponse.put(errorKey, "Failed to save the identified plant: " + e.getMessage());
                 return ResponseEntity.badRequest().body(errorResponse);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                errorResponse.put(errorKey, "Operation was interrupted: " + e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
             }
         } else {
             errorResponse.put(errorKey, "User not authenticated");

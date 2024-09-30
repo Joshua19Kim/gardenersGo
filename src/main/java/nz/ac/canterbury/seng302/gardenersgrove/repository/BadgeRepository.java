@@ -64,6 +64,7 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
      */
     Optional<Badge> findByNameAndGardenerId(String name, Long gardenerId);
 
+
     /**
      * Finds the badges with the specified type
      *

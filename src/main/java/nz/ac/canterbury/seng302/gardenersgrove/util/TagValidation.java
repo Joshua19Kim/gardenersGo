@@ -24,7 +24,7 @@ public class TagValidation {
      */
     public Optional<String> validateTag(String tagName) {
         String tagRegex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 _\\-'\"]+$";
-        String alphanumericRegex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].*";
+        String alphanumericRegex = ".*[A-Za-zÀ-ÖØ-öø-ž0-9].* {0,100}$";
         String result = "";
         if (tagName.length() > 25) {
             result += "A tag cannot exceed 25 characters <br/>";
@@ -41,15 +41,6 @@ public class TagValidation {
         return Optional.of(result);
     }
 
-    /**
-     * checks if a tag with the given name is already in use in the specified garden, to prevent
-     * duplicates
-     *
-     * @param tagName the tag name to check
-     * @param garden the garden to check the tag against
-     * @return "Used" if the tag is in use in the specified garden, or empty if the tag is not found
-     *     or not used in the garden
-     */
 
     /**
      * Checks if a tag with the given name is already in use in the specified garden, to prevent
