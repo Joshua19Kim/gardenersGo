@@ -92,7 +92,7 @@ public class CollectionsController {
         errorResponse = new HashMap<>();
         response = new HashMap<>();
         this.requestService = requestService;
-        pageSize = 12;
+        pageSize = 11;
         this.badgeService = badgeService;
     }
 
