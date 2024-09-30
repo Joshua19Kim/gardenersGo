@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailUserService {
     Logger logger = LoggerFactory.getLogger(EmailUserService.class);
-    private String api_key;
+  private final String api_key;
 
     @Autowired
     public EmailUserService(@Value("${email.password}") String api_key) {

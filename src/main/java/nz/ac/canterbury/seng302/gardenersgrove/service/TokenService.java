@@ -1,18 +1,17 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import java.util.Calendar;
+import java.util.Optional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.LostPasswordToken;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Optional;
-
 @Service
 public class TokenService {
 
-    private LostPasswordTokenRepository lostPasswordTokenRepository;
+    private final LostPasswordTokenRepository lostPasswordTokenRepository;
 
     @Autowired
     public TokenService(LostPasswordTokenRepository lostPasswordTokenRepository) {
