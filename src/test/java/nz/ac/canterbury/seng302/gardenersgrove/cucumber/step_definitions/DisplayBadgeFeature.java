@@ -45,7 +45,7 @@ public class DisplayBadgeFeature {
     private BadgeRepository badgeRepository;
     private ResultActions resultActions;
     private Gardener gardener;
-    private List<Badge> badgeList = new ArrayList<>();
+    private final List<Badge> badgeList = new ArrayList<>();
 
     @Before("@U7010")
     public void setUp() {

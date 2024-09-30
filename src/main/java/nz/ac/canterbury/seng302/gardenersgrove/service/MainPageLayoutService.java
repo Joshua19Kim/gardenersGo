@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MainPageLayoutService {
 
-    private MainPageLayoutRepository mainPageLayoutRepository;
+  private final MainPageLayoutRepository mainPageLayoutRepository;
 
     /**
      * Constructs a MainPageLayoutService with the provided mainPageLayoutRepository.

@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import org.springframework.data.domain.Page;
@@ -8,17 +11,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
 /**
  * Service class for managing Garden entities.
  */
 @Service
 public class GardenService {
 
-    private GardenRepository gardenRepository;
+    private final GardenRepository gardenRepository;
 
     /**
      * Constructs a GardenService with the provided GardenRepository.

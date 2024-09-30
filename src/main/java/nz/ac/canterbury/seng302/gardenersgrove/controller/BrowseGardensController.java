@@ -1,6 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Follower;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -22,13 +28,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Controller class that handles all the logic for the browse gardens page
@@ -127,7 +126,7 @@ public class BrowseGardensController {
         if (searchTags == null) {
             tagCount = 0L;
         } else {
-            tagCount = (long) searchTags.size();
+            tagCount = searchTags.size();
         }
         if(model.containsAttribute("pageNo")) {
             pageNoString = (String) model.getAttribute("pageNo");
@@ -214,7 +213,7 @@ public class BrowseGardensController {
             tagCount = 0L;
             setSearchTags(new ArrayList<>());
         } else {
-            tagCount = (long) tags.size();
+            tagCount = tags.size();
             setSearchTags(tags);
         }
         List<String> allTags = tagService.getAllTagNames();

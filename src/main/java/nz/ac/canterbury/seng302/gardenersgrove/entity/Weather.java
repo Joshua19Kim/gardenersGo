@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -17,12 +16,12 @@ public class Weather {
     private JsonNode current;
     @JsonProperty("forecast")
     private JsonNode forecast;
-    private List<Float> forecastMinTemperatures = new ArrayList<>();
-    private List<Float> forecastMaxTemperatures = new ArrayList<>();
-    private List<String> forecastImages = new ArrayList<>();
-    private List<String> forecastDescriptions = new ArrayList<>();
-    private List<Integer> forecastHumidities = new ArrayList<>();
-    private List<String> forecastDates = new ArrayList<>();
+    private final List<Float> forecastMinTemperatures = new ArrayList<>();
+    private final List<Float> forecastMaxTemperatures = new ArrayList<>();
+    private final List<String> forecastImages = new ArrayList<>();
+    private final List<String> forecastDescriptions = new ArrayList<>();
+    private final List<Integer> forecastHumidities = new ArrayList<>();
+    private final List<String> forecastDates = new ArrayList<>();
     private String currentLocation;
     private String currentWeatherImage;
     private String currentWeatherDescription;

@@ -1,14 +1,13 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenerFormRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.LostPasswordTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Service class for FormResults, defined by the @link{Service} annotation.
@@ -16,8 +15,8 @@ import java.util.Optional;
  */
 @Service
 public class GardenerFormService {
-    private GardenerFormRepository gardenerFormRepository;
-    private LostPasswordTokenRepository lostPasswordTokenRepository;
+    private final GardenerFormRepository gardenerFormRepository;
+    private final LostPasswordTokenRepository lostPasswordTokenRepository;
 
     @Autowired
     public GardenerFormService(GardenerFormRepository gardenerFormRepository,

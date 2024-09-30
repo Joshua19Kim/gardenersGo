@@ -1,5 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BadgeType;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -10,12 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 /**
  *  Service class for the badge repository
  */
@@ -24,8 +23,8 @@ public class BadgeService {
 
     Logger logger = LoggerFactory.getLogger(BadgeService.class);
 
-    private HashMap<String, String> badgeInformation;
-    private BadgeRepository badgeRepository;
+    private final HashMap<String, String> badgeInformation;
+    private final BadgeRepository badgeRepository;
 
     /**
      * Constructs the badge service
