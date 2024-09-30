@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ public class BadgeService {
 
     Logger logger = LoggerFactory.getLogger(BadgeService.class);
 
-    private List<String> badgeNames;
+    private HashMap<String, String> badgeInformation;
     private BadgeRepository badgeRepository;
 
     /**
@@ -33,9 +34,22 @@ public class BadgeService {
      @Autowired
         public BadgeService(BadgeRepository badgeRepository){
          this.badgeRepository= badgeRepository;
-         this.badgeNames = List.of("1st Plant Found", "10th Plant Found", "25th Plant Found", "50th Plant Found", "100th Plant Found",
-                 "1st Species Found", "10th Species Found", "25th Species Found", "50th Species Found", "100th Species Found",
-                 "1st Region Found", "5th Region Found", "10th Region Found", "17th Region Found");
+         this.badgeInformation =  new HashMap<>() {{
+             put("1st Plant Found", "/images/badges/1PlantBadge.png");
+             put("10th Plant Found", "/images/badges/10PlantBadge.png");
+             put("25th Plant Found", "/images/badges/25PlantBadge.png");
+             put("50th Plant Found", "/images/badges/50PlantBadge.png");
+             put("100th Plant Found", "/images/badges/100PlantBadge.png");
+             put("1st Species Found", "/images/badges/1SpeciesBadge.png");
+             put("10th Species Found", "/images/badges/10SpeciesBadge.png");
+             put("25th Species Found", "/images/badges/25SpeciesBadge.png");
+             put("50th Species Found", "/images/badges/50SpeciesBadge.png");
+             put("100th Species Found", "/images/badges/100SpeciesBadge.png");
+             put("1st Region Found", "/images/badges/1RegionBadge.png");
+             put("5th Region Found", "/images/badges/5RegionBadge.png");
+             put("10th Region Found", "/images/badges/10RegionBadge.png");
+             put("17th Region Found", "/images/badges/17RegionBadge.png");
+         }};
      }
 
     /**
@@ -68,13 +82,17 @@ public class BadgeService {
      * @param id the gardener's id
      * @return all of the gardener's unearned badges
      */
-    public List<String> getMyLockedBadgeNames(Long id) {
+    public HashMap<String, String> getMyLockedBadgeNames(Long id) {
         List<String> unlockedNames = badgeRepository.findByGardenerId(id).stream()
                 .map(badge -> badge.getName()) // Gets names of all unlocked badges
                 .collect(Collectors.toList());
-        return badgeNames.stream() // Gets all badge names
-                .filter(badgeName -> !unlockedNames.contains(badgeName)) // Filters out unlocked badges
-                .collect(Collectors.toList());
+        HashMap<String, String> lockedBadges = new HashMap<>();
+        for (String name : badgeInformation.keySet()) {
+            if (!unlockedNames.contains(name)) {
+                lockedBadges.put(name, badgeInformation.get(name));
+            }
+        }
+        return lockedBadges;
     }
 
     /**

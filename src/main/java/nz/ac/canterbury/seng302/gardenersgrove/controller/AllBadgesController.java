@@ -1,12 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.*;
 import nz.ac.canterbury.seng302.gardenersgrove.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -64,7 +64,7 @@ public class AllBadgesController {
         Optional<Gardener> gardenerOptional = getGardenerFromAuthentication();
         gardenerOptional.ifPresent(value -> gardener = value);
 
-        List<String> lockedBadgeNames = badgeService.getMyLockedBadgeNames(gardener.getId());
+        HashMap<String, String> lockedBadgeNames = badgeService.getMyLockedBadgeNames(gardener.getId());
         List<Badge> earnedBadges = badgeService.getMyBadges(gardener.getId());
 
         model.addAttribute("lockedBadgeNames", lockedBadgeNames);
