@@ -8,7 +8,7 @@
 <div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
 
 <div class="container mt-4">
-    <a id="backButton" th:href="@{../user}" class="btn btn-primary position-absolute" style="left: 20px; padding: 10px 10px; width: auto;" role="button">
+    <a id="backButton" th:href="@{../user}" class="btn btn-primary position-absolute" style="left: 20px; padding: 10px 10px; width: auto;" role="button" tabindex="17">
         Back to Profile
     </a>
 
@@ -20,8 +20,10 @@
     <!-- My Badges Section -->
     <div class="row"><h3 style="color: #8dab6e">My badges</h3></div>
     <div class="d-flex flex-wrap justify-content-center">
-        <div class="m-1" th:each="badge : ${earnedBadges}" style="width: 400px;">
+        <div class="m-1" th:each="badge, iterstat : ${earnedBadges}" style="width: 400px;">
             <div class="card browse-gardens-card col p-0 h-100" style="background-color: #fff; cursor: pointer;"
+                 th:tabIndex="${iterstat.index + 18}"
+                 th:onkeydown="handleEnterKey(event, [[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])"
                  th:onclick="handleBadgeClick([[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])">
 
                 <div class="card-body w-100">

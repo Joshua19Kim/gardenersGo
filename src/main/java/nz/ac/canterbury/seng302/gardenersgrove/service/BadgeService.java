@@ -27,28 +27,27 @@ public class BadgeService {
     private final BadgeRepository badgeRepository;
 
     /**
-     * Constructs the badge service
+     * Constructs the badge service and literal used to compare which badges are yet to be unlocked.
      * @param badgeRepository the repository used by the service
      */
      @Autowired
         public BadgeService(BadgeRepository badgeRepository){
          this.badgeRepository= badgeRepository;
-         this.badgeInformation =  new HashMap<>() {{
-             put("1st Plant Found", "/images/badges/1PlantBadge.png");
-             put("10th Plant Found", "/images/badges/10PlantBadge.png");
-             put("25th Plant Found", "/images/badges/25PlantBadge.png");
-             put("50th Plant Found", "/images/badges/50PlantBadge.png");
-             put("100th Plant Found", "/images/badges/100PlantBadge.png");
-             put("1st Species Found", "/images/badges/1SpeciesBadge.png");
-             put("10th Species Found", "/images/badges/10SpeciesBadge.png");
-             put("25th Species Found", "/images/badges/25SpeciesBadge.png");
-             put("50th Species Found", "/images/badges/50SpeciesBadge.png");
-             put("100th Species Found", "/images/badges/100SpeciesBadge.png");
-             put("1st Region Found", "/images/badges/1RegionBadge.png");
-             put("5th Region Found", "/images/badges/5RegionBadge.png");
-             put("10th Region Found", "/images/badges/10RegionBadge.png");
-             put("17th Region Found", "/images/badges/17RegionBadge.png");
-         }};
+         this.badgeInformation = new HashMap();
+         this.badgeInformation.put("1st Plant Found", "/images/badges/1PlantBadge.png");
+         this.badgeInformation.put("10th Plant Found", "/images/badges/10PlantBadge.png");
+         this.badgeInformation.put("25th Plant Found", "/images/badges/25PlantBadge.png");
+         this.badgeInformation.put("50th Plant Found", "/images/badges/50PlantBadge.png");
+         this.badgeInformation.put("100th Plant Found", "/images/badges/100PlantBadge.png");
+         this.badgeInformation.put("1st Species Found", "/images/badges/1SpeciesBadge.png");
+         this.badgeInformation.put("10th Species Found", "/images/badges/10SpeciesBadge.png");
+         this.badgeInformation.put("25th Species Found", "/images/badges/25SpeciesBadge.png");
+         this.badgeInformation.put("50th Species Found", "/images/badges/50SpeciesBadge.png");
+         this.badgeInformation.put("100th Species Found", "/images/badges/100SpeciesBadge.png");
+         this.badgeInformation.put("1st Region Found", "/images/badges/1RegionBadge.png");
+         this.badgeInformation.put("5th Region Found", "/images/badges/5RegionBadge.png");
+         this.badgeInformation.put("10th Region Found", "/images/badges/10RegionBadge.png");
+         this.badgeInformation.put("17th Region Found", "/images/badges/17RegionBadge.png");
      }
 
     /**
