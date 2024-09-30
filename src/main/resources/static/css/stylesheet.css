@@ -67,6 +67,14 @@ body {
     max-width: 128px;
 }
 
+.cancel-button:focus {
+    background-color: var(--button-cancel-hover-colour);
+    border-color: var(--button-cancel-hover-colour);
+}
+
+.image-add-button:focus {
+    background-color: var(--primary-color) !important;
+}
 
 
 .current {
@@ -381,19 +389,19 @@ img {
 }
 
 .errorMessage {
-    color: #b90909;
+    color: #df0000;
     font-size: smaller;
 }
 
 .errorMessage {
-    color: var(--accent-color);
+    color: #df0000;
     font-size: smaller;
 }
 
 .smallErrorMessage {
     font-size: 14px;
     font-style: italic;
-    color: red;
+    color: #df0000;
     display: block;
 }
 
@@ -545,6 +553,7 @@ img {
     width: 200px;
     padding: 5px;
     margin-left: 5px;
+    margin-bottom: 0px;
     border: 1px solid var(--primary-color);
     border-radius: 5px;
     background-color: var(--input-background-color);
@@ -614,6 +623,7 @@ img {
 
 #public-checkbox-label {
     font-size: 18px;
+    margin-bottom: 0px;
     color: var(--button-color);
     padding-right: 10px;
     vertical-align: middle;

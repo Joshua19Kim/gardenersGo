@@ -315,9 +315,12 @@
                     <a style="text-decoration: none;" href="${plantLink}">View in your collection</a>
                 </div>`;
 
-
                 if (scannedPlant.uploadedImage) {
-                    var image = `<img src="${scannedPlant.uploadedImage}" alt="Plant image" width="50%" height="100%" style="object-fit: cover; border-radius: 8px"/>`;
+                    let imageURL = scannedPlant.uploadedImage;
+                    if (getBaseUrl() !== '') {
+                        imageURL = scannedPlant.uploadedImage.startsWith('/') ? scannedPlant.uploadedImage.slice(1) : scannedPlant.uploadedImage;
+                    }
+                    var image = `<img src="${imageURL}" alt="Plant image" width="50%" height="100%" style="object-fit: cover; border-radius: 8px"/>`;
                     popupContent += `<div class="col-7" style="text-align: center;">${image}</div>`;
                 }
                 popupContent += '</div>';

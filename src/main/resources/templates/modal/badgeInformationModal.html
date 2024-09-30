@@ -26,7 +26,11 @@
 
     function handleBadgeClick(badgeName, imageFilename, dateEarned) {
         document.getElementById("badgeTitle").innerText = badgeName;
-        document.getElementById("badgeImage").src = imageFilename;
+        let imageURL = imageFilename;
+        if (getBaseUrl() !== '') {
+            imageURL = imageFilename.startsWith('/') ? imageFilename.slice(1) : imageFilename;
+        }
+        document.getElementById("badgeImage").src = imageURL;
         document.getElementById("badgeDateEarned").innerText = dateEarned;
         var badgeModalInstance = bootstrap.Modal.getOrCreateInstance(badgeModal);
         badgeModalInstance.show();
