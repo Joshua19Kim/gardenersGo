@@ -161,7 +161,7 @@ public class ValidityChecker {
      * @return input if no errors, else error string
      */
     public static String validateIdentifiedPlantName(String name) {
-        String validNameRegex = "[\\p{L}]+((?:[-' ]?\\p{L}+)?)*";
+        String validNameRegex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
         String result = "";
         if (name.length() > 64) {
             result = "Plant name must " +
@@ -446,7 +446,7 @@ public class ValidityChecker {
             }
             double plantLat = Double.parseDouble(plantLatitude);
             double plantLon = Double.parseDouble(plantLongitude);
-            return plantLat <= 90 && plantLat >= -90 && plantLon >= -180 && plantLon <= 180;
+            return plantLat <= 90 && plantLat >= -90 && plantLon >= -180 && plantLon <= 185; // need 185 lon for Chatham islands
         } catch (Exception e) {
             return false;
         }

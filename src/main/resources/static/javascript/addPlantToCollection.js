@@ -254,12 +254,15 @@ document.getElementById('manualAddLocationToggle').addEventListener('change', fu
         } else {
             manualAddGeolocationUpdateMssg.innerHTML = "Geolocation is not supported by this browser.";
             disableMALocationInput(false);
+            manualPlantLat.dispatchEvent(new Event('change'));
         }
     } else {
+
         manualAddGeolocationUpdateMssg.innerHTML = '';
         disableMALocationInput(false);
         manualAddAutocompleteResults.style.display = 'block';
         manualAddAutocompleteResults.innerText = '';
+        manualPlantLat.dispatchEvent(new Event('change'));
     }
     manualAddGeolocationUpdateMssg.style.color = "green";
 
@@ -284,13 +287,14 @@ function showMAError(error) {
             manualAddGeolocationUpdateMssg.innerHTML = "An unknown error occurred."
             break;
     }
+    manualPlantLat.dispatchEvent(new Event('change'));
 }
 
 function setMACoordinates(position) {
     manualPlantLat.value = position.coords.latitude.toString();
     manualPlantLon.value = position.coords.longitude.toString();
     manualAddGeolocationUpdateMssg.innerHTML = 'Current location saved.';
-
+    manualPlantLat.dispatchEvent(new Event('change'));
 
 }
 

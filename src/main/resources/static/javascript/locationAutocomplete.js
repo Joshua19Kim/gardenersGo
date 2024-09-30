@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (manualAddAddressInput != null) {
         manualAddAddressInput.addEventListener('input', function () {
+            manualPlantLat.value = this.value
             document.getElementById("locationError").innerText = "";
             document.getElementById("manualAddLocation").classList.remove("is-invalid");
             address = manualAddAddressInput;
@@ -50,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     scanningAddressInput.addEventListener('input', function () {
+        plantLat.value = this.value
         document.getElementById("scanningLocationError").innerText = "";
         document.getElementById("scanningLocation").classList.remove("is-invalid");
         address = scanningAddressInput;
@@ -154,6 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             manualPlantLon.value = result.lon;
                             manualAddLocationUpdateMssg.innerHTML = "The location has been verified : <br/>" + addressInputValue;
                             manualAddLocationUpdateMssg.style.color = "green";
+                            manualPlantLat.dispatchEvent(new Event('change'));
                             manualAddAddressInput.value = addressInputValue.trim();
                             document.getElementById("locationError").innerText = "";
                             document.getElementById("manualAddLocation").classList.remove("is-invalid");
@@ -166,6 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             locationUpdateMssg.innerHTML = "The location has been verified : <br/>" + addressInputValue;
                             locationUpdateMssg.style.color = "green";
                             scanningAddressInput.value = addressInputValue.trim();
+                            plantLat.dispatchEvent(new Event("change"));
                             document.getElementById("scanningLocationError").innerText = "";
                             document.getElementById("scanningLocation").classList.remove("is-invalid");
                         }

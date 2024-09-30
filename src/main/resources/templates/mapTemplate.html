@@ -115,14 +115,37 @@
         attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
     }).addTo(map);
 
+    const locationIcon = L.icon({
+        iconUrl: `${getBaseUrl()}/images/icons/gardenerIcon.png`,
+        iconSize:     [65, 65], // size of the icon
+        shadowSize:   [50, 64], // size of the shadow
+        iconAnchor:   [32.5, 32.5], // point of the icon which will correspond to marker's location
+        shadowAnchor: [4, 62],  // the same for the shadow
+        popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    });
+
+    let locationOnMap;
+
     // Function to reset the map to initial state
-    function resetMap(locationo) {
+    function resetMap(locationo, currentLocation=false) {
+
         map.setView(locationo.center, locationo.zoom);
+        // If there is an icon for current location, remove it
+        if (locationOnMap) {
+            map.removeLayer(locationOnMap);
+        }
+
+        // If the request is to get current location, add the icon
+        if (currentLocation) {
+            locationOnMap = L.marker(locationo.center, {icon: locationIcon}).addTo(map);
+        }
+
     }
 
     var clusteredMarkers = L.markerClusterGroup({
-        maxClusterRadius: 50, // Helps to prevent clusters over a large area
-        singleMarkerMode: false // Keep markers as part of cluster
+        maxClusterRadius: 60, // Helps to prevent clusters over a large area
+        singleMarkerMode: false, // Keep markers as part of cluster
+        removeOutsideVisibleBounds: false // Never removes markers
     });
 
     clusteredMarkers.on('clusterclick', function (a) {
@@ -216,7 +239,6 @@
             endDateError.textContent = "End date must be after the start date";
             endDateError.style.display = "block";
         } else {
-            console.log("Aaaaaaaaaaa")
             endDateError.textContent = "";
             endDateError.style.display = "none";
         }
@@ -270,8 +292,6 @@
                 return plantDate <= endDate;
             });
         }
-
-        clusteredMarkers.clearLayers();
         showMarkers();
     }
 
@@ -409,7 +429,7 @@
             minZoom: 5.2,
             maxZoom: 18
         };
-        resetMap(currentLocationState);
+        resetMap(currentLocationState, true);
     }
 
 

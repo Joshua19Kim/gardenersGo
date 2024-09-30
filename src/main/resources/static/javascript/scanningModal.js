@@ -176,12 +176,6 @@ goToCollectionButton.addEventListener('click', function() {
     var formData = new FormData(document.getElementById('identifiedPlantNameForm'));
     var name = formData.get('scanningName');
     var description = formData.get('scanningDescription');
-    if (scanningLocation.value === "" && !scanningLocation.disabled) {
-        plantLon.value = "";
-        plantLat.value = "";
-    }
-    console.log(plantLon.value);
-    console.log(plantLat.value);
 
     const saveUrl = `${getBaseUrl()}/saveIdentifiedPlant`;
     fetch(saveUrl, {
@@ -298,10 +292,12 @@ document.getElementById('locationToggle').addEventListener('change', function() 
         } else {
             geolocationUpdateMssg.innerHTML = "Geolocation is not supported by this browser.";
             disableLocationInput(false);
+            plantLat.dispatchEvent(new Event("change"));
         }
     } else {
         geolocationUpdateMssg.innerHTML = '';
         disableLocationInput(false);
+        plantLat.dispatchEvent(new Event("change"));
         scanningAutocompleteResults.style.display = 'block';
     }
     geolocationUpdateMssg.style.color = "green";
@@ -327,6 +323,7 @@ function showError(error) {
             geolocationUpdateMssg.innerHTML = "An unknown error occurred."
             break;
     }
+    plantLat.dispatchEvent(new Event("change"));
 }
 
 function setCoordinates(position) {
@@ -334,6 +331,7 @@ function setCoordinates(position) {
         plantLat.value = position.coords.latitude.toString();
         plantLon.value = position.coords.longitude.toString();
         geolocationUpdateMssg.innerHTML = 'Current location saved.';
+        plantLat.dispatchEvent(new Event("change"));
 
     }
 }
