@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 @Service
 public class PlantService {
-    private PlantRepository plantRepository;
+  private final PlantRepository plantRepository;
 
     /**
      * Constructs a PlantService with a PlantRepository.

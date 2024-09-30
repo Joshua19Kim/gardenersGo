@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import java.util.List;
+import java.util.Optional;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.IdentifiedPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenerFormService;
@@ -7,11 +9,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.IdentifiedPlantService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
-import java.util.List;
-import java.util.Optional;
-
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * Controller for displaying Open Street Maps through JavaFX webview
@@ -19,8 +18,8 @@ import java.util.Optional;
  */
 @Controller
 public class LeafletOSMController {
-    private GardenerFormService gardenerFormService;
-    private IdentifiedPlantService identifiedPlantService;
+    private final GardenerFormService gardenerFormService;
+    private final IdentifiedPlantService identifiedPlantService;
     private Gardener gardener;
 
     public LeafletOSMController(GardenerFormService gardenerFormService, IdentifiedPlantService identifiedPlantService) {

@@ -1,5 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Badge;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.BadgeType;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Gardener;
@@ -10,29 +15,39 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
 /**
  *  Service class for the badge repository
  */
 @Service
 public class BadgeService {
 
-    private List<String> badgeNames;
-    private BadgeRepository badgeRepository;
+    Logger logger = LoggerFactory.getLogger(BadgeService.class);
+
+    private final HashMap<String, String> badgeInformation;
+    private final BadgeRepository badgeRepository;
 
     /**
-     * Constructs the badge service
+     * Constructs the badge service and literal used to compare which badges are yet to be unlocked.
      * @param badgeRepository the repository used by the service
      */
      @Autowired
         public BadgeService(BadgeRepository badgeRepository){
          this.badgeRepository= badgeRepository;
-         this.badgeNames = List.of("1st Plant Found", "10th Plant Found", "25th Plant Found", "50th Plant Found", "100th Plant Found",
-                 "1st Species Found", "10th Species Found", "25th Species Found", "50th Species Found", "100th Species Found",
-                 "1st Region Found", "5th Region Found", "10th Region Found", "17th Region Found");
+         this.badgeInformation = new HashMap();
+         this.badgeInformation.put("1st Plant Found", "/images/badges/1PlantBadge.png");
+         this.badgeInformation.put("10th Plant Found", "/images/badges/10PlantBadge.png");
+         this.badgeInformation.put("25th Plant Found", "/images/badges/25PlantBadge.png");
+         this.badgeInformation.put("50th Plant Found", "/images/badges/50PlantBadge.png");
+         this.badgeInformation.put("100th Plant Found", "/images/badges/100PlantBadge.png");
+         this.badgeInformation.put("1st Species Found", "/images/badges/1SpeciesBadge.png");
+         this.badgeInformation.put("10th Species Found", "/images/badges/10SpeciesBadge.png");
+         this.badgeInformation.put("25th Species Found", "/images/badges/25SpeciesBadge.png");
+         this.badgeInformation.put("50th Species Found", "/images/badges/50SpeciesBadge.png");
+         this.badgeInformation.put("100th Species Found", "/images/badges/100SpeciesBadge.png");
+         this.badgeInformation.put("1st Region Found", "/images/badges/1RegionBadge.png");
+         this.badgeInformation.put("5th Region Found", "/images/badges/5RegionBadge.png");
+         this.badgeInformation.put("10th Region Found", "/images/badges/10RegionBadge.png");
+         this.badgeInformation.put("17th Region Found", "/images/badges/17RegionBadge.png");
      }
 
     /**
@@ -59,6 +74,24 @@ public class BadgeService {
      public List<Badge> getMyBadges(Long id) {
          return badgeRepository.findByGardenerId(id);
      }
+
+    /**
+     *  gets the unearned badges for a specific gardener
+     * @param id the gardener's id
+     * @return all of the gardener's unearned badges
+     */
+    public HashMap<String, String> getMyLockedBadgeNames(Long id) {
+        List<String> unlockedNames = badgeRepository.findByGardenerId(id).stream()
+                .map(badge -> badge.getName()) // Gets names of all unlocked badges
+                .collect(Collectors.toList());
+        HashMap<String, String> lockedBadges = new HashMap<>();
+        for (String name : badgeInformation.keySet()) {
+            if (!unlockedNames.contains(name)) {
+                lockedBadges.put(name, badgeInformation.get(name));
+            }
+        }
+        return lockedBadges;
+    }
 
     /**
      * Retrieves the three most recently earned badges for a given gardener.

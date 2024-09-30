@@ -8,6 +8,8 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.RelationshipService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.RequestService;
 import nz.ac.canterbury.seng302.gardenersgrove.service.SearchService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,5 +90,4 @@ public class ManageFriendsControllerTest {
                 .andExpect(view().name("manageFriends"));
 
     }
-
 }

@@ -31,7 +31,7 @@ public class ResetPasswordControllerTest {
     private TokenService tokenService;
     @MockBean
     private InputValidationUtil inputValidationUtil;
-    private Gardener mockGardener = new Gardener("test", "test", null, "test@test.test","Password1!");
+    private final Gardener mockGardener = new Gardener("test", "test", null, "test@test.test","Password1!");
     @MockBean
     private WriteEmail mockWriteEmail;
 
