@@ -245,23 +245,22 @@
     }
 
     function validateSearchInput(searchInput) {
-        var validCharacters = /^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$/;
+        const validCharacters = /^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$/;
 
-        if (searchInput.trim() === "" && searchInput.length > 0) {
-            return false;
-        } else if (!validCharacters.test(searchInput.trim())) {
-            return false;
+        if (searchInput.length > 0) {
+            if (searchInput.trim() === "" || !validCharacters.test(searchInput.trim())) {
+                return false;
+            }
         }
         return true;
     }
 
 
     function plantFilter() {
-        var searchTerm = searchInput.value;
 
         // Search validation
-        if (!validateSearchInput(searchTerm)) {
-            nameError.textContent = "Plant name cannot be empty and must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+        if (!validateSearchInput(searchInput.value)) {
+            nameError.textContent = "Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
             nameError.style.display = "block";
             return;
         }
