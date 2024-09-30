@@ -246,14 +246,18 @@
 
     function validateSearchInput(searchInput) {
         var validCharacters = /^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$/;
-        if (searchInput.trim() === "" || !validCharacters.test(searchInput.trim())) {
+
+        if (searchInput.trim() === "" && searchInput.length > 0) {
             return false;
-        } return true;
+        } else if (!validCharacters.test(searchInput.trim())) {
+            return false;
+        }
+        return true;
     }
 
 
     function plantFilter() {
-        var searchTerm = searchInput.value.trim();
+        var searchTerm = searchInput.value;
 
         // Search validation
         if (!validateSearchInput(searchTerm)) {
