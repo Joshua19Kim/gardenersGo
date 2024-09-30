@@ -48,13 +48,14 @@
 
     <div id="searchContainer" class="search-container-map position-relative p-2 m-0 mt-3 justify-content-start"
              style="z-index: 999; left: 60px; flex-direction: column; align-items: baseline; width: fit-content; display: none;" >
-            <form id="nameFilter" class="search-bar form-inline" style="display: flex; flex-direction: column;">
+            <form id="nameFilter" class="search-bar form-inline" style="display: flex; flex-direction: column;" novalidate>
                 <div class="input w-100">
                     <label class="map-label" style="margin-left: 20px;"> Plant Name </label>
                     <input aria-label="Search" class="form-control form-field" id="searchTerm" list="plant-names" placeholder="Search by plant name"
                            style="margin-bottom: 0 !important" tabindex="16" autocomplete="off" th:name="searchTerm" th:value="${searchTerm}"
                            type="search">
                     <datalist id="plant-names"></datalist>
+                    <span id="nameError" class="smallErrorMessageMap mt-2 mb-0"></span>
                 </div>
                 <!-- Date filtering -->
                 <div class="field date-input mt-3">
@@ -202,7 +203,7 @@
     endDate.valueAsDate = new Date(); // provide current date for endDate as a default value
     const endDateError = document.getElementById('endDateError');
     const noResultsError = document.getElementById('noResultsError');
-
+    const nameError = document.getElementById('nameError');
 
     function validateStartDate() {
         if(validateDate(startDate,startDateError)) {
@@ -243,8 +244,26 @@
         }
     }
 
+    function validateSearchInput(searchInput) {
+        const validCharacters = /^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$/;
+
+        return !((searchInput.length > 0) && (searchInput.trim() === "" || !validCharacters.test(searchInput.trim())));
+    }
+
 
     function plantFilter() {
+
+        // Search validation
+        if (!validateSearchInput(searchInput.value)) {
+            nameError.textContent = "Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes";
+            nameError.style.display = "block";
+            return;
+        }
+
+        nameError.textContent = "";
+        nameError.style.display = "none";
+
+
         var startDate = parseDateString(document.getElementById('startDate').value, '-');
         var endDate = parseDateString(document.getElementById('endDate').value, '-');
 
