@@ -28,7 +28,7 @@ public class PlantCollectionFeature {
     private MvcResult mvcResult;
     private Long gardenerId;
 
-    private Logger logger = LoggerFactory.getLogger(PlantCollectionFeature.class);
+    private final Logger logger = LoggerFactory.getLogger(PlantCollectionFeature.class);
 
     @Before("@U7001 or @7002")
     public void setUp() {

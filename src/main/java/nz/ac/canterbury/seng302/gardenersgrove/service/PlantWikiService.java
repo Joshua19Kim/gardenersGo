@@ -4,6 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlant;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.WikiPlantResponse;
 import org.slf4j.Logger;
@@ -15,12 +20,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Service class for interacting with the Perenual API
  * This service handles fetching plant data based on user queries
@@ -31,10 +30,10 @@ import java.util.List;
 public class PlantWikiService {
 
     Logger logger = LoggerFactory.getLogger(PlantWikiService.class);
-    private String apiKey;
+    private final String apiKey;
 
-    private String perenualApiUrl = "https://perenual.com/api/species-list";
-    private String apiDownMessage = "The plant wiki is down for the day :( Try again tomorrow";
+    private final String perenualApiUrl = "https://perenual.com/api/species-list";
+    private final String apiDownMessage = "The plant wiki is down for the day :( Try again tomorrow";
     private final ObjectMapper objectMapper;
 
   /**

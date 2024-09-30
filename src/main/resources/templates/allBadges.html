@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="~{fragmentExample/fragments/bootstrap.html}">
+    <title>Badges</title>
+</head>
+<body>
+
+<div th:insert="~{fragmentExample/fragments/navbar.html}"></div>
+
+<div class="container mt-4">
+    <a id="backButton" th:href="@{../user}" class="btn btn-primary position-absolute" style="left: 20px; padding: 10px 10px; width: auto;" role="button" tabindex="17">
+        Back to Profile
+    </a>
+
+
+    <div class="row">
+        <h2>Badges</h2>
+    </div>
+
+    <!-- My Badges Section -->
+    <div class="row"><h3 style="color: #8dab6e">My badges</h3></div>
+    <div class="d-flex flex-wrap justify-content-center">
+        <div class="m-1" th:each="badge, iterstat : ${earnedBadges}" style="width: 400px;">
+            <div class="card browse-gardens-card col p-0 h-100" style="background-color: #fff; cursor: pointer;"
+                 th:tabIndex="${iterstat.index + 18}"
+                 th:onkeydown="handleEnterKey(event, [[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])"
+                 th:onclick="handleBadgeClick([[${badge.name}]], [[${badge.imageFilename}]], [[${badge.dateEarned}]])">
+
+                <div class="card-body w-100">
+                    <div class="row mt-auto">
+                        <div class="col" style="display: flex; flex-direction: row; justify-content: left; align-items: center;">
+                            <img  th:src="@{${badge.imageFilename}}" alt="Badge Image" style="width: 200px; height: 200px; object-fit: cover;">
+                            <p class="card-text d-inline-block text-truncate" style="color: black; max-width: 50%" th:text="${badge.name}"></p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: center; margin-top: 13px;">
+                        <p class="card-text" style="color: black;" th:text="${badge.dateEarned}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <hr class="my-4" style="width: 100%; border: 1px solid #8dab6e;">
+
+    <!-- Locked Badges Section -->
+    <div class="row"><h3 style="color: #8dab6e">Badges to earn</h3></div>
+    <div class="d-flex flex-wrap justify-content-center">
+
+        <div class="m-1" th:each="badgeInfo : ${lockedBadgeNames}" style="width: 400px;">
+            <div class="card  col p-0 h-100" style="background-color: #e9ecef;">
+                <div class="card-body w-100">
+                    <div class="row mt-auto">
+                        <div class="col" style="display: flex; flex-direction: row; justify-content: left; align-items: center;">
+                            <img  th:src="@{${badgeInfo.value}}" alt="Locked Badge Image" style="width: 100px; height: 100px; object-fit: cover;">
+                            <p class="card-text d-inline-block text-truncate" style="color: black; max-width: 50%" th:text="${badgeInfo.key}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:insert="~{modal/badgeInformationModal.html}"></div>
+<script>
+
+    // Dynamically adjust back button height based on the navbar height - need to do this because navbar does not have a set height
+    function adjustButtonPosition() {
+        const navbarHeight = document.querySelector('nav').offsetHeight;
+        const backButton = document.getElementById('backButton');
+        backButton.style.top = `${navbarHeight + 20}px`;
+    }
+
+    // Call the function on window load and resize
+    window.onload = adjustButtonPosition;
+    window.onresize = adjustButtonPosition;
+</script>
+</body>
+</html>
