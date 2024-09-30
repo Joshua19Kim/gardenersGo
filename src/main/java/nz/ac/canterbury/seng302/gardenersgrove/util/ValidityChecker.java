@@ -161,7 +161,7 @@ public class ValidityChecker {
      * @return input if no errors, else error string
      */
     public static String validateIdentifiedPlantName(String name) {
-        String validNameRegex = "[\\p{L}]+((?:[-' ]?\\p{L}+)?)*";
+        String validNameRegex = "^[A-Za-zÀ-ÖØ-öø-ž0-9 ,.'-]+$";
         String result = "";
         if (name.length() > 64) {
             result = "Plant name must " +
