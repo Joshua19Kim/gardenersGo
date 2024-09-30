@@ -84,9 +84,17 @@ public class DisplayBadgeFeature {
     @Given("I have more than five badges")
     public void i_have_more_than_five_badges() {
         badgeList.clear();
+        List<String> names = List.of(
+                "1st Plant Found",
+                "10th Plant Found",
+                "25th Plant Found",
+                "50th Plant Found",
+                "100th Plant Found",
+                "10th Species Found"
+        );
         gardener = gardenerFormService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
         IntStream.range(0, 6).forEach(i -> {
-            Badge badge = new Badge(String.valueOf(i), LocalDate.now(), BadgeType.PLANTS, gardener, "hehe");
+            Badge badge = new Badge(names.get(i), LocalDate.now(), BadgeType.PLANTS, gardener, "hehe");
             badgeService.addBadge(badge);
             badgeList.add(badge);
         });
@@ -122,7 +130,7 @@ public class DisplayBadgeFeature {
         HashMap<String, String> lockedBadges = (HashMap<String, String>) mvcResult.getModelAndView().getModel().get("lockedBadgeNames");
 
         assertEquals(6, unlockedBadges.size());
-//        assertEquals(8, lockedBadges.size());
+        assertEquals(8, lockedBadges.size());
     }
 
     @Given("I have no badges")
