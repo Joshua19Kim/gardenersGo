@@ -12,14 +12,14 @@ This project is licensed with an MIT license. See LICENCE.txt for more details.
 
 ## Contributors
 SENG302 Teaching Team\
-Arthur Bell - abe118@uclive.ac.nz  
-Ben Moore - bmo80@uclive.ac.nz  
-Isaac Steele - ist46@uclive.ac.nz  
-Jasmine Ong - jon25@uclive.ac.nz  
-Joshua Byoungsoo Kim - bki42@uclive.ac.nz  
-Kush Desai - kde54@uclive.ac.nz  
-Rinlada Tolley - rto52@uclive.ac.nz  
-Sam Dawson - sda110@uclive.ac.nz
+Art*** ****
+B** *****
+I**** ******
+Ja***** ***
+Joshua Byoungsoo Kim
+Ku** *****
+Ri***** ******
+S** ******
 
 
 ## Dependencies
